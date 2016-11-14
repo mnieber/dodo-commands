@@ -4,8 +4,8 @@ dodo_commands.sublime-project
 dodo_commands.sublime-workspace
 dodo-setup
 dodo-activate
+dodo-install-defaults
 *.pyc
 doc/build
 defaults
-doc
 
