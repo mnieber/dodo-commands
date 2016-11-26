@@ -128,6 +128,12 @@ class Key:
             node = self._step_into(node, key)
         node[self.subkeys[-1]] = value
 
+    def remove(self):  # noqa
+        node = self.config
+        for key in self.subkeys[:-1]:
+            node = self._step_into(node, key)
+        del node[self.subkeys[-1]]
+
     def __repr__(self):  # noqa
         return str(self.subkeys)
 
@@ -190,57 +196,99 @@ class ConfigExpander:
         return []
 
     @classmethod
-    def _expand(cls, key, processed_keys):
-        value = key.get()
-        if not cls._is_leaf(value):
-            return cls._is_fully_expanded(key, processed_keys)
-        if not isinstance(value, type(str())):
-            return True
+    def _key_for_match(cls, matched_str, config):
+        key = Key(config, [])
+        for index in [ix for ix in matched_str.split("/") if ix]:
+            if isinstance(key.get(), type(list())):
+                subkey = int(index)
+            else:
+                subkey = index
+            key = key.child(subkey)
+        return key
 
+    @classmethod
+    def _expand(cls, value, config, processed_keys):
         matches = re.finditer(cls._regexp, value)
         for match in reversed([m for m in matches]):
-            replacement = Key(key.config, [])
-            for index in [ix for ix in match.group(1).split("/") if ix]:
-                if isinstance(replacement.get(), type(list())):
-                    subkey = int(index)
-                else:
-                    subkey = index
-                replacement = replacement.child(subkey)
-
+            replacement = cls._key_for_match(match.group(1), config)
             if replacement.subkeys not in processed_keys:
-                return False
+                return False, None
             value = (
                 value[:match.start()] +
                 str(replacement.get()) +
                 value[match.end():]
             )
-
-        key.set(os.path.expandvars(value))
-        return True
+        return True, os.path.expandvars(value)
 
     @classmethod
-    def _collect_keys(cls, config, node, result, subkeys=None):
+    def _expand_value_for(cls, key, processed_keys):
+        value = key.get()
+        if not cls._is_leaf(value):
+            return cls._is_fully_expanded(key, processed_keys), None
+        if not isinstance(value, type(str())):
+            return True, None
+        return cls._expand(
+            value, key.config, processed_keys
+        )
+
+    @classmethod
+    def _for_each_key(cls, config, node, f, subkeys=None):
         if subkeys is None:
             subkeys = []
 
         for child_key in cls._subkeys_of(node):
             value = node[child_key]
-            result.append(Key(config, list(subkeys) + [child_key]))
-            cls._collect_keys(
-                config, value, result, list(subkeys) + [child_key]
+            f(config, list(subkeys) + [child_key])
+            cls._for_each_key(
+                config, value, f, list(subkeys) + [child_key]
             )
+
+    @classmethod
+    def _expanded_key(cls, key, processed_keys):
+        """Return key with variable expansion on last subkey.
+
+        Return None if not all variables could be expanded.
+        """
+        last_index = key.subkeys[-1]
+        if not isinstance(last_index, type(str())):
+            return key
+
+        is_expanded, expanded_last_index = cls._expand(
+            last_index, key.config, processed_keys
+        )
+        if not is_expanded:
+            return None
+        return Key(
+            key.config, key.subkeys[:-1] + [expanded_last_index]
+        )
 
     @classmethod
     def run(cls, config):  # noqa
         all_keys = []
+        cls._for_each_key(
+            config, config,
+            lambda config, subkeys: all_keys.append(Key(config, subkeys))
+        )
+
         processed_keys = []
-        cls._collect_keys(config, config, all_keys)
         while all_keys:
             for key in list(all_keys):
-                if cls._expand(key, processed_keys):
-                    if cls._must_evaluate(key):
-                        cls._evaluate(key)
-                    processed_keys.append(key.subkeys)
+                expanded_key = cls._expanded_key(key, processed_keys)
+                if expanded_key is None:
+                    continue
+
+                is_expanded, expanded_value = cls._expand_value_for(
+                    key, processed_keys
+                )
+
+                if is_expanded:
+                    if expanded_value is not None:
+                        expanded_key.set(expanded_value)
+                        if expanded_key.subkeys != key.subkeys:
+                            key.remove()
+                    if cls._must_evaluate(expanded_key):
+                        cls._evaluate(expanded_key)
+                    processed_keys.append(expanded_key.subkeys)
                     all_keys.remove(key)
 
 
