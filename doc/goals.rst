@@ -27,6 +27,11 @@ Run commands in a docker container
 
 If you enable docker support, and if the command is runnable in docker, then the command will execute inside a docker container. Dodo Commands will read the project configuration to find out which volume mappings and environment variables it must create inside the container.
 
+Install dependencies automatically
+==================================
+
+By specifying the dependencies of a command script in a :code:`<script-name>.meta` file, missing Python packages are automatically installed into the currently active virtualenv.
+
 Auto-completion
 ===============
 
