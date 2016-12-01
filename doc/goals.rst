@@ -30,7 +30,7 @@ If you enable docker support, and if the command is runnable in docker, then the
 Install dependencies automatically
 ==================================
 
-By specifying the dependencies of a command script in a :code:`<script-name>.meta` file, missing Python packages are automatically installed into the currently active virtualenv.
+By specifying the dependencies of a command script in a :code:`<script-name>.meta` file, missing Python packages are automatically installed into the virtualenv of the Dodo Commands project.
 
 Auto-completion
 ===============

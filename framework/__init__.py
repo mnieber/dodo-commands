@@ -78,8 +78,12 @@ def load_command_class(module_dir, name):
         with open(meta_data_filename) as f:
             meta_data = yaml.load(f.read())
             print ("\n--- Installing from %s ---" % meta_data_filename)
+            pip = os.path.join(
+                get_project_dir(),
+                "env/bin/pip"
+            )
             subprocess.check_call(
-                ["pip", "install"] + meta_data['requirements'])
+                [pip, "install"] + meta_data['requirements'])
             print ("--- Done ---\n\n")
 
     import_path = '%s.%s' % (module_dir.replace("/", "."), name)
