@@ -37,6 +37,7 @@ from __future__ import unicode_literals
 
 import os
 import sys
+import argcomplete
 from argparse import ArgumentParser, SUPPRESS
 from dodo_commands.framework.config import (
     ConfigExpander, get_project_dir, ConfigIO, Key, KeyNotFound
@@ -115,6 +116,8 @@ class BaseCommand(object):  # noqa
             # like optparse when args is set
             parser.add_argument('args', nargs='*')
         self.add_arguments(parser)
+        argcomplete.autocomplete(parser)
+
         return parser
 
     def add_arguments(self, parser):  # noqa
@@ -131,7 +134,7 @@ class BaseCommand(object):  # noqa
         parser = self.create_parser(prog_name, subcommand)
         parser.print_help()
 
-    def run_from_argv(self, argv):  # noqa
+    def run_from_argv(self, argv, subcommand):  # noqa
         """
         Set up any environment changes requested (e.g., Python path
         and Django settings), then run this command. If the
@@ -140,7 +143,7 @@ class BaseCommand(object):  # noqa
         ``Exception`` is not ``CommandError``, raise it.
         """
         self._called_from_command_line = True
-        parser = self.create_parser(argv[0], argv[1])
+        parser = self.create_parser(argv[0], subcommand)
 
         options = parser.parse_args(argv[2:])
 

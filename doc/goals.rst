@@ -26,3 +26,8 @@ Run commands in a docker container
 ==================================
 
 If you enable docker support, and if the command is runnable in docker, then the command will execute inside a docker container. Dodo Commands will read the project configuration to find out which volume mappings and environment variables it must create inside the container.
+
+Auto-completion
+===============
+
+Dodo Commands provides auto-completion of the command names and their arguments (all argument parsing is done with the argparse package).

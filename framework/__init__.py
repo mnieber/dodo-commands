@@ -31,6 +31,8 @@
 
 """Root of the framework module."""
 
+import argcomplete
+from argparse import ArgumentParser
 from collections import defaultdict
 import yaml
 import os
@@ -173,10 +175,13 @@ class ManagementUtility(object):
         self.argv = argv
         self.prog_name = os.path.basename(self.argv[0])
 
-    def main_help_text(self, commands_only=False):
+    def main_help_text(self, commands_only=False, commands=None):
         """Return the script's main help text, as a string."""
+        if commands is None:
+            commands = get_commands()
+
         if commands_only:
-            usage = sorted(get_commands().keys())
+            usage = sorted(commands.keys())
         else:
             usage = [
                 "",
@@ -186,7 +191,7 @@ class ManagementUtility(object):
                 "Available subcommands:",
             ]
             commands_dict = defaultdict(lambda: [])
-            for name, app in get_commands().items():
+            for name, app in commands.items():
                 app = app.rpartition('.')[-1]
                 commands_dict[app].append(name)
             for app in sorted(commands_dict.keys()):
@@ -196,7 +201,7 @@ class ManagementUtility(object):
 
         return '\n'.join(usage)
 
-    def fetch_command(self, subcommand):
+    def fetch_command(self, subcommand, commands=None):
         """
         Fetch the given subcommand.
 
@@ -204,7 +209,9 @@ class ManagementUtility(object):
         appropriate command called from the command line if it can't be found.
         """
         # Get commands outside of try block to prevent swallowing exceptions
-        commands = get_commands()
+        if commands is None:
+            commands = get_commands()
+
         if subcommand not in commands:
             print ("Unknown dodo command: %s" % subcommand)
             sys.exit(1)
@@ -224,24 +231,49 @@ class ManagementUtility(object):
         Given the command-line arguments, this figures out which subcommand is
         being run, creates a parser appropriate to that command, and runs it.
         """
-        try:
-            subcommand = self.argv[1]
-        except IndexError:
-            subcommand = 'help'  # Display help if no arguments were given.
+        commands = get_commands()
+
+        if "_ARGCOMPLETE" in os.environ:
+            words = os.environ['COMP_LINE'].split()
+            subcommand = words[1]
+
+            if subcommand not in commands:
+                parser = ArgumentParser()
+                parser.add_argument(
+                    'command',
+                    choices=[x for x in commands.keys()]
+                )
+                argcomplete.autocomplete(parser)
+
+            os.environ['COMP_LINE'] = ' '.join(words[:1] + words[2:])
+            os.environ['COMP_POINT'] = str(
+                int(os.environ['COMP_POINT']) - (len(subcommand) + 1)
+            )
+        else:
+            try:
+                subcommand = self.argv[1]
+            except IndexError:
+                subcommand = 'help'  # Display help if no arguments were given.
 
         args = self.argv[2:]
+
         if subcommand == 'help':
             if '--commands' in args:
                 sys.stdout.write(
-                    self.main_help_text(commands_only=True) + '\n')
+                    self.main_help_text(
+                        commands_only=True, commands=commands
+                    ) + '\n'
+                )
             elif len(args) < 1:
                 sys.stdout.write(self.main_help_text() + '\n')
             else:
                 self.fetch_command(
-                    args[0]
+                    args[0], commands
                 ).print_help(self.prog_name, args[0])
         else:
-            self.fetch_command(subcommand).run_from_argv(self.argv)
+            self.fetch_command(subcommand, commands).run_from_argv(
+                self.argv, subcommand
+            )
 
 
 def execute_from_command_line(argv):

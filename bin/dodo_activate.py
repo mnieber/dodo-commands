@@ -30,7 +30,21 @@ class Activator:
         """Install a virtual env."""
         local["virtualenv"](os.path.join(self.project_folder, "env"))
         pip = local[os.path.join(self.project_folder, "env/bin", "pip")]
-        pip("install", "plumbum", "pudb", "PyYAML")
+        pip("install", "plumbum", "pudb", "PyYAML", "argcomplete")
+
+    def _register_autocomplete(self):
+        """Install a virtual env."""
+        register = local[os.path.join(
+            self.project_folder,
+            "env/bin",
+            "register-python-argcomplete"
+        )]
+        activate_script = os.path.join(
+            self.project_folder,
+            "env/bin",
+            "activate"
+        )
+        (register >> activate_script)("dodo")
 
     def _create_framework_folder(self, dodo_commands_folder):
         """Install dodo commands framework into the virtual env bin folder."""
@@ -98,6 +112,7 @@ class Activator:
         )
         os.makedirs(dodo_commands_folder)
         self._create_virtual_env()
+        self._register_autocomplete()
         self._create_defaults(dodo_commands_folder, project)
         self._create_framework_folder(dodo_commands_folder)
         self._create_dodo_script()

@@ -23,8 +23,9 @@ MIT License (see the enclosed license file). Files that are based on source code
 Dodo Commands offers a structured way to keep separated work environments for your projects:
 
 - each project has its own associated command scripts, configuration files and python environment
-- you run these copmmands from a single entry point (so you don't have to remember script locations)
+- you run these commands from a single entry point (so you don't have to remember script locations)
 - command script can refer to project configuration values, so you can separate logic from configuration
+- auto-completion is provided for the command script names and their arguments (when using bash)
 
 This can be illustrated by the following use-case:
 
