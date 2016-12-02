@@ -7,11 +7,11 @@ Installation
 Step 1: Install prerequisites
 ==========================================
 
-Dodo Commands depends on the python-virtualenv package:
+Dodo Commands depends on the python-virtualenv package, and you will need git to clone the source files:
 
 .. code-block:: bash
 
-    sudo apt-get install python-virtualenv
+    sudo apt-get install python-virtualenv git
 
 
 Step 2: Clone and install

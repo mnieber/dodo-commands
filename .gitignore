@@ -7,5 +7,8 @@ dodo-activate
 dodo-install-defaults
 *.pyc
 doc_build
-defaults
+defaults/projects/*
+!defaults/projects/__init__.py
+defaults/commands/*
+!defaults/commands/__init__.py
 .cache
