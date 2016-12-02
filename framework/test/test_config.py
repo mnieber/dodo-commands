@@ -39,7 +39,7 @@ class TestConfigIO:  # noqa
     @pytest.fixture
     def create_config(self, tmpdir):
         """Create a config file in the tmpdir."""
-        configIO = ConfigIO()  # noqa
+        configIO = ConfigIO(str(tmpdir))  # noqa
         configIO.save(self.simple_config)
 
     @pytest.fixture
@@ -53,27 +53,15 @@ class TestConfigIO:  # noqa
                 yaml.dump(self.layer, default_flow_style=False, indent=4)
             )
 
-    @pytest.fixture(autouse=True)
-    def mock(self, tmpdir, monkeypatch):  # noqa
-        @classmethod
-        def mock_path_to(cls, post_fix_paths):  # noqa
-            return os.path.join(
-                str(tmpdir),
-                *post_fix_paths
-            )
-
-        monkeypatch.setattr(
-            ConfigIO, '_path_to', mock_path_to)
-
-    def test_save(self):  # noqa
-        configIO = ConfigIO()  # noqa
+    def test_save(self, tmpdir):  # noqa
+        configIO = ConfigIO(str(tmpdir))  # noqa
         configIO.save(self.simple_config)
         config = configIO.load(load_layers=False)
         assert self.simple_config == config
 
     @pytest.mark.usefixtures("create_config", "create_layer")
-    def test_layers(self):  # noqa
-        configIO = ConfigIO()  # noqa
+    def test_layers(self, tmpdir):  # noqa
+        configIO = ConfigIO(str(tmpdir))  # noqa
         full_config = configIO.load()
 
         assert full_config['ROOT']['command_path'] == ['foo', 'bar', 'foobar']

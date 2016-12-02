@@ -19,28 +19,32 @@ def get_project_dir():
 class ConfigIO:
     """Read and write the dodo configuration."""
 
-    @classmethod
-    def _path_to(cls, post_fix_paths):
-        """Return path composed of dodo folder and the post_fix_paths list."""
-        return os.path.join(
-            get_project_dir(),
-            "dodo_commands",
-            *post_fix_paths
+    def __init__(self, config_base_dir=None):
+        """Arg config_base_dir is where config files are searched.
+
+        Arg config_base_dir defaults to get_project_dir()/dodo_commands.
+        """
+        self.config_base_dir = (
+            os.path.join(get_project_dir(), "dodo_commands")
+            if config_base_dir is None
+            else config_base_dir
         )
 
-    @classmethod
-    def _layers(cls, config):
+    def _path_to(self, post_fix_paths):
+        """Return path composed of config_base_dir and post_fix_paths list."""
+        return os.path.join(self.config_base_dir, *post_fix_paths)
+
+    def _layers(self, config):
         result = []
         layer_dir = config.get('ROOT', {}).get('layer_dir', '')
         layers = config.get('ROOT', {}).get('layers', [])
         for layer_filename in layers:
             result.append(
-                ConfigIO._path_to([layer_dir, layer_filename])
+                self._path_to([layer_dir, layer_filename])
             )
         return result
 
-    @classmethod
-    def _add_layer(cls, config, layer):
+    def _add_layer(self, config, layer):
         for section in (layer or {}):
             if section not in config:
                 config[section] = layer[section]
@@ -54,28 +58,26 @@ class ConfigIO:
                 else:
                     config[section][key] = value
 
-    @classmethod
-    def load(cls, config_filename='config.yaml', load_layers=True):
+    def load(self, config_filename='config.yaml', load_layers=True):
         """Get configuration."""
-        full_config_filename = cls._path_to([config_filename])
+        full_config_filename = self._path_to([config_filename])
         if not os.path.exists(full_config_filename):
             return None
 
         with open(full_config_filename) as f:
             config = yaml.load(f.read())
         if load_layers:
-            for layer_filename in cls._layers(config):
+            for layer_filename in self._layers(config):
                 if os.path.exists(layer_filename):
-                    cls._add_layer(config, cls.load(layer_filename))
+                    self._add_layer(config, self.load(layer_filename))
                 else:
                     print("Warning: layer not found: %s" % layer_filename)
         return config
 
-    @classmethod
-    def save(cls, config, config_filename='config.yaml'):
+    def save(self, config, config_filename='config.yaml'):
         """Write config to config_filename."""
         content = yaml.dump(config, default_flow_style=False, indent=4)
-        with open(cls._path_to([config_filename]), 'w') as f:
+        with open(self._path_to([config_filename]), 'w') as f:
             formatted_content = re.sub(
                 r'^([0-9_A-Z]+\:)$',
                 r'\n\1',
@@ -304,11 +306,32 @@ class CommandPath:
         def full_path(self):  # noqa
             return os.path.join(self.sys_path, self.module_path)
 
-    def __init__(self, project_dir):  # noqa
-        config = ConfigIO().load(load_layers=False) or {}
-        self.items = []
+    def __init__(self, project_dir, config_base_dir=None):
+        """config_base_dir is the directory where config files are searched.
 
-        for pattern in config.get('ROOT', {}).get('command_path', []):
+        The config_base_dir arg defaults to project_dir/dodo_commands.
+        """
+        if config_base_dir is None:
+            config_base_dir = os.path.join(project_dir, "dodo_commands")
+
+        config = ConfigIO(config_base_dir).load(load_layers=False) or {}
+        excluded_dirs = [
+            x.full_path for x in self._collect_items(
+                project_dir,
+                config.get('ROOT', {}).get('command_path_exclude', []),
+            )
+        ]
+        self.items = [
+            x for x in self._collect_items(
+                project_dir,
+                config.get('ROOT', {}).get('command_path', [])
+            )
+            if x.full_path not in excluded_dirs
+        ]
+
+    def _collect_items(self, project_dir, patterns):
+        items = []
+        for pattern in patterns:
             prefix = project_dir
             postfix = pattern
             if isinstance(pattern, type(list())):
@@ -322,7 +345,8 @@ class CommandPath:
                 item = CommandPath.Item()
                 item.sys_path = prefix
                 item.module_path = os.path.relpath(folder, prefix)
-                self.items.append(item)
+                items.append(item)
+        return items
 
     def extend_sys_path(self):
         """Return relative paths (to sys.path) to the command scipt modules."""

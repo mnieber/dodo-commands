@@ -4,9 +4,8 @@
 The DodoCommand class
 *********************
 
-The BaseCommand class is simple yet powerful. It basically offers access to the project configuration
-and a command line parser. The DodoCommand class builds on that by extending the BaseCommand with
-advanced features.
+The :code:`BaseCommand` class is pretty simple: it offers access to the project configuration
+and a command line parser. The :code:`DodoCommand` class extends BaseCommand with advanced features.
 
 
 The runcmd function, and --confirm and --echo flags

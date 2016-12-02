@@ -28,6 +28,15 @@ Besides the default_commands directory, a project can specify additional search 
         - dodo_commands/default_commands/*
 
 Each directory in command_path is relative to the project directory, and should point to a Python module.
+Use ${/ROOT/command_path_exclude} to exclude parts of the command path:
+
+.. code-block:: yaml
+
+    ROOT:
+        command_path:
+        - dodo_commands/default_commands/*
+        command_path_exclude:
+        - dodo_commands/default_commands/foo
 
 Extending sys.path using the command_path
 =========================================
