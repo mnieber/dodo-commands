@@ -1,9 +1,19 @@
 """Tests for config.py."""
 from plumbum import local
-from plumbum.cmd import cp
+from plumbum.cmd import cp, rm, touch
 import os
 
 class TestInstall:  # noqa
+    def _copy_code(self, system_dir, tmpdir):  # noqa
+        cp("-rf", system_dir, tmpdir)
+        for p in (
+            "dodo_commands/defaults/commands",
+            "dodo_commands/defaults/projects",
+        ):
+            rm("-rf", os.path.join(str(tmpdir), p))
+            os.mkdir(os.path.join(str(tmpdir), p))
+            touch(os.path.join(str(tmpdir), p, "__init__.py"))
+
     def run_install(self, tmpdir):  # noqa
         local['bash'](
             './dodo_commands/bin/install.sh',
@@ -18,6 +28,12 @@ class TestInstall:  # noqa
             '--projects',
             './dodo_commands/extra/tutorial_projects'
         )
+        local['python'](
+            './dodo_commands/bin/dodo-install-defaults',
+            '--ln',
+            '--commands',
+            './dodo_commands/extra/standard_commands'
+        )
 
     def activate_project(self):  # noqa
         local['python'](
@@ -25,6 +41,15 @@ class TestInstall:  # noqa
             'dodo_tutorial',
             '--create'
         )
+
+    def run_which(self, tmpdir):  # noqa
+        with local.cwd(str(tmpdir)):
+            log_filename = "which.log"
+            (local['dodo_tutorial/env/bin/python'] > log_filename)(
+                'dodo_tutorial/env/bin/dodo', 'which', '--system'
+            )
+            with open(log_filename) as f:
+                return f.read()
 
     def run_cmake(self, tmpdir):  # noqa
         with local.cwd(str(tmpdir)):
@@ -40,7 +65,9 @@ class TestInstall:  # noqa
         framework_dir = os.path.dirname(test_dir)
         system_dir = os.path.dirname(framework_dir)
 
-        cp("-rf", system_dir, tmpdir)
+        import pudb; pu.db
+        self._copy_code(system_dir, tmpdir)
+
         with local.cwd(tmpdir):
             self.run_install(tmpdir)
             assert os.path.exists('./dodo_commands/dodo_commands.config')
@@ -55,6 +82,8 @@ class TestInstall:  # noqa
 
             self.activate_project()
             assert os.path.exists('dodo_tutorial/env/bin')
+            expected = os.path.join(str(tmpdir), "dodo_commands\n")
+            assert self.run_which(tmpdir) == expected
 
             result = self.run_cmake(tmpdir)
             expected = "/usr/bin/docker run --rm -w {tmpdir}/dodo_tutorial/build/debug -i -t --volume={tmpdir}/dodo_tutorial/log:/var/log dodo_tutorial:1604 cmake -DCMAKE_INSTALL_PREFIX={tmpdir}/dodo_tutorial/install -DCMAKE_BUILD_TYPE=debug {tmpdir}/dodo_tutorial/src\n"  # noqa
