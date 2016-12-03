@@ -1,6 +1,6 @@
 # Dodo Commands
 
-By Maarten Nieber, with contributions from Georg Rollinger
+By Maarten Nieber, with contributions from Georg Rollinger.
 
 ## Introduction
 
@@ -43,7 +43,7 @@ The following steps shows how this is accomplished with Dodo Commands:
     > git clone https://github.com/mnieber/dodo_commands
     > source dodo_commands/bin/install.sh
 
-    > export PATH=$PATH:~/projects/dodo_commands/bin
+    > export PATH=$PATH:~/dodo_commands/bin
     ```
 
 2. enable the standard commands and tutorial projects
@@ -140,4 +140,4 @@ values, which means it's reusable:
     continue? [Y/n]
     ```
 
-This simplified scenario already shows how a complicated command line can be compressed into a short command. Instead of remembering/editing long command lines, you can tweak your project configuration files and produce these long command lines with Dodo Commands. It's also easy to get new colleagues started on a project by sharing your command scripts and configuration file with them (see [http://dodo-commands.readthedocs.io/en/latest/sharing-projects.html](the documentation) for details).
+This simplified scenario already shows how a complicated command line can be compressed into a short command. Instead of remembering/editing long command lines, you can tweak your project configuration files and produce these long command lines with Dodo Commands. It's also easy to get new colleagues started on a project by sharing your command scripts and configuration file with them (see [the documentation](http://dodo-commands.readthedocs.io/en/latest/sharing-projects.html) for details).
