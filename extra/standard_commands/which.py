@@ -26,10 +26,10 @@ class Command(DodoCommand):  # noqa
             help='Print where the build directory is'
         )
         group.add_argument(
-            '--install',
+            '--project',
             action="store_true",
-            dest="which_install",
-            help='Print where the install directory is'
+            dest="which_project",
+            help='Print where the project directory is'
         )
         group.add_argument(
             '--config',
@@ -50,7 +50,7 @@ class Command(DodoCommand):  # noqa
         )
 
     def handle_imp(  # noqa
-        self, which_src, which_build, which_install, which_config,
+        self, which_src, which_build, which_project, which_config,
         which_script, which_system, **kwargs
     ):
         build_dir = self.get_config("/ROOT/build_dir", "")
@@ -61,8 +61,8 @@ class Command(DodoCommand):  # noqa
             print src_dir
         elif which_build:
             print build_dir
-        elif which_install:
-            print os.path.join(project_dir, "install")
+        elif which_project:
+            print project_dir
         elif which_config:
             print os.path.join(project_dir, "dodo_commands", "config.yaml")
         elif which_system:
@@ -76,4 +76,4 @@ class Command(DodoCommand):  # noqa
                 if os.path.exists(script_path):
                     sys.stdout.write(script_path + "\n")
         else:
-            print project_dir
+            print self.get_config("/ROOT/project_name")

@@ -29,6 +29,20 @@ class Activator:
     def _create_virtual_env(self):
         """Install a virtual env."""
         local["virtualenv"](os.path.join(self.project_folder, "env"))
+
+        # update activate script so that it shows the name of the
+        # current project in the prompt
+        activate_script = os.path.join(
+            self.project_folder, "env/bin/activate"
+        )
+        with open(activate_script) as f:
+            lines = f.read()
+        with open(activate_script, "w") as f:
+            f.write(lines.replace(
+                r'PS1="(`basename \"$VIRTUAL_ENV\"`) $PS1"',
+                r'PS1="(`dodo which`) $PS1"'
+            ))
+
         pip = local[os.path.join(self.project_folder, "env/bin", "pip")]
         pip("install", "plumbum", "pudb", "PyYAML", "argcomplete")
 
