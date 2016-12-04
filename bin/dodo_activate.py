@@ -151,6 +151,7 @@ class Activator:
 
         def report(x):
             sys.stderr.write(x)
+            sys.stderr.flush()
 
         if args.create:
             if os.path.exists(self.project_dir):
