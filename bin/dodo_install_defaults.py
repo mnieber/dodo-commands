@@ -1,4 +1,4 @@
-"""Script for activating/creating a project in the projects folder."""
+"""Script for activating/creating a project in the projects dir."""
 import argparse
 import os
 import sys
@@ -37,29 +37,29 @@ class DefaultsInstaller:
     def _report_error(self, msg):
         sys.stderr.write(msg + os.linesep)
 
-    def _install(self, dest_folder, url, use_git):
-        """Install resource 'url' into dest_folder."""
+    def _install(self, dest_dir, url, use_git):
+        """Install resource 'url' into dest_dir."""
         try:
             if use_git:
-                with local.cwd(dest_folder):
+                with local.cwd(dest_dir):
                     local['git']['clone', url]()
             else:
                 if not os.path.exists(url):
                     self._report_error("Error: path not found: %s" % url)
                     return False
-                ln("-s", os.path.abspath(url), dest_folder)
+                ln("-s", os.path.abspath(url), dest_dir)
         except ProcessExecutionError:
             if use_git:
                 self._report_error((
                     "Could not clone into %s. Check that the " +
-                    "destination does not already exist.") % dest_folder
+                    "destination does not already exist.") % dest_dir
                 )
             else:
-                dest_path = os.path.join(dest_folder, os.path.basename(url))
+                dest_path = os.path.join(dest_dir, os.path.basename(url))
                 msg = (
                     "%s already exists (no changes were made)." % dest_path
                     if os.path.exists(dest_path) else
-                    "Error: could not create a symlink in %s." % dest_folder
+                    "Error: could not create a symlink in %s." % dest_dir
                 )
                 self._report_error(msg)
             return False
@@ -67,23 +67,23 @@ class DefaultsInstaller:
         return True
 
     def _install_commands(self, url, use_git):
-        """Install the folder with the default commands."""
+        """Install the dir with the default commands."""
         commands_dir = os.path.join(
-            self.source_folder, "defaults", "commands"
+            self.source_dir, "defaults", "commands"
         )
         return self._install(commands_dir, url, use_git)
 
     def _install_projects(self, url, use_git):
-        """Install the folder with the default commands."""
+        """Install the dir with the default commands."""
         projects_dir = os.path.join(
-            self.source_folder, "defaults", "projects"
+            self.source_dir, "defaults", "projects"
         )
         return self._install(projects_dir, url, use_git)
 
     def run(self):
-        """Activate or create a project in the projects folder."""
-        bin_folder = os.path.dirname(__file__)
-        self.source_folder = os.path.dirname(bin_folder)
+        """Activate or create a project in the projects dir."""
+        bin_dir = os.path.dirname(__file__)
+        self.source_dir = os.path.dirname(bin_dir)
         args = self._args()
 
         url, install = (

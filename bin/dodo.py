@@ -6,7 +6,7 @@ import sys
 if __name__ == "__main__":
     if not os.path.dirname(os.path.abspath(__file__)).endswith("env/bin"):
         sys.stderr.write(
-            'Error: this script must be run from the env/bin folder'
+            'Error: this script must be run from the env/bin directory'
         )
         sys.exit(1)
 
