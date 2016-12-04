@@ -43,7 +43,7 @@ import traceback
 from importlib import import_module
 
 from dodo_commands.framework.config import (
-    get_project_dir, CommandPath
+    CommandPath, get_project_dir
 )
 from dodo_commands.framework.base import (
     BaseCommand, CommandError
@@ -77,14 +77,14 @@ def load_command_class(module_dir, name):
         """Pip install packages found in meta_data_filename."""
         with open(meta_data_filename) as f:
             meta_data = yaml.load(f.read())
-            print ("\n--- Installing from %s ---" % meta_data_filename)
+            print("\n--- Installing from %s ---" % meta_data_filename)
             pip = os.path.join(
                 get_project_dir(),
                 "env/bin/pip"
             )
             subprocess.check_call(
                 [pip, "install"] + meta_data['requirements'])
-            print ("--- Done ---\n\n")
+            print("--- Done ---\n\n")
 
     import_path = '%s.%s' % (module_dir.replace("/", "."), name)
     if module_dir in ("", None, "."):
@@ -106,10 +106,10 @@ def load_command_class(module_dir, name):
             try:
                 module = import_module(import_path)
             except ImportError as e:
-                print traceback.print_exc(e)
+                print(traceback.print_exc(e))
                 sys.exit(1)
         else:
-            print traceback.print_exc(e)
+            print(traceback.print_exc(e))
             sys.exit(1)
 
     return module.Command()
@@ -217,7 +217,7 @@ class ManagementUtility(object):
             commands = get_commands()
 
         if subcommand not in commands:
-            print ("Unknown dodo command: %s" % subcommand)
+            print("Unknown dodo command: %s" % subcommand)
             sys.exit(1)
 
         module_name = commands[subcommand]

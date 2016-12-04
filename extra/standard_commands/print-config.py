@@ -6,4 +6,4 @@ from . import DodoCommand
 
 class Command(DodoCommand):  # noqa
     def handle_imp(self, **kwargs):  # noqa
-        print yaml.dump(self.config)
+        print(yaml.dump(self.config))

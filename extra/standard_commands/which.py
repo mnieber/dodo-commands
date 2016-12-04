@@ -58,15 +58,15 @@ class Command(DodoCommand):  # noqa
         project_dir = self.get_config("/ROOT/project_dir", get_project_dir())
 
         if which_src:
-            print src_dir
+            print(src_dir)
         elif which_build:
-            print build_dir
+            print(build_dir)
         elif which_project:
-            print project_dir
+            print(project_dir)
         elif which_config:
-            print os.path.join(project_dir, "dodo_commands", "config.yaml")
+            print(os.path.join(project_dir, "dodo_commands", "config.yaml"))
         elif which_system:
-            print self.get_config("/ROOT/system_dir")
+            print(self.get_config("/ROOT/system_dir"))
         elif which_script:
             command_path = CommandPath(project_dir)
             for item in command_path.items:
@@ -76,4 +76,4 @@ class Command(DodoCommand):  # noqa
                 if os.path.exists(script_path):
                     sys.stdout.write(script_path + "\n")
         else:
-            print self.get_config("/ROOT/project_name")
+            print(self.get_config("/ROOT/project_name"))
