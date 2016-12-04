@@ -9,7 +9,7 @@ import yaml
 
 
 def get_project_dir():
-    """Return the root folder of the current project."""
+    """Return the root dir of the current project."""
     result = __file__
     for _ in range(3):
         result = os.path.dirname(result)
@@ -338,13 +338,13 @@ class CommandPath:
                 prefix = os.path.join(project_dir, pattern[0])
                 postfix = pattern[1]
 
-            for folder in [
+            for command_dir in [
                 x for x in glob.glob(os.path.join(prefix, postfix))
                 if os.path.isdir(x)
             ]:
                 item = CommandPath.Item()
                 item.sys_path = prefix
-                item.module_path = os.path.relpath(folder, prefix)
+                item.module_path = os.path.relpath(command_dir, prefix)
                 items.append(item)
         return items
 
