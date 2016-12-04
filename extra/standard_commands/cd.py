@@ -41,14 +41,14 @@ class Command(DodoCommand):  # noqa
         sys.stdout.write("cd ")
         if cd_to_src:
             src_dir = self.get_config("/ROOT/src_dir")
-            print src_dir
+            print(src_dir)
         elif cd_to_build:
             build_dir = self.get_config("/ROOT/build_dir")
-            print build_dir
+            print(build_dir)
         elif cd_to_install:
             project_dir = self.get_config("/ROOT/project_dir")
-            print os.path.join(project_dir, "install")
+            print(os.path.join(project_dir, "install"))
         elif cd_to_system:
-            print self.get_config("/ROOT/system_dir")
+            print(self.get_config("/ROOT/system_dir"))
         else:
-            print self.get_config("/ROOT/project_dir")
+            print(self.get_config("/ROOT/project_dir"))

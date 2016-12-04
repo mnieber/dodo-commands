@@ -6,7 +6,7 @@ from dodo_commands.framework import (
 from dodo_commands.framework.command_error import CommandError
 
 from importlib import import_module
-from plumbum import local, ProcessExecutionError, FG
+from plumbum import FG, ProcessExecutionError, local
 from dodo_commands.framework.util import query_yes_no
 
 
@@ -92,15 +92,15 @@ class DodoCommand(BaseCommand):  # noqa
 
         func = local[args[0]][args[1:]]
         if self.opt_echo:
-            print func
+            print(func)
             return False
 
         with local.cwd(cwd or local.cwd):
             if self.opt_confirm:
-                print "(%s) %s" % (local.cwd, func)
+                print("(%s) %s" % (local.cwd, func))
                 if not query_yes_no("continue?"):
                     return False
-                print
+                print()
 
             try:
                 variable_map = self.get_config('/ENVIRONMENT/variable_map', {})
