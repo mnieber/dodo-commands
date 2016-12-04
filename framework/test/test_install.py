@@ -60,12 +60,11 @@ class TestInstall:  # noqa
             with open(log_filename) as f:
                 return f.read()
 
-    def test_save(self, tmpdir):  # noqa
+    def test_install(self, tmpdir):  # noqa
         test_dir = os.path.dirname(__file__)
         framework_dir = os.path.dirname(test_dir)
         system_dir = os.path.dirname(framework_dir)
 
-        import pudb; pu.db
         self._copy_code(system_dir, tmpdir)
 
         with local.cwd(tmpdir):

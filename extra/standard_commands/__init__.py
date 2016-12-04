@@ -53,10 +53,10 @@ class DodoCommand(BaseCommand):  # noqa
         if self._loaded_decorators is not None:
             return self._loaded_decorators
 
-        self._loaded_decorators = filter(
+        self._loaded_decorators = list(filter(
             lambda x: x is not None,
             map(self._load_decorator, self.decorators)
-        )
+        ))
         return self._loaded_decorators
 
     def add_arguments_imp(self, parser):  # noqa
