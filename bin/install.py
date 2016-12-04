@@ -6,7 +6,7 @@ import sys
 from plumbum.cmd import chmod
 
 
-def create_config(install_dir, projects_dir):
+def create_config(install_dir, projects_dir, python_interpreter):
     """Write global dodo commands configuration."""
     config = configparser.ConfigParser()
     config.add_section("DodoCommands")
@@ -15,6 +15,11 @@ def create_config(install_dir, projects_dir):
         "DodoCommands",
         "projects_dir",
         os.path.expanduser(projects_dir)
+    )
+    config.set(
+        "DodoCommands",
+        "python_interpreter",
+        python_interpreter
     )
     config.set(
         "DodoCommands",
@@ -52,13 +57,26 @@ def create_install_defaults_script(bin_dir):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--projects_dir', default="~/projects")
+    parser.add_argument(
+        '--projects_dir',
+        default="~/projects",
+        help="Location where your projects are stored."
+    )
+    parser.add_argument(
+        '--python',
+        default="python",
+        dest="python_interpreter",
+        help=(
+            "Python interpreter that is used in the virtual env " +
+            "of your projects."
+        )
+    )
     args = parser.parse_args()
 
     bin_dir = os.path.dirname(__file__)
     source_dir = os.path.dirname(bin_dir)
 
-    create_config(source_dir, args.projects_dir)
+    create_config(source_dir, args.projects_dir, args.python_interpreter)
     create_activate_script(bin_dir)
     create_install_defaults_script(bin_dir)
     print (

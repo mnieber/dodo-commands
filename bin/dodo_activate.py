@@ -20,30 +20,19 @@ class Activator:
         parser.add_argument('--create', action="store_true")
         return parser.parse_args()
 
-    def _rename_option(self, config, config_path):
-        config.set(
-            "DodoCommands",
-            "projects_dir",
-            config.get("DodoCommands", "projects_folder")
-        )
-        config.remove_option("DodoCommands", "projects_folder")
-        with open(config_path, "w") as f:
-            config.write(f)
-
     def _config(self):
         """Get configuration."""
         config = configparser.ConfigParser()
         config_path = os.path.join(self.source_dir, "dodo_commands.config")
         config.read(config_path)
-
-        if config.has_option("DodoCommands", "projects_folder"):
-            self._rename_option(config, config_path)
-
         return config
 
     def _create_virtual_env(self):
         """Install a virtual env."""
-        local["virtualenv"](os.path.join(self.project_dir, "env"))
+        local["virtualenv"](
+            "-p", self.python_interpreter,
+            os.path.join(self.project_dir, "env")
+        )
 
         # update activate script so that it shows the name of the
         # current project in the prompt
@@ -155,6 +144,9 @@ class Activator:
         args = self._args()
         config = self._config()
         self.projects_dir = config.get("DodoCommands", "projects_dir")
+        self.python_interpreter = config.get(
+            "DodoCommands", "python_interpreter"
+        )
         self.project_dir = os.path.join(self.projects_dir, args.project)
 
         def report(x):
