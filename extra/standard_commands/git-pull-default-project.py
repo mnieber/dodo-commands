@@ -10,11 +10,8 @@ class Command(DodoCommand):  # noqa
         parser.add_argument('--check-version', action='store_true')
 
     def handle_imp(self, check_version, **kwargs):  # noqa
-        default_project_dir = os.path.join(
-            self.get_config("/ROOT/system_dir", ""),
-            "defaults",
-            "projects",
-            self.get_config("/ROOT/project_name", "")
+        default_project_dir = self.get_config(
+            "/ROOT/project_dir", "defaults/project"
         )
 
         if not os.path.exists(default_project_dir):
