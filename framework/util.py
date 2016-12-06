@@ -1,4 +1,5 @@
 """Utilities."""
+from six.moves import input as raw_input
 import sys
 
 
