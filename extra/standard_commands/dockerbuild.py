@@ -43,5 +43,5 @@ class Command(DodoCommand):  # noqa
             [
                 ".",
             ],
-            cwd=commands_dir
+            cwd=self.get_config("/DOCKER/build_dir", commands_dir)
         )
