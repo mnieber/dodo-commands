@@ -93,26 +93,51 @@ class Activator:
         ln(
             "-s",
             os.path.join(self.source_dir, "defaults", "commands"),
-            os.path.join(dodo_commands_dir, "default_commands")
+            os.path.join(dodo_commands_dir, "defaults", "commands")
         )
         touch(os.path.join(dodo_commands_dir, "__init__.py"))
 
-    def _create_defaults(self, dodo_commands_dir, project_name):
+    def _find_defaults_dir(self, dodo_commands_dir, project_name):
         """Install the dir with default projects."""
-        for filename in glob.glob(
-            os.path.join(
-                self.source_dir, "defaults", "projects",
-                "*", project_name, "*"
-            )
-        ):
-            cp("-rf", filename, dodo_commands_dir)
+        pattern = (
+            "{project_name}"
+            if '/' in project_name else
+            "*/{project_name}"
+        ).format(project_name=project_name)
 
-        config_filename = os.path.join(dodo_commands_dir, "config.yaml")
-        if not os.path.exists(config_filename):
+        candidates = glob.glob(os.path.join(
+            self.source_dir, "defaults", "projects", pattern
+        ))
+        if len(candidates) > 1:
+            sys.stderr.write(
+                "Source location for %s is ambigious, could be:\n"
+                % project_name
+            )
+            sys.stderr.write("\n".join(candidates))
+            return None, False
+
+        if len(candidates) == 0:
+            return None, True
+
+        return candidates[0], True
+
+    def _create_defaults(self, dodo_commands_dir, defaults_dir):
+        """Install the dir with default projects."""
+        os.mkdir(os.path.join(dodo_commands_dir, "defaults"))
+        if defaults_dir:
+            for filename in glob.glob(os.path.join(defaults_dir, "*")):
+                cp("-rf", filename, dodo_commands_dir)
+            ln(
+                "-s",
+                defaults_dir,
+                os.path.join(dodo_commands_dir, "defaults/project")
+            )
+        else:
+            config_filename = os.path.join(dodo_commands_dir, "config.yaml")
             default_config = {
                 'ROOT': {
                     'command_path': [
-                        'dodo_commands/default_commands/*'
+                        'dodo_commands/defaults/commands/*'
                     ],
                     'version': '1.0.0'
                 }
@@ -128,10 +153,16 @@ class Activator:
         dodo_commands_dir = os.path.join(
             self.project_dir, "dodo_commands"
         )
+        defaults_dir, has_defaults_dir = self._find_defaults_dir(
+            dodo_commands_dir, project
+        )
+        if not has_defaults_dir:
+            return
+
         os.makedirs(dodo_commands_dir)
+        self._create_defaults(dodo_commands_dir, defaults_dir)
         self._create_virtual_env()
         self._register_autocomplete()
-        self._create_defaults(dodo_commands_dir, project)
         self._create_framework_dir(dodo_commands_dir)
         self._create_dodo_script()
         self._create_default_commands(dodo_commands_dir)
