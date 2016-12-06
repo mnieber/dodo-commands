@@ -48,7 +48,7 @@ class Activator:
             ))
 
         pip = local[os.path.join(self.project_dir, "env/bin", "pip")]
-        pip("install", "plumbum", "pudb", "PyYAML", "argcomplete")
+        pip("install", "plumbum", "pudb", "PyYAML", "argcomplete", "six")
 
     def _register_autocomplete(self):
         """Install a virtual env."""
