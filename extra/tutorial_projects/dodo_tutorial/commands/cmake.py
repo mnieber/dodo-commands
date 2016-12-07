@@ -1,5 +1,5 @@
 """Configure code with CMake."""
-from dodo_commands.default_commands.standard_commands import DodoCommand
+from dodo_commands.defaults.commands.standard_commands import DodoCommand
 
 class Command(DodoCommand):  # noqa
     decorators = ['docker']
