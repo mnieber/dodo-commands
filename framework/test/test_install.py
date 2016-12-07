@@ -45,8 +45,11 @@ class TestInstall:  # noqa
     def run_which(self, tmpdir):  # noqa
         with local.cwd(str(tmpdir)):
             log_filename = "which.log"
-            (local['dodo_tutorial/env/bin/python'] > log_filename)(
-                'dodo_tutorial/env/bin/dodo', 'which', '--system'
+            (
+                local['dodo_tutorial/dodo_commands/env/bin/python'] >
+                log_filename
+            )(
+                'dodo_tutorial/dodo_commands/env/bin/dodo', 'which', '--system'
             )
             with open(log_filename) as f:
                 return f.read()
@@ -54,8 +57,11 @@ class TestInstall:  # noqa
     def run_cmake(self, tmpdir):  # noqa
         with local.cwd(str(tmpdir)):
             log_filename = "cmake.log"
-            (local['dodo_tutorial/env/bin/python'] > log_filename)(
-                'dodo_tutorial/env/bin/dodo', 'cmake', '--echo'
+            (
+                local['dodo_tutorial/dodo_commands/env/bin/python'] >
+                log_filename
+            )(
+                'dodo_tutorial/dodo_commands/env/bin/dodo', 'cmake', '--echo'
             )
             with open(log_filename) as f:
                 return f.read()
@@ -80,7 +86,7 @@ class TestInstall:  # noqa
             )
 
             self.activate_project()
-            assert os.path.exists('dodo_tutorial/env/bin')
+            assert os.path.exists('dodo_tutorial/dodo_commands/env/bin')
             expected = os.path.join(str(tmpdir), "dodo_commands\n")
             assert self.run_which(tmpdir) == expected
 

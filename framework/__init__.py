@@ -80,7 +80,7 @@ def load_command_class(module_dir, name):
             print("\n--- Installing from %s ---" % meta_data_filename)
             pip = os.path.join(
                 get_project_dir(),
-                "env/bin/pip"
+                "dodo_commands/env/bin/pip"
             )
             subprocess.check_call(
                 [pip, "install"] + meta_data['requirements'])

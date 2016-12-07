@@ -51,5 +51,5 @@ Actually, default project settings should not be stored in a separate git reposi
     # project defaults are stored in https://github.com/foo/foobar.git/extra/dodo_project
 
     # note that the contents of https://github.com/foo/foobar.git/extra/dodo_project are
-    # copied to ${/ROOT/project_dir}/dodo_commands, likely overwriting the config.yaml file.
+    # copied to ${/ROOT/project_dir}/dodo_commands/res, likely overwriting the config.yaml file.
     dodo bootstrap src https://github.com/foo/foobar.git extra/dodo_project

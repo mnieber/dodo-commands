@@ -16,7 +16,7 @@ class Command(DodoCommand):  # noqa
         project_dir = self.get_config("/ROOT/project_dir", "")
         system_dir = self.get_config("/ROOT/system_dir", "")
         project_name = self.get_config("/ROOT/project_name", "")
-        dodo_commands_dir = os.path.join(project_dir, "dodo_commands")
+        res_dir = os.path.join(project_dir, "dodo_commands", "res")
 
         original_file = os.path.join(
             system_dir, "defaults", "projects", project_name, "config.yaml"
@@ -28,7 +28,7 @@ class Command(DodoCommand):  # noqa
             )
             return
 
-        copied_file = os.path.join(dodo_commands_dir, "config.yaml")
+        copied_file = os.path.join(res_dir, "config.yaml")
         copied_version = self._get_version(copied_file)
         if not copied_version:
             sys.stderr.write(

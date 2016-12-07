@@ -7,7 +7,7 @@ Once you have activated a project such as FooBar with :code:`$(dodo-activate Foo
 Configuration files
 ===================
 
-In the most common case, a new configuration file is created automatically when the project is first created (e.g. :code:`~/projects/FooBar/dodo_commands/config.yaml`). The configuration file uses the yaml format, with a few extra rules:
+In the most common case, a new configuration file is created automatically when the project is first created (e.g. :code:`~/projects/FooBar/dodo_commands/res/config.yaml`). The configuration file uses the yaml format, with a few extra rules:
 
 1. environment variables in values are expanded automatically
 
