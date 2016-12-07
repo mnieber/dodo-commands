@@ -8,7 +8,7 @@ from . import DodoCommand
 class Command(DodoCommand):  # noqa
     def add_arguments_imp(self, parser):  # noqa
         parser.add_argument(
-            'docker_image',
+            '--docker_image',
             help=(
                 "Identifies the docker image. "
                 "You should supply a value foo:bar. "
@@ -25,6 +25,9 @@ class Command(DodoCommand):  # noqa
         commands_dir = os.path.join(
             self.get_config("/ROOT/project_dir"), "dodo_commands"
         )
+
+        if not docker_image:
+            docker_image = self.get_config("/DOCKER/image")
 
         self.runcmd(
             [

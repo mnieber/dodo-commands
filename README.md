@@ -123,7 +123,7 @@ values, which means it's reusable:
 6. build the docker image that is associated with the dodo_tutorial project
 
     ```bash
-    > dodo dockerbuild dodo_tutorial:1604
+    > dodo dockerbuild
     ```
 
 7. do a trial run of the cmake command, without actually running it:
