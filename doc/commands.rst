@@ -14,18 +14,18 @@ The default Dodo command scripts are stored in :code:`dodo_commands/defaults/com
     # adds a subdirectory dodo_commands/defaults/commands/mycommands
     dodo-install-defaults --git --commands https://github.com/foo/mycommands.git
 
-Besides the default_commands directory, a project can specify additional search paths for commands. This is done using the ${/ROOT/command_path} setting in config.yaml:
+Besides the defaults/commands directory, a project can specify additional search paths for commands. This is done using the ${/ROOT/command_path} setting in config.yaml:
 
 .. code-block:: yaml
 
     ROOT:
         # final command_path is:
         # - ~/projects/FooBar/src/special_commands
-        # - ~/projects/FooBar/dodo_commands/default_commands/standard_commands
-        # - ~/projects/FooBar/dodo_commands/default_commands/mycommands
+        # - ~/projects/FooBar/dodo_commands/defaults/commands/standard_commands
+        # - ~/projects/FooBar/dodo_commands/defaults/commands/mycommands
         command_path:
         - src/special_commands
-        - dodo_commands/default_commands/*
+        - dodo_commands/defaults/commands/*
 
 Each directory in command_path is relative to the project directory, and should point to a Python module.
 Use ${/ROOT/command_path_exclude} to exclude parts of the command path:
@@ -34,9 +34,9 @@ Use ${/ROOT/command_path_exclude} to exclude parts of the command path:
 
     ROOT:
         command_path:
-        - dodo_commands/default_commands/*
+        - dodo_commands/defaults/commands/*
         command_path_exclude:
-        - dodo_commands/default_commands/foo
+        - dodo_commands/defaults/commands/foo
 
 Extending sys.path using the command_path
 =========================================

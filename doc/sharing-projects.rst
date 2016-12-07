@@ -32,39 +32,24 @@ To share these files, but still allow everyone to make local changes:
 
 #. To synchronize only config.yaml, call :code:`dodo diff config.yaml`. It's a good practice to use the value ${/ROOT/version} to track whether the copied configuration is up-to-date or not.
 
-Storing project settings live in the project's source repository.
-=================================================================
+Bootstrapping
+=============
 
-Actually, default project settings should not be stored in a separate git repository but rather in the project's source repository. The reason is that whenever the project's code changes, the default setting for working with that project may also change. This means that to start working on a project you need it's default configuration, for which you need access to the project. Bootstrapping is applied to break this cycle:
+Actually, default project settings should not be stored in a separate git repository but rather in the project's source repository. Bootstrapping is applied to get started on such a project:
 
-- first get the repository with bootstrap project configurations and activate the project
+- first create a new project from scratch
 
 .. code-block:: bash
 
-    dodo-install-defaults --git --projects https://github.com/foo/myprojects.git
     $(dodo-activate --create FooBar)
 
-- inspect the current configuration:
+- then call the bootstrap command to fetch the project sources, and reset the dodo commands configuration to use the defaults from the project sources. Ideally, the call to :code:`dodo bootstrap` below should be documented in the project's documentation.
 
 .. code-block:: bash
 
-    cat $(dodo which --config)
+    # assuming that the project must be cloned to ${/ROOT/project_dir}/src, and that the
+    # project defaults are stored in https://github.com/foo/foobar.git/extra/dodo_project
 
-which returns
-
-.. code-block:: yaml
-
-GIT:
-    url: git@github.com:foo/FooBar.git
-    clone_dir: ${/ROOT/src_dir}
-    default_config_dir: ${/ROOT/src_dir}/dodo_commands
-
-ROOT:
-    version: 1.0.0
-    src_dir: ${/ROOT/project_dir}/src
-
-- then call the bootstrap command to fetch the project sources, and reset the dodo commands configuration to use the defaults from the project sources
-
-.. code-block:: bash
-
-    dodo bootstrap
+    # note that the contents of https://github.com/foo/foobar.git/extra/dodo_project are
+    # copied to ${/ROOT/project_dir}/dodo_commands, likely overwriting the config.yaml file.
+    dodo bootstrap src https://github.com/foo/foobar.git extra/dodo_project

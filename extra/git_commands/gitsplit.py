@@ -1,6 +1,6 @@
 """Creates a git tag and allows to interactively rebase onto that tag."""
 from __future__ import absolute_import
-from dodo_commands.default_commands.standard_commands import DodoCommand
+from dodo_commands.defaults.commands.standard_commands import DodoCommand
 from git import Repo
 
 
