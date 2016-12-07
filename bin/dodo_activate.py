@@ -17,27 +17,30 @@ class Activator:
         """Get command line args."""
         parser = argparse.ArgumentParser()
         parser.add_argument('project')
-        parser.add_argument('--create', action="store_true")
+
+        group = parser.add_mutually_exclusive_group()
+        group.add_argument('--create', action="store_true")
+        group.add_argument('--create-from')
         return parser.parse_args()
 
     def _config(self):
         """Get configuration."""
         config = configparser.ConfigParser()
-        config_path = os.path.join(self.source_dir, "dodo_commands.config")
+        config_path = os.path.join(self._source_dir, "dodo_commands.config")
         config.read(config_path)
         return config
 
     def _create_virtual_env(self):
         """Install a virtual env."""
         local["virtualenv"](
-            "-p", self.python_interpreter,
-            os.path.join(self.project_dir, "env")
+            "-p", self.config.get("DodoCommands", "python_interpreter"),
+            os.path.join(self._project_dir, "env")
         )
 
         # update activate script so that it shows the name of the
         # current project in the prompt
         activate_script = os.path.join(
-            self.project_dir, "env/bin/activate"
+            self._project_dir, "env/bin/activate"
         )
         with open(activate_script) as f:
             lines = f.read()
@@ -47,37 +50,37 @@ class Activator:
                 r'PS1="(`dodo which`) $PS1"'
             ))
 
-        pip = local[os.path.join(self.project_dir, "env/bin", "pip")]
+        pip = local[os.path.join(self._project_dir, "env/bin", "pip")]
         pip("install", "plumbum", "pudb", "PyYAML", "argcomplete", "six")
 
     def _register_autocomplete(self):
         """Install a virtual env."""
         register = local[os.path.join(
-            self.project_dir,
+            self._project_dir,
             "env/bin",
             "register-python-argcomplete"
         )]
         activate_script = os.path.join(
-            self.project_dir,
+            self._project_dir,
             "env/bin",
             "activate"
         )
         (register >> activate_script)("dodo")
 
-    def _create_framework_dir(self, dodo_commands_dir):
+    def _create_framework_dir(self):
         """Install dodo commands framework into the virtual env bin dir."""
         ln(
             "-s",
-            os.path.join(self.source_dir, "framework"),
-            os.path.join(dodo_commands_dir, "framework")
+            os.path.join(self._source_dir, "framework"),
+            os.path.join(self._dodo_commands_dir, "framework")
         )
 
     def _create_dodo_script(self):
         """Install the dodo entry point script."""
-        env_dir = os.path.join(self.project_dir, "env/bin")
+        env_dir = os.path.join(self._project_dir, "env/bin")
         dodo_file = os.path.join(env_dir, "dodo")
         cp(
-            os.path.join(self.source_dir, "bin", "dodo.py"),
+            os.path.join(self._source_dir, "bin", "dodo.py"),
             dodo_file,
         )
         chmod("+x", dodo_file)
@@ -88,52 +91,58 @@ class Activator:
             dodo_file
         )
 
-    def _create_default_commands(self, dodo_commands_dir):
+    def _create_default_commands(self):
         """Install the dir with the default commands."""
         ln(
             "-s",
-            os.path.join(self.source_dir, "defaults", "commands"),
-            os.path.join(dodo_commands_dir, "defaults", "commands")
+            os.path.join(self._source_dir, "defaults", "commands"),
+            os.path.join(self._dodo_commands_dir, "defaults", "commands")
         )
-        touch(os.path.join(dodo_commands_dir, "__init__.py"))
+        touch(os.path.join(self._dodo_commands_dir, "__init__.py"))
 
-    def _find_defaults_dir(self, dodo_commands_dir, project_name):
-        """Install the dir with default projects."""
-        pattern = (
-            "{project_name}"
-            if '/' in project_name else
-            "*/{project_name}"
-        ).format(project_name=project_name)
+    def _find_defaults_dir(self):
+        if self.args.create_from and '/' in self.args.create_from:
+            pattern = self.args.create_from
+        elif self.args.create_from:
+            pattern = os.path.join("*", self.args.create_from)
+        else:
+            pattern = os.path.join("*", self._project_name)
 
         candidates = glob.glob(os.path.join(
-            self.source_dir, "defaults", "projects", pattern
+            self._source_dir, "defaults", "projects", pattern
         ))
         if len(candidates) > 1:
-            sys.stderr.write(
+            self._report(
                 "Source location for %s is ambigious, could be:\n"
-                % project_name
+                % self._project_name
             )
-            sys.stderr.write("\n".join(candidates))
+            self._report("\n".join(candidates))
             return None, False
 
-        if len(candidates) == 0:
-            return None, True
+        if len(candidates) == 0 and self.args.create_from:
+            self._report(
+                "Could not find a source location matching %s\n"
+                % self.args.create_from
+            )
+            return None, False
 
-        return candidates[0], True
+        return (candidates[0] if candidates else None), True
 
-    def _create_defaults(self, dodo_commands_dir, defaults_dir):
+    def _create_defaults(self, defaults_dir):
         """Install the dir with default projects."""
-        os.mkdir(os.path.join(dodo_commands_dir, "defaults"))
+        os.mkdir(os.path.join(self._dodo_commands_dir, "defaults"))
         if defaults_dir:
             for filename in glob.glob(os.path.join(defaults_dir, "*")):
-                cp("-rf", filename, dodo_commands_dir)
+                cp("-rf", filename, self._dodo_commands_dir)
             ln(
                 "-s",
                 defaults_dir,
-                os.path.join(dodo_commands_dir, "defaults/project")
+                os.path.join(self._dodo_commands_dir, "defaults/project")
             )
         else:
-            config_filename = os.path.join(dodo_commands_dir, "config.yaml")
+            config_filename = os.path.join(
+                self._dodo_commands_dir, "config.yaml"
+            )
             default_config = {
                 'ROOT': {
                     'command_path': [
@@ -149,55 +158,68 @@ class Activator:
                     )
                 )
 
-    def _create_project(self, project):
-        dodo_commands_dir = os.path.join(
-            self.project_dir, "dodo_commands"
-        )
-        defaults_dir, has_defaults_dir = self._find_defaults_dir(
-            dodo_commands_dir, project
-        )
+    def _create_project(self):
+        defaults_dir, has_defaults_dir = self._find_defaults_dir()
         if not has_defaults_dir:
-            return
+            return False
 
-        os.makedirs(dodo_commands_dir)
-        self._create_defaults(dodo_commands_dir, defaults_dir)
+        self._report(
+            "Creating project at location %s ..." % self._project_dir
+        )
+        os.makedirs(self._dodo_commands_dir)
+        self._create_defaults(defaults_dir)
         self._create_virtual_env()
         self._register_autocomplete()
-        self._create_framework_dir(dodo_commands_dir)
+        self._create_framework_dir()
         self._create_dodo_script()
-        self._create_default_commands(dodo_commands_dir)
+        self._create_default_commands()
+        self._report(" done\n")
+        return True
+
+    def _report(self, x):
+        sys.stderr.write(x)
+        sys.stderr.flush()
+
+    @property
+    def _source_dir(self):
+        bin_dir = os.path.dirname(__file__)
+        return os.path.dirname(bin_dir)
+
+    @property
+    def _project_dir(self):
+        return os.path.join(
+            self.config.get("DodoCommands", "projects_dir"),
+            self.args.project
+        )
+
+    @property
+    def _dodo_commands_dir(self):
+        return os.path.join(self._project_dir, "dodo_commands")
+
+    @property
+    def _project_name(self):
+        return self.args.project
 
     def run(self):
         """Activate or create a project in the projects dir."""
-        bin_dir = os.path.dirname(__file__)
-        self.source_dir = os.path.dirname(bin_dir)
+        self.args = self._args()
+        self.config = self._config()
 
-        args = self._args()
-        config = self._config()
-        self.projects_dir = config.get("DodoCommands", "projects_dir")
-        self.python_interpreter = config.get(
-            "DodoCommands", "python_interpreter"
-        )
-        self.project_dir = os.path.join(self.projects_dir, args.project)
-
-        def report(x):
-            sys.stderr.write(x)
-            sys.stderr.flush()
-
-        if args.create:
-            if os.path.exists(self.project_dir):
-                report("Project already exists: %s\n" % self.project_dir)
+        if self.args.create or self.args.create_from:
+            if os.path.exists(self._project_dir):
+                self._report(
+                    "Project already exists: %s\n" % self._project_dir
+                )
                 return
-            report("Creating project at location %s ..." % self.project_dir)
-            self._create_project(args.project)
-            report(" done\n")
-        elif not os.path.exists(self.project_dir):
-            report(
+            if not self._create_project():
+                return
+        elif not os.path.exists(self._project_dir):
+            self._report(
                 'Project not found: %s. Use the --create flag to create it\n'
-                % self.project_dir
+                % self._project_dir
             )
             return
 
         sys.stdout.write(
-            "source " + os.path.join(self.project_dir, "env/bin/activate\n")
+            "source " + os.path.join(self._project_dir, "env/bin/activate\n")
         )
