@@ -13,3 +13,11 @@ Fixes:
 Features:
 - New commands: new-command, git-gui, gitk, gitsplit, git, config-get, bootstrap
 
+## 0.1.1
+
+Fixes:
+- Added documentation and fixed broken references to defaults/commands
+
+Features:
+- Add argument --create-from to dodo_activate
+
