@@ -1,0 +1,3 @@
+CMAKE:
+    variables:
+        CMAKE_BUILD_TYPE: release

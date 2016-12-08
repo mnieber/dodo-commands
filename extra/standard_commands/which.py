@@ -64,7 +64,12 @@ class Command(DodoCommand):  # noqa
         elif which_project:
             print(project_dir)
         elif which_config:
-            print(os.path.join(project_dir, "dodo_commands", "config.yaml"))
+            print(os.path.join(
+                project_dir,
+                "dodo_commands",
+                "res",
+                "config.yaml"
+            ))
         elif which_system:
             print(self.get_config("/ROOT/system_dir"))
         elif which_script:

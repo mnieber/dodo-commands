@@ -8,7 +8,7 @@ from . import DodoCommand
 class Command(DodoCommand):  # noqa
     def add_arguments_imp(self, parser):  # noqa
         parser.add_argument(
-            'docker_image',
+            '--docker_image',
             help=(
                 "Identifies the docker image. "
                 "You should supply a value foo:bar. "
@@ -22,9 +22,12 @@ class Command(DodoCommand):  # noqa
         )
 
     def handle_imp(self, docker_image, build_arg, **kwargs):  # noqa
-        commands_dir = os.path.join(
-            self.get_config("/ROOT/project_dir"), "dodo_commands"
+        res_dir = os.path.join(
+            self.get_config("/ROOT/project_dir"), "dodo_commands", "res"
         )
+
+        if not docker_image:
+            docker_image = self.get_config("/DOCKER/image")
 
         self.runcmd(
             [
@@ -43,5 +46,5 @@ class Command(DodoCommand):  # noqa
             [
                 ".",
             ],
-            cwd=self.get_config("/DOCKER/build_dir", commands_dir)
+            cwd=self.get_config("/DOCKER/build_dir", res_dir)
         )

@@ -1,6 +1,6 @@
 CMAKE:
     variables:
-        CMAKE_BUILD_TYPE: debug
+        CMAKE_BUILD_TYPE: release
         CMAKE_INSTALL_PREFIX: ${/ROOT/project_dir}/install
 
 DOCKER:

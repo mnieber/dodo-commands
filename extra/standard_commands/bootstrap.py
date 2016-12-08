@@ -23,9 +23,9 @@ class Command(DodoCommand):  # noqa
         sys.stderr.write(msg + "\n")
 
     def _copy_defaults(self, project_defaults_dir):
-        dodo_commands_dir = os.path.join(self.project_dir, "dodo_commands")
+        res_dir = os.path.join(self.project_dir, "dodo_commands", "res")
         for filename in glob.glob(os.path.join(project_defaults_dir, "*")):
-            cp("-rf", filename, dodo_commands_dir)
+            cp("-rf", filename, res_dir)
 
     def _clone(self, clone_dir, git_url, depth):
         if not os.path.exists(clone_dir):

@@ -24,13 +24,13 @@ class Command(DodoCommand):  # noqa
         config.read(os.path.join(system_dir, "dodo_commands.config"))
 
         diff_tool = config.get("DodoCommands", "diff_tool")
-        dodo_commands_dir = os.path.join(project_dir, "dodo_commands")
+        res_dir = os.path.join(project_dir, "dodo_commands", "res")
 
         original_file = os.path.join(
             system_dir, "defaults", "projects", project_name, file)
-        copied_file = os.path.join(dodo_commands_dir, file)
+        copied_file = os.path.join(res_dir, file)
 
         self.runcmd(
             [diff_tool, original_file, copied_file],
-            cwd=dodo_commands_dir
+            cwd=res_dir
         )

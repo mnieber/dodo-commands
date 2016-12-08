@@ -34,13 +34,13 @@ class Activator:
         """Install a virtual env."""
         local["virtualenv"](
             "-p", self.config.get("DodoCommands", "python_interpreter"),
-            os.path.join(self._project_dir, "env")
+            os.path.join(self._dodo_commands_dir, "env")
         )
 
         # update activate script so that it shows the name of the
         # current project in the prompt
         activate_script = os.path.join(
-            self._project_dir, "env/bin/activate"
+            self._dodo_commands_dir, "env/bin/activate"
         )
         with open(activate_script) as f:
             lines = f.read()
@@ -50,18 +50,18 @@ class Activator:
                 r'PS1="(`dodo which`) $PS1"'
             ))
 
-        pip = local[os.path.join(self._project_dir, "env/bin", "pip")]
+        pip = local[os.path.join(self._dodo_commands_dir, "env/bin", "pip")]
         pip("install", "plumbum", "pudb", "PyYAML", "argcomplete", "six")
 
     def _register_autocomplete(self):
         """Install a virtual env."""
         register = local[os.path.join(
-            self._project_dir,
+            self._dodo_commands_dir,
             "env/bin",
             "register-python-argcomplete"
         )]
         activate_script = os.path.join(
-            self._project_dir,
+            self._dodo_commands_dir,
             "env/bin",
             "activate"
         )
@@ -77,7 +77,7 @@ class Activator:
 
     def _create_dodo_script(self):
         """Install the dodo entry point script."""
-        env_dir = os.path.join(self._project_dir, "env/bin")
+        env_dir = os.path.join(self._dodo_commands_dir, "env/bin")
         dodo_file = os.path.join(env_dir, "dodo")
         cp(
             os.path.join(self._source_dir, "bin", "dodo.py"),
@@ -131,18 +131,19 @@ class Activator:
     def _create_defaults(self, defaults_dir):
         """Install the dir with default projects."""
         os.mkdir(os.path.join(self._dodo_commands_dir, "defaults"))
+        os.mkdir(os.path.join(self._dodo_commands_dir, "res"))
+
+        res_dir = os.path.join(self._dodo_commands_dir, "res")
         if defaults_dir:
             for filename in glob.glob(os.path.join(defaults_dir, "*")):
-                cp("-rf", filename, self._dodo_commands_dir)
+                cp("-rf", filename, res_dir)
             ln(
                 "-s",
                 defaults_dir,
                 os.path.join(self._dodo_commands_dir, "defaults/project")
             )
         else:
-            config_filename = os.path.join(
-                self._dodo_commands_dir, "config.yaml"
-            )
+            config_filename = os.path.join(res_dir, "config.yaml")
             default_config = {
                 'ROOT': {
                     'command_path': [
@@ -221,5 +222,7 @@ class Activator:
             return
 
         sys.stdout.write(
-            "source " + os.path.join(self._project_dir, "env/bin/activate\n")
+            "source " + os.path.join(
+                self._dodo_commands_dir, "env/bin/activate\n"
+            )
         )

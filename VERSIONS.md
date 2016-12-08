@@ -13,3 +13,7 @@
 - FIX: Added documentation and fixed broken references to defaults/commands
 - NEW: Argument --create-from to dodo_activate
 
+## 0.1.2
+
+- BREAKING: Store env inside dodo_commands, and config.yaml in dodo_commands/res
+- FIX: Fix layer and print-config, update README.md to explain configuration layers

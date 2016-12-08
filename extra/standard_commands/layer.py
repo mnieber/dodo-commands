@@ -1,7 +1,6 @@
 """Enable or disable a layer in the configuration."""
 
 from . import DodoCommand
-import sys
 from dodo_commands.framework.config import ConfigIO
 
 
@@ -16,7 +15,10 @@ def _get_list_of_layers(layers, layer, value):
         else:
             newlayers.append(existing_layer)
 
-    return newlayers, found
+    if not found:
+        newlayers.append("%s.%s.yaml" % (layer, value))
+
+    return newlayers
 
 
 class Command(DodoCommand):  # noqa
@@ -27,11 +29,6 @@ class Command(DodoCommand):  # noqa
     def handle_imp(self, layer, value, **kwargs):  # noqa
         config = ConfigIO().load(load_layers=False)
         layers = config.get('ROOT', {}).get('layers', [])
-        newlayers, found = _get_list_of_layers(layers, layer, value)
-        if found:
-            config['ROOT']['layers'] = newlayers
-            ConfigIO().save(config)
-        else:
-            sys.stderr.write(
-                "Warning, skipped non-existing layer %s in ROOT\n" % layer
-            )
+        newlayers = _get_list_of_layers(layers, layer, value)
+        config['ROOT']['layers'] = newlayers
+        ConfigIO().save(config)

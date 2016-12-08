@@ -22,10 +22,10 @@ class ConfigIO:
     def __init__(self, config_base_dir=None):
         """Arg config_base_dir is where config files are searched.
 
-        Arg config_base_dir defaults to get_project_dir()/dodo_commands.
+        Arg config_base_dir defaults to get_project_dir()/dodo_commands/res.
         """
         self.config_base_dir = (
-            os.path.join(get_project_dir(), "dodo_commands")
+            os.path.join(get_project_dir(), "dodo_commands", "res")
             if config_base_dir is None
             else config_base_dir
         )
@@ -309,10 +309,10 @@ class CommandPath:
     def __init__(self, project_dir, config_base_dir=None):
         """config_base_dir is the directory where config files are searched.
 
-        The config_base_dir arg defaults to project_dir/dodo_commands.
+        The config_base_dir arg defaults to project_dir/dodo_commands/res.
         """
         if config_base_dir is None:
-            config_base_dir = os.path.join(project_dir, "dodo_commands")
+            config_base_dir = os.path.join(project_dir, "dodo_commands", "res")
 
         config = ConfigIO(config_base_dir).load(load_layers=False) or {}
         excluded_dirs = [

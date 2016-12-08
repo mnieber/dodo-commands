@@ -25,6 +25,7 @@ Dodo Commands offers a structured way to keep separated work environments for yo
 - each project has its own associated command scripts, configuration files and python environment
 - you run these commands from a single entry point (so you don't have to remember script locations)
 - command script can refer to project configuration values, so you can separate logic from configuration
+- you can turn on/off extra configuration layers that override your basic configuration values. This allows you - for example - to quickly switch between different C++ compilers.
 - auto-completion is provided for the command script names and their arguments (when using bash)
 
 This can be illustrated by the following use-case:
@@ -71,7 +72,7 @@ The following steps shows how this is accomplished with Dodo Commands:
     ```yaml
     CMAKE:
         variables:
-            CMAKE_BUILD_TYPE: debug
+            CMAKE_BUILD_TYPE: release
             CMAKE_INSTALL_PREFIX: ${/ROOT/project_dir}/install
 
     DOCKER:
@@ -84,7 +85,7 @@ The following steps shows how this is accomplished with Dodo Commands:
         build_dir: ${/ROOT/project_dir}/build/${/CMAKE/variables/CMAKE_BUILD_TYPE}
         src_dir: ${/ROOT/project_dir}/src
         command_path:
-        - dodo_commands/default_commands/*
+        - dodo_commands/defaults/commands/*
         - dodo_commands/commands
         version: 1.0.0
     ```
@@ -123,10 +124,27 @@ values, which means it's reusable:
 6. build the docker image that is associated with the dodo_tutorial project
 
     ```bash
-    > dodo dockerbuild dodo_tutorial:1604
+    > dodo dockerbuild
     ```
 
-7. do a trial run of the cmake command, without actually running it:
+7. enable the debug.on.yaml layer
+
+    ```bash
+    # check value of CMAKE_BUILD_TYPE
+    # returns 'release'
+    > dodo config-get /CMAKE/variables/CMAKE_BUILD_TYPE
+
+    > dodo layer debug on
+
+    # returns ['debug.on.yaml']
+    > dodo config-get /ROOT/layers
+
+    # returns 'debug'
+    > dodo config-get /CMAKE/variables/CMAKE_BUILD_TYPE
+
+    ```
+
+8. do a trial run of the cmake command, without actually running it:
 
     ```bash
     > dodo cmake --confirm
