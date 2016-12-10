@@ -314,7 +314,7 @@ class CommandPath:
         if config_base_dir is None:
             config_base_dir = os.path.join(project_dir, "dodo_commands", "res")
 
-        config = ConfigIO(config_base_dir).load(load_layers=False) or {}
+        config = ConfigIO(config_base_dir).load() or {}
         excluded_dirs = [
             x.full_path for x in self._collect_items(
                 project_dir,
