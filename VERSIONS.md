@@ -1,5 +1,9 @@
 # Version history
 
+## 0.1.4
+
+- Allow to create a project in an existing directory if no dodo_commands directory exists
+
 ## 0.1.3
 
 - FIX: Allow storing CommandPaths in configuration layers.

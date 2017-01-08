@@ -207,7 +207,7 @@ class Activator:
         self.config = self._config()
 
         if self.args.create or self.args.create_from:
-            if os.path.exists(self._project_dir):
+            if os.path.exists(self._dodo_commands_dir):
                 self._report(
                     "Project already exists: %s\n" % self._project_dir
                 )
