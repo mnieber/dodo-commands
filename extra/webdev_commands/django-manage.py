@@ -20,7 +20,7 @@ class Command(DodoCommand):  # noqa
     ):
         self.runcmd(
             [
-                "python",
+                self.get_config("/DJANGO/python"),
                 "manage.py",
                 manage_args
             ],
