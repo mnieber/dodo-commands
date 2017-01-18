@@ -1,5 +1,14 @@
 # Version history
 
+## 0.1.5
+
+- New command chown-src
+- Better error reporting in gitsplit command
+- Configurable python interpreter in django-manage command
+- Make directories in ${DOCKER/extra_dirs} available in dockerbuild command
+- Use ${/DOCKER/default_cwd} in docker command
+- Add argument 'branch' to bootstrap command
+
 ## 0.1.4
 
 - Allow to create a project in an existing directory if no dodo_commands directory exists
