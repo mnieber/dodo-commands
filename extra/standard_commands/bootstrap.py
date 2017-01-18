@@ -18,6 +18,10 @@ class Command(DodoCommand):  # noqa
             default=0,
             help="Depth for cloning repositories"
         )
+        parser.add_argument(
+            '--branch',
+            help="Branch to checkout after cloning"
+        )
 
     def _report(self, msg):
         sys.stderr.write(msg + "\n")
@@ -27,7 +31,8 @@ class Command(DodoCommand):  # noqa
         for filename in glob.glob(os.path.join(project_defaults_dir, "*")):
             cp("-rf", filename, res_dir)
 
-    def _clone(self, clone_dir, git_url, depth):
+    def _clone(self, clone_dir, git_url, depth, branch):
+        import pudb; pu.db
         if not os.path.exists(clone_dir):
             self.runcmd(
                 [
@@ -38,6 +43,16 @@ class Command(DodoCommand):  # noqa
                 ] + (["--depth", depth] if depth else []),
                 cwd=os.path.dirname(clone_dir)
             )
+            if branch:
+                self.runcmd(
+                    [
+                        "git",
+                        "checkout",
+                        branch
+                    ],
+                    cwd=clone_dir
+                )
+
         return True
 
     def _create_symlink(self, project_defaults_dir):
@@ -50,7 +65,7 @@ class Command(DodoCommand):  # noqa
         ln("-s", project_defaults_dir, target_dir)
 
     def handle_imp(
-        self, clone_dir, git_url, project_defaults_dir, depth, **kwargs
+        self, clone_dir, git_url, project_defaults_dir, depth, branch, **kwargs
     ):  # noqa
         self.project_dir = self.get_config('/ROOT/project_dir')
         clone_dir = os.path.join(self.project_dir, clone_dir)
@@ -58,7 +73,7 @@ class Command(DodoCommand):  # noqa
             clone_dir, project_defaults_dir
         )
 
-        self._clone(clone_dir, git_url, depth)
+        self._clone(clone_dir, git_url, depth, branch)
         if not os.path.exists(project_defaults_dir):
             self._report(
                 "Default project location %s not " +
