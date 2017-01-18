@@ -1,6 +1,8 @@
 """Creates a git tag and allows to interactively rebase onto that tag."""
 from __future__ import absolute_import
-from dodo_commands.defaults.commands.standard_commands import DodoCommand
+from dodo_commands.defaults.commands.standard_commands import (
+    DodoCommand, CommandError
+)
 from git import Repo
 
 
@@ -29,17 +31,20 @@ class Command(DodoCommand):  # noqa
         branch = repo.head.ref.name
 
         if onto:
-            result = repo.git.rebase(
-                self._split_for(branch),
-                onto=onto,
-                with_extended_output=True
-            )
-            if result[0] == 0:
-                repo.create_tag(
+            try:
+                result = repo.git.rebase(
                     self._split_for(branch),
-                    ref=onto,
-                    force=True
+                    onto=onto,
+                    with_extended_output=True
                 )
+                if result[0] == 0:
+                    repo.create_tag(
+                        self._split_for(branch),
+                        ref=onto,
+                        force=True
+                    )
+            except Exception as e:
+                raise CommandError(str(e))
 
         if move_split_to:
             repo.create_tag(
