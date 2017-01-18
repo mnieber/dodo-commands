@@ -10,5 +10,6 @@ class Command(DodoCommand):  # noqa
 
     def handle_imp(self, **kwargs):  # noqa
         self.runcmd(
-            ['/bin/bash']
+            ['/bin/bash'],
+            cwd=self.get_config("/DOCKER/default_cwd", None)
         )
