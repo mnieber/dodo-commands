@@ -17,6 +17,8 @@ class Decorator:  # noqa
     def _get_docker_variable_list(cls, get_config, prefix=""):
         variable_list = get_config('/DOCKER/variable_list', [])
         variable_map = get_config('/ENVIRONMENT/variable_map', {})
+        variable_map.update(get_config('/DOCKER/variable_map', []))
+
         return (
             [prefix + "%s" % x for x in variable_list] +
             [
@@ -59,7 +61,8 @@ class Decorator:  # noqa
         decorated.opt_non_interactive = non_interactive
 
     def modify_args(self, decorated, args, cwd):  # noqa
-        if not decorated.get_config('/DOCKER/enabled', False):
+        is_enabled = decorated.get_config('/DOCKER/enabled', False)
+        if is_enabled == "False" or not is_enabled:
             return args, cwd
 
         new_args = (
