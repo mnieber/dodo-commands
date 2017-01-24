@@ -1,5 +1,11 @@
 # Version history
 
+## 0.1.6
+
+- FIX: Remove stray pudb invocation in bootstrap command
+- Small improvements in commands: django-manage, autoless
+- Also disable docker if /DOCKER/enabled equals "False"
+
 ## 0.1.5
 
 - New command chown-src
