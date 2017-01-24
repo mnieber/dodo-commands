@@ -32,7 +32,6 @@ class Command(DodoCommand):  # noqa
             cp("-rf", filename, res_dir)
 
     def _clone(self, clone_dir, git_url, depth, branch):
-        import pudb; pu.db
         if not os.path.exists(clone_dir):
             self.runcmd(
                 [
