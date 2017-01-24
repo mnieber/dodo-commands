@@ -8,21 +8,18 @@ class Command(DodoCommand):  # noqa
 
     def add_arguments_imp(self, parser):  # noqa
         parser.add_argument(
-            '--args',
-            dest="manage_args",
-            required=False,
-            default=[],
+            'manage_args',
             nargs=argparse.REMAINDER
         )
 
     def handle_imp(  # noqa
-        self, manage_args, **kwargs
+        self, *args, **kwargs
     ):
         self.runcmd(
             [
                 self.get_config("/DJANGO/python"),
                 "manage.py",
-                manage_args
+                *kwargs['manage_args']
             ],
             cwd=self.get_config("/DJANGO/src_dir")
         )
