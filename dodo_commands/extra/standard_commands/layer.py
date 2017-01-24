@@ -5,20 +5,25 @@ from dodo_commands.framework.config import ConfigIO
 
 
 def _get_list_of_layers(layers, layer, value):
-    newlayers = []
+    result = []
     found = False
     for existing_layer in layers:
-        name, variant, _ = existing_layer.split(".")
+        try:
+            name, variant, _ = existing_layer.split(".")
+        except ValueError:
+            name = None
+            continue
+
         if name == layer:
             found = True
-            newlayers.append("%s.%s.yaml" % (name, value))
+            result.append("%s.%s.yaml" % (name, value))
         else:
-            newlayers.append(existing_layer)
+            result.append(existing_layer)
 
     if not found:
-        newlayers.append("%s.%s.yaml" % (layer, value))
+        result.append("%s.%s.yaml" % (layer, value))
 
-    return newlayers
+    return result
 
 
 class Command(DodoCommand):  # noqa
