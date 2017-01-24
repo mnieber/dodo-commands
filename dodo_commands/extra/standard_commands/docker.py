@@ -4,12 +4,12 @@ from . import DodoCommand
 
 
 class Command(DodoCommand):  # noqa
-    decorators = [
-        "docker",
-    ]
+    decorators = ["docker", ]
 
-    def handle_imp(self, **kwargs):  # noqa
+    def add_arguments_imp(self, parser):  # noqa
+        parser.add_argument('--command', default="")
+
+    def handle_imp(self, command, **kwargs):  # noqa
         self.runcmd(
-            ['/bin/bash'],
-            cwd=self.get_config("/DOCKER/default_cwd", None)
-        )
+            ["/bin/bash"] + (["-c", command] if command else []),
+            cwd=self.get_config("/DOCKER/default_cwd", None))
