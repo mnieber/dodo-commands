@@ -34,6 +34,11 @@ def create_config(install_dir, projects_dir, python_interpreter):
     ) as config_file:
         config.write(config_file)
 
+def make_executable(script_filename):
+    """Do chmod +x script_filename."""
+    st = os.stat(script_filename)
+    os.chmod(script_filename, st.st_mode | 0o111)
+
 
 def create_activate_script(bin_dir):
     """Write a version of dodo-activate with the correct shebang."""
@@ -42,7 +47,7 @@ def create_activate_script(bin_dir):
         f.write("#!" + sys.executable + "\n")
         f.write("from dodo_activate import Activator\n")
         f.write("Activator().run()\n")
-    chmod("+x", script_filename)
+    make_executable(script_filename)
 
 
 def create_install_defaults_script(bin_dir):
@@ -52,7 +57,7 @@ def create_install_defaults_script(bin_dir):
         f.write("#!" + sys.executable + "\n")
         f.write("from dodo_install_defaults import DefaultsInstaller\n")
         f.write("DefaultsInstaller().run()\n")
-    chmod("+x", script_filename)
+    make_executable(script_filename)
 
 
 if __name__ == "__main__":
@@ -79,7 +84,7 @@ if __name__ == "__main__":
     create_config(source_dir, args.projects_dir, args.python_interpreter)
     create_activate_script(bin_dir)
     create_install_defaults_script(bin_dir)
-    print (
+    print(
         "Finished configuring.\n"
         "Call the following command to extend the PATH for "
         "finding the dodo-activate command:\n"
