@@ -93,3 +93,8 @@ class DefaultsInstaller:
         )
 
         install(url, args.use_git)
+
+
+def main():
+    DefaultsInstaller().run()
+
