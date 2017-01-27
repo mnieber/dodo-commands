@@ -241,3 +241,7 @@ class Activator:
                 self._dodo_commands_dir, "env/bin/activate\n"
             )
         )
+
+
+def main():
+    Activator().run()
