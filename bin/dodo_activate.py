@@ -3,11 +3,29 @@ import argparse
 from six.moves import configparser
 import glob
 import os
+import shutil
 import sys
+import re
 import yaml
-
 from plumbum import local
-from plumbum.cmd import chmod, cp, ln, sed, touch
+
+
+def _make_executable(script_filename):
+    st = os.stat(script_filename)
+    os.chmod(script_filename, st.st_mode | 0o111)
+
+
+def _touch(fname, times=None):
+    with open(fname, 'a'):
+        os.utime(fname, times)
+
+
+def _sed(filename, replace_what, replace_with):
+    with open(filename, "r") as sources:
+        lines = sources.readlines()
+    with open(filename, "w") as sources:
+        for line in lines:
+            sources.write(re.sub(replace_what, replace_with, line))
 
 
 class Activator:
@@ -69,8 +87,7 @@ class Activator:
 
     def _create_framework_dir(self):
         """Install dodo commands framework into the virtual env bin dir."""
-        ln(
-            "-s",
+        os.symlink(
             os.path.join(self._source_dir, "framework"),
             os.path.join(self._dodo_commands_dir, "framework")
         )
@@ -79,26 +96,25 @@ class Activator:
         """Install the dodo entry point script."""
         env_dir = os.path.join(self._dodo_commands_dir, "env/bin")
         dodo_file = os.path.join(env_dir, "dodo")
-        cp(
+
+        shutil.copyfile(
             os.path.join(self._source_dir, "bin", "dodo.py"),
             dodo_file,
         )
-        chmod("+x", dodo_file)
-        placeholder = "# SHEBANG_PLACEHOLDER_PLEASE_DONT_MODIFY_THIS_LINE"
-        sed(
-            '-i',
-            's@%s@#!%s/python@g' % (placeholder, env_dir),
-            dodo_file
+        _make_executable(dodo_file)
+        _sed(
+            dodo_file,
+            "# SHEBANG_PLACEHOLDER_PLEASE_DONT_MODIFY_THIS_LINE",
+            '#!%s/python' % env_dir,
         )
 
     def _create_default_commands(self):
         """Install the dir with the default commands."""
-        ln(
-            "-s",
+        os.symlink(
             os.path.join(self._source_dir, "defaults", "commands"),
             os.path.join(self._dodo_commands_dir, "defaults", "commands")
         )
-        touch(os.path.join(self._dodo_commands_dir, "__init__.py"))
+        _touch(os.path.join(self._dodo_commands_dir, "__init__.py"))
 
     def _find_defaults_dir(self):
         if self.args.create_from and '/' in self.args.create_from:
@@ -136,9 +152,8 @@ class Activator:
         res_dir = os.path.join(self._dodo_commands_dir, "res")
         if defaults_dir:
             for filename in glob.glob(os.path.join(defaults_dir, "*")):
-                cp("-rf", filename, res_dir)
-            ln(
-                "-s",
+                shutil.copytree(filename, res_dir)
+            os.symlink(
                 defaults_dir,
                 os.path.join(self._dodo_commands_dir, "defaults/project")
             )
