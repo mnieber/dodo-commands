@@ -10,12 +10,10 @@ class DefaultsInstaller:
     def _args(self):
         """Get command line args."""
         parser = argparse.ArgumentParser()
-
-        group = parser.add_mutually_exclusive_group(required=True)
-        group.add_argument(
-            '--ln',
-            dest="path",
-            help='Use a symlink'
+        parser.add_argument(
+            "paths",
+            nargs='+',
+            help='Create symlinks to these command directories'
         )
 
         return parser.parse_args()
@@ -56,7 +54,8 @@ class DefaultsInstaller:
 
     def run(self):
         """Activate or create a project in the projects dir."""
-        self._install_commands(self._args().path)
+        for path in self._args().paths:
+            self._install_commands(path)
 
 
 def main():  # noqa
