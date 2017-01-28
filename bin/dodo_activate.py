@@ -5,7 +5,6 @@ import glob
 import os
 import shutil
 import sys
-import re
 import yaml
 from plumbum import local
 
@@ -20,12 +19,23 @@ def _touch(fname, times=None):
         os.utime(fname, times)
 
 
-def _sed(filename, replace_what, replace_with):
-    with open(filename, "r") as sources:
-        lines = sources.readlines()
-    with open(filename, "w") as sources:
-        for line in lines:
-            sources.write(re.sub(replace_what, replace_with, line))
+dodo_template = """
+from os.path import dirname, abspath
+import sys
+
+if __name__ == "__main__":
+    if not dirname(abspath(__file__)).endswith("env/bin"):
+        sys.stderr.write(
+            'Error: this script must be run from the env/bin directory'
+        )
+        sys.exit(1)
+
+    project_dir = abspath(dirname(dirname(dirname(dirname(__file__)))))
+    sys.path.append(project_dir)
+
+    from dodo_commands import execute_from_command_line
+    execute_from_command_line(sys.argv)
+"""
 
 
 class Activator:
@@ -44,8 +54,7 @@ class Activator:
     def _config(self):
         """Get configuration."""
         config = configparser.ConfigParser()
-        config_path = os.path.join(self._source_dir, "dodo_commands.config")
-        config.read(config_path)
+        config.read("~/.dodo_commands")
         return config
 
     def _create_virtual_env(self):
@@ -96,17 +105,11 @@ class Activator:
         """Install the dodo entry point script."""
         env_dir = os.path.join(self._dodo_commands_dir, "env/bin")
         dodo_file = os.path.join(env_dir, "dodo")
+        with open(dodo_file, "w") as of:
+            of.write('#!%s/python\n' % env_dir)
+            of.write(dodo_template)
 
-        shutil.copyfile(
-            os.path.join(self._source_dir, "bin", "dodo.py"),
-            dodo_file,
-        )
         _make_executable(dodo_file)
-        _sed(
-            dodo_file,
-            "# SHEBANG_PLACEHOLDER_PLEASE_DONT_MODIFY_THIS_LINE",
-            '#!%s/python' % env_dir,
-        )
 
     def _create_default_commands(self):
         """Install the dir with the default commands."""
@@ -243,5 +246,5 @@ class Activator:
         )
 
 
-def main():
+def main():  # noqa
     Activator().run()
