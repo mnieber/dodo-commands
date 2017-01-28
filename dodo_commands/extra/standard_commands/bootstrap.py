@@ -57,7 +57,7 @@ class Command(DodoCommand):  # noqa
     def _create_symlink(self, project_defaults_dir):
         target_dir = os.path.join(
             self.project_dir,
-            "dodo_commands/defaults/project"
+            "dodo_commands/default_project"
         )
         if os.path.exists(target_dir):
             rm(target_dir)

@@ -1,5 +1,5 @@
-"""Run a django-manage command."""
-from dodo_commands.defaults.commands.standard_commands import DodoCommand
+"""Run gitk."""
+from dodo_commands.default_commands.standard_commands import DodoCommand
 
 
 class Command(DodoCommand):  # noqa
@@ -8,8 +8,7 @@ class Command(DodoCommand):  # noqa
     ):
         self.runcmd(
             [
-                "git",
-                "gui",
+                "gitk",
             ],
             cwd=self.get_config("/ROOT/src_dir"),
         )

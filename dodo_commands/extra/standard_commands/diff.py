@@ -17,16 +17,15 @@ class Command(DodoCommand):  # noqa
 
     def handle_imp(self, file, **kwargs):  # noqa
         project_dir = self.get_config("/ROOT/project_dir", "")
-        system_dir = self.get_config("/ROOT/system_dir", "")
 
         config = configparser.ConfigParser()
-        config.read(os.path.join(system_dir, "dodo_commands.config"))
+        config.read(os.path.expanduser("~/.dodo_commands/config"))
 
         diff_tool = config.get("DodoCommands", "diff_tool")
         res_dir = os.path.join(project_dir, "dodo_commands", "res")
 
         original_file = os.path.realpath(
-            os.path.join(project_dir, "dodo_commands", "defaults", "project")
+            os.path.join(project_dir, "dodo_commands", "default_project")
         )
         copied_file = os.path.join(res_dir, file)
 
