@@ -1,9 +1,9 @@
 """Pull the latest version of the Dodo Commands system."""
 
 from . import DodoCommand
-from plumbum.cmd import cp, ln, rm
 import glob
 import os
+import shutil
 import sys
 
 
@@ -29,7 +29,10 @@ class Command(DodoCommand):  # noqa
     def _copy_defaults(self, project_defaults_dir):
         res_dir = os.path.join(self.project_dir, "dodo_commands", "res")
         for filename in glob.glob(os.path.join(project_defaults_dir, "*")):
-            cp("-rf", filename, res_dir)
+            if os.path.isdir(filename):
+                shutil.copytree(filename, res_dir)
+            else:
+                shutil.copy(filename, res_dir)
 
     def _clone(self, clone_dir, git_url, depth, branch):
         if not os.path.exists(clone_dir):
@@ -60,8 +63,8 @@ class Command(DodoCommand):  # noqa
             "dodo_commands/default_project"
         )
         if os.path.exists(target_dir):
-            rm(target_dir)
-        ln("-s", project_defaults_dir, target_dir)
+            os.unlink(target_dir)
+        os.symlink(project_defaults_dir, target_dir)
 
     def handle_imp(
         self, clone_dir, git_url, project_defaults_dir, depth, branch, **kwargs
