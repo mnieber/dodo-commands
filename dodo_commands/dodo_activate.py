@@ -70,7 +70,7 @@ class Activator:
         with open(activate_script, "w") as f:
             f.write(lines.replace(
                 r'PS1="(`basename \"$VIRTUAL_ENV\"`) $PS1"',
-                r'PS1="(`dodo which`) $PS1"'
+                r'PS1="(%s) $PS1"' % self.args.project
             ))
 
         pip = local[os.path.join(self._dodo_commands_dir, "env/bin", "pip")]
