@@ -35,7 +35,9 @@ class Command(DodoCommand):  # noqa
                 shutil.copy(filename, res_dir)
 
     def _clone(self, clone_dir, git_url, depth, branch):
-        if not os.path.exists(clone_dir):
+        if os.path.exists(clone_dir):
+            print("Path already exists, not cloning into: " + clone_dir)
+        else:
             self.runcmd(
                 [
                     "git",
