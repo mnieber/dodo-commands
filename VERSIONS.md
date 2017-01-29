@@ -1,5 +1,10 @@
 # Version history
 
+## 0.2.0
+
+- Use pip to install dodo_commands
+- Many small changes in api
+
 ## 0.1.6
 
 - FIX: Remove stray pudb invocation in bootstrap command
