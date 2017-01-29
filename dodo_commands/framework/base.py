@@ -93,7 +93,7 @@ class BaseCommand(object):  # noqa
 
     @staticmethod
     def get_version():  # noqa
-        return "0.1.6"
+        return "0.2.0"
 
     def create_parser(self, prog_name, subcommand):  # noqa
         """
