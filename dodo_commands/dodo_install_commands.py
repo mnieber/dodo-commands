@@ -1,5 +1,6 @@
 """Script for activating/creating a project in the projects dir."""
 import argparse
+from argparse import RawTextHelpFormatter
 import os
 import sys
 
@@ -7,9 +8,25 @@ import sys
 class DefaultsInstaller:
     """Adds subdirectories to default_commands."""
 
+    @property
+    def _extra_dir(self):
+        import dodo_commands
+        return os.path.join(
+            os.path.dirname(dodo_commands.__file__), "extra"
+        )
+
     def _args(self):
         """Get command line args."""
-        parser = argparse.ArgumentParser()
+        description = (
+            "Install default command directories supplied by the " +
+            "paths argument.\nIn addition, you can install the following " +
+            "directories that come\nstandard with Dodo Commands:\n\n" +
+            ('\n'.join(os.listdir(self._extra_dir)))
+        )
+
+        parser = argparse.ArgumentParser(
+            description=description, formatter_class=RawTextHelpFormatter
+        )
         parser.add_argument(
             "paths",
             nargs='+',
@@ -29,11 +46,7 @@ class DefaultsInstaller:
         )
 
         if not os.path.exists(path):
-            import dodo_commands
-            extra_dir = os.path.join(
-                os.path.dirname(dodo_commands.__file__), "extra"
-            )
-            alt_path = os.path.join(extra_dir, path)
+            alt_path = os.path.join(self._extra_dir, path)
             if os.path.exists(alt_path):
                 path = alt_path
             else:
