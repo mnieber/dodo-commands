@@ -28,6 +28,8 @@ After installing, the file :code:`~/.dodo_commands/config` contains global Dodo 
 
 - :code:`python` is the python interpreter that is used in the virtualenv of your projects (defaults to :code:`python`). If your OS uses Python 2 by default then you may want to set this to :code:`python3` to use the latest python.
 
+- :code:`diff_tool` is the diff tool used to show changes to your project configuration files..
+
 Step 3: (Optional) Create aliases
 =================================
 
@@ -39,8 +41,10 @@ call :code:`which dodo-activate` and add an alias for the resulting path
 in your :code:`~/.bashrc`. Do the same for the :code:`dodo-install-default-commands`
 command. The result could look like this:
 
-alias dodo-activate=/home/maarten/projects/dodo_commands_env/bin/dodo-activate
-alias dodo-install-default-commands=/home/maarten/projects/dodo_commands_env/bin/dodo-install-default-commands
+.. code-block:: bash
+
+    alias dodo-activate=/home/maarten/projects/dodo_commands_env/bin/dodo-activate
+    alias dodo-install-default-commands=/home/maarten/projects/dodo_commands_env/bin/dodo-install-default-commands
 
 
 Step 4: Install some default commands

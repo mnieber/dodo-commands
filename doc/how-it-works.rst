@@ -4,7 +4,7 @@
 How the Dodo Commands system works
 **********************************
 
-After following the :ref:`installation` steps, you can create new projects in the projects directory and work with them.
+After following the :ref:`installation` steps, you can create new projects in the projects directory and work with them. We'll explain how it works the long and clunky way, and then how the same can be done faster.
 
 Creating a project
 ==================
