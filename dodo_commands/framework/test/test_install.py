@@ -23,15 +23,7 @@ class TestInstall:  # noqa
 
     def install_defaults(self):  # noqa
         local['python'](
-            './dodo_commands/bin/dodo-install-defaults',
-            '--ln',
-            '--projects',
-            './dodo_commands/extra/tutorial_projects'
-        )
-        local['python'](
-            './dodo_commands/bin/dodo-install-defaults',
-            '--ln',
-            '--commands',
+            './dodo_commands/bin/dodo-install-default-commands',
             './dodo_commands/extra/standard_commands'
         )
 

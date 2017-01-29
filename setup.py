@@ -31,7 +31,7 @@ setup(name='dodo_commands',
       entry_points={
           'console_scripts': [
               'dodo-activate=dodo_commands.dodo_activate:main',
-              'dodo-install-commands=dodo_commands.dodo_install_commands:main',
+              'dodo-install-default-commands=dodo_commands.dodo_install_commands:main',
           ]
       },
       install_requires=[
