@@ -10,8 +10,8 @@ import sys
 class Command(DodoCommand):  # noqa
     def add_arguments_imp(self, parser):  # noqa
         parser.add_argument('clone_dir')
-        parser.add_argument('git_url')
         parser.add_argument('project_defaults_dir')
+        parser.add_argument('--git-url', dest='git_url')
         parser.add_argument(
             '--depth',
             type=int,
@@ -29,10 +29,11 @@ class Command(DodoCommand):  # noqa
     def _copy_defaults(self, project_defaults_dir):
         res_dir = os.path.join(self.project_dir, "dodo_commands", "res")
         for filename in glob.glob(os.path.join(project_defaults_dir, "*")):
+            dest_path = os.path.join(res_dir, os.path.basename(filename))
             if os.path.isdir(filename):
-                shutil.copytree(filename, res_dir)
+                shutil.copytree(filename, dest_path)
             else:
-                shutil.copy(filename, res_dir)
+                shutil.copy(filename, dest_path)
 
     def _clone(self, clone_dir, git_url, depth, branch):
         if os.path.exists(clone_dir):
@@ -69,7 +70,7 @@ class Command(DodoCommand):  # noqa
         os.symlink(project_defaults_dir, target_dir)
 
     def handle_imp(
-        self, clone_dir, git_url, project_defaults_dir, depth, branch, **kwargs
+        self, clone_dir, project_defaults_dir, git_url, depth, branch, **kwargs
     ):  # noqa
         self.project_dir = self.get_config('/ROOT/project_dir')
         clone_dir = os.path.join(self.project_dir, clone_dir)
@@ -77,7 +78,9 @@ class Command(DodoCommand):  # noqa
             clone_dir, project_defaults_dir
         )
 
-        self._clone(clone_dir, git_url, depth, branch)
+        if git_url:
+            self._clone(clone_dir, git_url, depth, branch)
+
         if not os.path.exists(project_defaults_dir):
             self._report(
                 "Default project location %s not " +
@@ -86,4 +89,6 @@ class Command(DodoCommand):  # noqa
             return None
 
         self._create_symlink(project_defaults_dir)
-        self._copy_defaults(project_defaults_dir)
+
+        if git_url:
+            self._copy_defaults(project_defaults_dir)
