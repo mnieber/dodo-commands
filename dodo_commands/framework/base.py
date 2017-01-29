@@ -71,9 +71,6 @@ class BaseCommand(object):  # noqa
     help = ''
     args = ''
 
-    def _get_system_dir(self):
-        return os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-
     def _add_to_config(self, config, section, key, value):
         if section in config:
             if key not in config[section]:
@@ -179,8 +176,6 @@ class BaseCommand(object):  # noqa
             self.config, "ROOT", "project_name", os.path.basename(project_dir))
         self._add_to_config(
             self.config, "ROOT", "project_dir", project_dir)
-        self._add_to_config(
-            self.config, "ROOT", "system_dir", self._get_system_dir())
         ConfigExpander().run(self.config)
 
         self.handle(*args, **options)
