@@ -75,7 +75,7 @@ If the "docker" decorator is used and the ${/DOCKER/enabled} configuration value
 
 #. each item in $(/DOCKER/volume_list} will be added as a docker volume (where 'item' in the host maps to 'item' in the docker container)
 
-#. each environment variable listed in $(/DOCKER/variable_list} will be added as an environment variable in the docker container.
+#. each environment variable listed in $(/DOCKER/variable_list} or $(/DOCKER/variable_map} will be added as an environment variable in the docker container.
 
 #. each key-value pair in $(/ENVIRONMENT/variable_map} will be added as an environment variable in the docker container.
 

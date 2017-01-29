@@ -37,30 +37,31 @@ This can be illustrated by the following use-case:
 
 The following steps shows how this is accomplished with Dodo Commands:
 
-1. clone and install
+1. Install
 
     ```bash
-    > cd ~
-    > git clone https://github.com/mnieber/dodo_commands
-    > source dodo_commands/bin/install.sh
-
-    > export PATH=$PATH:~/dodo_commands/bin
+    > pip install git+https://github.com/mnieber/dodo_commands.git
     ```
 
 2. enable the standard commands and tutorial projects
 
     ```bash
-    > dodo-install-defaults --ln --commands ./dodo_commands/extra/standard_commands
-    > dodo-install-defaults --ln --projects ./dodo_commands/extra/tutorial_projects
+    > dodo-install-default-commands standard_commands
     ```
 
-3. create and activate the local dodo_tutorial project
+3. create a new dodo_tutorial project
 
     ```bash
     > $(dodo-activate dodo_tutorial --create)
     ```
 
-4. inspect the configuration file of the dodo_tutorial project. This configuration provides the
+4. Use `dodo bootstrap` to obtain the tutorial configuration files
+
+    ```bash
+    > dodo bootstrap src extra/dodo_commands/res --git-url https://github.com/mnieber/dodo_commands_tutorial.git
+    ```
+
+5. inspect the configuration file of the dodo_tutorial project. This configuration provides the
    necessary input parameters for cmake and docker:
 
     ```bash
@@ -90,7 +91,7 @@ The following steps shows how this is accomplished with Dodo Commands:
         version: 1.0.0
     ```
 
-5. inspect the code of the 'cmake' command script. Note that this script does not contain project specific
+6. inspect the code of the 'cmake' command script. Note that this script does not contain project specific
 values, which means it's reusable:
 
     ```bash
@@ -121,13 +122,13 @@ values, which means it's reusable:
             )
     ```
 
-6. build the docker image that is associated with the dodo_tutorial project
+7. build the docker image that is associated with the dodo_tutorial project
 
     ```bash
     > dodo dockerbuild
     ```
 
-7. enable the debug.on.yaml layer
+8. enable the debug.on.yaml layer
 
     ```bash
     # check value of CMAKE_BUILD_TYPE
@@ -144,7 +145,7 @@ values, which means it's reusable:
 
     ```
 
-8. do a trial run of the cmake command, without actually running it:
+9. do a trial run of the cmake command, without actually running it:
 
     ```bash
     > dodo cmake --confirm

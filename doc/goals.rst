@@ -19,8 +19,7 @@ When you run :code:`dodo foo --bar --confirm` then the foo.py script will print 
 Give access to the configuration of the current project
 =======================================================
 
-Script code and configuration values should remain separate. When you run :code:`dodo foo --bar` then the foo.py script will have access to the configuration values of the currently
-active project.
+Script code and configuration values should remain separate. When you run :code:`dodo foo --bar` then the foo.py script will have access to the configuration values of the currently active project.
 
 Run commands in a docker container
 ==================================
