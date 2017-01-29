@@ -4,7 +4,7 @@
 How the Dodo Commands system works
 **********************************
 
-After following the :ref:`installation` steps, you have obtained a working Dodo Commands system directory. The installed system allows you to create new projects in the projects directory and work with them.
+After following the :ref:`installation` steps, you can create new projects in the projects directory and work with them.
 
 Creating a project
 ==================
@@ -28,7 +28,7 @@ This call will execute the following steps:
 
 #. the foo.py script is found and run with the --bar option
 
-#. the foo.py script will import several python modules from :code:`~/projects/FooBar/dodo_commands/framework` (this is a symlink to the framework directory of the Dodo Commands installation)
+#. the foo.py script will import several python modules from :code:`~/projects/FooBar/dodo_commands/framework` (this is a symlink to the framework directory of the Dodo Commands package)
 
 #. the foo.py script reads the project configuration and does some operation on the project (such as deleting all build results in ~/projects/FooBar/build/debug)
 
