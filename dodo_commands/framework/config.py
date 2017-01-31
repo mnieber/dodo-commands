@@ -10,10 +10,7 @@ import yaml
 
 def get_project_dir():
     """Return the root dir of the current project."""
-    result = __file__
-    for _ in range(3):
-        result = os.path.dirname(result)
-    return os.path.abspath(result)
+    return os.environ['DODO_COMMANDS_PROJECT_DIR']
 
 
 class ConfigIO:
@@ -348,8 +345,7 @@ class CommandPath:
                 items.append(item)
         return items
 
-    def extend_sys_path(self):
-        """Return relative paths (to sys.path) to the command scipt modules."""
+    def extend_sys_path(self):  # noqa
         for item in self.items:
             if item.sys_path not in sys.path:
                 sys.path.append(item.sys_path)

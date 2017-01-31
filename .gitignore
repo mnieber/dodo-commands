@@ -2,10 +2,7 @@ env
 dodo_commands.config
 dodo_commands.sublime-project
 dodo_commands.sublime-workspace
+dodo_commands/default_commands
 *.pyc
 doc_build
-defaults/projects/*
-!defaults/projects/__init__.py
-defaults/commands/*
-!defaults/commands/__init__.py
 .cache
