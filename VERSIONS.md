@@ -1,5 +1,9 @@
 # Version history
 
+## 0.2.2
+
+- Add argument --port to docker decorator
+
 ## 0.2.1
 
 - Fix: Don't crash on non-standard filenames in /ROOT/layers
