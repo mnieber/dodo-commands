@@ -19,7 +19,6 @@ class Command(DodoCommand):  # noqa
             [
                 self.get_config("/DJANGO/python"),
                 "manage.py",
-                *kwargs['manage_args']
-            ],
+            ] + kwargs['manage_args'],
             cwd=self.get_config("/DJANGO/src_dir")
         )
