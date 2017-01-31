@@ -1,5 +1,9 @@
 # Version history
 
+## 0.2.3
+
+- Simplify django-manage command and make it work for Python 2
+
 ## 0.2.2
 
 - Add argument --port to docker decorator
