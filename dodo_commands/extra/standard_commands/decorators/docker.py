@@ -28,7 +28,7 @@ class Decorator:  # noqa
         )
 
     @classmethod
-    def get_docker_args(cls, get_config, cwd, is_interactive):
+    def get_docker_args(cls, get_config, cwd, is_interactive, port):
         """
         Get docker args.
 
@@ -42,6 +42,7 @@ class Decorator:  # noqa
             ] +
             (['-w', cwd] if cwd else []) +
             (['-i', '-t'] if is_interactive else []) +
+            (['-p=%s' % port] if port else []) +
             cls._get_docker_variable_list(get_config, '--env=') +
             cls._get_docker_volume_list(get_config, '--volume=') +
             get_config('/DOCKER/extra_options', []) +
@@ -56,9 +57,14 @@ class Decorator:  # noqa
             action='store_true',
             help="Run docker calls without -i and -t"
         )
+        parser.add_argument(
+            '--port',
+            help="Value that is passed for the docker -p argument"
+        )
 
-    def handle(self, decorated, non_interactive, **kwargs):  # noqa
+    def handle(self, decorated, non_interactive, port, **kwargs):  # noqa
         decorated.opt_non_interactive = non_interactive
+        decorated.opt_port = port
 
     def modify_args(self, decorated, args, cwd):  # noqa
         is_enabled = decorated.get_config('/DOCKER/enabled', False)
@@ -68,7 +74,10 @@ class Decorator:  # noqa
         new_args = (
             ['docker'] +
             self.get_docker_args(
-                decorated.get_config, cwd, not decorated.opt_non_interactive
+                decorated.get_config,
+                cwd,
+                not decorated.opt_non_interactive,
+                decorated.opt_port
             ) +
             args
         )
