@@ -1,5 +1,11 @@
 # Version history
 
+## 0.2.1
+
+- Fix: Don't crash on non-standard filenames in /ROOT/layers
+- Add optional argument --command to "dodo docker"
+- Add argument --res to cd and which commands
+
 ## 0.2.0
 
 - Use pip to install dodo_commands
