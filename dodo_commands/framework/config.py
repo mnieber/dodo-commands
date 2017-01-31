@@ -69,6 +69,7 @@ class ConfigIO:
                     self._add_layer(config, self.load(layer_filename))
                 else:
                     print("Warning: layer not found: %s" % layer_filename)
+
         return config
 
     def save(self, config, config_filename='config.yaml'):
@@ -87,6 +88,23 @@ class ConfigIO:
                 if formatted_content[0] == '\n' else
                 formatted_content
             )
+
+
+def load_dodo_config():
+    """Load the project's dodo config and expand it."""
+    def _add_to_config(config, section, key, value):
+        if section in config:
+            if key not in config[section]:
+                config[section][key] = value
+
+    config = ConfigIO().load() or dict(ROOT={})
+    project_dir = get_project_dir()
+    _add_to_config(
+        config, "ROOT", "project_name", os.path.basename(project_dir))
+    _add_to_config(
+        config, "ROOT", "project_dir", project_dir)
+    ConfigExpander().run(config)
+    return config
 
 
 class KeyNotFound(CommandError):
@@ -311,7 +329,7 @@ class CommandPath:
         if config_base_dir is None:
             config_base_dir = os.path.join(project_dir, "dodo_commands", "res")
 
-        config = ConfigIO(config_base_dir).load() or {}
+        config = load_dodo_config()
         excluded_dirs = [
             x.full_path for x in self._collect_items(
                 config.get('ROOT', {}).get('command_path_exclude', []),

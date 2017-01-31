@@ -40,7 +40,7 @@ import sys
 import argcomplete
 from argparse import ArgumentParser, SUPPRESS
 from dodo_commands.framework.config import (
-    ConfigExpander, get_project_dir, ConfigIO, Key, KeyNotFound
+    Key, KeyNotFound, load_dodo_config
 )
 from dodo_commands.framework.command_error import CommandError
 
@@ -70,11 +70,6 @@ class BaseCommand(object):  # noqa
     # Metadata about this command.
     help = ''
     args = ''
-
-    def _add_to_config(self, config, section, key, value):
-        if section in config:
-            if key not in config[section]:
-                config[section][key] = value
 
     # Configuration shortcuts that alter various logic.
     _called_from_command_line = False
@@ -169,15 +164,7 @@ class BaseCommand(object):  # noqa
         """
         Try to execute this command.
         """
-        self.config = ConfigIO().load() or dict(ROOT={})
-
-        project_dir = get_project_dir()
-        self._add_to_config(
-            self.config, "ROOT", "project_name", os.path.basename(project_dir))
-        self._add_to_config(
-            self.config, "ROOT", "project_dir", project_dir)
-        ConfigExpander().run(self.config)
-
+        self.config = load_dodo_config()
         self.handle(*args, **options)
 
     def handle(self, *args, **options):  # noqa
