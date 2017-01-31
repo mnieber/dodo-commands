@@ -104,7 +104,7 @@ values, which means it's reusable:
 
     ```python
     """Configure code with CMake."""
-    from dodo_commands.default_commands.standard_commands import DodoCommand
+    from dodo_commands.extra.standard_commands import DodoCommand
 
     class Command(DodoCommand):  # noqa
         decorators = ['docker']

@@ -1,6 +1,6 @@
 """Run a django-manage command."""
 import argparse
-from dodo_commands.default_commands.standard_commands import DodoCommand
+from dodo_commands.extra.standard_commands import DodoCommand
 
 
 class Command(DodoCommand):  # noqa
