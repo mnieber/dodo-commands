@@ -1,5 +1,5 @@
 # noqa
-from dodo_commands.defaults.commands.standard_commands import DodoCommand
+from dodo_commands.default_commands.standard_commands import DodoCommand
 from dodo_commands import call_command
 from plumbum import local
 from plumbum.cmd import git
