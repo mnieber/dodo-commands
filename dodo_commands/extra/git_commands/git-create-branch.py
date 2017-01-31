@@ -1,6 +1,6 @@
 # noqa
 from dodo_commands.extra.standard_commands import DodoCommand
-from dodo_commands import call_command
+from dodo_commands.framework import call_command
 from plumbum import local
 from plumbum.cmd import git
 
