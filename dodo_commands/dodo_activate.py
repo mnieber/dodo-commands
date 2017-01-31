@@ -5,6 +5,7 @@ import os
 import sys
 import yaml
 from plumbum import local
+import dodo_commands
 
 
 def _make_executable(script_filename):
@@ -12,12 +13,12 @@ def _make_executable(script_filename):
     os.chmod(script_filename, st.st_mode | 0o111)
 
 
-def _touch(fname, times=None):
-    with open(fname, 'a'):
-        os.utime(fname, times)
-
 dodo_template = """
-from os.path import dirname, abspath
+import os
+from os.path import abspath, dirname, exists, expanduser, join
+import dodo_commands
+from dodo_commands.framework import execute_from_command_line
+
 import sys
 
 if __name__ == "__main__":
@@ -27,10 +28,18 @@ if __name__ == "__main__":
         )
         sys.exit(1)
 
-    project_dir = abspath(dirname(dirname(dirname(dirname(__file__)))))
-    sys.path.append(project_dir)
+    os.environ["DODO_COMMANDS_PROJECT_DIR"] = abspath(
+        dirname(dirname(dirname(dirname(__file__))))
+    )
 
-    from dodo_commands.framework import execute_from_command_line
+    default_commands_dir = join(
+        dirname(dodo_commands.__file__), "default_commands"
+    )
+    if not exists(default_commands_dir):
+        os.symlink(
+            expanduser("~/.dodo_commands/default_commands"),
+            default_commands_dir
+        )
     execute_from_command_line(sys.argv)
 """
 
@@ -74,7 +83,18 @@ class Activator:
             ))
 
         pip = local[os.path.join(self._dodo_commands_dir, "env/bin", "pip")]
-        pip("install", "plumbum", "pudb", "PyYAML", "argcomplete", "six")
+        pip("install", "argcomplete", "plumbum", "PyYAML", "six")
+
+        python = local[os.path.join(self._dodo_commands_dir, "env/bin", "python")]
+        site_packages_dir = python(
+            "-c",
+            "from distutils.sysconfig import get_python_lib; " +
+            "print(get_python_lib())"
+        )[:-1]
+        os.symlink(
+            os.path.dirname(dodo_commands.__file__),
+            os.path.join(site_packages_dir, "dodo_commands")
+        )
 
     def _register_autocomplete(self):
         """Install a virtual env."""
@@ -89,15 +109,6 @@ class Activator:
             "activate"
         )
         (register >> activate_script)("dodo")
-
-    def _create_framework_dir(self):
-        """Install dodo commands framework into the virtual env bin dir."""
-        import dodo_commands.framework
-        os.symlink(
-            os.path.dirname(dodo_commands.framework.__file__),
-            os.path.join(self._dodo_commands_dir, "framework")
-        )
-        _touch(os.path.join(self._dodo_commands_dir, "__init__.py"))
 
     def _create_dodo_script(self):
         """Install the dodo entry point script."""
@@ -142,7 +153,6 @@ class Activator:
         self._create_res_dir()
         self._create_virtual_env()
         self._register_autocomplete()
-        self._create_framework_dir()
         self._create_dodo_script()
         self._create_default_commands()
         self._report(" done\n")
