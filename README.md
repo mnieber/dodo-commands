@@ -86,8 +86,10 @@ The following steps shows how this is accomplished with Dodo Commands:
         build_dir: ${/ROOT/project_dir}/build/${/CMAKE/variables/CMAKE_BUILD_TYPE}
         src_dir: ${/ROOT/project_dir}/src
         command_path:
-        - dodo_commands/defaults/commands/*
-        - dodo_commands/commands
+        - - ~/.dodo_commands/
+          - default_commands/*
+        - - ${/ROOT/project_dir}
+          - dodo_commands/commands
         version: 1.0.0
     ```
 

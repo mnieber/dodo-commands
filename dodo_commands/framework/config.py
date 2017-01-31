@@ -314,26 +314,27 @@ class CommandPath:
         config = ConfigIO(config_base_dir).load() or {}
         excluded_dirs = [
             x.full_path for x in self._collect_items(
-                project_dir,
                 config.get('ROOT', {}).get('command_path_exclude', []),
             )
         ]
         self.items = [
             x for x in self._collect_items(
-                project_dir,
                 config.get('ROOT', {}).get('command_path', [])
             )
             if x.full_path not in excluded_dirs
         ]
 
-    def _collect_items(self, project_dir, patterns):
+    def _collect_items(self, patterns):
         items = []
         for pattern in patterns:
-            prefix = project_dir
-            postfix = pattern
-            if isinstance(pattern, type(list())):
-                prefix = os.path.join(project_dir, pattern[0])
-                postfix = pattern[1]
+            try:
+                prefix, postfix = pattern
+                prefix = os.path.expanduser(prefix)
+            except:
+                raise CommandError(
+                    "Items in command_path should be of " +
+                    "type [<sys-path>, <module-path>]."
+                )
 
             for command_dir in [
                 x for x in glob.glob(os.path.join(prefix, postfix))

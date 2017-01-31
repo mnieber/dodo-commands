@@ -15,11 +15,10 @@ def _make_executable(script_filename):
 
 dodo_template = """
 import os
-from os.path import abspath, dirname, exists, expanduser, join
-import dodo_commands
+from os.path import abspath, dirname
+import sys
 from dodo_commands.framework import execute_from_command_line
 
-import sys
 
 if __name__ == "__main__":
     if not dirname(abspath(__file__)).endswith("env/bin"):
@@ -31,15 +30,6 @@ if __name__ == "__main__":
     os.environ["DODO_COMMANDS_PROJECT_DIR"] = abspath(
         dirname(dirname(dirname(dirname(__file__))))
     )
-
-    default_commands_dir = join(
-        dirname(dodo_commands.__file__), "default_commands"
-    )
-    if not exists(default_commands_dir):
-        os.symlink(
-            expanduser("~/.dodo_commands/default_commands"),
-            default_commands_dir
-        )
     execute_from_command_line(sys.argv)
 """
 
@@ -119,13 +109,6 @@ class Activator:
             of.write(dodo_template)
         _make_executable(dodo_file)
 
-    def _create_default_commands(self):
-        """Install the dir with the default commands."""
-        os.symlink(
-            self._default_commands_dir,
-            os.path.join(self._dodo_commands_dir, "default_commands")
-        )
-
     def _create_res_dir(self):
         """Install the dir with dodo_commands resources."""
         res_dir = os.path.join(self._dodo_commands_dir, "res")
@@ -134,7 +117,7 @@ class Activator:
         default_config = {
             'ROOT': {
                 'command_path': [
-                    'dodo_commands/default_commands/*'
+                    ['~/.dodo_commands', 'default_commands/*']
                 ],
                 'version': '1.0.0'
             }
@@ -154,17 +137,12 @@ class Activator:
         self._create_virtual_env()
         self._register_autocomplete()
         self._create_dodo_script()
-        self._create_default_commands()
         self._report(" done\n")
         return True
 
     def _report(self, x):
         sys.stderr.write(x)
         sys.stderr.flush()
-
-    @property
-    def _default_commands_dir(self):
-        return os.path.expanduser("~/.dodo_commands/default_commands")
 
     @property
     def _project_dir(self):

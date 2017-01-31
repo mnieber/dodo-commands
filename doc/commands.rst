@@ -7,14 +7,27 @@ Commands
 Command paths and default commands
 ==================================
 
-The default Dodo command scripts are stored in :code:`~/.dodo_commands/default_commands`. Each project contains a symlink to this directory (e.g. the FooBar project stores a link to this directory in :code:`~/projects/FooBar/default_commands`). You can install additional default commands using:
+The default Dodo command scripts are stored in :code:`~/.dodo_commands/default_commands`. You can install additional default commands using:
 
 .. code-block:: bash
 
-    # adds a subdirectory dodo_commands/defaults/commands/mycommands
-    dodo-install-default-commands /path/to/commands
+    # adds a subdirectory ~/.dodo_commands/default_commands/mycommands
+    dodo-install-default-commands /path/to/mycommands
 
-Besides the defaults/commands directory, a project can specify additional search paths for commands. This is done using the ${/ROOT/command_path} setting in config.yaml:
+All search paths for commands are specified by the ${/ROOT/command_path} setting in config.yaml:
+
+    ROOT:
+        command_path:
+        - - ~/.dodo_commands
+          - default_commands/*
+
+Each item in the ${/ROOT/command_path} is itself a list of two elements:
+
+- a prefix path that is added to :code:`sys.path`
+- a postfix path that must be importable as a python module
+
+In the example below, the default commands are used as well as the
+:code:`special_commands` directory:
 
 .. code-block:: yaml
 
@@ -24,32 +37,20 @@ Besides the defaults/commands directory, a project can specify additional search
         # - ~/projects/FooBar/dodo_commands/default_commands/standard_commands
         # - ~/projects/FooBar/dodo_commands/default_commands/mycommands
         command_path:
-        - src/special_commands
-        - dodo_commands/default_commands/*
+        - - ${/ROOT/src_dir}
+          - special_commands
+        - - ~/.dodo_commands
+          - default_commands/*
 
-Each directory in command_path is relative to the project directory, and should point to a Python module.
 Use ${/ROOT/command_path_exclude} to exclude parts of the command path:
 
 .. code-block:: yaml
 
     ROOT:
-        command_path:
-        - dodo_commands/default_commands/*
         command_path_exclude:
-        - dodo_commands/default_commands/foo
+        - - ~/.dodo_commands
+          - default_commands/foo
 
-Extending sys.path using the command_path
-=========================================
-
-In the default case, as mentioned above, directories in ${/ROOT/command_path} are Python modules. This means that each intermediate node in the directory must contain a :code:`__init__.py` file. An alternative is to supply a pair of values: :code:`[sys_dir, module_dir]`. The first part (sys_dir) is added to :code:`sys.path`, and the second part (module_dir) should be a Python module:
-
-.. code-block:: yaml
-
-    ROOT:
-        command_path:
-        # ${/ROOT/project_dir}/src/foo is added to sys.path
-        # extra commands are found in ${/ROOT/project_dir}/src/foo/bar/foo_commands
-        - ["src/foo", "bar/foo_commands"]
 
 Installing command directories from dodo_commands.extra
 =======================================================
