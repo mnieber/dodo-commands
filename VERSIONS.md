@@ -1,5 +1,10 @@
 # Version history
 
+## 0.3.0
+
+- BREAKING: symlink dodo_commands in the site-packages of the dodo project
+- BREAKING: remove framework and default_commands dirs from dodo project dir
+
 ## 0.2.3
 
 - Simplify django-manage command and make it work for Python 2
@@ -16,8 +21,8 @@
 
 ## 0.2.0
 
-- Use pip to install dodo_commands
-- Many small changes in api
+- BREAKING: Use pip to install dodo_commands
+- BREAKING: Many small changes in api
 
 ## 0.1.6
 
