@@ -1,5 +1,9 @@
 # Version history
 
+## 0.3.1
+
+- Fix: resolve references in command_path
+
 ## 0.3.0
 
 - BREAKING: symlink dodo_commands in the site-packages of the dodo project
