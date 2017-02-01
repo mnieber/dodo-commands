@@ -3,7 +3,7 @@ import os
 
 
 setup(name='dodo_commands',
-      version='0.3.1',
+      version='0.3.2',
       description='Project-aware development environments, inspired by django-manage',
       url='https://github.com/mnieber/dodo_commands',
       author='Maarten Nieber',

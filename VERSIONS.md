@@ -1,5 +1,9 @@
 # Version history
 
+## 0.3.2
+
+- Fix: ensure less output directory exists in autoless command
+
 ## 0.3.1
 
 - Fix: resolve references in command_path
