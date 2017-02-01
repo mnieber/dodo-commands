@@ -8,6 +8,14 @@ class Command(DodoCommand):  # noqa
     def handle_imp(self, **kwargs):  # noqa
         self.runcmd(
             [
+                "mkdir",
+                "-p",
+                self.get_config("/LESS/output_dir")
+            ]
+        )
+
+        self.runcmd(
+            [
                 "autoless",
                 ".",
                 self.get_config("/LESS/output_dir")
