@@ -1,8 +1,9 @@
 # Version history
 
-## 0.3.2
+## 0.3.3
 
 - Fix: ensure less output directory exists in autoless command
+- Make the git command generic
 
 ## 0.3.1
 
