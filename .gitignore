@@ -5,5 +5,6 @@ dodo_commands.sublime-project
 dodo_commands.sublime-workspace
 dodo_commands/default_commands
 *.pyc
+dist/*
 doc_build
 .cache

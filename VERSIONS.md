@@ -1,5 +1,9 @@
 # Version history
 
+## 0.3.4
+
+- Fix PyPI installation problem
+
 ## 0.3.3
 
 - Fix: ensure less output directory exists in autoless command
