@@ -40,7 +40,7 @@ The following steps shows how this is accomplished with Dodo Commands:
 1. Install
 
     ```bash
-    > pip install git+https://github.com/mnieber/dodo_commands.git
+    > pip install dodo_commands
     ```
 
 2. enable the standard commands and tutorial projects

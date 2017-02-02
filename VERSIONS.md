@@ -1,5 +1,9 @@
 # Version history
 
+## 0.3.5
+
+- Update documentation
+
 ## 0.3.4
 
 - Fix PyPI installation problem

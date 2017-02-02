@@ -20,7 +20,7 @@ Step 2: Install
 
 .. code-block:: bash
 
-    pip install git+https://github.com/mnieber/dodo_commands.git
+    pip install dodo_commands
 
 After installing, the file :code:`~/.dodo_commands/config` contains global Dodo Commands settings:
 
