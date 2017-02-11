@@ -25,7 +25,9 @@ class Command(DodoCommand):  # noqa
         res_dir = os.path.join(project_dir, "dodo_commands", "res")
 
         original_file = os.path.realpath(
-            os.path.join(project_dir, "dodo_commands", "default_project")
+            os.path.join(
+                project_dir, "dodo_commands", "default_project", file
+            )
         )
         copied_file = os.path.join(res_dir, file)
 
