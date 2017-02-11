@@ -1,5 +1,11 @@
 # Version history
 
+## 0.3.6
+
+- Remove git-gui command (use dodo git gui instead)
+- Simplify the cd and which commands
+- Print an error if config layer filename not found
+
 ## 0.3.5
 
 - Update documentation
