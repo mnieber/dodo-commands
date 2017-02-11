@@ -1,5 +1,10 @@
 # Version history
 
+## 0.3.7
+
+- Fix problem with dodo diff <somefile>
+- Change --command option in "docker" to a positional argument
+
 ## 0.3.6
 
 - Remove git-gui command (use dodo git gui instead)
