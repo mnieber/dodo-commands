@@ -103,6 +103,11 @@ def load_dodo_config():
         config, "ROOT", "project_name", os.path.basename(project_dir))
     _add_to_config(
         config, "ROOT", "project_dir", project_dir)
+    _add_to_config(
+        config,
+        "ROOT",
+        "res_dir",
+        os.path.join(project_dir, "dodo_commands", "res"))
     ConfigExpander().run(config)
     return config
 

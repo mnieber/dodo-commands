@@ -42,7 +42,7 @@ A new configuration file is created automatically when the project is first crea
         layers:
             - buildtype.debug.yaml  # contents of this file are layered on top of this configuration
 
-5. the following magic values are automatically added: ${/ROOT/project_name} and ${/ROOT/project_dir}.
+5. the following magic values are automatically added: ${/ROOT/project_name},  ${/ROOT/project_dir} and ${/ROOT/res_dir}.
 
 Using the configuration
 =======================
