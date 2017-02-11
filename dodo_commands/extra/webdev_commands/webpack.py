@@ -16,7 +16,8 @@ class Command(DodoCommand):  # noqa
         )
 
     def handle_imp(self, webpack_args, **kwargs):  # noqa
+        webpack = self.get_config("/WEBPACK/webpack", "webpack")
         self.runcmd(
-            ["webpack", "--watch-stdin", webpack_args],
+            [webpack, "--watch-stdin", webpack_args],
             cwd=self.get_config("/WEBPACK/webpack_dir")
         )

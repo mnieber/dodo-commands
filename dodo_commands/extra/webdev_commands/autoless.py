@@ -6,6 +6,7 @@ class Command(DodoCommand):  # noqa
     decorators = ['docker']
 
     def handle_imp(self, **kwargs):  # noqa
+        autoless = self.get_config("/LESS/autoless", "autoless")
         self.runcmd(
             [
                 "mkdir",
@@ -16,7 +17,7 @@ class Command(DodoCommand):  # noqa
 
         self.runcmd(
             [
-                "autoless",
+                autoless,
                 ".",
                 self.get_config("/LESS/output_dir")
             ],
