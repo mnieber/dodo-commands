@@ -7,7 +7,7 @@ class Command(DodoCommand):  # noqa
     decorators = ["docker", ]
 
     def add_arguments_imp(self, parser):  # noqa
-        parser.add_argument('--command', default="")
+        parser.add_argument('command', nargs='?')
 
     def handle_imp(self, command, **kwargs):  # noqa
         self.runcmd(
