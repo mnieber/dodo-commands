@@ -40,17 +40,26 @@ class Activator:
     def _args(self):
         """Get command line args."""
         parser = argparse.ArgumentParser()
-        parser.add_argument('project')
+        parser.add_argument('project', nargs='?')
 
         group = parser.add_mutually_exclusive_group()
         group.add_argument('--create', action="store_true")
+        group.add_argument('--latest', action="store_true")
         return parser.parse_args()
+
+    def _config_filename(self):
+        return os.path.expanduser("~/.dodo_commands/config")
 
     def _config(self):
         """Get configuration."""
         config = configparser.ConfigParser()
-        config.read(os.path.expanduser("~/.dodo_commands/config"))
+        config.read(self._config_filename())
         return config
+
+    def _write_config(self):
+        """Save configuration."""
+        with open(self._config_filename(), "w") as f:
+            self.config.write(f)
 
     def _create_virtual_env(self):
         """Install a virtual env."""
@@ -163,6 +172,20 @@ class Activator:
         """Activate or create a project in the projects dir."""
         self.args = self._args()
         self.config = self._config()
+        latest_project = self.config.get("DodoCommands", "latest_project")
+
+        if self.args.latest:
+            if self.args.project:
+                self._report(
+                    "Options --latest and <project> are mutually exclusive\n"
+                )
+                return
+            self.args.project = latest_project
+            if not self.args.project:
+                self._report(
+                    "There is no latest project\n"
+                )
+                return
 
         if self.args.create:
             if os.path.exists(self._dodo_commands_dir):
@@ -178,6 +201,10 @@ class Activator:
                 % self._project_dir
             )
             return
+
+        if self.args.project != latest_project:
+            self.config.set("DodoCommands", "latest_project", self.args.project)
+            self._write_config()
 
         sys.stdout.write(
             "source " + os.path.join(

@@ -58,3 +58,15 @@ The way this works is that the dodo-activate command prints the line :code:`sour
 .. code-block:: bash
 
     $(dodo-activate FooBar --create)
+
+Adding dodo-activate to .bashrc
+===============================
+
+It's convenient to automatically activate the last used dodo commands project
+when you open a new shell. This can be achieved by adding
+
+.. code-block:: bash
+
+    $(dodo-activate --latest)
+
+to your `.bashrc`.
