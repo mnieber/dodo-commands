@@ -8,16 +8,14 @@ class Command(DodoCommand):  # noqa
 
     def add_arguments_imp(self, parser):  # noqa
         parser.add_argument(
-            '--args',
-            dest="webpack_args",
-            required=False,
-            default=[],
+            'webpack_args',
             nargs=argparse.REMAINDER
         )
 
     def handle_imp(self, webpack_args, **kwargs):  # noqa
         webpack = self.get_config("/WEBPACK/webpack", "webpack")
+        webpack_args = webpack_args or ["--watch-stdin"]
         self.runcmd(
-            [webpack, "--watch-stdin", webpack_args],
+            [webpack] + webpack_args,
             cwd=self.get_config("/WEBPACK/webpack_dir")
         )
