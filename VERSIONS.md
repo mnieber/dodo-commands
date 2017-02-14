@@ -1,5 +1,9 @@
 # Version history
 
+## 0.3.9
+
+- Fix: broken paths
+
 ## 0.3.8
 
 - Fix: avoid permission problems by not installing config file during setup
