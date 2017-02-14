@@ -1,4 +1,5 @@
 """Script for activating/creating a project in the projects dir."""
+from dodo_commands.framework.util import create_global_config
 import argparse
 from argparse import RawTextHelpFormatter
 import os
@@ -67,6 +68,8 @@ class DefaultsInstaller:
 
     def run(self):
         """Activate or create a project in the projects dir."""
+        create_global_config()
+
         for path in self._args().paths:
             self._install_commands(path)
 

@@ -1,4 +1,5 @@
 """Script for activating/creating a project in the projects dir."""
+from dodo_commands.framework.util import create_global_config
 import argparse
 from six.moves import configparser
 import os
@@ -170,6 +171,8 @@ class Activator:
 
     def run(self):
         """Activate or create a project in the projects dir."""
+        create_global_config()
+
         self.args = self._args()
         self.config = self._config()
         latest_project = self.config.get("DodoCommands", "latest_project")

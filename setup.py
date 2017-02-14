@@ -1,11 +1,5 @@
 from setuptools import setup
-import os
-import sys
 
-
-# in setup.py
-if 'bdist_wheel' in sys.argv:
-    raise RuntimeError("This setup.py does not support wheels")
 
 setup(name='dodo_commands',
       version='0.3.7',
@@ -31,10 +25,6 @@ setup(name='dodo_commands',
               'extra/webdev_commands/*.meta',
           ]
       },
-      data_files=[
-          (os.path.expanduser('~/.dodo_commands'), ['res/config']),
-          (os.path.expanduser('~/.dodo_commands/default_commands'), ['res/default_commands/__init__.py']),
-      ],
       entry_points={
           'console_scripts': [
               'dodo-activate=dodo_commands.dodo_activate:main',

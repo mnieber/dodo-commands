@@ -1,5 +1,6 @@
 """Utilities."""
 from six.moves import input as raw_input
+import os
 import sys
 
 
@@ -34,3 +35,32 @@ def query_yes_no(question, default="yes"):
         else:
             sys.stdout.write("Please respond with 'yes' or 'no' "
                              "(or 'y' or 'n').\n")
+
+
+_global_config = """
+[DodoCommands]
+projects_dir=~/projects
+python_interpreter=python
+diff_tool=diff
+"""
+
+
+def create_global_config():
+    """Create config file and default_commands dir."""
+    base_dir = os.path.expanduser('~/.dodo_commands')
+    if not os.path.exists(base_dir):
+        os.mkdir(base_dir)
+
+    config_filename = os.path.join(base_dir, "config")
+    if not os.path.exists(config_filename):
+        with open(config_filename, 'w') as f:
+            f.write(_global_config)
+
+    default_commands_dir = os.path.join(base_dir, "default_commands")
+    if not os.path.exists(default_commands_dir):
+        os.mkdir(default_commands_dir)
+
+    init_py = os.path.join(default_commands_dir, "__init__.py")
+    if not os.path.exists(init_py):
+        with open(init_py, 'w') as f:
+            pass
