@@ -1,5 +1,10 @@
 # Version history
 
+## 0.3.8
+
+- Fix: avoid permission problems by not installing config file during setup
+- Add option --latest to dodo-activate
+
 ## 0.3.7
 
 - Fix problem with dodo diff <somefile>
