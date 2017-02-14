@@ -1,8 +1,8 @@
 """Module for working with the dodo configurations."""
 
 from dodo_commands.framework.command_error import CommandError
-from config_expander import ConfigExpander
-from config_expander import Key, KeyNotFound  # noqa
+from dodo_commands.framework.config_expander import ConfigExpander
+from dodo_commands.framework.config_expander import Key, KeyNotFound  # noqa
 import glob
 import os
 import re

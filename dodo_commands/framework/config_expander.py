@@ -1,4 +1,4 @@
-from command_error import CommandError
+from dodo_commands.framework.command_error import CommandError
 import os
 import re
 
