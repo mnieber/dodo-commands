@@ -22,14 +22,6 @@ Step 2: Install
 
     pip install dodo_commands
 
-After installing, the file :code:`~/.dodo_commands/config` contains global Dodo Commands settings:
-
-- :code:`projects_dir` is the location where your projects are stored (defaults to :code:`~/projects`)
-
-- :code:`python` is the python interpreter that is used in the virtualenv of your projects (defaults to :code:`python`). If your OS uses Python 2 by default then you may want to set this to :code:`python3` to use the latest python.
-
-- :code:`diff_tool` is the diff tool used to show changes to your project configuration files..
-
 Step 3: (Optional) Create aliases
 =================================
 
@@ -59,3 +51,15 @@ At this point, the Dodo Commands framework is installed but it will not contain 
 The :code:`standard_commands` directory was found "magically"
 because it comes with the Dodo Commands python package.
 To read more about installing default commands, see :ref:`commands`.
+
+
+Step 5: (Optional) Tweak global configuration
+=============================================
+
+Calling either :code:`dodo-install-default-commands --help` or :code:`dodo-activate --help`, a file :code:`~/.dodo_commands/config` will create a global Dodo Commands settings (unless it already exists):
+
+- :code:`projects_dir` is the location where your projects are stored (defaults to :code:`~/projects`)
+
+- :code:`python` is the python interpreter that is used in the virtualenv of your projects (defaults to :code:`python`). If your OS uses Python 2 by default then you may want to set this to :code:`python3` to use the latest python.
+
+- :code:`diff_tool` is the diff tool used to show changes to your project configuration files. It's recommended to install and use :code:`meld` for this option.
