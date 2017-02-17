@@ -1,5 +1,10 @@
 # Version history
 
+## 0.3.10
+
+- Require option --force or --confirm in bootstrap command
+- Add pytest_args argument to pytest command
+
 ## 0.3.9
 
 - Fix: broken paths
