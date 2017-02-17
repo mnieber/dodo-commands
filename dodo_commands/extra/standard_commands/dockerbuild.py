@@ -4,7 +4,6 @@ import os
 
 from . import DodoCommand
 from dodo_commands.framework import CommandError
-from plumbum.cmd import cp, rm
 
 
 class Command(DodoCommand):  # noqa
@@ -19,8 +18,7 @@ class Command(DodoCommand):  # noqa
             )
         )
 
-    @classmethod
-    def _copy_extra_dirs(cls, local_dir, extra_dirs):
+    def _copy_extra_dirs(self, local_dir, extra_dirs):
         for extra_dir_name, extra_dir_path in extra_dirs.items():
             local_path = os.path.join(local_dir, extra_dir_name)
             if os.path.exists(local_path):
@@ -31,13 +29,12 @@ class Command(DodoCommand):  # noqa
                 raise CommandError(
                     "Cannot copy from non-existing path: " + extra_dir_path
                 )
-            cp("-rf", extra_dir_path, local_path)
+            self.runcmd(["cp", "-rf", extra_dir_path, local_path])
 
-    @classmethod
-    def _remove_extra_dirs(cls, local_dir, extra_dirs):
+    def _remove_extra_dirs(self, local_dir, extra_dirs):
         for extra_dir_name, extra_dir_path in extra_dirs.items():
             local_path = os.path.join(local_dir, extra_dir_name)
-            rm("-rf", local_path)
+            self.runcmd(["rm", "-rf", local_path])
 
     def handle_imp(self, docker_image, **kwargs):  # noqa
         res_dir = os.path.join(
