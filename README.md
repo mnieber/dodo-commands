@@ -58,7 +58,7 @@ The following steps shows how this is accomplished with Dodo Commands:
 4. Use `dodo bootstrap` to obtain the tutorial configuration files
 
     ```bash
-    > dodo bootstrap src extra/dodo_commands/res --git-url https://github.com/mnieber/dodo_commands_tutorial.git
+    > dodo bootstrap src extra/dodo_commands/res --force --git-url https://github.com/mnieber/dodo_commands_tutorial.git
     ```
 
 5. inspect the configuration file of the dodo_tutorial project. This configuration provides the

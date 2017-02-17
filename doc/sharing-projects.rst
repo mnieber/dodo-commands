@@ -34,7 +34,7 @@ default configuration files:
 
 .. code-block:: bash
 
-    dodo bootstrap src extra/dodo_commands/res --git-url https://github.com/foo/foobar.git
+    dodo bootstrap src extra/dodo_commands/res --force --git-url https://github.com/foo/foobar.git
 
 Note that the path :code:`extra/dodo_commands/res` is relative to the root of the
 cloned repository. At this point, your colleague has the same directory
@@ -54,6 +54,6 @@ structure as you, with one additional symlink:
 
 .. code-block:: bash
 
-    dodo bootstrap src extra/dodo_commands/res
+    dodo bootstrap src extra/dodo_commands/res --force
 
 - To synchronize only config.yaml, call :code:`dodo diff config.yaml`. It's a good practice to use the value ${/ROOT/version} to track whether the copied configuration is up-to-date or not.

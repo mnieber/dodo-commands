@@ -1,9 +1,8 @@
 """Pull the latest version of the Dodo Commands system."""
 
-from . import DodoCommand
+from dodo_commands.extra.standard_commands import DodoCommand, CommandError
 import glob
 import os
-import shutil
 import sys
 
 
@@ -11,6 +10,7 @@ class Command(DodoCommand):  # noqa
     def add_arguments_imp(self, parser):  # noqa
         parser.add_argument('clone_dir')
         parser.add_argument('project_defaults_dir')
+        parser.add_argument('--force', dest="use_force", action="store_true")
         parser.add_argument('--git-url', dest='git_url')
         parser.add_argument(
             '--depth',
@@ -26,14 +26,21 @@ class Command(DodoCommand):  # noqa
     def _report(self, msg):
         sys.stderr.write(msg + "\n")
 
-    def _copy_defaults(self, project_defaults_dir):
+    def _copy_defaults(self, project_defaults_dir, use_force):
         res_dir = os.path.join(self.project_dir, "dodo_commands", "res")
         for filename in glob.glob(os.path.join(project_defaults_dir, "*")):
             dest_path = os.path.join(res_dir, os.path.basename(filename))
-            if os.path.isdir(filename):
-                shutil.copytree(filename, dest_path)
-            else:
-                shutil.copy(filename, dest_path)
+            if os.path.exists(dest_path):
+                if self.opt_confirm:
+                    print("Warning, destination path already exists: %s" % dest_path)
+                elif use_force:
+                    print("Overwriting existing path: %s" % dest_path)
+                else:
+                    raise CommandError(
+                        "Destination path %s already exists. " % dest_path +
+                        "Use the --confirm or --force flag to overwrite it."
+                    )
+            self.runcmd(["cp", "-rf", filename, dest_path])
 
     def _clone(self, clone_dir, git_url, depth, branch):
         if os.path.exists(clone_dir):
@@ -66,11 +73,18 @@ class Command(DodoCommand):  # noqa
             "dodo_commands/default_project"
         )
         if os.path.exists(target_dir):
-            os.unlink(target_dir)
-        os.symlink(project_defaults_dir, target_dir)
+            self.runcmd(["rm", target_dir])
+        self.runcmd(["ln", "-s", project_defaults_dir, target_dir])
 
     def handle_imp(
-        self, clone_dir, project_defaults_dir, git_url, depth, branch, **kwargs
+        self,
+        clone_dir,
+        project_defaults_dir,
+        use_force,
+        git_url,
+        depth,
+        branch,
+        **kwargs
     ):  # noqa
         self.project_dir = self.get_config('/ROOT/project_dir')
         clone_dir = os.path.join(self.project_dir, clone_dir)
@@ -91,4 +105,4 @@ class Command(DodoCommand):  # noqa
         self._create_symlink(project_defaults_dir)
 
         if git_url:
-            self._copy_defaults(project_defaults_dir)
+            self._copy_defaults(project_defaults_dir, use_force)
