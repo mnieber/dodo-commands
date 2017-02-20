@@ -27,6 +27,7 @@ This call will execute the following steps:
 #. the dodo script will load the :code:`command_path` (a list of directories with command scripts) from the project's configuration file (:code:`~/projects/FooBar/dodo_commands/res/config.yaml`).
 
 #. the foo.py script is found and run with the --bar option
+@maarten what happens with lines in between?
 
 #. the foo.py script will import several python modules from :code:`~/projects/FooBar/dodo_commands/framework` (this is a symlink to the framework directory of the Dodo Commands package)
 
