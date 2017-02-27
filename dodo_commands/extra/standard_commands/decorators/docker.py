@@ -28,7 +28,7 @@ class Decorator:  # noqa
         )
 
     @classmethod
-    def get_docker_args(cls, get_config, cwd, is_interactive):
+    def get_docker_args(cls, get_config, extra_options):
         """
         Get docker args.
 
@@ -40,8 +40,7 @@ class Decorator:  # noqa
                 'run',
                 '--rm',
             ] +
-            (['-w', cwd] if cwd else []) +
-            (['-i', '-t'] if is_interactive else []) +
+            extra_options +
             cls._get_docker_variable_list(get_config, '--env=') +
             cls._get_docker_volume_list(get_config, '--volume=') +
             get_config('/DOCKER/extra_options', []) +
@@ -65,13 +64,17 @@ class Decorator:  # noqa
         if is_enabled == "False" or not is_enabled:
             return args, cwd
 
+        extra_options = []
+        if not decorated.opt_non_interactive:
+            extra_options.extend(['-i', '-t'])
+        if cwd:
+            extra_options.extend(['-w', cwd])
+        if hasattr(decorated, "docker_options"):
+            extra_options.extend(decorated.docker_options)
+
         new_args = (
             ['docker'] +
-            self.get_docker_args(
-                decorated.get_config,
-                cwd,
-                not decorated.opt_non_interactive
-            ) +
+            self.get_docker_args(decorated.get_config, extra_options) +
             args
         )
         return new_args, local.cwd
