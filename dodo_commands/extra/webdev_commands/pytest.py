@@ -14,6 +14,9 @@ class Command(DodoCommand):  # noqa
         )
 
     def handle_imp(self, pytest_args, **kwargs):  # noqa
+        if pytest_args[:1] == ['-']:
+            pytest_args = pytest_args[1:]
+
         self.runcmd(
             [
                 self.get_config("/PYTEST/pytest"),
