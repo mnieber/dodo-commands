@@ -1,5 +1,11 @@
 # Version history
 
+## 0.4.0
+
+- Commands can use decorated.docker_options to add more docker options
+- Remove port argument from docker decorator
+- Link pg docker container in django-manage command
+
 ## 0.3.10
 
 - Require option --force or --confirm in bootstrap command
