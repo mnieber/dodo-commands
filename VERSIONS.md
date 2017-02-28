@@ -1,5 +1,9 @@
 # Version history
 
+## 0.4.2
+
+- Fix crash when latest_project value is missing in global config
+
 ## 0.4.1
 
 - Also use DOCKER/volumes_from_list in docker decorator
