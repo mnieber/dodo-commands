@@ -14,6 +14,13 @@ class Decorator:  # noqa
         )
 
     @classmethod
+    def _get_docker_volumes_from_list(cls, get_config, prefix=""):
+        volumes_from_list = get_config('DOCKER/volumes_from_list', [])
+        return (
+            [prefix + "%s" % x for x in volumes_from_list]
+        )
+
+    @classmethod
     def _get_docker_variable_list(cls, get_config, prefix=""):
         variable_list = get_config('/DOCKER/variable_list', [])
         variable_map = get_config('/ENVIRONMENT/variable_map', {})
@@ -43,6 +50,7 @@ class Decorator:  # noqa
             extra_options +
             cls._get_docker_variable_list(get_config, '--env=') +
             cls._get_docker_volume_list(get_config, '--volume=') +
+            cls._get_docker_volumes_from_list(get_config, '--volumes-from=') +
             get_config('/DOCKER/extra_options', []) +
             [
                 get_config('/DOCKER/image'),
