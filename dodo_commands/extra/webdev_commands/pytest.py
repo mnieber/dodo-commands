@@ -6,6 +6,9 @@ from dodo_commands.extra.standard_commands import DodoCommand
 class Command(DodoCommand):  # noqa
     help = ""
     decorators = ["docker"]
+    docker_options = [
+        '--name=pytest',
+    ]
 
     def add_arguments_imp(self, parser):  # noqa
         parser.add_argument(

@@ -5,6 +5,9 @@ from dodo_commands.extra.standard_commands import DodoCommand
 
 class Command(DodoCommand):  # noqa
     decorators = ['docker']
+    docker_options = [
+        '--name=webpack',
+    ]
 
     def add_arguments_imp(self, parser):  # noqa
         parser.add_argument(
