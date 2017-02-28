@@ -1,5 +1,10 @@
 # Version history
 
+## 0.4.1
+
+- Also use DOCKER/volumes_from_list in docker decorator
+- Use standard docker container names in webpack, autoless and pytest
+
 ## 0.4.0
 
 - Commands can use decorated.docker_options to add more docker options
