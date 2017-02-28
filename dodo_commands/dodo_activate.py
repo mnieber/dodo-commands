@@ -175,7 +175,11 @@ class Activator:
 
         self.args = self._args()
         self.config = self._config()
-        latest_project = self.config.get("DodoCommands", "latest_project")
+        latest_project = (
+            self.config.get("DodoCommands", "latest_project")
+            if self.config.has_option("DodoCommands", "latest_project") else
+            ""
+        )
 
         if self.args.latest:
             if self.args.project:
