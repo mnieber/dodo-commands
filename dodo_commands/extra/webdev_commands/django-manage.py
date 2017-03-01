@@ -5,9 +5,6 @@ from dodo_commands.extra.standard_commands import DodoCommand
 
 class Command(DodoCommand):  # noqa
     decorators = ['docker']
-    docker_options = [
-        '--link=pg:pg',
-    ]
 
     def add_arguments_imp(self, parser):  # noqa
         parser.add_argument(
