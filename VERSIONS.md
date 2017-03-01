@@ -1,5 +1,9 @@
 # Version history
 
+## 0.4.3
+
+- Remove hack in dodo runpostgres command
+
 ## 0.4.2
 
 - Fix crash when latest_project value is missing in global config
