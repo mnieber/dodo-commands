@@ -9,7 +9,8 @@ from dodo_commands.framework import CommandError
 class Command(DodoCommand):  # noqa
     def add_arguments_imp(self, parser):  # noqa
         parser.add_argument(
-            '--docker_image',
+            '--image',
+            dest="docker_image",
             help=(
                 "Identifies the docker image. "
                 "You should supply a value foo:bar. "
