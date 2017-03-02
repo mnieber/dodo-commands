@@ -22,7 +22,22 @@ Step 2: Install
 
     pip install dodo_commands
 
-Step 3: (Optional) Create aliases
+
+Step 3: Install some default commands
+=====================================
+
+At this point, the Dodo Commands framework is installed but it will not contain any commands you can run. To install the standard Dodo Commands, run:
+
+.. code-block:: bash
+
+    dodo-install-default-commands standard_commands
+
+The :code:`standard_commands` directory was found "magically"
+because it comes with the Dodo Commands python package.
+To read more about installing default commands, see :ref:`commands`.
+
+
+Step 4: (Optional) Create aliases
 =================================
 
 NOTE: this step is only necessary if you installed :code:`dodo_commands`
@@ -39,24 +54,20 @@ command. The result could look like this:
     alias dodo-install-default-commands=/home/maarten/projects/dodo_commands_env/bin/dodo-install-default-commands
 
 
-Step 4: Install some default commands
-=====================================
+Step 5: (Optional) Activate the latest project automatically
+============================================================
 
-At this point, the Dodo Commands framework is installed but it will not contain any commands you can run. To install the standard Dodo Commands, run:
+To automatically activate the last used Dodo Commands project, add this line to your :code:`~/.bashrc` file:
 
 .. code-block:: bash
 
-    dodo-install-default-commands standard_commands
-
-The :code:`standard_commands` directory was found "magically"
-because it comes with the Dodo Commands python package.
-To read more about installing default commands, see :ref:`commands`.
+    $(dodo-activate --latest)
 
 
-Step 5: (Optional) Tweak global configuration
+Step 6: (Optional) Tweak global configuration
 =============================================
 
-Calling either :code:`dodo-install-default-commands --help` or :code:`dodo-activate --help`, a file :code:`~/.dodo_commands/config` will create a global Dodo Commands settings (unless it already exists):
+Calling :code:`dodo-activate --help` will create a global Dodo Commands settings file at location :code:`~/.dodo_commands/config` (unless it already exists):
 
 - :code:`projects_dir` is the location where your projects are stored (defaults to :code:`~/projects`)
 
