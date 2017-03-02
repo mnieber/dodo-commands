@@ -1,5 +1,11 @@
 # Version history
 
+## 0.4.4
+
+- Improve documentation
+- Add node-sass command
+- Rename --docker_image to --image in dodo dockerbuild
+
 ## 0.4.3
 
 - Remove hack in dodo runpostgres command
