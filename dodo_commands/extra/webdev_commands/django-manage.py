@@ -13,12 +13,15 @@ class Command(DodoCommand):  # noqa
         )
 
     def handle_imp(  # noqa
-        self, *args, **kwargs
+        self, manage_args, *args, **kwargs
     ):
+        if manage_args[:1] == ['-']:
+            manage_args = manage_args[1:]
+
         self.runcmd(
             [
                 self.get_config("/DJANGO/python"),
                 "manage.py",
-            ] + kwargs['manage_args'],
+            ] + manage_args,
             cwd=self.get_config("/DJANGO/src_dir")
         )
