@@ -1,5 +1,9 @@
 # Version history
 
+## 0.4.6
+
+- Fix of error in 0.4.5 (node-sass command)
+
 ## 0.4.5
 
 - Small fixes in node-sass and django-manage commands
