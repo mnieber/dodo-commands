@@ -28,10 +28,10 @@ class Command(DodoCommand):  # noqa
 
         self.runcmd(
             [
-                "rm",
-                "-f",
-                os.path.dirname(self.get_config("/SASS/output_file"))
-            ]
+                nodesass,
+                self.get_config("/SASS/src_file"),
+                self.get_config("/SASS/output_file")
+            ] + nodesass_args
         )
 
         self.runcmd(
