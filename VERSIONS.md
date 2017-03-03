@@ -1,5 +1,9 @@
 # Version history
 
+## 0.4.5
+
+- Small fixes in node-sass and django-manage commands
+
 ## 0.4.4
 
 - Improve documentation

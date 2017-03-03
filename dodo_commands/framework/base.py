@@ -88,7 +88,7 @@ class BaseCommand(object):  # noqa
 
     @staticmethod
     def get_version():  # noqa
-        return "0.4.4"
+        return "0.4.5"
 
     def create_parser(self, prog_name, subcommand):  # noqa
         """
