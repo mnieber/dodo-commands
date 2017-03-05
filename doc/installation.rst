@@ -22,6 +22,12 @@ Step 2: Install
 
     pip install dodo_commands
 
+Once installed, you can upgrade the dodo_commands python package with
+
+.. code-block:: bash
+
+    dodo-upgrade
+
 
 Step 3: Install some default commands
 =====================================
