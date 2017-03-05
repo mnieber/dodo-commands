@@ -1,5 +1,11 @@
 # Version history
 
+## 0.4.7
+
+- Add dodo-upgrade command to upgrade dodo_commands itself
+- Remove obsolete commands
+
+
 ## 0.4.6
 
 - Fix of error in 0.4.5 (node-sass command)
