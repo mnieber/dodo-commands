@@ -1,10 +1,14 @@
 # Version history
 
+## 0.5.0
+
+- Improve formatting of errors in the console output
+- Add tape command
+
 ## 0.4.7
 
 - Add dodo-upgrade command to upgrade dodo_commands itself
 - Remove obsolete commands
-
 
 ## 0.4.6
 
