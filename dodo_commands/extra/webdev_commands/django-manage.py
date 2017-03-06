@@ -15,9 +15,7 @@ class Command(DodoCommand):  # noqa
     def handle_imp(  # noqa
         self, manage_args, *args, **kwargs
     ):
-        if manage_args[:1] == ['-']:
-            manage_args = manage_args[1:]
-
+        manage_args = manage_args[1:] if manage_args[:1] == ['-'] else manage_args
         self.runcmd(
             [
                 self.get_config("/DJANGO/python"),
