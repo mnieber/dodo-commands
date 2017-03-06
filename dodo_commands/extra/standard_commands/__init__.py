@@ -105,9 +105,8 @@ class DodoCommand(BaseCommand):  # noqa
             try:
                 variable_map = self.get_config('/ENVIRONMENT/variable_map', {})
                 with local.env(**variable_map):
-                    # local['env'] & FG
                     func & FG
                 return True
-            except ProcessExecutionError as e:
-                print(e)
+            except ProcessExecutionError:
+                print("Dodo Commands error while running this command:\n\n%s" % func)
                 return False
