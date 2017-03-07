@@ -1,6 +1,9 @@
 # noqa
 import argparse
 from dodo_commands.extra.standard_commands import DodoCommand
+from dodo_commands.util import remove_trailing_dashes
+import json
+import os
 
 
 class Command(DodoCommand):  # noqa
@@ -17,12 +20,21 @@ class Command(DodoCommand):  # noqa
         )
 
     def handle_imp(self, tape_args, **kwargs):  # noqa
-        tape_args = tape_args[1:] if tape_args[:1] == ['-'] else tape_args
+        stats_file = os.path.join(
+            self.get_config("/ROOT/src_dir"),
+            "webpack/webpack-stats.json"
+        )
+        stats = json.loads(open(stats_file).read())
+        bundle = os.path.join(
+            self.get_config("/VIRT_ROOT/src_dir"),
+            "static/bundles",
+            stats["chunks"]["main"][0]["name"]
+        )
 
         self.runcmd(
             [
-                self.get_config("/TAPE/tape", "tape"),
-                self.get_config("/TAPE/glob")
-            ] + tape_args,
+                "tape-run",
+                bundle,
+            ] + remove_trailing_dashes(tape_args),
             cwd=self.get_config("/TAPE/src_dir")
         )
