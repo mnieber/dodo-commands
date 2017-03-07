@@ -1,6 +1,7 @@
 """Run the webpack command."""
 import argparse
 from dodo_commands.extra.standard_commands import DodoCommand
+from dodo_commands.util import remove_trailing_dashes
 
 
 class Command(DodoCommand):  # noqa
@@ -16,12 +17,9 @@ class Command(DodoCommand):  # noqa
         )
 
     def handle_imp(self, webpack_args, **kwargs):  # noqa
-        if webpack_args[:1] == ['-']:
-            webpack_args = webpack_args[1:]
-
         webpack = self.get_config("/WEBPACK/webpack", "webpack")
         webpack_args = webpack_args or ["--watch-stdin"]
         self.runcmd(
-            [webpack] + webpack_args,
+            [webpack] + remove_trailing_dashes(webpack_args),
             cwd=self.get_config("/WEBPACK/webpack_dir")
         )

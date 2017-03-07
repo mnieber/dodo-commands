@@ -1,6 +1,7 @@
 # noqa
 import argparse
 from dodo_commands.extra.standard_commands import DodoCommand
+from dodo_commands.util import remove_trailing_dashes
 
 
 class Command(DodoCommand):  # noqa
@@ -17,12 +18,9 @@ class Command(DodoCommand):  # noqa
         )
 
     def handle_imp(self, pytest_args, **kwargs):  # noqa
-        if pytest_args[:1] == ['-']:
-            pytest_args = pytest_args[1:]
-
         self.runcmd(
             [
                 self.get_config("/PYTEST/pytest"),
-            ] + pytest_args,
+            ] + remove_trailing_dashes(pytest_args),
             cwd=self.get_config("/PYTEST/src_dir")
         )

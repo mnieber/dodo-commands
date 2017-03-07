@@ -64,3 +64,8 @@ def create_global_config():
     if not os.path.exists(init_py):
         with open(init_py, 'w') as f:
             pass
+
+
+def remove_trailing_dashes(args):
+    """Removes first -- item from args."""
+    return args[1:] if args[:1] == ['--'] else args

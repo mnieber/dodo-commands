@@ -1,6 +1,7 @@
 """Run a django-manage command."""
 import argparse
 from dodo_commands.extra.standard_commands import DodoCommand
+from dodo_commands.util import remove_trailing_dashes
 
 
 class Command(DodoCommand):  # noqa
@@ -15,11 +16,10 @@ class Command(DodoCommand):  # noqa
     def handle_imp(  # noqa
         self, manage_args, *args, **kwargs
     ):
-        manage_args = manage_args[1:] if manage_args[:1] == ['-'] else manage_args
         self.runcmd(
             [
                 self.get_config("/DJANGO/python"),
                 "manage.py",
-            ] + manage_args,
+            ] + remove_trailing_dashes(manage_args),
             cwd=self.get_config("/DJANGO/src_dir")
         )
