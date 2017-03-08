@@ -1,5 +1,9 @@
 # Version history
 
+## 0.6.1
+
+- Fix dodo-upgrade (nothing was executed)
+
 ## 0.6.0
 
 - Print warning for unexpanded config keys
