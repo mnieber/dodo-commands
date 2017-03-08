@@ -1,5 +1,9 @@
 # Version history
 
+## 0.6.0
+
+- Print warning for unexpanded config keys
+
 ## 0.5.2
 
 - Fix broken imports

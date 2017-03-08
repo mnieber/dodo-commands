@@ -2,10 +2,10 @@ from setuptools import setup
 
 
 setup(name='dodo_commands',
-      version='0.5.2',
+      version='0.6.0',
       description='Project-aware development environments, inspired by django-manage',
       url='https://github.com/mnieber/dodo_commands',
-      download_url='https://github.com/mnieber/dodo_commands/tarball/0.5.2',
+      download_url='https://github.com/mnieber/dodo_commands/tarball/0.6.0',
       author='Maarten Nieber',
       author_email='hallomaarten@yahoo.com',
       license='MIT',
