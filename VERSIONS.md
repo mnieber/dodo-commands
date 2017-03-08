@@ -1,5 +1,9 @@
 # Version history
 
+## 0.5.2
+
+- Fix broken imports
+
 ## 0.5.1
 
 - Add check-version command
