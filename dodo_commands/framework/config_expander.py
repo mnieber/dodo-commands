@@ -185,7 +185,9 @@ class ConfigExpander:
         )
 
         processed_xpaths = []
-        while all_keys:
+        changed = True
+        while all_keys and changed:
+            changed = False
             for key in list(all_keys):
                 expanded_key = cls._expanded_key(key, processed_xpaths)
                 if expanded_key is None:
@@ -204,3 +206,7 @@ class ConfigExpander:
                         cls._evaluate(expanded_key)
                     processed_xpaths.append(expanded_key.xpath)
                     all_keys.remove(key)
+                    changed = True
+
+        if all_keys:
+            print("Warning: unexpanded keys %s" % all_keys)
