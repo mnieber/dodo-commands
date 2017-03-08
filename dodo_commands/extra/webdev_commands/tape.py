@@ -1,7 +1,7 @@
 # noqa
 import argparse
 from dodo_commands.extra.standard_commands import DodoCommand
-from dodo_commands.util import remove_trailing_dashes
+from dodo_commands.framework.util import remove_trailing_dashes
 import json
 import os
 
