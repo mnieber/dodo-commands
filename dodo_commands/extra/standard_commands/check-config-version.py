@@ -14,7 +14,6 @@ class Command(DodoCommand):  # noqa
 
     def handle_imp(self, **kwargs):  # noqa
         project_dir = self.get_config("/ROOT/project_dir", "")
-        res_dir = os.path.join(project_dir, "dodo_commands", "res")
         original_file = os.path.join(
             project_dir, "dodo_commands", "default_project", "config.yaml"
         )
@@ -25,7 +24,7 @@ class Command(DodoCommand):  # noqa
             )
             return
 
-        copied_file = os.path.join(res_dir, "config.yaml")
+        copied_file = os.path.join(project_dir, "dodo_commands", "res", "config.yaml")
         copied_version = self._get_version(copied_file)
         if not copied_version:
             sys.stderr.write(
@@ -35,11 +34,9 @@ class Command(DodoCommand):  # noqa
 
         if copied_version[:2] < original_version[:2]:
             sys.stdout.write(
-                "Configuration needs update (%s.%s < %s.%s)\n"
+                'Configuration needs update (%s < %s). Tip: use "dodo diff ."\n'
                 % (
-                    copied_version[0],
-                    copied_version[1],
-                    original_version[0],
-                    original_version[1]
+                    ".".join(copied_version),
+                    ".".join(original_version),
                 )
             )
