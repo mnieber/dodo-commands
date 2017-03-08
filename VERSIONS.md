@@ -1,5 +1,9 @@
 # Version history
 
+## 0.5.1
+
+- Add check-version command
+
 ## 0.5.0
 
 - Improve formatting of errors in the console output
