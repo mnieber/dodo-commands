@@ -1,5 +1,9 @@
 # Version history
 
+## 0.6.2
+
+- Fix remaining broken import
+
 ## 0.6.1
 
 - Fix dodo-upgrade (nothing was executed)
