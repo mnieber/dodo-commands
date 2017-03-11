@@ -69,7 +69,7 @@ class Activator:
         with open(activate_script, "w") as f:
             f.write(lines.replace(
                 r'PS1="(`basename \"$VIRTUAL_ENV\"`) $PS1"',
-                r'PS1="(%s) $PS1"' % self.args.project
+                r'PS1="(%s) $PS1"' % self.project
             ))
 
         pip = local[os.path.join(self._dodo_commands_dir, "env/bin", "pip")]
@@ -148,20 +148,16 @@ class Activator:
     def _project_dir(self):
         return os.path.expanduser(os.path.join(
             self.config.get("DodoCommands", "projects_dir"),
-            self.args.project
+            self.project
         ))
 
     @property
     def _dodo_commands_dir(self):
         return os.path.join(self._project_dir, "dodo_commands")
 
-    @property
-    def _project_name(self):
-        return self.args.project
-
-    def run(self, args):
+    def run(self, project, latest, create):
         """Activate or create a project in the projects dir."""
-        self.args = args
+        self.project = project
 
         create_global_config()
         self.config = self._config()
@@ -171,20 +167,20 @@ class Activator:
             ""
         )
 
-        if self.args.latest:
-            if self.args.project:
+        if latest:
+            if self.project:
                 self._report(
                     "Options --latest and <project> are mutually exclusive\n"
                 )
                 return
-            self.args.project = latest_project
-            if not self.args.project:
+            self.project = latest_project
+            if not self.project:
                 self._report(
                     "There is no latest project\n"
                 )
                 return
 
-        if self.args.create:
+        if create:
             if os.path.exists(self._dodo_commands_dir):
                 self._report(
                     "Project already exists: %s\n" % self._project_dir
@@ -199,8 +195,8 @@ class Activator:
             )
             return
 
-        if self.args.project != latest_project:
-            self.config.set("DodoCommands", "latest_project", self.args.project)
+        if self.project != latest_project:
+            self.config.set("DodoCommands", "latest_project", self.project)
             self._write_config()
 
         sys.stdout.write(
@@ -218,4 +214,5 @@ def main():  # noqa
     group.add_argument('--create', action="store_true")
     group.add_argument('--latest', action="store_true")
 
-    Activator().run(parser.parse_args())
+    args = parser.parse_args()
+    Activator().run(args.project, args.latest, args.create)
