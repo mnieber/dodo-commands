@@ -35,7 +35,6 @@ class DefaultsInstaller:
                 return False
 
         if os.path.exists(dest_dir):
-            self._report_error("%s already exists (no changes were made)." % dest_dir)
             return False
 
         try:
