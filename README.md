@@ -135,15 +135,15 @@ values, which means it's reusable:
     ```bash
     # check value of CMAKE_BUILD_TYPE
     # returns 'release'
-    > dodo config-get /CMAKE/variables/CMAKE_BUILD_TYPE
+    > dodo print-config --key /CMAKE/variables/CMAKE_BUILD_TYPE
 
     > dodo layer debug on
 
     # returns ['debug.on.yaml']
-    > dodo config-get /ROOT/layers
+    > dodo print-config --key /ROOT/layers
 
     # returns 'debug'
-    > dodo config-get /CMAKE/variables/CMAKE_BUILD_TYPE
+    > dodo print-config --key /CMAKE/variables/CMAKE_BUILD_TYPE
 
     ```
 
