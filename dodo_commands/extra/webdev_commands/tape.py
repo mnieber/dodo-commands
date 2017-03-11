@@ -1,6 +1,5 @@
 # noqa
 import argparse
-import os
 from dodo_commands.extra.standard_commands import DodoCommand
 from dodo_commands.framework.util import remove_trailing_dashes
 
@@ -19,13 +18,9 @@ class Command(DodoCommand):  # noqa
         )
 
     def handle_imp(self, tape_args, **kwargs):  # noqa
-        jsx_dir = os.path.join(self.get_config("/ROOT/src_dir"), "jsx")
-        assert os.path.exists(jsx_dir)
-
         self.runcmd(
             [
-                self.get_config("/TAPE/tape_run"),
+                self.get_config("/TAPE/tape"),
                 self.get_config("/TAPE/bundle_file"),
-            ] + remove_trailing_dashes(tape_args),
-            cwd=jsx_dir
+            ] + remove_trailing_dashes(tape_args)
         )
