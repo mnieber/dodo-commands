@@ -2,7 +2,7 @@
 Configuration files
 *******************
 
-Once you have activated a project such as FooBar with :code:`$(dodo-activate FooBar)`, you will continue to work with that project's configuration file and set of command scripts.
+Once you have activated a project such as FooBar with :code:`$(dodo activate FooBar)`, you will continue to work with that project's configuration file and set of command scripts.
 
 Configuration files
 ===================

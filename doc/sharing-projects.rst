@@ -26,7 +26,7 @@ location :code:`~/projects/FooBar/src/extra/dodo_commands/res` and
 commit this to your git repository.
 
 - your colleague starts out by creating an empty Dodo Commands project using
-:code:`dodo-activate FooBar --create`.
+:code:`dodo activate FooBar --create`.
 
 Your colleague then calls the :code:`bootstrap` command to clone the project repository
 and (at the same time) initialize their Dodo Commands configuration with the

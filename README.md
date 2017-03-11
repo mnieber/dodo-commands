@@ -46,13 +46,13 @@ The following steps shows how this is accomplished with Dodo Commands:
 2. enable the standard commands and tutorial projects
 
     ```bash
-    > dodo-install-default-commands standard_commands
+    > dodo install-default-commands standard_commands
     ```
 
 3. create a new dodo_tutorial project
 
     ```bash
-    > $(dodo-activate dodo_tutorial --create)
+    > $(dodo activate dodo_tutorial --create)
     ```
 
 4. Use `dodo bootstrap` to obtain the tutorial configuration files

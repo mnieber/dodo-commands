@@ -9,11 +9,11 @@ After following the :ref:`installation` steps, you can create new projects in th
 Creating a project
 ==================
 
-Projects are created with the dodo-activate command::
+Projects are created with the ``dodo activate`` command::
 
-    dodo-activate FooBar --create
+    dodo activate FooBar --create
 
-Running this command creates a new FooBar project directory with various files. The most important one is the :code:`~/projects/FooBar/dodo_commands/env/bin/dodo` script file. Any further operation on the project is performed by calling this script with the appropriate options.
+Running this command creates a new FooBar project directory with various files. The most important one is the :code:`~/projects/FooBar/dodo_commands/env/bin/dodo` script file. This is a version of the ``dodo`` script that is specific to the created project. Any further operation on the project is performed by calling this script with the appropriate options.
 
 Running a command
 =================
@@ -35,13 +35,13 @@ This call will execute the following steps:
 Activating a project
 ====================
 
-The :code:`~/projects/FooBar/dodo_commands/env/bin/dodo` script is part of a virtual python environment that was installed when we called :code:`dodo-activate FooBar --create`. You can save some typing by first activating this python environment with:
+The :code:`~/projects/FooBar/dodo_commands/env/bin/dodo` script is part of a virtual python environment that was installed when we called :code:`dodo activate FooBar --create`. You can save some typing by first activating this python environment with:
 
 .. code-block:: bash
 
     source ~/projects/FooBar/dodo_commands/env/bin/activate
 
-and then running any further commands with:
+This has the effect that running ``dodo`` will find the project-specific script. You can now run commands against the activated project with:
 
 .. code-block:: bash
 
@@ -51,22 +51,10 @@ The short-cut to activating the python environment is using:
 
 .. code-block:: bash
 
-    $(dodo-activate FooBar)
+    $(dodo activate FooBar)
 
-The way this works is that the dodo-activate command prints the line :code:`source ~/projects/FooBar/dodo_commands/env/bin/activate` to the console, and the :code:`$(...)` syntax takes care of executing this in the shell. To create a new project and activate it at the same time, call:
-
-.. code-block:: bash
-
-    $(dodo-activate FooBar --create)
-
-Adding dodo-activate to .bashrc
-===============================
-
-It's convenient to automatically activate the last used dodo commands project
-when you open a new shell. This can be achieved by adding
+The way this works is that the ``dodo activate`` command prints the line :code:`source ~/projects/FooBar/dodo_commands/env/bin/activate` to the console, and the :code:`$(...)` syntax takes care of executing this in the shell. To create a new project and activate it at the same time, call:
 
 .. code-block:: bash
 
-    $(dodo-activate --latest)
-
-to your `.bashrc`.
+    $(dodo activate FooBar --create)

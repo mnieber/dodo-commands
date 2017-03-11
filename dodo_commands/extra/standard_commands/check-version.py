@@ -25,7 +25,7 @@ class Command(DodoCommand):  # noqa
             actual_version = DodoCommand.get_version().split(".")
             if required_version > actual_version:
                 sys.stdout.write(
-                    'The dodo_commands package needs to be upgraded (%s < %s). Tip: use "dodo-upgrade"\n'
+                    'The dodo_commands package needs to be upgraded (%s < %s). Tip: use "dodo upgrade"\n'
                     % (
                         ".".join(actual_version),
                         ".".join(required_version),
