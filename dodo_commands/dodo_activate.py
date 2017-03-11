@@ -38,16 +38,6 @@ if __name__ == "__main__":
 class Activator:
     """Creates and activates projects."""
 
-    def _args(self):
-        """Get command line args."""
-        parser = argparse.ArgumentParser()
-        parser.add_argument('project', nargs='?')
-
-        group = parser.add_mutually_exclusive_group()
-        group.add_argument('--create', action="store_true")
-        group.add_argument('--latest', action="store_true")
-        return parser.parse_args()
-
     def _config_filename(self):
         return os.path.expanduser("~/.dodo_commands/config")
 
@@ -169,11 +159,11 @@ class Activator:
     def _project_name(self):
         return self.args.project
 
-    def run(self):
+    def run(self, args):
         """Activate or create a project in the projects dir."""
-        create_global_config()
+        self.args = args
 
-        self.args = self._args()
+        create_global_config()
         self.config = self._config()
         latest_project = (
             self.config.get("DodoCommands", "latest_project")
@@ -221,4 +211,11 @@ class Activator:
 
 
 def main():  # noqa
-    Activator().run()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('project', nargs='?')
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--create', action="store_true")
+    group.add_argument('--latest', action="store_true")
+
+    Activator().run(parser.parse_args())
