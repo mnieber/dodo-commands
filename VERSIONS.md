@@ -1,5 +1,11 @@
 # Version history
 
+## 0.6.3
+
+- Replace config-get command by dodo print-config --key
+- Use tape instead of tape-run again in tape command
+- Add --watch argument to webpack command
+
 ## 0.6.2
 
 - Fix remaining broken import
