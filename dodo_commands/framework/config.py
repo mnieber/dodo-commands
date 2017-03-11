@@ -139,10 +139,13 @@ class CommandPath:
                 config.get('ROOT', {}).get('command_path_exclude', []),
             )
         ]
+
+        command_path_list = config.get('ROOT', {}).get('command_path', [])
+        this_dir = os.path.dirname(os.path.dirname(__file__))
+        command_path_list.append([this_dir, "system_commands"])
+
         self.items = [
-            x for x in self._collect_items(
-                config.get('ROOT', {}).get('command_path', [])
-            )
+            x for x in self._collect_items(command_path_list)
             if x.full_path not in excluded_dirs
         ]
 
