@@ -6,35 +6,15 @@ import os
 import sys
 
 
+def _extra_dir():
+    import dodo_commands
+    return os.path.join(
+        os.path.dirname(dodo_commands.__file__), "extra"
+    )
+
+
 class DefaultsInstaller:
     """Adds subdirectories to default_commands."""
-
-    @property
-    def _extra_dir(self):
-        import dodo_commands
-        return os.path.join(
-            os.path.dirname(dodo_commands.__file__), "extra"
-        )
-
-    def _args(self):
-        """Get command line args."""
-        description = (
-            "Install default command directories supplied by the " +
-            "paths argument.\nIn addition, you can install the following " +
-            "directories that come\nstandard with Dodo Commands:\n\n" +
-            ('\n'.join(os.listdir(self._extra_dir)))
-        )
-
-        parser = argparse.ArgumentParser(
-            description=description, formatter_class=RawTextHelpFormatter
-        )
-        parser.add_argument(
-            "paths",
-            nargs='+',
-            help='Create symlinks to these command directories'
-        )
-
-        return parser.parse_args()
 
     def _report_error(self, msg):
         sys.stderr.write(msg + os.linesep)
@@ -47,7 +27,7 @@ class DefaultsInstaller:
         )
 
         if not os.path.exists(path):
-            alt_path = os.path.join(self._extra_dir, path)
+            alt_path = os.path.join(_extra_dir(), path)
             if os.path.exists(alt_path):
                 path = alt_path
             else:
@@ -66,13 +46,28 @@ class DefaultsInstaller:
 
         return True
 
-    def run(self):
+    def run(self, paths):
         """Activate or create a project in the projects dir."""
         create_global_config()
 
-        for path in self._args().paths:
+        for path in paths:
             self._install_commands(path)
 
 
 def main():  # noqa
-    DefaultsInstaller().run()
+    description = (
+        "Install default command directories supplied by the " +
+        "paths argument.\nIn addition, you can install the following " +
+        "directories that come\nstandard with Dodo Commands:\n\n" +
+        ('\n'.join(os.listdir(_extra_dir())))
+    )
+
+    parser = argparse.ArgumentParser(
+        description=description, formatter_class=RawTextHelpFormatter
+    )
+    parser.add_argument(
+        "paths",
+        nargs='+',
+        help='Create symlinks to these command directories'
+    )
+    DefaultsInstaller().run(parser.parse_args().paths)
