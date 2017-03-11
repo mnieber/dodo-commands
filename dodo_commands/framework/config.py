@@ -59,6 +59,9 @@ class ConfigIO:
 
     def load(self, config_filename='config.yaml', load_layers=True):
         """Get configuration."""
+        if not get_project_dir():
+            return None
+
         full_config_filename = self._path_to([config_filename])
         if not os.path.exists(full_config_filename):
             return None
@@ -101,15 +104,16 @@ def load_dodo_config():
 
     config = ConfigIO().load() or dict(ROOT={})
     project_dir = get_project_dir()
-    _add_to_config(
-        config, "ROOT", "project_name", os.path.basename(project_dir))
-    _add_to_config(
-        config, "ROOT", "project_dir", project_dir)
-    _add_to_config(
-        config,
-        "ROOT",
-        "res_dir",
-        os.path.join(project_dir, "dodo_commands", "res"))
+    if project_dir:
+        _add_to_config(
+            config, "ROOT", "project_name", os.path.basename(project_dir))
+        _add_to_config(
+            config, "ROOT", "project_dir", project_dir)
+        _add_to_config(
+            config,
+            "ROOT",
+            "res_dir",
+            os.path.join(project_dir, "dodo_commands", "res"))
     ConfigExpander().run(config)
     return config
 
