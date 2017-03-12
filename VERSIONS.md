@@ -1,5 +1,9 @@
 # Version history
 
+## 0.7.0
+
+- Use a system `dodo` entry point
+
 ## 0.6.3
 
 - Replace config-get command by dodo print-config --key
