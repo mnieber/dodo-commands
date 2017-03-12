@@ -52,14 +52,15 @@ Use ${/ROOT/command_path_exclude} to exclude parts of the command path:
           - default_commands/foo
 
 
+System commands
+===============
+
+The system commands such as ``dodo activate`` are part of the ``dodo_commands.system_commands`` python package. An entry for these commands is added automatically to the command path (you can inspect this with ``dodo print-config``).
+
 Installing command directories from dodo_commands.extra
 =======================================================
 
-If you call :code:`dodo install-default-commands` with a path that is not found, then
-:code:`dodo install-default-commands` will try to locate
-this path inside the `extra` directory of the dodo_commands python package.
-Calling :code:`dodo install-default-commands --help` will show a list of
-command directories that come standard with the dodo_commands package.
+If you call :code:`dodo install-default-commands` with a path that is not found, then :code:`dodo install-default-commands` will try to locate this path inside the `extra` directory of the dodo_commands python package. Calling :code:`dodo install-default-commands --help` will show a list of command directories that come standard with the dodo_commands package.
 
 
 The BaseCommand class

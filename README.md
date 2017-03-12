@@ -61,8 +61,7 @@ The following steps shows how this is accomplished with Dodo Commands:
     > dodo bootstrap src extra/dodo_commands/res --force --git-url https://github.com/mnieber/dodo_commands_tutorial.git
     ```
 
-5. inspect the configuration file of the dodo_tutorial project. This configuration provides the
-   necessary input parameters for cmake and docker:
+5. inspect the configuration file of the dodo_tutorial project. This configuration provides the necessary input parameters for cmake and docker:
 
     ```bash
     > cat $(dodo which --config)
@@ -93,8 +92,7 @@ The following steps shows how this is accomplished with Dodo Commands:
         version: 1.0.0
     ```
 
-6. inspect the code of the 'cmake' command script. Note that this script does not contain project specific
-values, which means it's reusable:
+6. inspect the code of the 'cmake' command script. Note that this script does not contain project specific values, which means it's reusable:
 
     ```bash
     > cat $(dodo which --script cmake)

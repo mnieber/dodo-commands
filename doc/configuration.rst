@@ -33,7 +33,7 @@ A new configuration file is created automatically when the project is first crea
         - (3 + 4)  # evaluates to "7"
         foobar: ${/BUILD/nr_of_threads_EVAL}  # value will be "6"
 
-4. ${/ROOT/layers} lists additional yaml files that are layered on top of the root configuration file. If a key exists both in the root configuration and in a layer configuration, then values replace values, lists are concatenated, and dictionaries are merged. The ROOT/layer_dir value can be used to specify the sub-directory where layer configuration files are searched:
+4. ${/ROOT/layers} lists additional yaml files that are layered on top of the root configuration file. If a key exists both in the root configuration and in a layer configuration, then values replace values, lists are concatenated, and dictionaries are merged. The ${/ROOT/layer_dir} value can be used to specify the sub-directory where layer configuration files are searched:
 
 .. code-block:: yaml
 
@@ -42,7 +42,7 @@ A new configuration file is created automatically when the project is first crea
         layers:
             - buildtype.debug.yaml  # contents of this file are layered on top of this configuration
 
-5. the following magic values are automatically added: ${/ROOT/project_name},  ${/ROOT/project_dir} and ${/ROOT/res_dir}.
+5. the following magic values are automatically added: ${/ROOT/project_name}, ${/ROOT/project_dir}, ${/ROOT/res_dir} and finally the system_commands directory in ${/ROOT/command_path}.
 
 Using the configuration
 =======================

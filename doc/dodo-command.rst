@@ -13,7 +13,7 @@ The runcmd function, and --confirm and --echo flags
 
 The :code:`DodoCommand` class adds: a helper function :code:`runcmd` and two additional flags to each command:
 
-#. the runcmd fucntion takes a list of arguments and runs them on the command line. Moreover, it loads any variables in ${/ENVIRONMENT/variable_map} from the configuration and adds them to the system environment.
+#. the runcmd fucntion takes a list of arguments and runs them on the command line. Moreover, it loads any variables in ${/ENVIRONMENT/variable_map} from the configuration and adds them to the system environment (for the duration of running the command).
 
 #. the :code:`--echo` flag changes the behaviour of :code:`runcmd` so that it only prints the arguments instead of executing them.
 
@@ -75,10 +75,12 @@ If the "docker" decorator is used and the ${/DOCKER/enabled} configuration value
 
 #. each item in $(/DOCKER/volume_list} will be added as a docker volume (where 'item' in the host maps to 'item' in the docker container)
 
-#. each environment variable listed in $(/DOCKER/variable_list} or $(/DOCKER/variable_map} will be added as an environment variable in the docker container.
+#. each item in $(/DOCKER/volumes_from_list} will be added as a docker "volumes_from" argument
+
+#. each environment variable listed in $(/DOCKER/variable_list} or $(/DOCKER/variable_map} will be added as an environment variable in the docker container. Variables in ``variable_list`` have the same name in the host and in the container.
 
 #. each key-value pair in $(/ENVIRONMENT/variable_map} will be added as an environment variable in the docker container.
 
 #. arguments in ${/DOCKER/extra_options} are passed as extra options to the docker command line call.
 
-#. the '--rm' flag is added be default. The '-i' and '-t' flags are added unless you pass the --non-interactive flag.
+#. the '--rm' flag is added by default. The '-i' and '-t' flags are added unless you pass the --non-interactive flag.
