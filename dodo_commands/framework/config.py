@@ -102,7 +102,17 @@ def load_dodo_config():
             if key not in config[section]:
                 config[section][key] = value
 
+    def _system_commands_dir():
+        import dodo_commands.system_commands
+        return os.path.dirname(dodo_commands.system_commands.__file__)
+
     config = ConfigIO().load() or dict(ROOT={})
+
+    _add_to_config(config, "ROOT", "command_path", [])
+    config['ROOT']['command_path'].append(
+        [os.path.dirname(_system_commands_dir()), "system_commands"]
+    )
+
     project_dir = get_project_dir()
     if project_dir:
         _add_to_config(
@@ -145,9 +155,6 @@ class CommandPath:
         ]
 
         command_path_list = config.get('ROOT', {}).get('command_path', [])
-        this_dir = os.path.dirname(os.path.dirname(__file__))
-        command_path_list.append([this_dir, "system_commands"])
-
         self.items = [
             x for x in self._collect_items(command_path_list)
             if x.full_path not in excluded_dirs
