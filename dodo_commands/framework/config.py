@@ -10,6 +10,15 @@ import sys
 import yaml
 
 
+def represent_dict(self, data):
+    """Sorts keys in dict"""
+    items = [x for x in data.items()]
+    items.sort()
+    return self.represent_mapping(u'tag:yaml.org,2002:map', items)
+
+yaml.add_representer(dict, represent_dict)
+
+
 def get_project_dir():
     """Return the root dir of the current project."""
     return os.environ['DODO_COMMANDS_PROJECT_DIR']
