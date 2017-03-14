@@ -11,12 +11,13 @@ class Command(DodoCommand):  # noqa
     ]
 
     def add_arguments_imp(self, parser):  # noqa
+        parser.add_argument('--watch', action="store_true")
         parser.add_argument(
             'nodesass_args',
             nargs=argparse.REMAINDER
         )
 
-    def handle_imp(self, nodesass_args, **kwargs):  # noqa
+    def handle_imp(self, watch, nodesass_args, **kwargs):  # noqa
         nodesass = self.get_config("/SASS/nodesass", "node-sass")
         self.runcmd(
             [
@@ -37,8 +38,7 @@ class Command(DodoCommand):  # noqa
         self.runcmd(
             [
                 nodesass,
-                '-w',
                 self.get_config("/SASS/src_file"),
                 self.get_config("/SASS/output_file")
-            ] + nodesass_args
+            ] + nodesass_args + (["-w"] if watch else [])
         )
