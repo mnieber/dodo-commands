@@ -1,5 +1,9 @@
 # Version history
 
+## 0.7.1
+
+- Write sorted dicts to dodo configuration files
+
 ## 0.7.0
 
 - Use a system `dodo` entry point
