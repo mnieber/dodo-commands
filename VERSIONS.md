@@ -1,5 +1,9 @@
 # Version history
 
+## 0.7.2
+
+- Fix setup.py
+
 ## 0.7.1
 
 - Write sorted dicts to dodo configuration files
