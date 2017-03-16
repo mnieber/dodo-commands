@@ -12,7 +12,7 @@ setup(name='dodo_commands',
       packages=[
           'dodo_commands',
           'dodo_commands.framework',
-          'dodo_commands.framework.system_commands',
+          'dodo_commands.system_commands',
       ],
       package_data={
           'dodo_commands': [
