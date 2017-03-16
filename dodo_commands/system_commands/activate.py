@@ -1,5 +1,5 @@
 # noqa
-from dodo_commands.system_commands import DodoCommand
+from dodo_commands.system_commands import DodoCommand, CommandError
 from dodo_commands.dodo_activate import Activator
 
 
@@ -15,4 +15,6 @@ class Command(DodoCommand):  # noqa
         group.add_argument('--create', action="store_true")
 
     def handle_imp(self, project, latest, create, **kwargs):  # noqa
+        if not project and not latest:
+            raise CommandError("No project was specified")
         Activator().run(project, latest, create)
