@@ -1,6 +1,6 @@
 """Run a django-manage command."""
 import argparse
-from dodo_commands.extra.standard_commands import DodoCommand
+from dodo_commands.system_commands import DodoCommand
 from dodo_commands.framework.util import remove_trailing_dashes
 
 

@@ -102,7 +102,7 @@ The following steps shows how this is accomplished with Dodo Commands:
 
     ```python
     """Configure code with CMake."""
-    from dodo_commands.extra.standard_commands import DodoCommand
+    from dodo_commands.system_commands import DodoCommand
 
     class Command(DodoCommand):  # noqa
         decorators = ['docker']

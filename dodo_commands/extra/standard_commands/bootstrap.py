@@ -1,6 +1,6 @@
 """Pull the latest version of the Dodo Commands system."""
 
-from dodo_commands.extra.standard_commands import DodoCommand, CommandError
+from dodo_commands.system_commands import DodoCommand, CommandError
 import glob
 import os
 import sys

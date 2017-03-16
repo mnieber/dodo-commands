@@ -1,6 +1,6 @@
 # noqa
 import argparse
-from dodo_commands.extra.standard_commands import DodoCommand
+from dodo_commands.system_commands import DodoCommand
 
 class Command(DodoCommand):  # noqa
     help = ""

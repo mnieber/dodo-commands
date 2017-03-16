@@ -1,5 +1,5 @@
 # noqa
-from dodo_commands.extra.standard_commands import DodoCommand
+from dodo_commands.system_commands import DodoCommand
 from dodo_commands.dodo_install_commands import DefaultsInstaller
 
 
