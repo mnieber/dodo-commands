@@ -11,10 +11,34 @@ def _extra_dir():
     )
 
 
+def _packages_in_extra_dir():
+    extra_dir = _extra_dir()
+    packages = [
+        x for x in os.listdir(extra_dir)
+        if os.path.isdir(os.path.join(extra_dir, x))
+        and not x.startswith('__')
+    ]
+
+    if len(packages) == 0:
+        return ""
+
+    if len(packages) == 1:
+        msg = " The %s package is found automagically " % packages[0]
+    else:
+        packages[-1] = "and " + packages[-1]
+        msg = " The %s packages are found automagically " % ", ".join(packages)
+
+    return (
+        msg + "in the dodo_commands.extra package" +
+        ", e.g. the following works: dodo install-default-commands %s." % packages[0]
+    )
+
+
 class Command(DodoCommand):  # noqa
     help = (
         "Install default command directories supplied by the " +
-        "paths argument."
+        "paths argument: dodo install-default-commands " +
+        "/path/to/my/commands. " + _packages_in_extra_dir()
     )
     decorators = []
 
@@ -22,12 +46,12 @@ class Command(DodoCommand):  # noqa
         parser.add_argument(
             "paths",
             nargs='*',
-            help='Create a symlink to these command directories'
+            help='Create symlinks to these command directories'
         )
         parser.add_argument(
             "--pip",
             nargs='*',
-            help='Pip install the commands in these packages and create symlinks'
+            help='Pip install the commands in these packages'
         )
 
     def _report_error(self, msg):
