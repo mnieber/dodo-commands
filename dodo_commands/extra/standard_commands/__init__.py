@@ -108,5 +108,5 @@ class DodoCommand(BaseCommand):  # noqa
                     func & FG
                 return True
             except ProcessExecutionError:
-                print("/nDodo Commands error while running this command:\n\n%s" % func)
+                print("\nDodo Commands error while running this command:\n\n%s" % func)
                 return False
