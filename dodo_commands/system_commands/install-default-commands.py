@@ -96,8 +96,10 @@ class Command(DodoCommand):  # noqa
         if os.path.realpath(dodo_commands_path) != dodo_commands_path:
             raise CommandError("Please deactivate your dodo project first.")
 
-        for path in paths:
-            self._install_commands(path)
+        if paths:
+            for path in paths:
+                self._install_commands(path)
 
-        for package in pip:
-            self._install_package(package)
+        if pip:
+            for package in pip:
+                self._install_package(package)
