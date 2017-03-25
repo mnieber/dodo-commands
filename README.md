@@ -37,19 +37,27 @@ This can be illustrated by the following use-case:
 
 The following steps shows how this is accomplished with Dodo Commands:
 
+0. Install prerequisites
+
+    ```bash
+    > sudo apt-get install python-virtualenv git
+    # optionally, install cmake (without cmake the last step in this README will fail)
+    > sudo apt-get install cmake
+    ```
+
 1. Install
 
     ```bash
     > pip install dodo_commands
     ```
 
-2. enable the standard commands
+2. Enable the standard commands
 
     ```bash
     > dodo install-default-commands standard_commands
     ```
 
-3. create a new dodo_tutorial project
+3. Create a new dodo_tutorial project
 
     ```bash
     > $(dodo activate dodo_tutorial --create)
@@ -61,7 +69,7 @@ The following steps shows how this is accomplished with Dodo Commands:
     > dodo bootstrap src extra/dodo_commands/res --force --git-url https://github.com/mnieber/dodo_commands_tutorial.git
     ```
 
-5. inspect the configuration file of the dodo_tutorial project. This configuration provides the necessary input parameters for cmake and docker:
+5. Inspect the configuration file of the dodo_tutorial project. This configuration provides the necessary input parameters for cmake and docker:
 
     ```bash
     > cat $(dodo which --config)
@@ -92,7 +100,7 @@ The following steps shows how this is accomplished with Dodo Commands:
         version: 1.0.0
     ```
 
-6. inspect the code of the 'cmake' command script. Note that this script does not contain project specific values, which means it's reusable:
+6. Inspect the code of the 'cmake' command script. Note that this script does not contain project specific values, which means it's reusable:
 
     ```bash
     > cat $(dodo which --script cmake)
@@ -122,13 +130,20 @@ The following steps shows how this is accomplished with Dodo Commands:
             )
     ```
 
-7. build the docker image that is associated with the dodo_tutorial project
+7. Build the docker image that is associated with the dodo_tutorial project
 
     ```bash
+    # Requires that docker is installed
     > dodo dockerbuild
     ```
 
-8. enable the debug.on.yaml layer
+    Alternatively, you can edit the configuration file and set `enabled` to `false` under the `DOCKER` key. This has the effect that all commands run on the host machine.
+
+    ```bash
+    > edit $(dodo which --config)
+    ```
+
+8. Enable the debug.on.yaml layer
 
     ```bash
     # check value of CMAKE_BUILD_TYPE
@@ -145,7 +160,7 @@ The following steps shows how this is accomplished with Dodo Commands:
 
     ```
 
-9. do a trial run of the cmake command, without actually running it:
+9. Do a trial run of the cmake command, without actually running it:
 
     ```bash
     > dodo cmake --confirm
