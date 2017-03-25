@@ -1,5 +1,9 @@
 # Version history
 
+## 0.7.5
+
+- Fix crash in install-default-commands when no pip packages are specified
+
 ## 0.7.4
 
 - Fix importing missing dependencies via the meta file
