@@ -44,6 +44,8 @@ Note that the path ``extra/dodo_commands/res`` is relative to the root of the cl
 
 - the additional symlink is used by the ``dodo diff`` command to show the differences between your local configuration files and the default files. Your colleague can freely change their local configuration files and use `dodo diff .` to update the default files and push them.
 
+- we recommend to set :code:`meld` as the ``diff_tool`` in :code:`~/.dodo_commands/config`.
+
 - if you call ``dodo bootstrap`` with ``--confirm`` but without the ``--git-url`` argument, then it doesn't clone the git repository but only creates the symlink (when it asks to copy configuration files, answer 'no') :
 
 .. code-block:: bash
@@ -51,3 +53,10 @@ Note that the path ``extra/dodo_commands/res`` is relative to the root of the cl
     dodo bootstrap src extra/dodo_commands/res --confirm
 
 - To synchronize only config.yaml, call ``dodo diff config.yaml``. It's a good practice to use the value ${/ROOT/version} to track whether the copied configuration is up-to-date or not.
+
+
+Checking the config version
+===========================
+
+The ``dodo check-config-version`` command compares the ``${/ROOT/version}`` value in your local configuration with the value in the (shared) default configuration. If someone bumped the version in the shared configuration, it will tell you that your local configuration is not up-to-date (use ``dodo diff .`` to synchronize).
+One of the values that you synchronize with ``dodo diff .`` is ``${/ROOT/required_dodo_commands_version}``. The ``dodo check-version`` command reads this value and warns you if your Dodo Commands version is too old (if it is, then you can run ``dodo upgrade`` to upgrade Dodo Commands).

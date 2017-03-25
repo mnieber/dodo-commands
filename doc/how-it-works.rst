@@ -67,3 +67,27 @@ The way this works is that the ``dodo activate`` command prints the line ``sourc
 .. code-block:: bash
 
     $(dodo activate FooBar --create)
+
+
+Activating the last used project
+================================
+
+Dodo Commands remembers which project was last activated. You can activate the last used project with ``$(dodo activate --latest)``. It's usually convenient to activate the latest project whenever you open a terminal. Calling ``dodo autostart on`` writes a small script file to ``~/.dodo_commands_autostart``.
+
+.. code-block:: bash
+
+    dodo autostart on
+    cat ~/.dodo_commands_autostart
+
+    > $(dodo activate --latest)
+    > dodo check-config-version
+
+Add the following lines to your ``~/.bashrc`` to execute this script when a terminal is opened:
+
+.. code-block:: bash
+
+    if [ -f ~/.dodo_commands_autostart ]; then
+        . ~/.dodo_commands_autostart
+    fi
+
+If you want to disable the autostart behaviour, call ``dodo autostart off``. This will delete the ``~/.dodo_commands_autostart`` file.
