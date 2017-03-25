@@ -1,5 +1,14 @@
 # Version history
 
+## 0.7.4
+
+- Fix importing missing dependencies via the meta file
+- Obtain version with dodo --version
+- Move git_commands and webdev_commands to external git repos
+- Allow to install pip packages in install-default-commands
+- Prevent running dodo upgrade with activated dodo project
+- Fix crash in dodo activate when no project is specified
+
 ## 0.7.3
 
 - Fix setup.py

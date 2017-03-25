@@ -227,7 +227,7 @@ class ManagementUtility(object):
 
     @staticmethod
     def get_version():  # noqa
-        return "0.7.3"
+        return "0.7.4"
 
     def execute(self):
         """
