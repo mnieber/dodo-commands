@@ -60,6 +60,16 @@ Use ${/ROOT/command_path_exclude} to exclude parts of the command path:
           - default_commands/foo
 
 
+Specifying command dependencies in the .meta file
+=================================================
+
+Each Dodo command should ideally run out-of-the-box. If your ``foo`` command needs additional Python packages, you can describe them in a ``foo.meta`` file:
+
+.. code-block:: yaml
+
+    requirements:
+    - dominate==2.2.0
+
 System commands
 ===============
 

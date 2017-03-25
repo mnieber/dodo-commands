@@ -86,29 +86,24 @@ def load_command_class(module_dir, name):
                 [pip, "install"] + meta_data['requirements'])
             print("--- Done ---\n\n")
 
-    import_path = '%s.%s' % (module_dir.replace("/", "."), name)
+    package_path = module_dir.replace("/", ".")
+    import_path = '%s.%s' % (package_path, name)
     if module_dir in ("", None, "."):
         import_path = name
 
     try:
         module = import_module(import_path)
     except ImportError as e:
-        meta_data_filename = os.path.join(
-            get_project_dir(),
-            module_dir,
-            name + ".meta"
-        )
-
-        if os.path.exists(meta_data_filename):
-            install_packages(meta_data_filename)
-
-            # try import once again
-            try:
+        try:
+            base_path = import_module(package_path).__path__[0]
+            meta_data_filename = os.path.join(base_path, name + ".meta")
+            if os.path.exists(meta_data_filename):
+                install_packages(meta_data_filename)
                 module = import_module(import_path)
-            except ImportError as e:
+            else:
                 print(traceback.print_exc(e))
                 sys.exit(1)
-        else:
+        except ImportError as e:
             print(traceback.print_exc(e))
             sys.exit(1)
 

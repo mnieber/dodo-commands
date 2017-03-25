@@ -1,3 +1,2 @@
-{
-    "requirements": ["dominate==2.2.0"]
-}
+requirements:
+    - dominate==2.2.0
