@@ -189,10 +189,12 @@ class ManagementUtility(object):
         else:
             usage = [
                 "",
+                "Version %s (%s --version)." % (
+                    self.get_version(), self.prog_name
+                ),
                 "Type '%s help <subcommand>' for help on "
                 "a specific subcommand." % self.prog_name,
-                "",
-                "Available subcommands:",
+                "Available subcommands (dodo help --commands):",
             ]
             commands_dict = defaultdict(lambda: [])
             for name, app in commands.items():
@@ -228,6 +230,10 @@ class ManagementUtility(object):
             klass = load_command_class(module_name, subcommand)
         return klass
 
+    @staticmethod
+    def get_version():  # noqa
+        return "0.7.3"
+
     def execute(self):
         """
         Execute subcommand.
@@ -261,7 +267,9 @@ class ManagementUtility(object):
 
         args = self.argv[2:]
 
-        if subcommand == 'help':
+        if subcommand == '--version':
+            sys.stdout.write(self.get_version() + '\n')
+        elif subcommand == 'help':
             if '--commands' in args:
                 sys.stdout.write(
                     self.main_help_text(

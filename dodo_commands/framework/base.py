@@ -86,10 +86,6 @@ class BaseCommand(object):  # noqa
         else:
             return usage
 
-    @staticmethod
-    def get_version():  # noqa
-        return "0.7.3"
-
     def create_parser(self, prog_name, subcommand):  # noqa
         """
         Create and return the ``ArgumentParser`` which will be used to
@@ -98,8 +94,6 @@ class BaseCommand(object):  # noqa
         parser = CommandParser(
             self, prog="%s %s" % (os.path.basename(prog_name), subcommand),
             description=self.help or None)
-        parser.add_argument(
-            '--version', action='version', version=self.get_version())
         parser.add_argument(
             '--traceback', action='store_true',
             help=SUPPRESS)
