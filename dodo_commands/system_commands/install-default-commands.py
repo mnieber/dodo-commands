@@ -29,7 +29,7 @@ def _packages_in_extra_dir():
         msg = " The %s packages are found automagically " % ", ".join(packages)
 
     return (
-        msg + "in the dodo_commands.extra package" +
+        msg + " in the dodo_commands.extra package" +
         ", e.g. the following works: dodo install-default-commands %s." % packages[0]
     )
 

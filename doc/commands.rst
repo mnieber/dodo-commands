@@ -11,8 +11,16 @@ The default Dodo command scripts are stored in :code:`~/.dodo_commands/default_c
 
 .. code-block:: bash
 
-    # adds a subdirectory ~/.dodo_commands/default_commands/mycommands
-    dodo install-default-commands /path/to/mycommands
+    # creates a symlink to ``my_commands`` in ``~/.dodo_commands/default_commands/my_commands``
+    dodo install-default-commands /path/to/my_commands
+
+or
+
+.. code-block:: bash
+
+    # adds ``~/.dodo_commands/default_commands/mycommands`` by installing the
+    # ``my_commands`` package
+    dodo install-default-commands --pip my_commands
 
 All search paths for commands are specified by the ${/ROOT/command_path} setting in config.yaml:
 

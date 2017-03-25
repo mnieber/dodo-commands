@@ -43,7 +43,7 @@ The following steps shows how this is accomplished with Dodo Commands:
     > pip install dodo_commands
     ```
 
-2. enable the standard commands and tutorial projects
+2. enable the standard commands
 
     ```bash
     > dodo install-default-commands standard_commands
