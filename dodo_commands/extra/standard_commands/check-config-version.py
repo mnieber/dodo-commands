@@ -1,5 +1,6 @@
 """Compare configuration version to version in original project config file."""
 from . import DodoCommand
+from dodo_commands.framework.util import bordered
 import os
 import sys
 import yaml
@@ -33,10 +34,11 @@ class Command(DodoCommand):  # noqa
             return
 
         if copied_version[:2] < original_version[:2]:
-            sys.stdout.write(
+            sys.stdout.write(bordered(
                 'Configuration needs update (%s < %s). Tip: use "dodo diff ."\n'
                 % (
                     ".".join(copied_version),
                     ".".join(original_version),
                 )
-            )
+            ))
+            sys.stdout.write('\n')
