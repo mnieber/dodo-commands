@@ -1,5 +1,10 @@
 # Version history
 
+## 0.7.6
+
+- Print clearer warning in check-version and check-config-version
+- Fix broken reference to get_version
+
 ## 0.7.5
 
 - Fix crash in install-default-commands when no pip packages are specified
