@@ -1,5 +1,6 @@
 """Compare configuration version to version in original project config file."""
 from . import DodoCommand
+from dodo_commands.framework import get_version
 import os
 import sys
 import yaml
@@ -22,7 +23,7 @@ class Command(DodoCommand):  # noqa
 
         required_version = self._get_version(config_filename)
         if required_version:
-            actual_version = DodoCommand.get_version().split(".")
+            actual_version = get_version().split(".")
             if required_version > actual_version:
                 sys.stdout.write(
                     'The dodo_commands package needs to be upgraded (%s < %s). Tip: use "dodo upgrade"\n'

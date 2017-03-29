@@ -50,6 +50,10 @@ from dodo_commands.framework.base import (
 )
 
 
+def get_version():  # noqa
+    return "0.7.5"
+
+
 def find_commands(module_dir):
     """
     Return a list of all the command names.
@@ -185,7 +189,7 @@ class ManagementUtility(object):
             usage = [
                 "",
                 "Version %s (%s --version)." % (
-                    self.get_version(), self.prog_name
+                    get_version(), self.prog_name
                 ),
                 "Type '%s help <subcommand>' for help on "
                 "a specific subcommand." % self.prog_name,
@@ -225,10 +229,6 @@ class ManagementUtility(object):
             klass = load_command_class(module_name, subcommand)
         return klass
 
-    @staticmethod
-    def get_version():  # noqa
-        return "0.7.5"
-
     def execute(self):
         """
         Execute subcommand.
@@ -263,7 +263,7 @@ class ManagementUtility(object):
         args = self.argv[2:]
 
         if subcommand == '--version':
-            sys.stdout.write(self.get_version() + '\n')
+            sys.stdout.write(get_version() + '\n')
         elif subcommand == 'help':
             if '--commands' in args:
                 sys.stdout.write(
