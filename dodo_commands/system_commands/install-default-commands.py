@@ -85,6 +85,16 @@ class Command(DodoCommand):  # noqa
 
     def _install_package(self, package):
         pip = os.path.join(os.path.dirname(sys.executable), "pip")
+        if pip.startswith('/usr/') and not os.path.exists(pip):
+            alt_pip = pip.replace("/usr/", "/usr/local/")
+            if os.path.exists(alt_pip):
+                pip = alt_pip
+            else:
+                raise CommandError(
+                    "Expected to find a pip executable at location %s or %s."
+                    % (pip, alt_pip)
+                )
+
         default_commands_dir = os.path.expanduser("~/.dodo_commands/default_commands")
         self.runcmd([
             pip, 'install', '--upgrade', '--target', default_commands_dir, package
