@@ -1,5 +1,9 @@
 # Version history
 
+## 0.7.7
+
+- Handle case where pip is located inside /usr/local instead of /usr
+
 ## 0.7.6
 
 - Print clearer warning in check-version and check-config-version
