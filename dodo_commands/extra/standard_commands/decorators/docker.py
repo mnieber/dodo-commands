@@ -35,6 +35,10 @@ class Decorator:  # noqa
         )
 
     @classmethod
+    def _get_linked_container_list(cls, get_config, prefix=""):
+        return [prefix + "%s" % x for x in get_config('/DOCKER/link_list', [])]
+
+    @classmethod
     def get_docker_args(cls, get_config, extra_options):
         """
         Get docker args.
@@ -51,6 +55,7 @@ class Decorator:  # noqa
             cls._get_docker_variable_list(get_config, '--env=') +
             cls._get_docker_volume_list(get_config, '--volume=') +
             cls._get_docker_volumes_from_list(get_config, '--volumes-from=') +
+            cls._get_linked_container_list(get_config, '--link=') +
             get_config('/DOCKER/extra_options', []) +
             [
                 get_config('/DOCKER/image'),
