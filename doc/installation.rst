@@ -42,6 +42,10 @@ The :code:`standard_commands` directory was found "magically"
 because it comes with the Dodo Commands python package.
 To read more about installing default commands, see :ref:`commands`.
 
+.. tip::
+
+   On Mac you may need to create a file ``~/.distutils.cfg`` that `sets an empty prefix <http://stackoverflow.com/a/24357384/301034>`_ to prevent errors stating "must supply either home or prefix/exec-prefix -- not both".
+
 
 Step 4: (Optional) Create aliases
 =================================

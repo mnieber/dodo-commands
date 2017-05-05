@@ -24,7 +24,7 @@ Dodo Commands offers a structured way to keep separated work environments for yo
 
 - each project has its own associated command scripts, configuration files and python environment
 - you run these commands from a single entry point (so you don't have to remember script locations)
-- command script can refer to project configuration values, so you can separate logic from configuration
+- command scripts can refer to project configuration values, so you can separate logic from configuration
 - you can turn on/off extra configuration layers that override your basic configuration values. This allows you - for example - to quickly switch between different C++ compilers.
 - auto-completion is provided for the command script names and their arguments (when using bash)
 
