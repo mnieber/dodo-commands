@@ -11,6 +11,7 @@ from dodo_commands.framework.util import query_yes_no
 
 
 class DodoCommand(BaseCommand):  # noqa
+    safe = True
     decorators = []
     _loaded_decorators = None
 
@@ -70,6 +71,22 @@ class DodoCommand(BaseCommand):  # noqa
     ):
         self.opt_confirm = confirm
         self.opt_echo = echo
+
+        if echo and not self.safe:
+            raise CommandError(
+                "The --echo option is not supported for unsafe commands.\n" +
+                "Since this command is marked as unsafe, some operations will " +
+                "be performed directly, instead of echoed to the console. " +
+                "Use --confirm if you wish to execute with visual feedback. "
+            )
+
+        if confirm and not self.safe:
+            if not query_yes_no(
+                "Since this command is marked as unsafe, some operations will " +
+                "be performed without asking for confirmation. Continue?",
+                default="no"
+            ):
+                return
 
         for decorator in self._get_decorators():
             decorator.handle(self, **kwargs)

@@ -29,6 +29,8 @@ def _get_list_of_layers(layers, layer, value):
 
 
 class Command(DodoCommand):  # noqa
+    safe = False
+
     def add_arguments_imp(self, parser):  # noqa
         parser.add_argument('layer')
         parser.add_argument('value')

@@ -13,13 +13,23 @@ The runcmd function, and --confirm and --echo flags
 
 The :code:`DodoCommand` class adds: a helper function :code:`runcmd` and two additional flags to each command:
 
-#. the runcmd fucntion takes a list of arguments and runs them on the command line. Moreover, it loads any variables in ${/ENVIRONMENT/variable_map} from the configuration and adds them to the system environment (for the duration of running the command).
+#. the runcmd function takes a list of arguments and runs them on the command line. Moreover, it loads any variables in ${/ENVIRONMENT/variable_map} from the configuration and adds them to the system environment (for the duration of running the command).
 
 #. the :code:`--echo` flag changes the behaviour of :code:`runcmd` so that it only prints the arguments instead of executing them.
 
 #. the :code:`--confirm` flag changes the behaviour of :code:`runcmd` so that it asks for confirmation before executing a command line.
 
 Because the :code:`DodoCommand` class implements :code:`add_arguments` and :code:`handle`, subclasses must now implement :code:`add_arguments_imp` and :code:`handle_imp` instead.
+
+Note that since command scripts are written in Python, it's not guaranteed that all operations are confirmed or echoed to the screen. If you write a command script that doesn't completely honor the --confirm and --echo flags, you should mark it with ``safe = False``, as shown in the example below. Unsafe commands will not run with the --echo flag, and will pause with a warning when run with the --confirm flag.
+
+.. code-block:: python
+
+    class Command(DodoCommand):  # noqa
+        safe = False
+
+        # rest of the command goes here...
+
 
 Decorators
 ==========

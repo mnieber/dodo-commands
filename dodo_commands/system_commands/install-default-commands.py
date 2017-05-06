@@ -41,6 +41,7 @@ class Command(DodoCommand):  # noqa
         "/path/to/my/commands. " + _packages_in_extra_dir()
     )
     decorators = []
+    safe = False
 
     def add_arguments_imp(self, parser):  # noqa
         parser.add_argument(

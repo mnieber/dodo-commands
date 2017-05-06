@@ -8,6 +8,7 @@ class Command(DodoCommand):  # noqa
         "Writes (or removes) a small script that activates the latest " +
         "Dodo Commands project"
     )
+    safe = False
     decorators = []
 
     def add_arguments_imp(self, parser):  # noqa

@@ -26,6 +26,7 @@ class Command(DodoCommand):  # noqa
 
 class Command(DodoCommand):  # noqa
     help = "Creates a new Dodo command."
+    safe = False
 
     def add_arguments_imp(self, parser):  # noqa
         """
