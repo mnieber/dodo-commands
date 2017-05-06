@@ -105,7 +105,7 @@ class Command(DodoCommand):  # noqa
         import dodo_commands
         dodo_commands_path = dodo_commands.__path__[0]
         if os.path.realpath(dodo_commands_path) != dodo_commands_path:
-            raise CommandError("Please deactivate your dodo project first.")
+            raise CommandError("Please deactivate your dodo project first by running 'deactivate'.")
 
         if paths:
             for path in paths:
