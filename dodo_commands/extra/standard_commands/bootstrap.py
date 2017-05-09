@@ -87,7 +87,8 @@ class Command(DodoCommand):  # noqa
         **kwargs
     ):  # noqa
         self.project_dir = self.get_config('/ROOT/project_dir')
-        clone_dir = os.path.join(self.project_dir, clone_dir)
+        if not os.path.isabs(clone_dir):
+            clone_dir = os.path.join(self.project_dir, clone_dir)
         project_defaults_dir = os.path.join(
             clone_dir, project_defaults_dir
         )
