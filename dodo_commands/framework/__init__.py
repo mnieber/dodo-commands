@@ -34,7 +34,7 @@
 import argcomplete
 from argparse import ArgumentParser
 from collections import defaultdict
-import yaml
+import ruamel.yaml
 import os
 import pkgutil
 import subprocess
@@ -80,7 +80,7 @@ def load_command_class(module_dir, name):
     def install_packages(meta_data_filename):
         """Pip install packages found in meta_data_filename."""
         with open(meta_data_filename) as f:
-            meta_data = yaml.load(f.read())
+            meta_data = ruamel.yaml.round_trip_load(f.read())
             print("\n--- Installing from %s ---" % meta_data_filename)
             pip = os.path.join(
                 get_project_dir(),

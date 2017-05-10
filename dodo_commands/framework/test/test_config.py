@@ -2,7 +2,7 @@
 
 import os
 import pytest
-import yaml
+import ruamel.yaml
 from ..config import ConfigIO
 
 
@@ -49,9 +49,7 @@ class TestConfigIO:  # noqa
         os.mkdir(layer_dir)
         layer_filename = os.path.join(layer_dir, "mylayer.yml")
         with open(layer_filename, "w") as f:
-            f.write(
-                yaml.dump(self.layer, default_flow_style=False, indent=4)
-            )
+            f.write(ruamel.yaml.round_trip_dump(self.layer))
 
     def test_save(self, tmpdir):  # noqa
         configIO = ConfigIO(str(tmpdir))  # noqa

@@ -5,18 +5,8 @@ from dodo_commands.framework.config_expander import ConfigExpander
 from dodo_commands.framework.config_expander import Key, KeyNotFound  # noqa
 import glob
 import os
-import re
 import sys
-import yaml
-
-
-def represent_dict(self, data):
-    """Sorts keys in dict"""
-    items = [x for x in data.items()]
-    items.sort()
-    return self.represent_mapping(u'tag:yaml.org,2002:map', items)
-
-yaml.add_representer(dict, represent_dict)
+import ruamel.yaml
 
 
 def get_project_dir():
@@ -76,7 +66,7 @@ class ConfigIO:
             return None
 
         with open(full_config_filename) as f:
-            config = yaml.load(f.read())
+            config = ruamel.yaml.round_trip_load(f.read())
         if load_layers:
             for layer_filename in self._layers(config):
                 if os.path.exists(layer_filename):
@@ -88,20 +78,8 @@ class ConfigIO:
 
     def save(self, config, config_filename='config.yaml'):
         """Write config to config_filename."""
-        content = yaml.dump(config, default_flow_style=False, indent=4)
         with open(self._path_to([config_filename]), 'w') as f:
-            formatted_content = re.sub(
-                r'^([0-9_A-Z]+\:)$',
-                r'\n\1',
-                content,
-                flags=re.MULTILINE
-            )
-            return f.write(
-                # swallow the leading newline
-                formatted_content[1:]
-                if formatted_content[0] == '\n' else
-                formatted_content
-            )
+            return f.write(ruamel.yaml.round_trip_dump(config))
 
 
 def load_dodo_config():

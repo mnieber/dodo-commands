@@ -4,13 +4,13 @@ from dodo_commands.framework import get_version
 from dodo_commands.framework.util import bordered
 import os
 import sys
-import yaml
+import ruamel.yaml
 
 
 class Command(DodoCommand):  # noqa
     def _get_version(self, config_filename):
         with open(config_filename) as f:
-            config = yaml.load(f.read())
+            config = ruamel.yaml.round_trip_load(f.read())
         version = config.get("ROOT", {}).get("required_dodo_commands_version", "").split(".")
         return [x for x in version if x != ""]
 

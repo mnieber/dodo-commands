@@ -34,7 +34,7 @@ setup(name='dodo_commands',
       install_requires=[
           'argcomplete',
           'plumbum',
-          'PyYaml',
+          'ruamel.yaml',
           'six',
       ],
       zip_safe=False)

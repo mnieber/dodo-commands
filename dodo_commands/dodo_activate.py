@@ -3,7 +3,7 @@ import argparse
 from six.moves import configparser
 import os
 import sys
-import yaml
+import ruamel.yaml
 from plumbum import local
 import dodo_commands
 
@@ -72,7 +72,7 @@ class Activator:
             ))
 
         pip = local[os.path.join(self._dodo_commands_dir, "env/bin", "pip")]
-        pip("install", "argcomplete", "plumbum", "PyYAML", "six")
+        pip("install", "argcomplete", "plumbum", "ruamel.yaml", "six")
 
         python = local[os.path.join(self._dodo_commands_dir, "env/bin", "python")]
         site_packages_dir = python(
@@ -122,11 +122,7 @@ class Activator:
             }
         }
         with open(config_filename, "w") as f:
-            f.write(
-                yaml.dump(
-                    default_config, default_flow_style=False, indent=4
-                )
-            )
+            f.write(ruamel.yaml.round_trip_dump(default_config))
 
     def _create_project(self):
         self._report(

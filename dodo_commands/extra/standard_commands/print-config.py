@@ -1,6 +1,7 @@
 """Print the full configuration."""
 
-import yaml
+import ruamel.yaml
+import re
 from . import DodoCommand
 
 
@@ -12,4 +13,17 @@ class Command(DodoCommand):  # noqa
         if key:
             print("%s" % str(self.get_config(key, '')))
         else:
-            print(yaml.dump(self.config, default_flow_style=False, indent=4))
+            content = re.sub(
+                r'^([0-9_A-Z]+\:)$',
+                r'\n\1',
+                ruamel.yaml.round_trip_dump(self.config),
+                flags=re.MULTILINE
+            )
+            print(
+                re.sub(
+                    r'^\n\n',
+                    r'\n',
+                    content,
+                    flags=re.MULTILINE
+                )
+            )
