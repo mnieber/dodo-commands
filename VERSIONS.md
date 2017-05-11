@@ -1,5 +1,12 @@
 # Version history
 
+## 0.7.8
+
+- Replace PyYAML with ruamel.yaml
+- Add flag --sudo to dodo upgrade
+- Mark commands that do not honor --confirm and --echo as unsafe
+- Use /DOCKER/link_list to link containers in docker decorator
+
 ## 0.7.7
 
 - Handle case where pip is located inside /usr/local instead of /usr
