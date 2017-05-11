@@ -2,14 +2,15 @@
 Configuration files
 *******************
 
-Once you have activated a project such as FooBar with :code:`$(dodo activate FooBar)`, you will continue to work with that project's configuration file and set of command scripts.
+Once you have activated a project such as FooBar with :code:`$(dodo activate FooBar)`, you will continue to work with that project's configuration file and set of command scripts. This chapter explains how to store values in the configuration file and use them in a command script.
+
 
 Configuration files
 ===================
 
 A new configuration file is created automatically when the project is first created (e.g. :code:`~/projects/FooBar/dodo_commands/res/config.yaml`). The configuration file uses the yaml format, with a few extra rules:
 
-1. environment variables in values are expanded automatically
+1. environment variables (such as ``$PATH``) in values are expanded automatically
 
 2. special "dodo environment" variables refer to other values in the configuration file:
 
@@ -33,16 +34,24 @@ A new configuration file is created automatically when the project is first crea
         - (3 + 4)  # evaluates to "7"
         foobar: ${/BUILD/nr_of_threads_EVAL}  # value will be "6"
 
-4. ${/ROOT/layers} lists additional yaml files that are layered on top of the root configuration file. If a key exists both in the root configuration and in a layer configuration, then values replace values, lists are concatenated, and dictionaries are merged. The ${/ROOT/layer_dir} value can be used to specify the sub-directory where layer configuration files are searched:
+4. ``${/ROOT/layers}`` lists additional yaml files that are layered on top of the root configuration file. If a key exists both in the root configuration and in a layer configuration, then values replace values, lists are concatenated, and dictionaries are merged. The ``${/ROOT/layer_dir}`` value can be used to specify the sub-directory where layer configuration files are searched:
 
 .. code-block:: yaml
 
     ROOT:
         layer_dir: layers
         layers:
-            - buildtype.debug.yaml  # contents of this file are layered on top of this configuration
+            # contents of this file are layered on top of this configuration
+            - buildtype.debug.yaml
 
-5. the following magic values are automatically added: ${/ROOT/project_name}, ${/ROOT/project_dir}, ${/ROOT/res_dir} and finally the system_commands directory in ${/ROOT/command_path}.
+Layers can be switched on and off with the ``dodo layer`` command. For example, to replace the layer ``buildtype.debug.yaml`` with ``buildtype.release.yaml`` call:
+
+.. code-block:: bash
+
+    dodo layer buildtype release
+
+
+5. the following magic values are automatically added: ``${/ROOT/project_name}``, ``${/ROOT/project_dir}``, ``${/ROOT/res_dir}`` and finally the system_commands directory in ``${/ROOT/command_path}``.
 
 Using the configuration
 =======================

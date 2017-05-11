@@ -4,18 +4,16 @@
 How the Dodo Commands system works
 **********************************
 
-After following the :ref:`installation` steps, you can create new projects in the projects directory and work with them. We'll explain how it works the long and clunky way, and then how the same can be done faster.
+After following the :ref:`installation` steps, you now have a "dodo" executable (called the "system dodo") that you can use to create new projects in the projects directory. Each dodo project has it's own copy of the dodo executable (called the "project" dodo). By calling the "project" dodo, you can operate on the project. We'll explain how this works the long and clunky way, and then how the same can be done much faster.
 
 System dodo script
 ==================
 
-The entry point for running dodo commands is the ``dodo`` script. To see where it's located type:
+The entry point for running dodo commands is the system ``dodo`` script. To see where it's located type:
 
 .. code-block:: bash
 
     which dodo
-
-In a minute we'll learn that each Dodo Commands project has it's own copy of the ``dodo`` script. When you are working on a Dodo Commands project, you will use the "project" dodo, and otherwise the "system" dodo. Though in practice these scripts work the same, and you will not notice a difference in behaviour, it's important to understand this distinction.
 
 Creating a project
 ==================
@@ -24,7 +22,7 @@ Projects are created with the ``dodo activate`` command::
 
     dodo activate FooBar --create
 
-Running this command creates a new FooBar project directory with various files. The most important one is the ``~/projects/FooBar/dodo_commands/env/bin/dodo`` script file. This is a version of the ``dodo`` script that is specific to the created project. When you call this ``dodo`` script, it's implied that you are operating on the ``FooBar`` project.
+Running this command creates a new FooBar project directory with various files. The most important one is the ``~/projects/FooBar/dodo_commands/env/bin/dodo`` script file. This is a copy of the ``dodo`` script that is specific to the created project. When you call this ``dodo`` script, it's implied that you are operating on the ``FooBar`` project.
 
 Running a command
 =================
@@ -69,6 +67,8 @@ The way this works is that the ``dodo activate`` command prints the line ``sourc
     $(dodo activate FooBar --create)
 
 
+.. _autostart:
+
 Activating the last used project
 ================================
 
@@ -90,4 +90,4 @@ Add the following lines to your ``~/.bashrc`` to execute this script when a term
         . ~/.dodo_commands_autostart
     fi
 
-If you want to disable the autostart behaviour, call ``dodo autostart off``. This will delete the ``~/.dodo_commands_autostart`` file.
+If you want to disable the autostart behaviour, call ``dodo autostart off``. This will delete the ``~/.dodo_commands_autostart`` file, and therefore disable the automatic project activation.

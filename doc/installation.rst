@@ -38,9 +38,7 @@ At this point, the Dodo Commands framework is installed but it will not contain 
 
     dodo install-default-commands standard_commands
 
-The :code:`standard_commands` directory was found "magically"
-because it comes with the Dodo Commands python package.
-To read more about installing default commands, see :ref:`commands`.
+The :code:`standard_commands` directory was found "magically" because it comes with the Dodo Commands python package. Commands are installed in the ``~/.dodo_commands/default_commands`` directory. To read more about installing default commands, see :ref:`commands`.
 
 .. tip::
 
@@ -55,7 +53,7 @@ into a virtual environment.
 
 To make sure that the :code:`dodo` command is always found,
 call :code:`which dodo` and add the resulting path (the directory part) to the PATH in
-in your :code:`~/.bashrc`. The result could look like this:
+in your :code:`~/.bashrc`. The result should look something like this:
 
 .. code-block:: bash
 
@@ -71,11 +69,12 @@ To automatically activate the last used Dodo Commands project, add this line to 
 
     $(dodo activate --latest)
 
+If you wish to be able to toggle the automatic activation on and off, read about the :ref:`autostart` command.
 
 Step 6: (Optional) Tweak global configuration
 =============================================
 
-The first time you call :code:`dodo` a global Dodo Commands settings file at location :code:`~/.dodo_commands/config` is created (unless it already exists):
+The first time you call :code:`dodo`, a global :code:`~/.dodo_commands/config` file is created (unless it already exists) with the following settings:
 
 - :code:`projects_dir` is the location where your projects are stored (defaults to :code:`~/projects`)
 

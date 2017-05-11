@@ -26,13 +26,15 @@ The proposed solution to the above problem is the following:
 - your colleague starts out by creating an empty Dodo Commands project using
 ``dodo activate FooBar --create``.
 
-Your colleague then calls the ``bootstrap`` command to clone the project repository and (at the same time) initialize their Dodo Commands configuration with a *copy* of the default configuration files:
+Your colleague then calls the ``bootstrap`` command to clone the project repository and initialize their Dodo Commands configuration with a *copy* of the default configuration files:
 
 .. code-block:: bash
 
     dodo bootstrap src extra/dodo_commands/res --force --git-url https://github.com/foo/foobar.git
 
-Note that the path ``extra/dodo_commands/res`` is relative to the root of the cloned repository. At this point, your colleague has the same directory structure as you, with one additional symlink:
+In the above example, the repository is cloned to the ``src`` subdirectory of the project directory. After cloning, all default configuration files are copied from the ``extra/dodo_commands/res`` location (which is relative to the root of the cloned repository). Finally, the location of the cloned sources (``src``) is stored in the configuration under the ``${/ROOT/src_dir}`` key.
+
+At this point, your colleague has the same directory structure as you, with one additional symlink:
 
 .. code-block:: bash
 
@@ -52,7 +54,26 @@ Note that the path ``extra/dodo_commands/res`` is relative to the root of the cl
 
     dodo bootstrap src extra/dodo_commands/res --confirm
 
-- To synchronize only config.yaml, call ``dodo diff config.yaml``. It's a good practice to use the value ${/ROOT/version} to track whether the copied configuration is up-to-date or not.
+- To synchronize only config.yaml, call ``dodo diff config.yaml``. It's a good practice to use the value ``${/ROOT/version}`` to track whether the copied configuration is up-to-date or not.
+
+
+Bootstrapping with monolithic repositories
+==========================================
+
+A monolithic repository may contain several projects that each have their own Dodo Commands configuration. In this scenario, several Dodo Commands projects should share the same source tree:
+
+.. code-block:: bash
+
+    # Get monolithic repository.
+
+    cd ~/sources
+    git clone https://github.com/foo/monolith.git
+
+    # Bootstrap the foobar project without cloning the sources.
+    # Copy configuration from ~/sources/monolith/foobar/extra/dodo_commands/res
+
+    $(dodo activate --create foobar)
+    dodo bootstrap ~/sources/monolith/foobar extra/dodo_commands/res --force
 
 
 Checking the config version

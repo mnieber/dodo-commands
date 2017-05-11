@@ -4,24 +4,23 @@
 The DodoCommand class
 *********************
 
-The :code:`BaseCommand` class is pretty simple: it offers access to the project configuration
-and a command line parser. The :code:`DodoCommand` class extends BaseCommand with advanced features.
+The :code:`BaseCommand` class is pretty simple: it offers a command line parser and access to the project configuration. The :code:`DodoCommand` class extends BaseCommand with advanced features.
 
 
 The runcmd function, and --confirm and --echo flags
 ===================================================
 
-The :code:`DodoCommand` class adds: a helper function :code:`runcmd` and two additional flags to each command:
+The :code:`DodoCommand` class adds a helper function :code:`runcmd` and two additional flags to each command:
 
-#. the runcmd function takes a list of arguments and runs them on the command line. Moreover, it loads any variables in ${/ENVIRONMENT/variable_map} from the configuration and adds them to the system environment (for the duration of running the command).
+#. the ``runcmd`` function takes a list of arguments and runs them on the command line. Moreover, it adds all variables in ``${/ENVIRONMENT/variable_map}`` to the system environment (for the duration of running the command).
 
-#. the :code:`--echo` flag changes the behaviour of :code:`runcmd` so that it only prints the arguments instead of executing them.
+#. the :code:`--echo` flag changes the behaviour of :code:`runcmd` so that it only prints a command line instead of executing the command.
 
-#. the :code:`--confirm` flag changes the behaviour of :code:`runcmd` so that it asks for confirmation before executing a command line.
+#. the :code:`--confirm` flag changes the behaviour of :code:`runcmd` so that it prints a command line and asks for confirmation before executing the command.
 
-Because the :code:`DodoCommand` class implements :code:`add_arguments` and :code:`handle`, subclasses must now implement :code:`add_arguments_imp` and :code:`handle_imp` instead.
+Because the ``DodoCommand`` class implements :code:`add_arguments` and :code:`handle`, subclasses of ``DodoCommand`` must now implement :code:`add_arguments_imp` and :code:`handle_imp` instead.
 
-Note that since command scripts are written in Python, it's not guaranteed that all operations are confirmed or echoed to the screen. If you write a command script that doesn't completely honor the --confirm and --echo flags, you should mark it with ``safe = False``, as shown in the example below. Unsafe commands will not run with the --echo flag, and will pause with a warning when run with the --confirm flag.
+Note that since command scripts are written in Python, it's not guaranteed that all operations are confirmed or echoed to the screen. Command scripts that do not completely honor the --confirm and --echo flags should be mark it with ``safe = False``, as shown in the example below. Unsafe commands will not run with the --echo flag, and will pause with a warning when run with the --confirm flag.
 
 .. code-block:: python
 
@@ -34,17 +33,11 @@ Note that since command scripts are written in Python, it's not guaranteed that 
 Decorators
 ==========
 
-A Decorator is a class that alters the workings of a DodoCommand class:
-
-- it can add extra arguments to the command
-- it can modify the arguments that are passed to the DodoCommand
-
-The decorator should be placed in a :code:`decorators` directory inside a commands directory.
-This is illustrated by the following example:
+A Decorator is a class that alters the workings of a DodoCommand class. It can extend or modify the arguments that are passed to ``DodoCommand.handle``. The decorator should be placed in a ``decorators`` directory inside a commands directory. This is illustrated by the following example:
 
 .. code-block:: python
 
-    # file my_commands/decorators/debugger.py
+    # file: my_commands/decorators/debugger.py
 
     class Decorator:  # noqa
         def add_arguments(self, decorated, parser):  # noqa
@@ -79,20 +72,20 @@ Classes that want to use the Decorator can declare them in the :code:`decorators
 The docker decorator
 ====================
 
-If the "docker" decorator is used and the ${/DOCKER/enabled} configuration value is true, then all command lines will be prefixed with :code:`/usr/bin/docker run` and related docker arguments:
+If the "docker" decorator is used and the ``${/DOCKER/enabled}`` configuration value is true, then all command lines will be prefixed with ``/usr/bin/docker run`` and related docker arguments:
 
-#. each key-value pair in $(/DOCKER/volume_map} will be added as a docker volume (where 'key' in the host maps to 'value' in the docker container)
+#. each key-value pair in ``$(/DOCKER/volume_map}`` will be added as a docker volume (where 'key' in the host maps to 'value' in the docker container)
 
-#. each item in $(/DOCKER/volume_list} will be added as a docker volume (where 'item' in the host maps to 'item' in the docker container)
+#. each item in ``$(/DOCKER/volume_list}`` will be added as a docker volume (where 'item' in the host maps to 'item' in the docker container)
 
-#. each item in $(/DOCKER/volumes_from_list} will be added as a docker "volumes_from" argument
+#. each item in ``$(/DOCKER/volumes_from_list}`` will be added as a docker "volumes_from" argument
 
-#. each item in $(/DOCKER/link_list} will be added as a docker "link" argument
+#. each item in ``$(/DOCKER/link_list}`` will be added as a docker "link" argument
 
-#. each environment variable listed in $(/DOCKER/variable_list} or $(/DOCKER/variable_map} will be added as an environment variable in the docker container. Variables in ``variable_list`` have the same name in the host and in the container.
+#. each environment variable listed in ``$(/DOCKER/variable_list}`` or ``$(/DOCKER/variable_map}`` will be added as an environment variable in the docker container. Variables in ``variable_list`` have the same name in the host and in the container.
 
-#. each key-value pair in $(/ENVIRONMENT/variable_map} will be added as an environment variable in the docker container.
+#. each key-value pair in ``$(/ENVIRONMENT/variable_map}`` will be added as an environment variable in the docker container.
 
-#. arguments in ${/DOCKER/extra_options} are passed as extra options to the docker command line call.
+#. arguments in ``${/DOCKER/extra_options}`` are passed as extra options to the docker command line call.
 
-#. the '--rm' flag is added by default. The '-i' and '-t' flags are added unless you pass the --non-interactive flag.
+#. the ``--rm`` flag is added by default. The ``-i`` and ``-t`` flags are added unless you pass the ``--non-interactive`` flag.
