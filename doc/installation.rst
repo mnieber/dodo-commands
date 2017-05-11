@@ -69,7 +69,7 @@ To automatically activate the last used Dodo Commands project, add this line to 
 
     $(dodo activate --latest)
 
-If you wish to be able to toggle the automatic activation on and off, read about the :ref:`autostart` command.
+If you wish to be able to toggle the automatic activation on and off, read about :ref:`autostart`.
 
 Step 6: (Optional) Tweak global configuration
 =============================================

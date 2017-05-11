@@ -44,14 +44,14 @@ A new configuration file is created automatically when the project is first crea
             # contents of this file are layered on top of this configuration
             - buildtype.debug.yaml
 
-Layers can be switched on and off with the ``dodo layer`` command. For example, to replace the layer ``buildtype.debug.yaml`` with ``buildtype.release.yaml`` call:
+Layers can be switched on and off with the ``dodo layer`` command. In the aboce example, to replace the layer ``buildtype.debug.yaml`` with ``buildtype.release.yaml`` call:
 
 .. code-block:: bash
 
     dodo layer buildtype release
 
 
-5. the following magic values are automatically added: ``${/ROOT/project_name}``, ``${/ROOT/project_dir}``, ``${/ROOT/res_dir}`` and finally the system_commands directory in ``${/ROOT/command_path}``.
+5. the following magic values are automatically added: ``${/ROOT/project_name}``, ``${/ROOT/project_dir}``, ``${/ROOT/res_dir}``. Finally the system_commands directory is automatically added to ``${/ROOT/command_path}``.
 
 Using the configuration
 =======================

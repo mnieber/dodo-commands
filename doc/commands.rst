@@ -7,7 +7,7 @@ Commands
 Command paths and default commands
 ==================================
 
-The default Dodo command scripts are stored in :code:`~/.dodo_commands/default_commands`. These commands are available in any Dodo Commands project you create. You can install additional default commands using:
+The default Dodo Commands scripts are stored in :code:`~/.dodo_commands/default_commands`. These commands are available in any Dodo Commands project you create. You can install additional default commands using:
 
 .. code-block:: bash
 
@@ -47,9 +47,9 @@ In the example below, all subdirectories of the default commands are used (note 
         - - ${/ROOT/src_dir}
           - special_commands
 
-In this example, final command_path contains ``~/projects/FooBar/src/special_commands``, ``~/projects/FooBar/dodo_commands/default_commands/standard_commands`` and ``~/projects/FooBar/dodo_commands/default_commands/mycommands``.
+In this example, the final command_path contains ``~/projects/FooBar/src/special_commands``, ``~/projects/FooBar/dodo_commands/default_commands/standard_commands`` and ``~/projects/FooBar/dodo_commands/default_commands/mycommands``.
 
-Use ${/ROOT/command_path_exclude} to exclude parts of the command path:
+Use ``${/ROOT/command_path_exclude}`` to exclude parts of the command path:
 
 .. code-block:: yaml
 
@@ -62,7 +62,7 @@ Use ${/ROOT/command_path_exclude} to exclude parts of the command path:
 System commands
 ===============
 
-The system commands such as ``dodo activate`` are part of the ``dodo_commands.system_commands`` python package. An entry for these commands is added automatically to the command path (you can inspect this with ``dodo print-config``).
+System commands such as ``dodo activate`` are part of the ``dodo_commands.system_commands`` python package. An entry for these commands is added automatically to the command path (you can inspect this with ``dodo print-config``).
 
 
 Specifying command dependencies in the .meta file
@@ -75,7 +75,7 @@ Each Dodo command should ideally run out-of-the-box. If your ``foo`` command nee
     requirements:
     - dominate==2.2.0
 
-Calling the ``foo`` command will automatically install the ``dominate`` package into the python virtual environment of the active Dodo Commands project.
+In this example, calling the ``foo`` command will automatically install the ``dominate`` package into the python virtual environment of the active Dodo Commands project.
 
 
 Installing command directories from dodo_commands.extra

@@ -4,16 +4,14 @@
 How the Dodo Commands system works
 **********************************
 
-After following the :ref:`installation` steps, you now have a "dodo" executable (called the "system dodo") that you can use to create new projects in the projects directory. Each dodo project has it's own copy of the dodo executable (called the "project" dodo). By calling the "project" dodo, you can operate on the project. We'll explain how this works the long and clunky way, and then how the same can be done much faster.
-
-System dodo script
-==================
-
-The entry point for running dodo commands is the system ``dodo`` script. To see where it's located type:
+After following the :ref:`installation` steps, you now have a "dodo" executable (called the "system" dodo) that you can use to create new projects in the projects directory. To see where it's located type:
 
 .. code-block:: bash
 
     which dodo
+
+Each dodo project has it's own copy of the dodo executable (called the "project" dodo). By calling the "project" dodo, you can operate on the project. We'll explain how this works the long and clunky way, and then how the same can be done much faster.
+
 
 Creating a project
 ==================
@@ -33,7 +31,7 @@ You run a command on a project by calling its ``dodo`` script with the name of t
 
 This call will execute the following steps:
 
-#. the dodo script will load the ``command_path`` (a list of directories with command scripts) from the project's configuration file (``~/projects/FooBar/dodo_commands/res/config.yaml``).
+#. the dodo script will read the ``command_path`` (a list of directories with command scripts) from the project's configuration file (``~/projects/FooBar/dodo_commands/res/config.yaml``).
 
 #. the foo.py script is found and run with the --bar option
 
@@ -60,7 +58,7 @@ The short-cut to activating the python environment is using:
 
     $(dodo activate FooBar)
 
-The way this works is that the ``dodo activate`` command prints the line ``source ~/projects/FooBar/dodo_commands/env/bin/activate`` to the console, and the ``$(...)`` syntax takes care of executing this in the shell. To create a new project and activate it at the same time, call:
+This works because the ``dodo activate`` call prints the line ``source ~/projects/FooBar/dodo_commands/env/bin/activate`` to the console, and the ``$(...)`` syntax takes care of executing this in the shell. To create a new project and activate it at the same time, call:
 
 .. code-block:: bash
 
@@ -72,7 +70,7 @@ The way this works is that the ``dodo activate`` command prints the line ``sourc
 Activating the last used project
 ================================
 
-Dodo Commands remembers which project was last activated. You can activate the last used project with ``$(dodo activate --latest)``. It's usually convenient to activate the latest project whenever you open a terminal. Calling ``dodo autostart on`` writes a small script file to ``~/.dodo_commands_autostart``.
+Dodo Commands remembers which project was last activated. You can activate the last used project with ``$(dodo activate --latest)``. It's usually convenient to activate the latest project whenever you open a terminal. To facilitate this, calling ``dodo autostart on`` writes a small script file to ``~/.dodo_commands_autostart``.
 
 .. code-block:: bash
 

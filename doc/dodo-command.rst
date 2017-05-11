@@ -10,7 +10,7 @@ The :code:`BaseCommand` class is pretty simple: it offers a command line parser 
 The runcmd function, and --confirm and --echo flags
 ===================================================
 
-The :code:`DodoCommand` class adds a helper function :code:`runcmd` and two additional flags to each command:
+The :code:`DodoCommand` class adds a helper function :code:`runcmd` and two additional flags:
 
 #. the ``runcmd`` function takes a list of arguments and runs them on the command line. Moreover, it adds all variables in ``${/ENVIRONMENT/variable_map}`` to the system environment (for the duration of running the command).
 
