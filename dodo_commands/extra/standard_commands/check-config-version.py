@@ -18,6 +18,9 @@ class Command(DodoCommand):  # noqa
         original_file = os.path.join(
             project_dir, "dodo_commands", "default_project", "config.yaml"
         )
+        if not os.path.exists(original_file):
+            return
+
         original_version = self._get_version(original_file)
         if not original_version:
             sys.stderr.write(
