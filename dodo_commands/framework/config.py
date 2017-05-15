@@ -131,43 +131,62 @@ class CommandPath:
 
         The config_base_dir arg defaults to project_dir/dodo_commands/res.
         """
-        if config_base_dir is None:
-            config_base_dir = os.path.join(project_dir, "dodo_commands", "res")
-
+        config_base_dir = self._config_base_dir(config_base_dir, project_dir)
         config = load_dodo_config()
-        excluded_dirs = [
-            x.full_path for x in self._collect_items(
-                config.get('ROOT', {}).get('command_path_exclude', []),
-            )
+
+        exclude_patterns = self._exclude_patterns(config)
+        excluded_command_dirs = [
+            x.full_path for x in self._create_items(exclude_patterns)
         ]
 
-        command_path_list = config.get('ROOT', {}).get('command_path', [])
+        include_patterns = self._include_patterns(config)
         self.items = [
-            x for x in self._collect_items(command_path_list)
-            if x.full_path not in excluded_dirs
+            x for x in self._create_items(include_patterns)
+            if x.full_path not in excluded_command_dirs
         ]
 
-    def _collect_items(self, patterns):
+    def _config_base_dir(self, config_base_dir, project_dir):
+        if config_base_dir is None:
+            return os.path.join(project_dir, "dodo_commands", "res")
+        return config_base_dir
+
+    def _include_patterns(self, config):
+        return config.get('ROOT', {}).get('command_path', [])
+
+    def _exclude_patterns(self, config):
+        return config.get('ROOT', {}).get('command_path_exclude', [])
+
+    def _create_items(self, patterns):
         items = []
         for pattern in patterns:
-            try:
-                prefix, postfix = pattern
-                prefix = os.path.expanduser(prefix)
-            except:
-                raise CommandError(
-                    "Items in command_path should be of " +
-                    "type [<sys-path>, <module-path>]."
-                )
-
-            for command_dir in [
-                x for x in glob.glob(os.path.join(prefix, postfix))
-                if os.path.isdir(x)
-            ]:
-                item = CommandPath.Item()
-                item.sys_path = prefix
-                item.module_path = os.path.relpath(command_dir, prefix)
-                items.append(item)
+            sys_path, module_path = self._split_pattern(pattern)
+            for command_dir in self._glob_command_dirs(sys_path, module_path):
+                items.append(self._create_item(sys_path, command_dir))
         return items
+
+    def _create_item(self, sys_path, command_dir):
+        item = CommandPath.Item()
+        item.sys_path = sys_path
+        item.module_path = os.path.relpath(command_dir, sys_path)
+        return item
+
+    def _glob_command_dirs(self, sys_path, module_path):
+        return [
+            x for x in glob.glob(os.path.join(sys_path, module_path))
+            if os.path.isdir(x)
+        ]
+
+    def _split_pattern(self, pattern):
+        try:
+            sys_path, module_path = pattern
+            sys_path = os.path.expanduser(sys_path)
+        except:
+            raise CommandError(
+                "Patterns in command_path should be of " +
+                "type [<sys-path>, <module-path>]. " +
+                "Failing pattern: %s" + pattern
+            )
+        return sys_path, module_path
 
     def extend_sys_path(self):  # noqa
         for item in self.items:
