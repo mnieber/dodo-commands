@@ -1,9 +1,8 @@
 """Package default_commands."""
 
-from dodo_commands.framework import (
-    BaseCommand, CommandPath, get_project_dir
-)
+from dodo_commands.framework import (BaseCommand, CommandPath)
 from dodo_commands.framework.command_error import CommandError
+from dodo_commands.framework.config import load_dodo_config
 
 from importlib import import_module
 from plumbum import FG, ProcessExecutionError, local
@@ -16,9 +15,9 @@ class DodoCommand(BaseCommand):  # noqa
     _loaded_decorators = None
 
     @staticmethod
-    def _load_decorator(name):
+    def _load_decorator(name, config):
         """Load and return decorator class in module with given name."""
-        command_path = CommandPath(get_project_dir())
+        command_path = CommandPath(config)
         command_path.extend_sys_path()
         for item in command_path.items:
             import_path = '%s.decorators.%s' % (
@@ -45,19 +44,18 @@ class DodoCommand(BaseCommand):  # noqa
             help="Print all commands instead of running them"
         )
 
-        for decorator in self._get_decorators():
+        for decorator in self._get_decorators(load_dodo_config()):
             decorator.add_arguments(self, parser)
 
         self.add_arguments_imp(parser)
 
-    def _get_decorators(self):
-        if self._loaded_decorators is not None:
-            return self._loaded_decorators
+    def _get_decorators(self, config):
+        if self._loaded_decorators is None:
+            self._loaded_decorators = [
+                self._load_decorator(d, config) for d in self.decorators
+                if d is not None
+            ]
 
-        self._loaded_decorators = list(filter(
-            lambda x: x is not None,
-            map(self._load_decorator, self.decorators)
-        ))
         return self._loaded_decorators
 
     def add_arguments_imp(self, parser):  # noqa
@@ -88,7 +86,7 @@ class DodoCommand(BaseCommand):  # noqa
             ):
                 return
 
-        for decorator in self._get_decorators():
+        for decorator in self._get_decorators(self.config):
             decorator.handle(self, **kwargs)
         self.handle_imp(**kwargs)
 
@@ -104,7 +102,7 @@ class DodoCommand(BaseCommand):  # noqa
         Decorator to print function call details - parameters names and
         effective values.
         """
-        for decorator in self._get_decorators():
+        for decorator in self._get_decorators(self.config):
             args, cwd = decorator.modify_args(self, args, cwd)
 
         func = local[args[0]][args[1:]]

@@ -43,7 +43,7 @@ import traceback
 from importlib import import_module
 
 from dodo_commands.framework.config import (
-    CommandPath, get_project_dir
+    CommandPath, get_project_dir, load_dodo_config
 )
 from dodo_commands.framework.base import (
     BaseCommand, CommandError
@@ -122,9 +122,8 @@ def get_commands():
     pairs from this dictionary can then be used in calls to
     load_command_class(module_name, command_name)
     """
-    project_dir = get_project_dir()
     commands = {}
-    command_path = CommandPath(project_dir)
+    command_path = CommandPath(load_dodo_config())
     command_path.extend_sys_path()
     for item in command_path.items:
         for command in find_commands(item.full_path):

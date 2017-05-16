@@ -41,7 +41,7 @@ class Command(DodoCommand):  # noqa
 
     def handle_imp(self, name, next_to, **kwargs):  # noqa
         dest_path = None
-        command_path = CommandPath(self.get_config("/ROOT/project_dir"))
+        command_path = CommandPath(self.config)
         for item in command_path.items:
             script_path = os.path.join(
                 item.full_path, next_to + ".py"

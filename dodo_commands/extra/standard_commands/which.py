@@ -28,15 +28,14 @@ class Command(DodoCommand):  # noqa
             help='Print where the dodo command script with given name is')
 
     def handle_imp(self, what, config, script, **kwargs):
-        project_dir = get_project_dir()
         if config:
             print(
                 os.path.join(
-                    project_dir, "dodo_commands", "res", "config.yaml"
+                    get_project_dir(), "dodo_commands", "res", "config.yaml"
                 )
             )
         elif script:
-            command_path = CommandPath(project_dir)
+            command_path = CommandPath(self.config)
             for item in command_path.items:
                 script_path = os.path.join(
                     item.full_path, script + ".py"
