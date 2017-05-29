@@ -21,7 +21,7 @@ class Command(DodoCommand):  # noqa
         )
 
     def handle_imp(self, foo, bar, **kwargs):  # noqa
-        pass
+        self.runcmd(["echo"], cwd=".")
 """
 
 class Command(DodoCommand):  # noqa
