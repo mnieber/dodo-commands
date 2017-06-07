@@ -1,5 +1,11 @@
 # Version history
 
+## 0.8.0
+
+- Add optional --project-name to diff command
+- Fix the tests, remove the installation test
+- Refactor ConfigIO and CommandPath
+
 ## 0.7.8
 
 - Replace PyYAML with ruamel.yaml
