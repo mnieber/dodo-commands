@@ -94,15 +94,7 @@ class DodoCommand(BaseCommand):  # noqa
     def handle_imp(self, **kwargs):  # noqa
         raise CommandError("Not implemented")
 
-    def runcmd(  # noqa
-        self,
-        args,
-        cwd=None
-    ):
-        """
-        Decorator to print function call details - parameters names and
-        effective values.
-        """
+    def runcmd(self, args, cwd=None):
         for decorator in self._get_decorators(self.config):
             args, cwd = decorator.modify_args(self, args, cwd)
 
