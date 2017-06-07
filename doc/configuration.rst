@@ -44,7 +44,7 @@ A new configuration file is created automatically when the project is first crea
             # contents of this file are layered on top of this configuration
             - buildtype.debug.yaml
 
-Layers can be switched on and off with the ``dodo layer`` command. In the aboce example, to replace the layer ``buildtype.debug.yaml`` with ``buildtype.release.yaml`` call:
+Layers can be switched on and off with the ``dodo layer`` command. In the above example, to replace the layer ``buildtype.debug.yaml`` with ``buildtype.release.yaml`` call:
 
 .. code-block:: bash
 
