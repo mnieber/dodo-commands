@@ -1,4 +1,5 @@
 """Package default_commands."""
+import os
 
 from dodo_commands.framework import (BaseCommand, CommandPath)
 from dodo_commands.framework.command_error import CommandError
@@ -110,13 +111,16 @@ class DodoCommand(BaseCommand):  # noqa
             print(func)
             return False
 
-        with local.cwd(cwd or local.cwd):
-            if self.opt_confirm:
-                print("(%s) %s" % (local.cwd, func))
-                if not query_yes_no("continue?"):
-                    return False
-                print()
+        if self.opt_confirm:
+            print("(%s) %s" % (cwd or local.cwd, func))
+            if not query_yes_no("continue?"):
+                return False
+            print()
 
+        if cwd and not os.path.exists(cwd):
+            raise CommandError("Directory not found: %s" % cwd)
+
+        with local.cwd(cwd or local.cwd):
             try:
                 variable_map = self.get_config('/ENVIRONMENT/variable_map', {})
                 with local.env(**variable_map):
