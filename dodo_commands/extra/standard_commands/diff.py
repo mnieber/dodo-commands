@@ -14,8 +14,12 @@ class Command(DodoCommand):  # noqa
             'file',
             help='Show diff for this file'
         )
+        parser.add_argument(
+            '--project-name',
+            help='Compare to files from an alternative project'
+        )
 
-    def handle_imp(self, file, **kwargs):  # noqa
+    def handle_imp(self, file, project_name, **kwargs):  # noqa
         project_dir = self.get_config("/ROOT/project_dir", "")
 
         config = configparser.ConfigParser()
@@ -24,11 +28,19 @@ class Command(DodoCommand):  # noqa
         diff_tool = config.get("DodoCommands", "diff_tool")
         res_dir = os.path.join(project_dir, "dodo_commands", "res")
 
-        original_file = os.path.realpath(
-            os.path.join(
-                project_dir, "dodo_commands", "default_project", file
+        if project_name:
+            ref_project_dir = os.path.abspath(
+                os.path.join(project_dir, "..", project_name)
             )
-        )
+            original_file = os.path.join(
+                ref_project_dir, "dodo_commands", "res", file
+            )
+        else:
+            original_file = os.path.realpath(
+                os.path.join(
+                    project_dir, "dodo_commands", "default_project", file
+                )
+            )
         copied_file = os.path.join(res_dir, file)
 
         self.runcmd(
