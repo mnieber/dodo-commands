@@ -5,7 +5,6 @@ from dodo_commands.dodo_activate import Activator
 
 class Command(DodoCommand):  # noqa
     help = ""
-    decorators = []
     safe = False
 
     def add_arguments_imp(self, parser):  # noqa

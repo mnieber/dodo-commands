@@ -40,7 +40,6 @@ class Command(DodoCommand):  # noqa
         "paths argument: dodo install-default-commands " +
         "/path/to/my/commands. " + _packages_in_extra_dir()
     )
-    decorators = []
     safe = False
 
     def add_arguments_imp(self, parser):  # noqa

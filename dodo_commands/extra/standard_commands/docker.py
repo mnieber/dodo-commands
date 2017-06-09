@@ -4,8 +4,6 @@ from . import DodoCommand
 
 
 class Command(DodoCommand):  # noqa
-    decorators = ["docker", ]
-
     def add_arguments_imp(self, parser):  # noqa
         parser.add_argument('command', nargs='?')
 

@@ -1,9 +1,10 @@
 """Package default_commands."""
+import fnmatch
+import inspect
 import os
 
 from dodo_commands.framework import (BaseCommand, CommandPath)
 from dodo_commands.framework.command_error import CommandError
-from dodo_commands.framework.config import load_dodo_config
 
 from importlib import import_module
 from plumbum import FG, ProcessExecutionError, local
@@ -12,24 +13,58 @@ from dodo_commands.framework.util import query_yes_no
 
 class DodoCommand(BaseCommand):  # noqa
     safe = True
-    decorators = []
     _loaded_decorators = None
 
-    @staticmethod
-    def _load_decorator(name, config):
-        """Load and return decorator class in module with given name."""
-        command_path = CommandPath(config)
+    def all_decorators(self):
+        """Returns a mapping from decorator name to its directory."""
+        command_path = CommandPath(self.config)
         command_path.extend_sys_path()
+        result = {}
         for item in command_path.items:
-            import_path = '%s.decorators.%s' % (
-                item.module_path.replace("/", "."), name
-            )
             try:
-                module = import_module(import_path)
-                return module.Decorator()
+                module_path = os.path.join(item.module_path, "decorators")
+                module = import_module(module_path.replace("/", "."))
+                for decorator in os.listdir(module.__path__[0]):
+                    name, ext = os.path.splitext(decorator)
+                    if ext == '.py' and name != '__init__':
+                        result[name] = module_path
             except ImportError:
                 continue
-        return None
+        return result
+
+    @staticmethod
+    def _load_decorator(name, directory):
+        """Load and return decorator class in module with given name."""
+        module = import_module(directory.replace("/", ".") + "." + name)
+        return module.Decorator()
+
+    def _command_name(self):
+        script_filename = os.path.basename(inspect.getfile(self.__class__))
+        return os.path.splitext(script_filename)[0]
+
+    def _uses_decorator(self, decorator_name):
+        patterns = (
+            self.config.get('ROOT', {}).get('decorators', {}).get(decorator_name, [])
+        )
+        command_name = self._command_name()
+        approved = [
+            pattern for pattern in patterns if
+            not pattern.startswith("!") and fnmatch.filter([command_name], pattern)
+        ]
+        rejected = [
+            pattern for pattern in patterns if
+            pattern.startswith("!") and fnmatch.filter([command_name], pattern[1:])
+        ]
+        return len(approved) and not len(rejected)
+
+    def _get_decorators(self):
+        if self._loaded_decorators is None:
+            self._loaded_decorators = [
+                self._load_decorator(name, directory)
+                for name, directory in self.all_decorators().items()
+                if self._uses_decorator(name)
+            ]
+        return self._loaded_decorators
 
     def add_arguments(self, parser):
         """Entry point for subclassed commands to add custom arguments."""
@@ -45,19 +80,10 @@ class DodoCommand(BaseCommand):  # noqa
             help="Print all commands instead of running them"
         )
 
-        for decorator in self._get_decorators(load_dodo_config()):
+        for decorator in self._get_decorators():
             decorator.add_arguments(self, parser)
 
         self.add_arguments_imp(parser)
-
-    def _get_decorators(self, config):
-        if self._loaded_decorators is None:
-            self._loaded_decorators = [
-                self._load_decorator(d, config) for d in self.decorators
-                if d is not None
-            ]
-
-        return self._loaded_decorators
 
     def add_arguments_imp(self, parser):  # noqa
         pass
@@ -87,7 +113,7 @@ class DodoCommand(BaseCommand):  # noqa
             ):
                 return
 
-        for decorator in self._get_decorators(self.config):
+        for decorator in self._get_decorators():
             decorator.handle(self, **kwargs)
         self.handle_imp(**kwargs)
 
@@ -95,7 +121,7 @@ class DodoCommand(BaseCommand):  # noqa
         raise CommandError("Not implemented")
 
     def runcmd(self, args, cwd=None):
-        for decorator in self._get_decorators(self.config):
+        for decorator in self._get_decorators():
             args, cwd = decorator.modify_args(self, args, cwd)
 
         func = local[args[0]][args[1:]]

@@ -6,7 +6,6 @@ import sys
 
 class Command(DodoCommand):  # noqa
     help = ""
-    decorators = []
 
     def add_arguments_imp(self, parser):  # noqa
         """

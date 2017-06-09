@@ -58,16 +58,16 @@ A Decorator is a class that alters the workings of a DodoCommand class. It can e
             new_args = [decorated.get_config('/BUILD/debugger')] + args
             return new_args, cwd
 
-Classes that want to use the Decorator can declare them in the :code:`decorators` member:
+Note that not all decorators are compatible with all commands. For example, only some commands can be run inside a debugger. Therefore, for each decorator you should list in the configuration which commands are decorated. When listing the commands, wildcards are allowed, and you can exclude commands by prefixing them with an exclamation mark:
 
-.. code-block:: python
+.. code-block:: yaml
 
-    class Command(DodoCommand):  # noqa
-        decorators = [
-            "debugger",
-        ]
-
-        # rest of the command goes here...
+    ROOT:
+      decorators:
+        # Use a wildcard to decorate all commands, but exclude the foo command
+        debugger: ['*', '!foo']
+        # cmake and runserver can be run inside docker
+        docker: ['cmake', 'runserver']
 
 The docker decorator
 ====================

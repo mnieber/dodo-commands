@@ -9,7 +9,6 @@ class Command(DodoCommand):  # noqa
         "Dodo Commands project"
     )
     safe = False
-    decorators = []
 
     def add_arguments_imp(self, parser):  # noqa
         parser.add_argument('status', choices=['on', 'off'])

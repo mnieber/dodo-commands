@@ -113,8 +113,6 @@ The following steps shows how this is accomplished with Dodo Commands:
     from dodo_commands.system_commands import DodoCommand
 
     class Command(DodoCommand):  # noqa
-        decorators = ['docker']
-
         def _get_variable_list(self, prefix):
             return [
                 prefix + "%s=%s" % key_val for key_val in
