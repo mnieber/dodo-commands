@@ -75,6 +75,9 @@ class BaseCommand(object):  # noqa
     _called_from_command_line = False
     can_import_settings = True
 
+    def __init__(self):
+        self.config = load_dodo_config()
+
     def usage(self, subcommand):  # noqa
         """
         Return a brief description of how to use this command, by
@@ -137,7 +140,7 @@ class BaseCommand(object):  # noqa
         # Move positional args out of options to mimic legacy optparse
         args = cmd_options.pop('args', ())
         try:
-            self.execute(*args, **cmd_options)
+            self.handle(*args, **cmd_options)
         except Exception as e:
             if options.traceback or not isinstance(e, CommandError):
                 raise
@@ -153,13 +156,6 @@ class BaseCommand(object):  # noqa
             if default_value == "__not_set_234234__":
                 raise
         return default_value
-
-    def execute(self, *args, **options):  # noqa
-        """
-        Try to execute this command.
-        """
-        self.config = load_dodo_config()
-        self.handle(*args, **options)
 
     def handle(self, *args, **options):  # noqa
         """

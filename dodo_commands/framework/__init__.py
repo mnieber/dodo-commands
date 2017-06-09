@@ -167,7 +167,7 @@ def call_command(name, *args, **options):
     # Move positional args out of options to mimic legacy optparse
     args = defaults.pop('args', ())
 
-    return command.execute(*args, **defaults)
+    return command.handle(*args, **defaults)
 
 
 class ManagementUtility(object):
