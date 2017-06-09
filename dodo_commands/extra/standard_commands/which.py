@@ -26,8 +26,29 @@ class Command(DodoCommand):  # noqa
         group.add_argument(
             '--script',
             help='Print where the dodo command script with given name is')
+        group.add_argument(
+            '--dir',
+            dest='directory',
+            help='Finds the X_dir value in the configuration, where X is the given option value')
+        group.add_argument(
+            '--decorators',
+            action="store_true",
+            help='Prints which command decorators are available')
 
-    def handle_imp(self, what, config, script, **kwargs):
+    def _which_script(self, script):
+        command_path = CommandPath(self.config)
+        for item in command_path.items:
+            script_path = os.path.join(
+                item.full_path, script + ".py"
+            )
+            if os.path.exists(script_path):
+                return script_path
+        return None
+
+    def _which_dir(self, directory):
+        return self.get_config("/ROOT/%s_dir" % directory, None)
+
+    def handle_imp(self, what, config, script, directory, decorators, **kwargs):
         if config:
             print(
                 os.path.join(
@@ -35,14 +56,14 @@ class Command(DodoCommand):  # noqa
                 )
             )
         elif script:
-            command_path = CommandPath(self.config)
-            for item in command_path.items:
-                script_path = os.path.join(
-                    item.full_path, script + ".py"
-                )
-                if os.path.exists(script_path):
-                    sys.stdout.write(script_path + "\n")
+            sys.stdout.write(self._which_script(script) + "\n")
+        elif directory:
+            sys.stdout.write(self._which_dir(directory) + "\n")
+        elif decorators:
+            sys.stdout.write(", ".join(self.all_decorators().keys()) + "\n")
         elif what:
-            sys.stdout.write(self.get_config("/ROOT/%s_dir" % what) + "\n")
+            x = self._which_script(what) or self._which_dir(what)
+            if x:
+                sys.stdout.write(x + "\n")
         else:
             sys.stdout.write(self.get_config("/ROOT/project_name") + "\n")
