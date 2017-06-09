@@ -62,7 +62,9 @@ class ConfigIO:
     def _load_layers(self, config):
         for layer_filename in self._layers(config):
             if os.path.exists(layer_filename):
-                self._add_layer_to_config(config, self.load(layer_filename))
+                self._add_layer_to_config(
+                    config, self.load(layer_filename, load_layers=False)
+                )
             else:
                 print("Warning: layer not found: %s" % layer_filename)
 
