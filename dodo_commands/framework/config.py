@@ -42,7 +42,12 @@ class ConfigIO:
         root = config.get('ROOT', {})
         layer_dir = root.get('layer_dir', '')
         for layer_filename in root.get('layers', []):
-            result.append(self._path_to([layer_dir, layer_filename]))
+            pattern = os.path.expanduser(
+                layer_filename
+                if os.path.dirname(layer_filename) else
+                self._path_to([layer_dir, layer_filename])
+            )
+            result.extend(x for x in glob.glob(pattern))
         return result
 
     def _add_layer_to_config(self, config, layer):

@@ -34,7 +34,7 @@ A new configuration file is created automatically when the project is first crea
         - (3 + 4)  # evaluates to "7"
         foobar: ${/BUILD/nr_of_threads_EVAL}  # value will be "6"
 
-4. ``${/ROOT/layers}`` lists additional yaml files that are layered on top of the root configuration file. If a key exists both in the root configuration and in a layer configuration, then values replace values, lists are concatenated, and dictionaries are merged. The ``${/ROOT/layer_dir}`` value can be used to specify the sub-directory where layer configuration files are searched:
+4. ``${/ROOT/layers}`` lists additional yaml files that are layered on top of the root configuration file. If a key exists both in the root configuration and in a layer configuration, then values replace values, lists are concatenated, and dictionaries are merged. The ``${/ROOT/layer_dir}`` value can be used to specify the sub-directory where layer configuration files are searched. However, layers may also be prefixed with an absolute path. Finally, wildcards are allowed.
 
 .. code-block:: yaml
 
@@ -43,8 +43,12 @@ A new configuration file is created automatically when the project is first crea
         layers:
             # contents of this file are layered on top of this configuration
             - buildtype.debug.yaml
+            # layer with an absolute path
+            - ~/.dodo_commands/default_layer.yaml
+            # example of using wildcards
+            - ~/.dodo_commands/default_layers/*.yaml
 
-Layers can be switched on and off with the ``dodo layer`` command. In the above example, to replace the layer ``buildtype.debug.yaml`` with ``buildtype.release.yaml`` call:
+Layers can be switched on and off with the ``dodo layer`` command (except for the ones with absolute paths). In the above example, to replace the layer ``buildtype.debug.yaml`` with ``buildtype.release.yaml`` call:
 
 .. code-block:: bash
 

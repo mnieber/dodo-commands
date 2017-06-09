@@ -6,24 +6,29 @@ from dodo_commands.framework import CommandError
 import os
 
 
-def _get_list_of_layers(layers, layer, value):
+def _update_list_of_layers(layers, new_layer_name, new_layer_variant):
+    def _layer_name(x):
+        # layers with a prefix path are not named
+        if os.path.dirname(x):
+            return None
+        try:
+            return x.split(".")[0]
+        except ValueError:
+            return None
+
+    def _new_layer(result):
+        return "%s.%s.yaml" % (new_layer_name, new_layer_variant)
+
     result = []
     found = False
-    for existing_layer in layers:
-        try:
-            name, variant, _ = existing_layer.split(".")
-        except ValueError:
-            name = None
-            continue
-
-        if name == layer:
+    for layer in layers:
+        if _layer_name(layer) == new_layer_name:
             found = True
-            result.append("%s.%s.yaml" % (name, value))
+            result.append(_new_layer())
         else:
-            result.append(existing_layer)
-
+            result.append(layer)
     if not found:
-        result.append("%s.%s.yaml" % (layer, value))
+        result.append(_new_layer())
 
     return result
 
@@ -48,6 +53,6 @@ class Command(DodoCommand):  # noqa
 
         config = ConfigIO().load(load_layers=False)
         layers = config.get('ROOT', {}).get('layers', [])
-        newlayers = _get_list_of_layers(layers, layer, value)
+        newlayers = _update_list_of_layers(layers, layer, value)
         config['ROOT']['layers'] = newlayers
         ConfigIO().save(config)
