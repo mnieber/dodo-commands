@@ -1,5 +1,12 @@
 # Version history
 
+## 0.9.0
+
+- Allow to call "which" without explicitly using --script or --dir
+- Avoid loading all layers multiple times
+- Allow wildcards and absolute file paths in the list of layers
+- Remove list of decorators from the DodoCommand class
+
 ## 0.8.0
 
 - Add optional --project-name to diff command
