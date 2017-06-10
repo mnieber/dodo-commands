@@ -20,7 +20,7 @@ The :code:`DodoCommand` class adds a helper function :code:`runcmd` and two addi
 
 Because the ``DodoCommand`` class implements :code:`add_arguments` and :code:`handle`, subclasses of ``DodoCommand`` must now implement :code:`add_arguments_imp` and :code:`handle_imp` instead.
 
-Note that since command scripts are written in Python, it's not guaranteed that all operations are confirmed or echoed to the screen. Command scripts that do not completely honor the --confirm and --echo flags should be mark it with ``safe = False``, as shown in the example below. Unsafe commands will not run with the --echo flag, and will pause with a warning when run with the --confirm flag.
+Note that since command scripts are written in Python, it's not guaranteed that all operations are confirmed or echoed to the screen. Command scripts that do not completely honor the ``--confirm`` and ``--echo`` flags should be marked with ``safe = False``, as shown in the example below. Unsafe commands will not run with the --echo flag, and will pause with a warning when run with the --confirm flag.
 
 .. code-block:: python
 
