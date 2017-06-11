@@ -16,7 +16,7 @@ def _update_list_of_layers(layers, new_layer_name, new_layer_variant):
         except ValueError:
             return None
 
-    def _new_layer(result):
+    def _new_layer():
         return "%s.%s.yaml" % (new_layer_name, new_layer_variant)
 
     result = []
