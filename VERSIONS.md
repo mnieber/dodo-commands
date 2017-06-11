@@ -1,5 +1,10 @@
 # Version history
 
+## 0.9.1
+
+- Fix syntax error in layer.py
+- Add tests for all standard commands
+
 ## 0.9.0
 
 - Allow to call "which" without explicitly using --script or --dir
