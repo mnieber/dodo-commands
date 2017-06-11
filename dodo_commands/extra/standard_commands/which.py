@@ -60,7 +60,7 @@ class Command(DodoCommand):  # noqa
         elif directory:
             sys.stdout.write(self._which_dir(directory) + "\n")
         elif decorators:
-            sys.stdout.write(", ".join(self.all_decorators().keys()) + "\n")
+            sys.stdout.write(", ".join(sorted(self.all_decorators().keys())) + "\n")
         elif what:
             x = self._which_script(what) or self._which_dir(what)
             if x:
