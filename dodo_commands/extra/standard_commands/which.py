@@ -2,6 +2,7 @@
 from . import DodoCommand
 from dodo_commands.framework.config import (CommandPath, get_project_dir)
 import os
+from six.moves import configparser
 import sys
 
 
@@ -34,6 +35,10 @@ class Command(DodoCommand):  # noqa
             '--decorators',
             action="store_true",
             help='Prints which command decorators are available')
+        group.add_argument(
+            '--projects',
+            action="store_true",
+            help='Prints which projects are available')
 
     def _which_script(self, script):
         command_path = CommandPath(self.config)
@@ -48,7 +53,12 @@ class Command(DodoCommand):  # noqa
     def _which_dir(self, directory):
         return self.get_config("/ROOT/%s_dir" % directory, None)
 
-    def handle_imp(self, what, config, script, directory, decorators, **kwargs):
+    def _projects_dir(self):
+        config = configparser.ConfigParser()
+        config.read(os.path.expanduser("~/.dodo_commands/config"))
+        return os.path.expanduser(config.get("DodoCommands", "projects_dir"))
+
+    def handle_imp(self, what, config, script, directory, decorators, projects, **kwargs):
         if config:
             print(
                 os.path.join(
@@ -61,6 +71,12 @@ class Command(DodoCommand):  # noqa
             sys.stdout.write(self._which_dir(directory) + "\n")
         elif decorators:
             sys.stdout.write(", ".join(sorted(self.all_decorators().keys())) + "\n")
+        elif projects:
+            projects = [
+                x for x in os.listdir(self._projects_dir())
+                if os.path.isdir(os.path.join(self._projects_dir(), x, "dodo_commands", "res"))
+            ]
+            sys.stdout.write("\n".join(sorted(projects)) + "\n")
         elif what:
             x = self._which_script(what) or self._which_dir(what)
             if x:
