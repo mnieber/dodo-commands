@@ -20,10 +20,17 @@ class Command(DodoCommand):  # noqa
             help="Location relative to src_dir where the default project config is stored",
         )
         parser.add_argument('--force', dest="use_force", action="store_true")
-        parser.add_argument(
+
+        group = parser.add_mutually_exclusive_group()
+        group.add_argument(
             '--git-url', dest='git_url',
             help="Clone this repository to the src_dir location",
         )
+        group.add_argument(
+            '--link-dir',
+            help="Make the src directory a symlink to this directory",
+        )
+
         parser.add_argument(
             '--depth',
             type=int,
@@ -56,30 +63,33 @@ class Command(DodoCommand):  # noqa
 
     def _clone(self, src_dir, git_url, depth, branch):
         if os.path.exists(src_dir):
-            print("Path already exists, not cloning into: " + src_dir)
-        else:
+            raise CommandError("Cannot clone into %s, path already exists" % src_dir)
+
+        self.runcmd(
+            [
+                "git",
+                "clone",
+                git_url,
+                os.path.basename(src_dir)
+            ] + (["--depth", depth] if depth else []),
+            cwd=os.path.dirname(src_dir)
+        )
+        if branch:
             self.runcmd(
                 [
                     "git",
-                    "clone",
-                    git_url,
-                    os.path.basename(src_dir)
-                ] + (["--depth", depth] if depth else []),
-                cwd=os.path.dirname(src_dir)
+                    "checkout",
+                    branch
+                ],
+                cwd=src_dir
             )
-            if branch:
-                self.runcmd(
-                    [
-                        "git",
-                        "checkout",
-                        branch
-                    ],
-                    cwd=src_dir
-                )
 
-        return True
+    def _link(self, src_dir, link_dir):
+        if os.path.exists(src_dir):
+            raise CommandError("Cannot create a link because %s already exists" % src_dir)
+        self.runcmd(["ln", "-s", link_dir, src_dir])
 
-    def _create_symlink(self, project_defaults_dir):
+    def _create_symlink_to_defaults(self, project_defaults_dir):
         target_dir = os.path.join(
             self.project_dir,
             "dodo_commands/default_project"
@@ -99,33 +109,32 @@ class Command(DodoCommand):  # noqa
         project_defaults_dir,
         use_force,
         git_url,
+        link_dir,
         depth,
         branch,
         **kwargs
     ):  # noqa
         self.project_dir = self.get_config('/ROOT/project_dir')
-        clone_dir = (
+        full_src_dir = (
             src_dir
             if os.path.isabs(src_dir) else
             os.path.join(self.project_dir, src_dir)
         )
 
         if git_url:
-            self._clone(clone_dir, git_url, depth, branch)
+            self._clone(full_src_dir, git_url, depth, branch)
+        elif link_dir:
+            self._link(full_src_dir, os.path.expanduser(link_dir))
 
-        project_defaults_dir = os.path.join(clone_dir, project_defaults_dir)
+        project_defaults_dir = os.path.join(full_src_dir, project_defaults_dir)
         if not os.path.exists(project_defaults_dir):
-            self._report(
+            raise CommandError(
                 "Default project location %s not " +
                 "found." % project_defaults_dir
             )
-            return None
 
-        self._create_symlink(project_defaults_dir)
-
-        if git_url:
-            self._copy_defaults(project_defaults_dir, use_force)
-
+        self._create_symlink_to_defaults(project_defaults_dir)
+        self._copy_defaults(project_defaults_dir, use_force)
         self._write_src_dir(
             src_dir
             if os.path.isabs(src_dir) else
