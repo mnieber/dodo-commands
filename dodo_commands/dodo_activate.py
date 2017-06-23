@@ -1,11 +1,13 @@
 """Script for activating/creating a project in the projects dir."""
 import argparse
 from six.moves import configparser
+import glob
 import os
 import sys
 import ruamel.yaml
 from plumbum import local
 import dodo_commands
+from dodo_commands.framework import CommandError
 
 
 def _make_executable(script_filename):
@@ -51,6 +53,13 @@ class Activator:
         with open(self._config_filename(), "w") as f:
             self.config.write(f)
 
+    def _activate_script(self):
+        env_dir = os.path.join(self._dodo_commands_dir, "env")
+        result = glob.glob(os.path.join(env_dir, "**/activate"))
+        if not result:
+            raise CommandError("Activate script not found in %s" % env_dir)
+        return result[0]
+
     def _create_virtual_env(self):
         """Install a virtual env."""
         local["virtualenv"](
@@ -60,12 +69,9 @@ class Activator:
 
         # update activate script so that it shows the name of the
         # current project in the prompt
-        activate_script = os.path.join(
-            self._dodo_commands_dir, "env/bin/activate"
-        )
-        with open(activate_script) as f:
+        with open(self._activate_script()) as f:
             lines = f.read()
-        with open(activate_script, "w") as f:
+        with open(self._activate_script(), "w") as f:
             f.write(lines.replace(
                 r'PS1="(`basename \"$VIRTUAL_ENV\"`) $PS1"',
                 r'PS1="(%s) $PS1"' % self.project
@@ -92,12 +98,7 @@ class Activator:
             "env/bin",
             "register-python-argcomplete"
         )]
-        activate_script = os.path.join(
-            self._dodo_commands_dir,
-            "env/bin",
-            "activate"
-        )
-        (register >> activate_script)("dodo")
+        (register >> self._activate_script())("dodo")
 
     def _create_dodo_script(self):
         """Install the dodo entry point script."""
@@ -192,11 +193,7 @@ class Activator:
             self.config.set("DodoCommands", "latest_project", self.project)
             self._write_config()
 
-        sys.stdout.write(
-            "source " + os.path.join(
-                self._dodo_commands_dir, "env/bin/activate\n"
-            )
-        )
+        sys.stdout.write("source %s\n" % self._activate_script())
 
 
 def main():  # noqa
