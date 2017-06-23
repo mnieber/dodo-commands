@@ -1,5 +1,13 @@
 # Version history
 
+## 0.9.2
+
+- Add option --projects to which.py
+- Add option --parse to new-command.py
+- Add option --link-dir to bootstrap command
+- Add option --defaults-dir to diff command
+- Use glob to find the location of the activate script
+
 ## 0.9.1
 
 - Fix syntax error in layer.py
