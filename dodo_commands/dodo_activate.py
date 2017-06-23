@@ -78,7 +78,7 @@ class Activator:
             ))
 
         pip = local[os.path.join(self._dodo_commands_dir, "env/bin", "pip")]
-        pip("install", "argcomplete", "plumbum", "ruamel.yaml", "six")
+        pip("install", "argcomplete", "plumbum", "ruamel.yaml", "six", "parsimonious")
 
         python = local[os.path.join(self._dodo_commands_dir, "env/bin", "python")]
         site_packages_dir = python(
