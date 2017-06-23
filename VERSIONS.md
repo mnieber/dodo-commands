@@ -1,5 +1,9 @@
 # Version history
 
+## 0.9.3
+
+- Revert the use of glob to find the activate script
+
 ## 0.9.2
 
 - Add option --projects to which.py
