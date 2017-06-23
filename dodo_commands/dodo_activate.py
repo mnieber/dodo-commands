@@ -1,13 +1,11 @@
 """Script for activating/creating a project in the projects dir."""
 import argparse
 from six.moves import configparser
-import glob
 import os
 import sys
 import ruamel.yaml
 from plumbum import local
 import dodo_commands
-from dodo_commands.framework import CommandError
 
 
 def _make_executable(script_filename):
@@ -54,11 +52,7 @@ class Activator:
             self.config.write(f)
 
     def _activate_script(self):
-        env_dir = os.path.join(self._dodo_commands_dir, "env")
-        result = glob.glob(os.path.join(env_dir, "**/activate"))
-        if not result:
-            raise CommandError("Activate script not found in %s" % env_dir)
-        return result[0]
+        return os.path.join(self._dodo_commands_dir, "env", "bin", "activate")
 
     def _create_virtual_env(self):
         """Install a virtual env."""
