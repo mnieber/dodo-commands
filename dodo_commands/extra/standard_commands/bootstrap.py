@@ -30,6 +30,10 @@ class Command(DodoCommand):  # noqa
             '--link-dir',
             help="Make the src directory a symlink to this directory",
         )
+        group.add_argument(
+            '--cookiecutter-url',
+            help="Use cookiecutter to create the src_dir location",
+        )
 
         parser.add_argument(
             '--depth',
@@ -84,6 +88,18 @@ class Command(DodoCommand):  # noqa
                 cwd=src_dir
             )
 
+    def _cookiecutter(self, src_dir, cookiecutter_url):
+        if os.path.exists(src_dir):
+            raise CommandError("Cannot clone into %s, path already exists" % src_dir)
+
+        self.runcmd(
+            [
+                "cookiecutter",
+                cookiecutter_url,
+                "-o", src_dir
+            ]
+        )
+
     def _link(self, src_dir, link_dir):
         if os.path.exists(src_dir):
             raise CommandError("Cannot create a link because %s already exists" % src_dir)
@@ -110,6 +126,7 @@ class Command(DodoCommand):  # noqa
         use_force,
         git_url,
         link_dir,
+        cookiecutter_url,
         depth,
         branch,
         **kwargs
@@ -125,6 +142,8 @@ class Command(DodoCommand):  # noqa
             self._clone(full_src_dir, git_url, depth, branch)
         elif link_dir:
             self._link(full_src_dir, os.path.expanduser(link_dir))
+        elif cookiecutter_url:
+            self._cookiecutter(full_src_dir, os.path.expanduser(cookiecutter_url))
 
         project_defaults_dir = os.path.join(full_src_dir, project_defaults_dir)
         if not os.path.exists(project_defaults_dir):
