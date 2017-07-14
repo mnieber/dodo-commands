@@ -17,13 +17,9 @@ setup(name='dodo_commands',
       package_data={
           'dodo_commands': [
               'extra/__init__.py',
-              'extra/git_commands/*.py',
-              'extra/git_commands/*.meta',
               'extra/standard_commands/*.py',
               'extra/standard_commands/*.meta',
               'extra/standard_commands/decorators/*.py',
-              'extra/webdev_commands/*.py',
-              'extra/webdev_commands/*.meta',
           ]
       },
       entry_points={
