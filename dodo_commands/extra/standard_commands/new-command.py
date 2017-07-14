@@ -80,7 +80,7 @@ class Command(DodoCommand):  # noqa
             arg = term_node.text
             a('        parser.add_argument(\'%s\')' % arg)
             args.append(arg[2:] if arg.startswith('--') else arg)
-        else:
+        if not args:
             a('        pass')
         return args
 
@@ -228,4 +228,4 @@ class Command(DodoCommand):  # noqa
         if self._update_config(config_keys, config):
             ConfigIO().save(config)
 
-        print dest_path
+        print(dest_path)
