@@ -45,7 +45,11 @@ At this point, your colleague has the same directory structure as you, with one 
 
 - the additional symlink is used by the ``dodo diff`` command to show the differences between your local configuration files and the default files. Your colleague can freely change their local configuration files and use `dodo diff .` to update the default files and push them.
 
-- we recommend to set :code:`meld` as the ``diff_tool`` in :code:`~/.dodo_commands/config`.
+- we recommend to set :code:`meld` as the ``diff_tool`` in :code:`~/.dodo_commands/config`:
+
+.. code-block:: bash
+
+    dodo global-config diff_tool meld
 
 - if you call ``dodo bootstrap`` with ``--confirm`` but without the ``--git-url`` argument, then it doesn't clone the git repository but only creates the symlink (when it asks to copy configuration files, answer 'no') :
 
