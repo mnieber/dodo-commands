@@ -1,5 +1,11 @@
 # Version history
 
+## 0.9.4
+
+- Add global-config command
+- Remove labels from VERSIONS.md file
+- Fix errors in new-command command
+
 ## 0.9.3
 
 - Revert the use of glob to find the activate script

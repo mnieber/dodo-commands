@@ -51,7 +51,7 @@ from dodo_commands.framework.base import (
 
 
 def get_version():  # noqa
-    return "0.9.3"
+    return "0.9.4"
 
 
 def find_commands(module_dir):
