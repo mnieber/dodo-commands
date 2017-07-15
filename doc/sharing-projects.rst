@@ -60,6 +60,18 @@ At this point, your colleague has the same directory structure as you, with one 
 - To synchronize only config.yaml, call ``dodo diff config.yaml``. It's a good practice to use the value ``${/ROOT/version}`` to track whether the copied configuration is up-to-date or not.
 
 
+Starting a project from a cookiecutter template
+===============================================
+
+It's convenient to start a new project from a cookiecutter template. This can be achieved by using the ``cookiecutter-url`` option instead of ``git-url``:
+
+.. code-block:: bash
+
+    dodo bootstrap src extra/dodo_commands/res --force --cookiecutter-url https://github.com/foo/foobar.git
+
+Note that the cookiecutter url can also point to a directory on the local filesystem.
+
+
 Bootstrapping with monolithic repositories
 ==========================================
 
