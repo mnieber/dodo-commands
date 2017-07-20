@@ -51,7 +51,6 @@ class Decorator:  # noqa
         return (
             [
                 'run',
-                '--rm',
             ] +
             option_list +
             [
@@ -90,6 +89,9 @@ class Decorator:  # noqa
     @classmethod
     def _options(cls, decorated, cwd):
         result = []
+
+        if not hasattr(decorated, 'docker_rm') or decorated.docker_rm:
+            result.append(('rm', None))
         if not decorated.opt_non_interactive:
             result.append(('interactive', None))
             result.append(('tty', None))
