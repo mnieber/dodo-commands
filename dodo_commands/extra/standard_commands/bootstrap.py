@@ -119,6 +119,13 @@ class Command(DodoCommand):  # noqa
         config['ROOT']['src_dir'] = src_dir
         ConfigIO().save(config)
 
+    def _get_full_src_dir(self, src_dir):
+        return (
+            src_dir
+            if os.path.isabs(src_dir) else
+            os.path.join(self.project_dir, src_dir)
+        )
+
     def handle_imp(
         self,
         src_dir,
@@ -132,11 +139,8 @@ class Command(DodoCommand):  # noqa
         **kwargs
     ):  # noqa
         self.project_dir = self.get_config('/ROOT/project_dir')
-        full_src_dir = (
-            src_dir
-            if os.path.isabs(src_dir) else
-            os.path.join(self.project_dir, src_dir)
-        )
+        full_src_dir = self._get_full_src_dir(src_dir)
+        self.runcmd(['mkdir', '-p', os.path.dirname(full_src_dir)])
 
         if git_url:
             self._clone(full_src_dir, git_url, depth, branch)
