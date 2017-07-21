@@ -4,14 +4,18 @@ from dodo_commands.framework.util import bordered
 import os
 import sys
 import ruamel.yaml
+from semantic_version import Version
 
 
 class Command(DodoCommand):  # noqa
     def _get_version(self, config_filename):
         with open(config_filename) as f:
             config = ruamel.yaml.round_trip_load(f.read())
-        version = config.get("ROOT", {}).get("version", "").split(".")
-        return [x for x in version if x != ""]
+        return config.get("ROOT", {}).get("version", "")
+
+    def _partial_sem_version(self, version):
+        v = Version(version)
+        return Version("%s.%s" % (v.major, v.minor), partial=True)
 
     def handle_imp(self, **kwargs):  # noqa
         project_dir = self.get_config("/ROOT/project_dir", "")
@@ -36,12 +40,15 @@ class Command(DodoCommand):  # noqa
             )
             return
 
-        if copied_version[:2] < original_version[:2]:
+        if (
+            self._partial_sem_version(copied_version) <
+            self._partial_sem_version(original_version)
+        ):
             sys.stdout.write(bordered(
                 'Configuration needs update (%s < %s). Tip: use "dodo diff ."\n'
                 % (
-                    ".".join(copied_version),
-                    ".".join(original_version),
+                    copied_version,
+                    original_version,
                 )
             ))
             sys.stdout.write('\n')
