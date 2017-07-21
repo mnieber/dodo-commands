@@ -1,5 +1,9 @@
 # Version history
 
+## 0.10.1
+
+- Use semantic_version to compare version strings
+
 ## 0.10.0
 
 - Docker decorator adds docker options based on the container name
