@@ -1,5 +1,10 @@
 # Version history
 
+## 0.10.0
+
+- Docker decorator adds docker options based on the container name
+- Document the use of cookiecutter
+
 ## 0.9.4
 
 - Add global-config command
