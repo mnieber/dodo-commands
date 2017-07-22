@@ -11,6 +11,22 @@ from plumbum import FG, ProcessExecutionError, local
 from dodo_commands.framework.util import query_yes_no
 
 
+def _ask_to_continue(func, cwd, is_echo, is_confirm):
+    """Ask the user whether to continue with executing func."""
+    if is_echo:
+        print(func)
+        return False
+
+    if is_confirm:
+        print("(%s) %s" % (cwd, func))
+        if not query_yes_no("continue?"):
+            return False
+        else:
+            print()
+
+    return True
+
+
 class DodoCommand(BaseCommand):  # noqa
     safe = True
     _loaded_decorators = None
@@ -125,15 +141,8 @@ class DodoCommand(BaseCommand):  # noqa
             args, cwd = decorator.modify_args(self, args, cwd)
 
         func = local[args[0]][args[1:]]
-        if self.opt_echo:
-            print(func)
+        if not _ask_to_continue(func, cwd, self.opt_echo, self.opt_confirm):
             return False
-
-        if self.opt_confirm:
-            print("(%s) %s" % (cwd or local.cwd, func))
-            if not query_yes_no("continue?"):
-                return False
-            print()
 
         if cwd and not os.path.exists(cwd):
             raise CommandError("Directory not found: %s" % cwd)
