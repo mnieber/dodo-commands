@@ -80,4 +80,4 @@ def bordered(text):
     for s in lines:
         res.append('│' + (s + ' ' * width)[:width] + '│')
     res.append('└' + '─' * width + '┘')
-    return '\n'.join(res) + '\n'
+    return '\n'.join(res)
