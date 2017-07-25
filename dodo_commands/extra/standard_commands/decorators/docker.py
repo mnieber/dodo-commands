@@ -41,7 +41,21 @@ class Decorator:  # noqa
         return [prefix + "%s" % x for x in docker_config.get('link_list', [])]
 
     @classmethod
-    def get_docker_args(cls, get_config, option_list):
+    def get_image_name(cls, get_config, name):
+        result = get_config('/DOCKER/options/%s/image' % name, '')
+        if result:
+            return result
+
+        for pattern, docker_config in get_config('/DOCKER/options', {}).items():
+            if fnmatch(name, pattern):
+                result = get_config('/DOCKER/options/%s/image' % pattern, '')
+                if result:
+                    return result
+
+        return get_config('/DOCKER/image')
+
+    @classmethod
+    def get_docker_args(cls, get_config, option_list, name):
         """
         Get docker args.
 
@@ -54,7 +68,7 @@ class Decorator:  # noqa
             ] +
             option_list +
             [
-                get_config('/DOCKER/image'),
+                cls.get_image_name(get_config, name),
             ]
         )
 
@@ -128,18 +142,15 @@ class Decorator:  # noqa
             return args, cwd
 
         options = self._options(decorated, cwd)
+        name = self._container_name(options)
+        all_options = (
+            self._options_to_list(options) +
+            self._config_docker_options(decorated.get_config, name)
+        )
+
         new_args = (
             ['docker'] +
-            self.get_docker_args(
-                decorated.get_config,
-                (
-                    self._options_to_list(options) +
-                    self._config_docker_options(
-                        decorated.get_config,
-                        self._container_name(options)
-                    )
-                ),
-            ) +
+            self.get_docker_args(decorated.get_config, all_options, name) +
             args
         )
         return new_args, local.cwd
