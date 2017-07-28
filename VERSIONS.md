@@ -1,5 +1,12 @@
 # Version history
 
+## 0.10.2
+
+- Add option --src-subdir to bootstrap command
+- Fix broken error message in bootstrap
+- Allow to get the docker image name from /DOCKER/options
+- Add pause decorator
+
 ## 0.10.1
 
 - Use semantic_version to compare version strings
