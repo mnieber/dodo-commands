@@ -158,8 +158,7 @@ class Command(DodoCommand):  # noqa
         project_defaults_dir = os.path.join(full_src_dir, project_defaults_dir)
         if not os.path.exists(project_defaults_dir):
             raise CommandError(
-                "Default project location %s not " +
-                "found." % project_defaults_dir
+                "Default project location %s not found." % project_defaults_dir
             )
 
         self._create_symlink_to_defaults(project_defaults_dir)
