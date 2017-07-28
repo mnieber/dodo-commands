@@ -46,6 +46,11 @@ class Command(DodoCommand):  # noqa
             help="Branch to checkout after cloning"
         )
 
+        parser.add_argument(
+            '--src-subdir',
+            help="Specify a subdirectory of src_dir to clone into",
+        )
+
     def _report(self, msg):
         sys.stderr.write(msg + "\n")
 
@@ -119,11 +124,11 @@ class Command(DodoCommand):  # noqa
         config['ROOT']['src_dir'] = src_dir
         ConfigIO().save(config)
 
-    def _get_full_src_dir(self, src_dir):
+    def _get_full_src_dir(self, src_dir, src_subdir):
         return (
-            src_dir
+            os.path.join(src_dir, src_subdir)
             if os.path.isabs(src_dir) else
-            os.path.join(self.project_dir, src_dir)
+            os.path.join(self.project_dir, src_dir, src_subdir)
         )
 
     def handle_imp(
@@ -136,10 +141,11 @@ class Command(DodoCommand):  # noqa
         cookiecutter_url,
         depth,
         branch,
+        src_subdir,
         **kwargs
     ):  # noqa
         self.project_dir = self.get_config('/ROOT/project_dir')
-        full_src_dir = self._get_full_src_dir(src_dir)
+        full_src_dir = self._get_full_src_dir(src_dir, src_subdir)
         self.runcmd(['mkdir', '-p', os.path.dirname(full_src_dir)])
 
         if git_url:
