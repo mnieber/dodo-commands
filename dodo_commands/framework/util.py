@@ -44,6 +44,7 @@ _global_config = """
 projects_dir=~/projects
 python_interpreter=python
 diff_tool=diff
+pretty_print=true
 """
 
 

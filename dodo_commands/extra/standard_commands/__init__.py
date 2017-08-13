@@ -2,6 +2,7 @@
 import fnmatch
 import inspect
 import os
+from six.moves import configparser
 
 from dodo_commands.framework import (BaseCommand, CommandPath)
 from dodo_commands.framework.command_error import CommandError
@@ -12,14 +13,19 @@ from plumbum import FG, ProcessExecutionError, local
 from dodo_commands.framework.util import query_yes_no
 
 
-def _ask_to_continue(args, cwd, is_echo, is_confirm):
+def _ask_to_continue(args, cwd, is_echo, is_confirm, pretty_print):
     """Ask the user whether to continue with executing func."""
+    def to_str():
+        if pretty_print:
+            return args.to_str()
+        return " ".join(args.flatten())
+
     if is_echo:
-        print(args.to_str())
+        print(to_str())
         return False
 
     if is_confirm:
-        print("(%s) %s" % (cwd, args.to_str()))
+        print("(%s) %s" % (cwd, to_str()))
         if not query_yes_no("continue?"):
             return False
         else:
@@ -83,8 +89,17 @@ class DodoCommand(BaseCommand):  # noqa
             ]
         return self._loaded_decorators
 
+    def _default_pretty_print(self):
+        config = configparser.ConfigParser()
+        config.read(os.path.expanduser("~/.dodo_commands/config"))
+        try:
+            return config.get("DodoCommands", "pretty_print")
+        except configparser.NoOptionError:
+            return "true"
+
     def add_arguments(self, parser):
         """Entry point for subclassed commands to add custom arguments."""
+
         parser.add_argument(
             '--confirm',
             action='store_true',
@@ -95,6 +110,13 @@ class DodoCommand(BaseCommand):  # noqa
             '--echo',
             action='store_true',
             help="Print all commands instead of running them"
+        )
+
+        parser.add_argument(
+            '--pretty-print', '--pp',
+            default=self._default_pretty_print(),
+            choices=['yes', 'true', 't', 'y', '1', 'no', 'false', 'f', 'n', '0'],
+            help="Use pretty printing for --echo and --confirm options"
         )
 
         for decorator in self._get_decorators():
@@ -109,10 +131,12 @@ class DodoCommand(BaseCommand):  # noqa
         self,
         confirm=False,
         echo=False,
+        pretty_print=True,
         **kwargs
     ):
         self.opt_confirm = confirm
         self.opt_echo = echo
+        self.opt_pretty_print = pretty_print
 
         if echo and not self.safe:
             raise CommandError(
@@ -142,7 +166,13 @@ class DodoCommand(BaseCommand):  # noqa
         for decorator in self._get_decorators():
             root_node, cwd = decorator.modify_args(self, root_node, cwd)
 
-        if not _ask_to_continue(root_node, cwd, self.opt_echo, self.opt_confirm):
+        if not _ask_to_continue(
+            root_node,
+            cwd,
+            self.opt_echo,
+            self.opt_confirm,
+            self.opt_pretty_print in ('yes', 'true', 't', 'y', '1')
+        ):
             return False
 
         if cwd and not os.path.exists(cwd):
