@@ -1,3 +1,5 @@
+from dodo_commands.framework.args_tree import ArgsTreeNode
+
 class Decorator:  # noqa
     def add_arguments(self, decorated, parser):  # noqa
         parser.add_argument(
@@ -10,9 +12,10 @@ class Decorator:  # noqa
     def handle(self, decorated, use_debugger, **kwargs):  # noqa
         decorated.opt_use_debugger = use_debugger
 
-    def modify_args(self, decorated, args, cwd):  # noqa
+    def modify_args(self, decorated, root_node, cwd):  # noqa
         if not decorated.opt_use_debugger:
-            return args, cwd
+            return root_node, cwd
 
-        new_args = [decorated.get_config('/BUILD/debugger')] + args
-        return new_args, cwd
+        debugger_node = ArgsTreeNode("debugger", args=[decorated.get_config('/BUILD/debugger')])
+        debugger_node.add_child(root_node)
+        return debugger_node, cwd

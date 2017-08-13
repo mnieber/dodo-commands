@@ -14,5 +14,5 @@ class Decorator:  # noqa
         if pause_ms:
             time.sleep(pause_ms / 1000)
 
-    def modify_args(self, decorated, args, cwd):  # noqa
-        return args, cwd
+    def modify_args(self, decorated, root_node, cwd):  # noqa
+        return root_node, cwd

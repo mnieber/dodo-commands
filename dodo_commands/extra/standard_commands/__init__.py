@@ -5,20 +5,21 @@ import os
 
 from dodo_commands.framework import (BaseCommand, CommandPath)
 from dodo_commands.framework.command_error import CommandError
+from dodo_commands.framework.args_tree import ArgsTreeNode
 
 from importlib import import_module
 from plumbum import FG, ProcessExecutionError, local
 from dodo_commands.framework.util import query_yes_no
 
 
-def _ask_to_continue(func, cwd, is_echo, is_confirm):
+def _ask_to_continue(args, cwd, is_echo, is_confirm):
     """Ask the user whether to continue with executing func."""
     if is_echo:
-        print(func)
+        print(args.to_str())
         return False
 
     if is_confirm:
-        print("(%s) %s" % (cwd, func))
+        print("(%s) %s" % (cwd, args.to_str()))
         if not query_yes_no("continue?"):
             return False
         else:
@@ -137,17 +138,19 @@ class DodoCommand(BaseCommand):  # noqa
         raise CommandError("Not implemented")
 
     def runcmd(self, args, cwd=None):
+        root_node = ArgsTreeNode('original_args', args=args)
         for decorator in self._get_decorators():
-            args, cwd = decorator.modify_args(self, args, cwd)
+            root_node, cwd = decorator.modify_args(self, root_node, cwd)
 
-        func = local[args[0]][args[1:]]
-        if not _ask_to_continue(func, cwd, self.opt_echo, self.opt_confirm):
+        if not _ask_to_continue(root_node, cwd, self.opt_echo, self.opt_confirm):
             return False
 
         if cwd and not os.path.exists(cwd):
             raise CommandError("Directory not found: %s" % cwd)
 
         with local.cwd(cwd or local.cwd):
+            flat_args = root_node.flatten()
+            func = local[flat_args[0]][flat_args[1:]]
             try:
                 variable_map = self.get_config('/ENVIRONMENT/variable_map', {})
                 with local.env(**variable_map):

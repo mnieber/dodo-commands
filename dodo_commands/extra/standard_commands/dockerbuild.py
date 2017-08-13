@@ -1,6 +1,7 @@
 """Build a docker image."""
 
 import os
+import re
 
 from . import DodoCommand
 from dodo_commands.framework import CommandError
@@ -57,7 +58,7 @@ class Command(DodoCommand):  # noqa
                     "-t",
                     docker_image,
                     "-f",
-                    "Dockerfile.%s.%s" % tuple(docker_image.split(":", 1)),
+                    "Dockerfile.%s.%s" % tuple(re.split("[\:/]", docker_image)),
                 ] +
                 [
                     ".",
