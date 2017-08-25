@@ -25,6 +25,10 @@ class Command(DodoCommand):  # noqa
             action="store_true",
             help='Print where the config file is')
         group.add_argument(
+            '--global-config',
+            action="store_true",
+            help='Print where the global config file is')
+        group.add_argument(
             '--script',
             help='Print where the dodo command script with given name is')
         group.add_argument(
@@ -58,13 +62,15 @@ class Command(DodoCommand):  # noqa
         config.read(os.path.expanduser("~/.dodo_commands/config"))
         return os.path.expanduser(config.get("DodoCommands", "projects_dir"))
 
-    def handle_imp(self, what, config, script, directory, decorators, projects, **kwargs):
+    def handle_imp(self, what, config, global_config, script, directory, decorators, projects, **kwargs):
         if config:
             print(
                 os.path.join(
                     get_project_dir(), "dodo_commands", "res", "config.yaml"
                 )
             )
+        elif global_config:
+            sys.stdout.write(os.path.expanduser('~/.dodo_commands/config\n'))
         elif script:
             sys.stdout.write(self._which_script(script) + "\n")
         elif directory:
