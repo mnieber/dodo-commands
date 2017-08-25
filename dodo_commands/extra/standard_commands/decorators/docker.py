@@ -102,8 +102,8 @@ class Decorator:  # noqa
                     key, val = p
                     if key == "name":
                         name = val
-                    name = key if root_node.has_child(key) else "other"
-                    root_node[name].append(cls._to_opt(key, val))
+                    child_name = key if root_node.has_child(key) else "other"
+                    root_node[child_name].append(cls._to_opt(key, val))
                 except:
                     raise CommandError(
                         "Elements of docker_options must be tuples of type (key, val)"
