@@ -123,10 +123,6 @@ class Decorator:  # noqa
         return ""
 
     def modify_args(self, decorated, root_node, cwd):  # noqa
-        is_enabled = decorated.get_config('/DOCKER/enabled', False)
-        if is_enabled == "False" or not is_enabled:
-            return root_node, cwd
-
         docker_node = ArgsTreeNode("docker", args=['docker', 'run'])
         docker_node.add_child(ArgsTreeNode("basic"))
         docker_node.add_child(ArgsTreeNode("name"))
