@@ -54,7 +54,7 @@ class Decorator:  # noqa
             return result
 
         for pattern, docker_config in get_config('/DOCKER/options', {}).items():
-            if fnmatch(name, pattern):
+            if name and fnmatch(name, pattern):
                 result = get_config('/DOCKER/options/%s/image' % pattern, '')
                 if result:
                     return result
@@ -67,7 +67,7 @@ class Decorator:  # noqa
             root_node['env'].append("--env=%s=%s" % key_val)
 
         for pattern, docker_config in get_config('/DOCKER/options', {}).items():
-            if fnmatch(name, pattern):
+            if name and fnmatch(name, pattern):
                 cls._add_docker_variable_list(docker_config, root_node)
                 cls._add_docker_volume_list(docker_config, root_node)
                 cls._add_docker_volumes_from_list(docker_config, root_node)
