@@ -1,5 +1,12 @@
 # Version history
 
+## 0.10.3
+
+- Remove DOCKER/enabled flag
+- Fix crash when there is no docker name
+- Add --pretty-print option
+- Add option --global-config to dodo which
+
 ## 0.10.2
 
 - Add option --src-subdir to bootstrap command
