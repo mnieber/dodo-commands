@@ -6,6 +6,10 @@ from dodo_commands.framework.args_tree import ArgsTreeNode
 from fnmatch import fnmatch
 
 
+def _is_tuple(x):
+    return hasattr(x, "__len__") and not isinstance(x, type(str()))
+
+
 class Decorator:  # noqa
     @classmethod
     def _add_docker_volume_list(cls, docker_config, root_node):
@@ -53,11 +57,12 @@ class Decorator:  # noqa
         if result:
             return result
 
-        for pattern, docker_config in get_config('/DOCKER/options', {}).items():
-            if name and fnmatch(name, pattern):
-                result = get_config('/DOCKER/options/%s/image' % pattern, '')
-                if result:
-                    return result
+        for patterns, docker_config in get_config('/DOCKER/options', {}).items():
+            for pattern in (patterns if _is_tuple(patterns) else [patterns]):
+                if name and fnmatch(name, pattern):
+                    result = docker_config.get('image', None)
+                    if result:
+                        return result
 
         return get_config('/DOCKER/image')
 
@@ -66,14 +71,15 @@ class Decorator:  # noqa
         for key_val in get_config('/ENVIRONMENT/variable_map', {}).items():
             root_node['env'].append("--env=%s=%s" % key_val)
 
-        for pattern, docker_config in get_config('/DOCKER/options', {}).items():
-            if name and fnmatch(name, pattern):
-                cls._add_docker_variable_list(docker_config, root_node)
-                cls._add_docker_volume_list(docker_config, root_node)
-                cls._add_docker_volumes_from_list(docker_config, root_node)
-                cls._add_linked_container_list(docker_config, root_node)
-                for x in docker_config.get('extra_options', []):
-                    root_node['other'].append(x)
+        for patterns, docker_config in get_config('/DOCKER/options', {}).items():
+            for pattern in (patterns if _is_tuple(patterns) else [patterns]):
+                if name and fnmatch(name, pattern):
+                    cls._add_docker_variable_list(docker_config, root_node)
+                    cls._add_docker_volume_list(docker_config, root_node)
+                    cls._add_docker_volumes_from_list(docker_config, root_node)
+                    cls._add_linked_container_list(docker_config, root_node)
+                    for x in docker_config.get('extra_options', []):
+                        root_node['other'].append(x)
 
     def add_arguments(self, decorated, parser):  # noqa
         parser.add_argument(
