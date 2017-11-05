@@ -74,12 +74,13 @@ class Activator:
         pip = local[os.path.join(self._dodo_commands_dir, "env/bin", "pip")]
         pip(
             "install",
+            "ansimarkup",
             "argcomplete",
+            "parsimonious",
             "plumbum",
             "ruamel.yaml",
-            "six",
-            "parsimonious",
             "semantic_version",
+            "six",
         )
 
         python = local[os.path.join(self._dodo_commands_dir, "env/bin", "python")]
