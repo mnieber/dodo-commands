@@ -1,10 +1,12 @@
 """Build a docker image."""
 
+import argparse
 import os
 import re
 
 from . import DodoCommand
 from dodo_commands.framework import CommandError
+from dodo_commands.framework.util import remove_trailing_dashes
 
 
 class Command(DodoCommand):  # noqa
@@ -18,6 +20,10 @@ class Command(DodoCommand):  # noqa
                 "A file Dockerfile.foo.bar will be used "
                 "as the input docker file."
             )
+        )
+        parser.add_argument(
+            'build_args',
+            nargs=argparse.REMAINDER
         )
 
     def _copy_extra_dirs(self, local_dir, extra_dirs):
@@ -38,7 +44,7 @@ class Command(DodoCommand):  # noqa
             local_path = os.path.join(local_dir, extra_dir_name)
             self.runcmd(["rm", "-rf", local_path])
 
-    def handle_imp(self, docker_image, **kwargs):  # noqa
+    def handle_imp(self, docker_image, build_args, **kwargs):  # noqa
         res_dir = os.path.join(
             self.get_config("/ROOT/project_dir"), "dodo_commands", "res"
         )
@@ -62,7 +68,7 @@ class Command(DodoCommand):  # noqa
                 ] +
                 [
                     ".",
-                ],
+                ] + remove_trailing_dashes(build_args),
                 cwd=local_dir
             )
         finally:
