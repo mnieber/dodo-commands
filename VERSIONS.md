@@ -1,5 +1,11 @@
 # Version history
 
+## 0.11.0
+
+- Allow to use a complex "tuple" key in DOCKER/options
+- Add build_args argument to dockerbuild
+- Add dodo diagnose command
+
 ## 0.10.3
 
 - Remove DOCKER/enabled flag
