@@ -1,5 +1,9 @@
 # Version history
 
+## 0.11.1
+
+- Add DiagnoseBase class
+
 ## 0.11.0
 
 - Allow to use a complex "tuple" key in DOCKER/options
