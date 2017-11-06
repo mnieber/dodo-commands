@@ -19,10 +19,7 @@ class Command(DodoCommand):  # noqa
         pass
 
     def handle_imp(self, **kwargs):  # noqa
-        self.steps_dir = os.path.join(
-            self.get_config('/ROOT/res_dir'),
-            'diagnose'
-        )
+        self.steps_dir = self.get_config('/ROOT/diagnose_dir')
 
         self.am = ansimarkup.AnsiMarkup(tags=dict(
             orange=ansimarkup.parse("<fg #f29130>"),
