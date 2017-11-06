@@ -9,6 +9,7 @@ from importlib import import_module
 import ansimarkup
 from dodo_commands.framework.util import bordered
 import textwrap
+from _diagnose_base import DiagnoseBase  # noqa
 
 
 class Command(DodoCommand):  # noqa
