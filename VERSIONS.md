@@ -1,5 +1,9 @@
 # Version history
 
+## 0.11.2
+
+- Use /ROOT/diagnose_dir in dodo diagnose
+
 ## 0.11.1
 
 - Add DiagnoseBase class
