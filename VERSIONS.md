@@ -1,5 +1,10 @@
 # Version history
 
+## 0.11.3
+
+- Fix broken bootstrap command
+- Make value arg optional in dodo layer
+
 ## 0.11.2
 
 - Use /ROOT/diagnose_dir in dodo diagnose
