@@ -125,10 +125,15 @@ class Command(DodoCommand):  # noqa
         ConfigIO().save(config)
 
     def _get_full_src_dir(self, src_dir, src_subdir):
-        return (
+        postfix = (
             os.path.join(src_dir, src_subdir)
+            if src_subdir else
+            src_dir
+        )
+        return (
+            postfix
             if os.path.isabs(src_dir) else
-            os.path.join(self.project_dir, src_dir, src_subdir)
+            os.path.join(self.project_dir, postfix)
         )
 
     def handle_imp(
