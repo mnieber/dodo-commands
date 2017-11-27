@@ -1,5 +1,9 @@
 # Version history
 
+## 0.11.5
+
+- Make value argument optional in dodo global-config
+
 ## 0.11.4
 
 - Use decorators.docker.Decorator.get_image_name in DiagnoseBase
