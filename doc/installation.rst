@@ -45,8 +45,8 @@ The :code:`standard_commands` directory was found "magically" because it comes w
    On Mac you may need to create a file ``~/.distutils.cfg`` that `sets an empty prefix <http://stackoverflow.com/a/24357384/301034>`_ to prevent errors stating "must supply either home or prefix/exec-prefix -- not both".
 
 
-Step 4: (Optional) Create aliases
-=================================
+Step 4: (Optional) Extend the path
+==================================
 
 NOTE: this step is only necessary if you installed :code:`dodo_commands`
 into a virtual environment.
