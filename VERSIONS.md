@@ -1,5 +1,10 @@
 # Version history
 
+## 0.11.4
+
+- Use decorators.docker.Decorator.get_image_name in DiagnoseBase
+- Don't fall back on /DOCKER/image in docker decorator
+
 ## 0.11.3
 
 - Fix broken bootstrap command
