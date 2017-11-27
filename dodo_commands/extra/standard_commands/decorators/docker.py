@@ -64,7 +64,7 @@ class Decorator:  # noqa
                     if result:
                         return result
 
-        return get_config('/DOCKER/image')
+        raise CommandError("Could not find docker image for %s" % name)
 
     @classmethod
     def _add_config_docker_options(cls, get_config, name, root_node):
