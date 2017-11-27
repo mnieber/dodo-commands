@@ -1,4 +1,5 @@
 import plumbum
+from dodo_commands.extra.standard_commands.decorators.docker import Decorator as DockerDecorator
 
 
 class DiagnoseBase:
@@ -14,33 +15,38 @@ class DiagnoseBase:
         except plumbum.commands.processes.CommandNotFound:
             self.prnt_error("Docker is not installed")
 
-    def _image(self, key):
-        image = self.get_config(key, None)
+    def _image(self, key_or_name):
+        image = (
+            self.get_config(key_or_name, None) or
+            DockerDecorator.get_image_name(self.get_config, key_or_name)
+        )
+
         if not image:
-            self.prnt_error("Missing docker image configuration value: %s" % key)
+            self.prnt_error("Missing docker image configuration value for docker with name: %s" % key_or_name)
         return image
 
-    def _print_yes_no(self, flag, yes_msg, no_msg, key):
+    def _print_yes_no(self, flag, yes_msg, no_msg, image):
         if flag:
             self.prnt(" yes")
             if yes_msg:
-                self.prnt(yes_msg % dict(key=key))
+                self.prnt(yes_msg % dict(image=image))
         else:
             self.prnt(" no")
             if no_msg:
-                self.prnt_next(no_msg % dict(key=key))
+                self.prnt_next(no_msg % dict(image=image))
 
-    def check_docker_image(self, key, yes_msg, no_msg):
+    def check_docker_image(self, key_or_name, yes_msg, no_msg):
         docker = self._docker()
-        image = self._image(key)
+        image = self._image(key_or_name)
 
         self.prnt(
-            "Checking if docker image ##${%s}## is found locally:" % key,
+            "Checking if docker image for %s (%s) is found locally:"
+            % (key_or_name, image),
             new_line=False
         )
 
         docker_image_exists = docker("images", "-q", image)
-        self._print_yes_no(docker_image_exists, yes_msg, no_msg, key)
+        self._print_yes_no(docker_image_exists, yes_msg, no_msg, image)
 
     def check_docker_container(self, key, yes_msg, no_msg):
         docker = self._docker()
@@ -52,4 +58,4 @@ class DiagnoseBase:
         )
 
         container_exists = image in docker("ps", "-a", "--filter=name=%s" % image)
-        self._print_yes_no(container_exists, yes_msg, no_msg, key)
+        self._print_yes_no(container_exists, yes_msg, no_msg, image)
