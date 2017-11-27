@@ -10,7 +10,7 @@ class Command(DodoCommand):  # noqa
 
     def add_arguments_imp(self, parser):  # noqa
         parser.add_argument('key')
-        parser.add_argument('val')
+        parser.add_argument('val', nargs='?')
 
     def _config_filename(self):
         return os.path.expanduser("~/.dodo_commands/config")
@@ -28,5 +28,8 @@ class Command(DodoCommand):  # noqa
 
     def handle_imp(self, key, val, **kwargs):  # noqa
         config = self._read_config()
-        config.set("DodoCommands", key, val)
-        self._write_config(config)
+        if val:
+            config.set("DodoCommands", key, val)
+            self._write_config(config)
+        else:
+            print(config.get("DodoCommands", key))
