@@ -142,9 +142,14 @@ class Decorator:  # noqa
         name = self._add_options(decorated, cwd, docker_node)
         self._add_config_docker_options(decorated.get_config, name, docker_node)
 
-        docker_node.add_child(
-            ArgsTreeNode("image", args=[self.get_image_name(decorated.get_config, name)])
+        image_name = (
+            decorated.docker_image
+            if hasattr(decorated, 'docker_image') else
+            self.get_image_name(decorated.get_config, name)
         )
-        docker_node.add_child(root_node)
+        docker_node.add_child(
+            ArgsTreeNode("image", args=[image_name])
+        )
 
+        docker_node.add_child(root_node)
         return docker_node, local.cwd

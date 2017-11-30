@@ -51,12 +51,22 @@ A Decorator is a class that alters the workings of a DodoCommand class. It can e
         def handle(self, decorated, use_debugger, **kwargs):  # noqa
             decorated.opt_use_debugger = use_debugger
 
-        def modify_args(self, decorated, args, cwd):  # noqa
-            if not decorated.opt_use_debugger:
-                return args, cwd
 
-            new_args = [decorated.get_config('/BUILD/debugger')] + args
-            return new_args, cwd
+        def modify_args(self, decorated, root_node, cwd):  # noqa
+            if not decorated.opt_use_debugger:
+                return root_node, cwd
+
+            # Create a command argument with the path to the debugger
+            # Note that "debugger" is a tag which is only used internally
+            debugger_node = ArgsTreeNode(
+                "debugger", args=[decorated.get_config('/BUILD/debugger')]
+            )
+
+            # create a new command by using debugger_node as a prefix, and
+            # adding the existing root_node command as a postfix
+            debugger_node.add_child(root_node)
+            return debugger_node, cwd
+
 
 Note that not all decorators are compatible with all commands. For example, only some commands can be run inside a debugger. Therefore, for each decorator you should list in the configuration which commands are decorated. When listing the commands, wildcards are allowed, and you can exclude commands by prefixing them with an exclamation mark:
 
