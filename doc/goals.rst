@@ -3,7 +3,7 @@ Goals of the Dodo Commands system
 *********************************
 
 The Dodo Commands system supports various goals. The following list skips
-some of the details, but gives a general overview:
+some of the details, but gives a general overview. To see a use-case, visit this `page <https://github.com/mnieber/dodo_commands>`_.
 
 Single entry point to run a variety of command scripts
 ======================================================

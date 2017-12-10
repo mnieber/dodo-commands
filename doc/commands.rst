@@ -49,7 +49,7 @@ In the example below, all subdirectories of the default commands are used (note 
 
 In this example, the final command_path contains ``~/projects/FooBar/src/special_commands``, ``~/projects/FooBar/dodo_commands/default_commands/standard_commands`` and ``~/projects/FooBar/dodo_commands/default_commands/mycommands``.
 
-Use ``${/ROOT/command_path_exclude}`` to exclude parts of the command path:
+Use ``${/ROOT/command_path_exclude}`` to exclude certain paths from the command path:
 
 .. code-block:: yaml
 
@@ -76,12 +76,6 @@ Each Dodo command should ideally run out-of-the-box. If your ``foo`` command nee
     - dominate==2.2.0
 
 In this example, calling the ``foo`` command will automatically install the ``dominate`` package into the python virtual environment of the active Dodo Commands project.
-
-
-Installing command directories from dodo_commands.extra
-=======================================================
-
-If you call :code:`dodo install-default-commands` with a path that is not found, then :code:`dodo install-default-commands` will try to locate this path inside the `extra` directory of the dodo_commands python package. Calling :code:`dodo install-default-commands --help` will show a list of command directories that come standard with the dodo_commands package.
 
 
 The BaseCommand class

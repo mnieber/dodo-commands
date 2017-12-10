@@ -72,10 +72,10 @@ It's convenient to start a new project from a cookiecutter template. This can be
 Note that the cookiecutter url can also point to a directory on the local filesystem.
 
 
-Bootstrapping with monolithic repositories
-==========================================
+Symlinking to a local src directory (useful with monolithic repositories)
+=========================================================================
 
-A monolithic repository may contain several projects that each have their own Dodo Commands configuration. In this scenario, several Dodo Commands projects should share the same source tree:
+A monolithic repository may contain several projects that each have their own Dodo Commands configuration. In this scenario, each Dodo Commands project should use a symlink to a subdirectory of the monolithic source tree:
 
 .. code-block:: bash
 
@@ -88,7 +88,7 @@ A monolithic repository may contain several projects that each have their own Do
     # Copy configuration from ~/sources/monolith/foobar/extra/dodo_commands/res
 
     $(dodo activate --create foobar)
-    dodo bootstrap ~/sources/monolith/foobar extra/dodo_commands/res --force
+    dodo bootstrap --link-dir ~/sources/monolith/foobar extra/dodo_commands/res --force
 
 
 Checking the config version

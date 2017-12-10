@@ -4,7 +4,7 @@
 How the Dodo Commands system works
 **********************************
 
-After following the :ref:`installation` steps, you now have a "dodo" executable (called the "system" dodo) that you can use to create new projects in the projects directory. To see where it's located type:
+After following the :ref:`installation` steps, you now have a ``dodo`` executable (called the "system" dodo) that you can use to create new projects in the projects directory. To see where it's located type:
 
 .. code-block:: bash
 
@@ -35,7 +35,7 @@ This call will execute the following steps:
 
 #. the foo.py script is found and run with the --bar option
 
-#. the foo.py script reads the project configuration and does some operation on the project (such as deleting all build results in ~/projects/FooBar/build/debug)
+#. the foo.py script can access the project configuration and does some operation on the project (such as deleting all build results in ~/projects/FooBar/build/debug)
 
 Activating a project
 ====================
@@ -46,7 +46,7 @@ The ``~/projects/FooBar/dodo_commands/env/bin/dodo`` script is part of a virtual
 
     source ~/projects/FooBar/dodo_commands/env/bin/activate
 
-This has the effect that running ``dodo`` will find the project-specific script, rather than the "system" dodo script. You can now run commands against the activated project with:
+This has the effect that running ``dodo`` will now find the project-specific script, rather than the "system" dodo script. You can now run commands against the activated project with:
 
 .. code-block:: bash
 
@@ -70,7 +70,7 @@ This works because the ``dodo activate`` call prints the line ``source ~/project
 Activating the last used project
 ================================
 
-Dodo Commands remembers which project was last activated. You can activate the last used project with ``$(dodo activate --latest)``. It's usually convenient to activate the latest project whenever you open a terminal. To facilitate this, calling ``dodo autostart on`` writes a small script file to ``~/.dodo_commands_autostart``.
+Dodo Commands remembers which project was last activated. You can activate the last used project with ``$(dodo activate --latest)``. It's usually convenient to activate the latest project whenever you open a terminal. To facilitate this, you can call ``dodo autostart on`` to write a small script file to ``~/.dodo_commands_autostart``.
 
 .. code-block:: bash
 
@@ -79,6 +79,7 @@ Dodo Commands remembers which project was last activated. You can activate the l
 
     > $(dodo activate --latest)
     > dodo check-config-version
+    > dodo check-version
 
 Add the following lines to your ``~/.bashrc`` to execute this script when a terminal is opened:
 
