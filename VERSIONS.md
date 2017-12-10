@@ -1,5 +1,10 @@
 # Version history
 
+## 0.11.6
+
+- Use decorated.docker_image in decorators.docker
+- Update README.md
+
 ## 0.11.5
 
 - Make value argument optional in dodo global-config
