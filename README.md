@@ -29,37 +29,29 @@ Call `$(dodo activate fooProject)` to activate its Python virtual environment.
 
 For example, you may call `dodo cmake` to invoke the cmake executable in the project's C++ build directory, passing it a list of flags and the desired C++ source directory. It's enough to type `dodo cmake` because all other required information is read from the project's configuration file.
 
-3. If you switch to "barProject", you still call `dodo cmake` to invoke the cmake compiler, but now the C++ build directory location and cmake parameters are read from barProject's configuration file.
+3. If you switch to a different project with `$(dodo activate barProject)`, you still call `dodo cmake` to invoke the cmake compiler, but now the C++ build directory location and cmake parameters are read from `barProject`'s configuration file.
 
-4. If you enable docker support for fooProject, then it will run the cmake executable in the pre-configured docker container. This allows you to keep your runtime environments isolated from your host computer.
+4. If you enable docker support for `fooProject`, then it will run the cmake executable in the pre-configured docker container. This allows you to keep your runtime environments isolated from your host computer.
 
 ## Example
 
-The following steps shows a Dodo Commands project that offers a `dodo cmake` command:
+The following steps show a Dodo Commands project that offers a `dodo cmake` command:
 
-0. Install prerequisites
-
+0. Install
     ```bash
     > sudo apt-get install python-virtualenv git
-    # optionally, install cmake (without cmake the last step in this README will fail)
-    > sudo apt-get install cmake
-    ```
-
-1. Install
-
-    ```bash
     > pip install dodo_commands
     > dodo install-default-commands standard_commands
     ```
 
-2. Create a new (empty) dodo_tutorial project and bootstrap it by copying some configuration files from the dodo_commands_tutorial project
+1. Create a new (empty) `dodo_tutorial` project and bootstrap it by copying some configuration files from the `dodo_commands_tutorial` project
 
     ```bash
     > $(dodo activate dodo_tutorial --create)
     > dodo bootstrap src extra/dodo_commands/res --force --git-url https://github.com/mnieber/dodo_commands_tutorial.git
     ```
 
-3. Inspect the configuration file:
+2. Inspect the configuration file:
 
     ```bash
     > cat $(dodo which --config)
@@ -84,19 +76,21 @@ The following steps shows a Dodo Commands project that offers a `dodo cmake` com
       version: 1.0.0
     ```
 
-4. Inspect the code of the 'cmake' command script:
+3. If you inspect the code of the 'cmake' command script with:
 
     ```bash
     > cat $(dodo which --script cmake)
     ```
 
-    which returns
+    you will see that it refers to configuration file values such as `/ROOT/build_dir`:
 
     ```python
     """Configure code with CMake."""
     from dodo_commands.system_commands import DodoCommand
 
     class Command(DodoCommand):  # noqa
+        docker_options = [('name', 'cmake')]
+
         def handle_imp(self, **kwargs):  # noqa
             self.runcmd(
                 ["cmake"] +
@@ -109,7 +103,7 @@ The following steps shows a Dodo Commands project that offers a `dodo cmake` com
             )
     ```
 
-5. Do a trial run of the cmake command, without actually running it:
+4. Do a trial run of the cmake command, without actually running it:
 
     ```bash
     > dodo cmake --confirm
@@ -123,11 +117,11 @@ The following steps shows a Dodo Commands project that offers a `dodo cmake` com
     continue? [Y/n]
     ```
 
-6. Show the command line for running cmake in docker:
+5. Show the command line for running cmake in docker:
 
     ```bash
     # enable the docker.on.yaml configuration layer that adds some docker specific
-    # values (such the image name) to the configuration file
+    # values (such as the image name) to the configuration file
     > dodo layer docker on
 
     # the same command now runs in docker!
@@ -150,4 +144,4 @@ The following steps shows a Dodo Commands project that offers a `dodo cmake` com
     Note that this command line only works if the dodo_tutorial:1604 image exists. You can build it by running `dodo dockerbuild`.
 
 
-This simplified scenario already shows how a complicated command line can be compressed into a short command. Instead of remembering/editing long command lines, you can tweak your project configuration files and produce these long command lines with Dodo Commands. It's also easy to get new colleagues started on a project by sharing your command scripts and configuration file with them (see [the documentation](http://dodo-commands.readthedocs.io/en/latest/sharing-projects.html) for details).
+This simple scenario shows how a complicated command line can be compressed into a short command that's easy to remember. We've seen that Dodo Commands is transparent about what it actually executes. It's also easy to get new colleagues started on a project by sharing your command scripts and configuration file with them (see [the documentation](http://dodo-commands.readthedocs.io/en/latest/sharing-projects.html) for details).
