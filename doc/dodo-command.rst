@@ -18,9 +18,9 @@ The :code:`DodoCommand` class adds a helper function :code:`runcmd` and two addi
 
 #. the :code:`--confirm` flag changes the behaviour of :code:`runcmd` so that it prints a command line and asks for confirmation before executing the command.
 
-Because the ``DodoCommand`` class implements :code:`add_arguments` and :code:`handle`, subclasses of ``DodoCommand`` must now implement :code:`add_arguments_imp` and :code:`handle_imp` instead.
+Because the ``DodoCommand`` class implements :code:`add_arguments` and :code:`handle`, subclasses of ``DodoCommand`` must implement :code:`add_arguments_imp` and :code:`handle_imp` if they wish to customize the commands' argument or ``handle`` function.
 
-Note that since command scripts are written in Python, it's not guaranteed that all operations are confirmed or echoed to the screen. Command scripts that do not completely honor the ``--confirm`` and ``--echo`` flags should be marked with ``safe = False``, as shown in the example below. Unsafe commands will not run with the --echo flag, and will pause with a warning when run with the --confirm flag.
+Note that since command scripts are written in Python, the script may choose to perform any operation without explicitly asking your permission. In other words, it may choose to ignore the --confirm and --echo options. This sitation should of course be avoided. However, if a Command script does not completely honor the ``--confirm`` and ``--echo`` flags, it should be marked with ``safe = False``, as shown in the example below. Unsafe commands will not run with the --echo flag, and will pause with a warning when run with the --confirm flag.
 
 .. code-block:: python
 

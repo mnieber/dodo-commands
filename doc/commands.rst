@@ -22,7 +22,7 @@ or
     # ``my_commands`` package
     dodo install-default-commands --pip my_commands
 
-All search paths for commands are specified by the ``${/ROOT/command_path}`` setting in config.yaml:
+The search path for commands is determined by the ``${/ROOT/command_path}`` setting in config.yaml:
 
 .. code-block:: yaml
 
@@ -47,7 +47,7 @@ In the example below, all subdirectories of the default commands are used (note 
         - - ${/ROOT/src_dir}
           - special_commands
 
-In this example, the final command_path contains ``~/projects/FooBar/src/special_commands``, ``~/projects/FooBar/dodo_commands/default_commands/standard_commands`` and ``~/projects/FooBar/dodo_commands/default_commands/mycommands``.
+In this case, the final command_path contains ``~/projects/FooBar/src/special_commands``, ``~/projects/FooBar/dodo_commands/default_commands/standard_commands`` and ``~/projects/FooBar/dodo_commands/default_commands/mycommands``.
 
 Use ``${/ROOT/command_path_exclude}`` to exclude certain paths from the command path:
 

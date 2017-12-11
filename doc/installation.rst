@@ -4,33 +4,21 @@
 Installation
 ************
 
-Step 1: Install prerequisites
-==========================================
+Step 1: Install software
+========================
 
-Dodo Commands depends on the python-virtualenv package.
-In addition, some of the Dodo commands use git.
+Dodo Commands depends on the python-virtualenv package. In addition, some of the Dodo commands use git.
 
 .. code-block:: bash
 
+    # install prerequisites
     sudo apt-get install python-virtualenv git
 
+    # install dodo commands
+    sudo pip install dodo_commands
 
-Step 2: Install
-===============
-
-.. code-block:: bash
-
-    pip install dodo_commands
-
-
-Step 3: Install some default commands
-=====================================
-
-At this point, the Dodo Commands framework is installed but it will not contain any commands you can run. To install the standard Dodo Commands, run:
-
-.. code-block:: bash
-
-    dodo install-default-commands standard_commands
+    # install default commands
+    dodo install-default-commands standard_commands --pip dodo_webdev_commands --pip dodo_git_commands
 
 The :code:`standard_commands` directory was found "magically" because it comes with the Dodo Commands python package. Commands are installed in the ``~/.dodo_commands/default_commands`` directory. To read more about installing default commands, see :ref:`commands`.
 
@@ -38,23 +26,19 @@ The :code:`standard_commands` directory was found "magically" because it comes w
 
    On Mac you may need to create a file ``~/.distutils.cfg`` that `sets an empty prefix <http://stackoverflow.com/a/24357384/301034>`_ to prevent errors stating "must supply either home or prefix/exec-prefix -- not both".
 
-
-Step 4: (Optional) Extend the path
+Step 2: (Optional) Extend the path
 ==================================
 
 NOTE: this step is only necessary if you installed :code:`dodo_commands`
 into a virtual environment.
 
-To make sure that the :code:`dodo` command is always found,
-call :code:`which dodo` and add the resulting path (the directory part) to the PATH in
-in your :code:`~/.bashrc`. The result should look something like this:
+To make sure that the :code:`dodo` command is always found, call :code:`which dodo` and add the resulting path (the directory part) to the PATH in in your :code:`~/.bashrc`. The result should look something like this:
 
 .. code-block:: bash
 
     export PATH=$PATH:/home/maarten/projects/dodo_commands_env/bin
 
-
-Step 5: (Optional) Activate the latest project automatically
+Step 3: (Optional) Activate the latest project automatically
 ============================================================
 
 To automatically activate the last used Dodo Commands project, add this line to your :code:`~/.bashrc` file:
@@ -65,7 +49,7 @@ To automatically activate the last used Dodo Commands project, add this line to 
 
 If you wish to be able to toggle the automatic activation on and off, read about :ref:`autostart`.
 
-Step 6: (Optional) Tweak global configuration
+Step 4: (Optional) Tweak global configuration
 =============================================
 
 The first time you call :code:`dodo`, a global :code:`~/.dodo_commands/config` file is created (unless it already exists) with the following settings:
