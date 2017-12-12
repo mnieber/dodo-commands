@@ -9,7 +9,8 @@ import ansimarkup
 from dodo_commands.framework.util import bordered
 from dodo_commands.framework.config import expand_keys
 import textwrap
-from _diagnose_base import DiagnoseBase  # noqa
+
+from ._diagnose_base import DiagnoseBase  # noqa
 
 
 class Command(DodoCommand):  # noqa
