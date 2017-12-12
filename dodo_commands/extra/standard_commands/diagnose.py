@@ -1,13 +1,13 @@
 # noqa
 from dodo_commands.system_commands import DodoCommand
 import glob
-import json
 import os
 import sys
 import re
 from importlib import import_module
 import ansimarkup
 from dodo_commands.framework.util import bordered
+from dodo_commands.framework.config import expand_keys
 import textwrap
 from _diagnose_base import DiagnoseBase  # noqa
 
@@ -37,17 +37,7 @@ class Command(DodoCommand):  # noqa
                     self.run_step(step_module_name)
 
     def _expand(self, term):
-        result = ""
-        val_terms = re.split('\$\{([^\}]+)\}', term)
-        for idx, term in enumerate(val_terms):
-            if idx % 2:
-                str_rep = json.dumps(self.get_config(term))
-                if str_rep.startswith('"') and str_rep.endswith('"'):
-                    str_rep = str_rep[1:-1]
-                result += str_rep
-            else:
-                result += term
-        return result
+        return expand_keys(term, self.config)
 
     def prnt(self, msg, new_line=True):
         paragraphs = re.split('<cr/>', msg)

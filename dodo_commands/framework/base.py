@@ -40,7 +40,7 @@ import sys
 import argcomplete
 from argparse import ArgumentParser, SUPPRESS
 from dodo_commands.framework.config import (
-    Key, KeyNotFound, load_dodo_config
+    look_up_key, load_dodo_config
 )
 from dodo_commands.framework.command_error import CommandError
 
@@ -149,13 +149,7 @@ class BaseCommand(object):  # noqa
             sys.exit(1)
 
     def get_config(self, key, default_value="__not_set_234234__"):  # noqa
-        xpath = [k for k in key.split("/") if k]
-        try:
-            return Key(self.config, xpath).get()
-        except KeyNotFound:
-            if default_value == "__not_set_234234__":
-                raise
-        return default_value
+        return look_up_key(self.config, key, default_value)
 
     def handle(self, *args, **options):  # noqa
         """

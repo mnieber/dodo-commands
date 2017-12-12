@@ -4,7 +4,9 @@ from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.config_expander import ConfigExpander
 from dodo_commands.framework.config_expander import Key, KeyNotFound  # noqa
 import glob
+import json
 import os
+import re
 import sys
 import ruamel.yaml
 
@@ -211,3 +213,27 @@ class CommandPath:
         for item in self.items:
             if item.sys_path not in sys.path:
                 sys.path.append(item.sys_path)
+
+
+def look_up_key(config, key, default_value="__not_set_234234__"):
+    xpath = [k for k in key.split("/") if k]
+    try:
+        return Key(config, xpath).get()
+    except KeyNotFound:
+        if default_value == "__not_set_234234__":
+            raise
+    return default_value
+
+
+def expand_keys(text, config):
+    result = ""
+    val_terms = re.split('\$\{([^\}]+)\}', text)
+    for idx, term in enumerate(val_terms):
+        if idx % 2:
+            str_rep = json.dumps(look_up_key(config, term))
+            if str_rep.startswith('"') and str_rep.endswith('"'):
+                str_rep = str_rep[1:-1]
+            result += str_rep
+        else:
+            result += term
+    return result
