@@ -65,10 +65,10 @@ class Command(DodoCommand):  # noqa
                     docker_image,
                     "-f",
                     "Dockerfile.%s.%s" % tuple(re.split("[\:/]", docker_image)),
-                ] +
+                ] + remove_trailing_dashes(build_args) +
                 [
                     ".",
-                ] + remove_trailing_dashes(build_args),
+                ],
                 cwd=local_dir
             )
         finally:
