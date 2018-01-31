@@ -87,9 +87,17 @@ class Decorator:  # noqa
             action='store_true',
             help="Run docker calls without -i and -t"
         )
+        parser.add_argument(
+            '--kill-existing',
+            action='store_true',
+            help="Kill and remove existing docker container with the same name"
+        )
 
-    def handle(self, decorated, non_interactive, **kwargs):  # noqa
+    def handle(
+        self, decorated, non_interactive, kill_existing, **kwargs
+    ):  # noqa
         decorated.opt_non_interactive = non_interactive
+        decorated.opt_kill_existing = kill_existing
 
     @classmethod
     def _add_options(cls, decorated, cwd, root_node):
@@ -128,6 +136,25 @@ class Decorator:  # noqa
                 return val
         return ""
 
+    def _kill_existing_container(self, name):
+        docker = local['docker']
+        live_containers = docker(
+            "ps",
+            "--format={{.Names}}",
+            "--filter=name=^/%s$" % name
+        )
+        if len(live_containers):
+            docker("stop", name)
+
+        exited_containers = docker(
+            "ps",
+            "-a",
+            "--format={{.Names}}",
+            "--filter=name=^/%s$" % name
+        )
+        if len(exited_containers):
+            docker("rm", name)
+
     def modify_args(self, decorated, root_node, cwd):  # noqa
         docker_node = ArgsTreeNode("docker", args=['docker', 'run'])
         docker_node.add_child(ArgsTreeNode("basic"))
@@ -140,6 +167,9 @@ class Decorator:  # noqa
         docker_node.add_child(ArgsTreeNode("workdir"))
 
         name = self._add_options(decorated, cwd, docker_node)
+        if decorated.opt_kill_existing and name:
+            self._kill_existing_container(name)
+
         self._add_config_docker_options(decorated.get_config, name, docker_node)
 
         image_name = (
