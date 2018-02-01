@@ -1,5 +1,13 @@
 # Version history
 
+## 0.12.0
+
+- Fix import path
+- Fix args in dockerbuild command
+- Add eval command
+- Add findtext command
+- Add option --kill-existing to docker decorator
+
 ## 0.11.6
 
 - Use decorated.docker_image in decorators.docker
