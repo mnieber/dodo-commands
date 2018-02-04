@@ -77,9 +77,6 @@ class ConfigIO:
 
     def load(self, config_filename='config.yaml', load_layers=True):
         """Get configuration."""
-        if not get_project_dir():
-            return None
-
         full_config_filename = self._path_to([config_filename])
         if not os.path.exists(full_config_filename):
             return None

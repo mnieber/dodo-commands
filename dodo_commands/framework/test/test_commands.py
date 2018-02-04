@@ -65,7 +65,7 @@ class TestConfigIO:  # noqa
         assert os.path.join(dodo_test_dir, 'src') == dodo('which', 'src')[:-1]
         assert res_dir == dodo('which', 'res')[:-1]
         assert config_filename == dodo('which', '--config')[:-1]
-        assert 'debugger, docker' == dodo('which', '--decorators')[:-1]
+        assert 'debugger, docker, pause' == dodo('which', '--decorators')[:-1]
 
         # dodo cd
         assert "cd " + dodo_test_dir == dodo('cd')[:-1]
@@ -83,13 +83,14 @@ class TestConfigIO:  # noqa
         assert "" == dodo('check-version')[:-1]
 
         # dodo diff
-        assert "/usr/bin/meld %s/src/extra/dodo_commands/res %s/." % (dodo_test_dir, res_dir) == dodo('diff', '.', '--echo')[:-1]
+        assert "meld %s/src/extra/dodo_commands/res %s/." % (dodo_test_dir, res_dir) == dodo('diff', '.', '--echo', '--pp=0')[:-1]
 
         # dodo docker
-        assert "/usr/bin/docker run --rm --interactive --tty --volume=%s/log:/var/log dodo_tutorial:1604 /bin/bash" % dodo_test_dir == dodo('docker', '--echo')[:-1]
+        dodo('layer', 'docker', 'on')
+        assert "docker run --rm --interactive --tty --name=foo --volume=%s/log:/var/log dodo_tutorial:1604 /bin/bash" % dodo_test_dir == dodo('docker', '--name=foo', '--echo', '--pp=0')[:-1]
 
         # dodo dockerbuild
-        assert "/usr/bin/docker build -t dodo_tutorial:1604 -f Dockerfile.dodo_tutorial.1604 ." == dodo('dockerbuild', '--echo')[:-1]
+        assert "docker build -t dodo_tutorial:1604 -f Dockerfile.dodo_tutorial.1604 ." == dodo('dockerbuild', '--echo', '--pp=0')[:-1]
 
         # dodo autostart
         autostart_file = os.path.expanduser('~/.dodo_commands_autostart')
