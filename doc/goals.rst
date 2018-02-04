@@ -24,7 +24,7 @@ Script code and configuration values should remain separate. When you run :code:
 Run commands in a docker container
 ==================================
 
-If you enable docker support, and if the command is runnable in docker, then the command will execute inside a docker container. Dodo Commands will read the project configuration to find out which volume mappings and environment variables it must create inside the container.
+You can make certain commands execute inside a docker container. Dodo Commands will read the project configuration to find out which volume mappings and environment variables it must create inside the container.
 
 Install dependencies automatically
 ==================================

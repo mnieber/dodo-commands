@@ -47,6 +47,9 @@ class Command(DodoCommand):  # noqa
             if new_line:
                 sys.stdout.write('\n')
 
+    # Items like `this` are printed in green.
+    # Items like ``this`` are printed in yellow.
+    # Items like ##this## are expanded to this = that.
     def prnt_paragraph(self, paragraph):
         msg, new_msg = paragraph, ""
 

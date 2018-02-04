@@ -2,7 +2,7 @@
 Configuration files
 *******************
 
-Activating a project such as FooBar with :code:`$(dodo activate FooBar)` implies that this project's configuration file is used for any command that you execute. This chapter explains how to store values in the configuration file and use them in a command script.
+Activating a project such as FooBar with :code:`$(dodo activate FooBar)` implies that this project's configuration file is accessible to any command that you execute. This chapter explains how to store values in the configuration file and use them in a command script.
 
 
 Configuration files

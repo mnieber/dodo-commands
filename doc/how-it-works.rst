@@ -20,18 +20,18 @@ Projects are created with the ``dodo activate`` command::
 
     dodo activate FooBar --create
 
-Running this command creates a new FooBar project directory with various files. The most important one is the ``~/projects/FooBar/dodo_commands/env/bin/dodo`` script file. This is a copy of the ``dodo`` script that is specific to the created project. When you call this ``dodo`` script, it's implied that you are operating on the ``FooBar`` project.
+Running this command creates a new FooBar project directory with various files. The most important one is the ``~/projects/FooBar/dodo_commands/env/bin/dodo`` script file. This copy of the ``dodo`` script is specific to the created project. When you call this ``dodo`` script, it's implied that you are operating on the ``FooBar`` project.
 
 Running a command
 =================
 
 You run a command on a project by calling its ``dodo`` script with the name of the command:
 
-~/projects/FooBar/dodo_commands/env/bin/dodo foo --bar
+    ~/projects/FooBar/dodo_commands/env/bin/dodo foo --bar
 
 This call will execute the following steps:
 
-#. the dodo script will read the ``command_path`` (a list of directories with command scripts) from the project's configuration file (``~/projects/FooBar/dodo_commands/res/config.yaml``).
+#. the ``dodo`` script will read the ``command_path`` (a list of directories with command scripts) from the project's configuration file (``~/projects/FooBar/dodo_commands/res/config.yaml``).
 
 #. the foo.py script is found and run with the --bar option
 
@@ -46,7 +46,7 @@ The ``~/projects/FooBar/dodo_commands/env/bin/dodo`` script is part of a virtual
 
     source ~/projects/FooBar/dodo_commands/env/bin/activate
 
-This has the effect that running ``dodo`` will now find the project-specific script, rather than the "system" dodo script. You can now run commands against the activated project with:
+This has the effect that running ``dodo`` will now find the project-specific dodo script, rather than the "system" dodo script. You can now run commands against the activated project with:
 
 .. code-block:: bash
 
@@ -64,6 +64,7 @@ This works because the ``dodo activate`` call prints the line ``source ~/project
 
     $(dodo activate FooBar --create)
 
+If you activated a project and you want to go back to the previously active project, run ``$(dodo activate -)``.
 
 .. _autostart:
 

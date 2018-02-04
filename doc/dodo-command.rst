@@ -82,7 +82,7 @@ Note that not all decorators are compatible with all commands. For example, only
 The docker decorator
 ====================
 
-If the "docker" decorator is used and the ``${/DOCKER/enabled}`` configuration value is true, then all command lines will be prefixed with ``/usr/bin/docker run`` and related docker arguments:
+If the "docker" decorator is used, then all command lines will be prefixed with ``/usr/bin/docker run`` and related docker arguments:
 
 #. ``decorated.docker_options`` is a list of ``(key, value)`` tuples that are added as docker options. Use this mechanism to give a name to the running docker container:
 
@@ -124,3 +124,36 @@ If the "docker" decorator is used and the ``${/DOCKER/enabled}`` configuration v
 #. each key-value pair in ``$(/ENVIRONMENT/variable_map}`` will be added as an environment variable in the docker container.
 
 #. the ``--rm`` flag is added by default, unless ``decorated.rm`` is False. The ``-i`` and ``-t`` flags are added unless you pass the ``--non-interactive`` flag when running the dodo command.
+
+
+Example docker configuration
+============================
+
+Below is a simple Docker configuration. It specifies that all docker commands (that match the '*' wildcard) use the ``foobar:base`` image, and map the source directory to /srv/foobar/src. For more elaborate examples, see <<REF>>.
+
+.. code-block:: yaml
+
+    DOCKER:
+        options:
+            '*':
+                image: foobar:base
+                volume_map:
+                    ${/ROOT/src_dir}: /srv/foobar/src
+            'django-runserver':
+                extra_options:
+                    - --publish=127.0.0.1:80:80
+
+Note that - in this example - when you run ``dodo django-runserver``, then the ``--publish=127.0.0.1:80:80`` is added to the docker call:
+
+.. code-block:: bash
+
+    dodo django-manage --echo
+
+    # prints:
+    # docker run
+    #     --rm --interactive --tty
+    #     --name=django-manage
+    #     --volume=/home/maarten/projects/foobar/src:/srv/foobar/src
+    #     --publish=127.0.0.1:80:80
+    #     foobar:base
+    #     python manage.py

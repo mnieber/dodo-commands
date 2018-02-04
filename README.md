@@ -4,7 +4,7 @@ By Maarten Nieber, with contributions from Georg Rollinger.
 
 ## Introduction
 
-Dodo Commands is a small framework for creating separate development environments for your projects. Each development environment contains:
+Dodo Commands is a small framework for creating separated development environments for your projects. Each development environment contains:
 
 - a Python virtual environment
 - a set of short commands
@@ -35,16 +35,16 @@ For example, you may call `dodo cmake` to invoke the cmake executable in the pro
 
 ## Example
 
-The following steps show a Dodo Commands project that offers a `dodo cmake` command:
+The following steps install a pre-existing Dodo Commands project that offers a `dodo cmake` command:
 
-0. Install
+0. Install the Dodo Commands tool
     ```bash
     > sudo apt-get install python-virtualenv git
     > pip install dodo_commands
     > dodo install-default-commands standard_commands
     ```
 
-1. Create a new (empty) `dodo_tutorial` project and bootstrap it by copying some configuration files from the `dodo_commands_tutorial` project
+1. Create a new (empty) `dodo_tutorial` project and bootstrap it by copying some configuration files from the pre-existing `dodo_commands_tutorial` project
 
     ```bash
     > $(dodo activate dodo_tutorial --create)
@@ -144,4 +144,4 @@ The following steps show a Dodo Commands project that offers a `dodo cmake` comm
     Note that this command line only works if the dodo_tutorial:1604 image exists. You can build it by running `dodo dockerbuild`.
 
 
-This simple scenario shows how a complicated command line can be compressed into a short command that's easy to remember. We've seen that Dodo Commands is transparent about what it actually executes. It's also easy to get new colleagues started on a project by sharing your command scripts and configuration file with them (see [the documentation](http://dodo-commands.readthedocs.io/en/latest/sharing-projects.html) for details).
+This simple scenario shows how a complicated command line can be compressed into a short command that's easy to remember. We've seen that by offering the `--confirm` flag Dodo Commands is transparent about what it actually executes. It's also easy to get new colleagues started on a project by sharing your command scripts and configuration file with them (see [the documentation](http://dodo-commands.readthedocs.io/en/latest/sharing-projects.html) for details).

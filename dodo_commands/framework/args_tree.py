@@ -2,6 +2,7 @@ class ArgsTreeNode:
     def __init__(self, name, args=None, is_horizontal=True):
         self.name = name
         self.children = []
+        # this flag controls if nodes are printed horizontally
         self.is_horizontal = is_horizontal
         self.args = args or []
 
