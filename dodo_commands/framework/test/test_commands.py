@@ -70,17 +70,17 @@ class TestConfigIO:  # noqa
         # dodo cd
         assert "cd " + dodo_test_dir == dodo('cd')[:-1]
 
-        # dodo check-config-version
+        # dodo check-version --config
         self._set_config_version(config_filename, '0.1.0')
-        assert "Configuration needs update (0.1.0 < 1.0.0)" in dodo('check-config-version')[:-1]
+        assert "Configuration needs update (0.1.0 < 1.0.0)" in dodo('check-version', '--config')[:-1]
         self._set_config_version(config_filename, '1.0.0')
-        assert "" == dodo('check-config-version')[:-1]
+        assert "" == dodo('check-version', '--config')[:-1]
 
-        # dodo check-version
+        # dodo check-version --dodo
         self._set_required_dodo_version(config_filename, '10000.0.0')
-        assert "The dodo_commands package needs to be upgraded" in dodo('check-version')[:-1]
+        assert "The dodo_commands package needs to be upgraded" in dodo('check-version', '--dodo')[:-1]
         self._set_required_dodo_version(config_filename, dodo('--version')[:-1])
-        assert "" == dodo('check-version')[:-1]
+        assert "" == dodo('check-version', '--dodo')[:-1]
 
         # dodo diff
         assert "meld %s/src/extra/dodo_commands/res %s/." % (dodo_test_dir, res_dir) == dodo('diff', '.', '--echo', '--pp=0')[:-1]

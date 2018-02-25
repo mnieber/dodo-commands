@@ -18,7 +18,6 @@ class Command(DodoCommand):  # noqa
         if status == "on" and not os.path.exists(script):
             with open(script, "w") as f:
                 f.write("$(dodo activate --latest)\n")
-                f.write("dodo check-config-version\n")
-                f.write("dodo check-version\n")
+                f.write("dodo check-version --dodo --config\n")
         if status == "off" and os.path.exists(script):
             os.unlink(script)
