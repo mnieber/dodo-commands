@@ -6,6 +6,7 @@ import sys
 import ruamel.yaml
 from plumbum import local
 import dodo_commands
+from dodo_commands.framework.command_error import CommandError
 
 
 def _make_executable(script_filename):
@@ -154,15 +155,24 @@ class Activator:
     def _dodo_commands_dir(self):
         return os.path.join(self._project_dir, "dodo_commands")
 
+    def _config_get(self, key, default=""):
+        return (
+            self.config.get("DodoCommands", key)
+            if self.config.has_option("DodoCommands", key) else
+            default
+        )
+
     def run(self, project, latest, create):
         """Activate or create a project in the projects dir."""
-        self.project = project
         self.config = self._config()
-        latest_project = (
-            self.config.get("DodoCommands", "latest_project")
-            if self.config.has_option("DodoCommands", "latest_project") else
-            ""
-        )
+        latest_project = self._config_get("latest_project")
+        previous_project = self._config_get("previous_project")
+
+        if project == '-':
+            project = previous_project
+            if not project:
+                raise CommandError("There is no previous project")
+        self.project = project
 
         if latest:
             if self.project:
@@ -193,6 +203,7 @@ class Activator:
             return
 
         if self.project != latest_project:
+            self.config.set("DodoCommands", "previous_project", latest_project)
             self.config.set("DodoCommands", "latest_project", self.project)
             self._write_config()
 
