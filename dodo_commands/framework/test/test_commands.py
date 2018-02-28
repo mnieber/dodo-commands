@@ -90,7 +90,7 @@ class TestConfigIO:  # noqa
         assert "docker run --rm --interactive --tty --name=foo --volume=%s/log:/var/log dodo_tutorial:1604 /bin/bash" % dodo_test_dir == dodo('docker', '--name=foo', '--echo', '--pp=0')[:-1]
 
         # dodo dockerbuild
-        assert "docker build -t dodo_tutorial:1604 -f Dockerfile.dodo_tutorial.1604 ." == dodo('dockerbuild', '--echo', '--pp=0')[:-1]
+        assert "docker build -t dodo_tutorial:1604 -f Dockerfile ." == dodo('dockerbuild', '--echo', '--pp=0', 'base')[:-1]
 
         # dodo autostart
         autostart_file = os.path.expanduser('~/.dodo_commands_autostart')

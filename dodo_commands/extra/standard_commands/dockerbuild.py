@@ -2,7 +2,6 @@
 
 import argparse
 import os
-import re
 
 from . import DodoCommand
 from dodo_commands.framework import CommandError
@@ -12,14 +11,9 @@ from dodo_commands.framework.util import remove_trailing_dashes
 class Command(DodoCommand):  # noqa
     def add_arguments_imp(self, parser):  # noqa
         parser.add_argument(
-            '--image',
-            dest="docker_image",
-            help=(
-                "Identifies the docker image. "
-                "You should supply a value foo:bar. "
-                "A file Dockerfile.foo.bar will be used "
-                "as the input docker file."
-            )
+            'name',
+            choices=self.get_config('/DOCKER/images', {}).keys(),
+            help='Look the docker image by this name in /DOCKER/images'
         )
         parser.add_argument(
             'build_args',
@@ -44,17 +38,15 @@ class Command(DodoCommand):  # noqa
             local_path = os.path.join(local_dir, extra_dir_name)
             self.runcmd(["rm", "-rf", local_path])
 
-    def handle_imp(self, docker_image, build_args, **kwargs):  # noqa
-        res_dir = os.path.join(
-            self.get_config("/ROOT/project_dir"), "dodo_commands", "res"
+    def handle_imp(self, name, build_args, **kwargs):  # noqa
+        docker_image = self.get_config('/DOCKER/images/%s/image' % name, name)
+        docker_file = self.get_config(
+            '/DOCKER/images/%s/docker_file' % name,
+            "Dockerfile"
         )
-        local_dir = self.get_config("/DOCKER/build_dir", res_dir)
-
-        if not docker_image:
-            docker_image = self.get_config("/DOCKER/image")
-
-        extra_dirs = self.get_config("/DOCKER/extra_dirs", {})
-        self._copy_extra_dirs(local_dir, extra_dirs)
+        build_dir = self.get_config("/DOCKER/images/%s/build_dir" % name)
+        extra_dirs = self.get_config("/DOCKER/images/%s/extra_dirs" % name, {})
+        self._copy_extra_dirs(build_dir, extra_dirs)
 
         try:
             self.runcmd(
@@ -64,12 +56,12 @@ class Command(DodoCommand):  # noqa
                     "-t",
                     docker_image,
                     "-f",
-                    "Dockerfile.%s.%s" % tuple(re.split("[\:/]", docker_image)),
+                    docker_file,
                 ] + remove_trailing_dashes(build_args) +
                 [
                     ".",
                 ],
-                cwd=local_dir
+                cwd=build_dir
             )
         finally:
-            self._remove_extra_dirs(local_dir, extra_dirs)
+            self._remove_extra_dirs(build_dir, extra_dirs)
