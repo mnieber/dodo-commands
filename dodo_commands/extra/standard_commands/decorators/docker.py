@@ -1,7 +1,6 @@
 """Decorates command lines with docker arguments."""
 
 from plumbum import local
-from dodo_commands.framework import CommandError
 from dodo_commands.framework.args_tree import ArgsTreeNode
 from fnmatch import fnmatch
 
@@ -52,34 +51,49 @@ class Decorator:  # noqa
             root_node['link'].append(x)
 
     @classmethod
-    def get_image_name(cls, get_config, name):
-        result = get_config('/DOCKER/options/%s/image' % name, '')
-        if result:
-            return result
+    def docker_node(cls, get_config, command_name, cwd, is_interactive):
+        docker_node = ArgsTreeNode("docker", args=['docker', 'run'])
 
+        docker_node.add_child(ArgsTreeNode("basic"))
+        docker_node.add_child(ArgsTreeNode("name"))
+        docker_node.add_child(ArgsTreeNode("link"))
+        docker_node.add_child(ArgsTreeNode("volume", is_horizontal=False))
+        docker_node.add_child(ArgsTreeNode("volumes-from"))
+        docker_node.add_child(ArgsTreeNode("env", is_horizontal=False))
+        docker_node.add_child(ArgsTreeNode("other"))
+        docker_node.add_child(ArgsTreeNode("workdir"))
+        docker_node.add_child(ArgsTreeNode("image"))
+
+        name = command_name
+        image = None
+        rm = True
         for patterns, docker_config in get_config('/DOCKER/options', {}).items():
             for pattern in (patterns if _is_tuple(patterns) else [patterns]):
-                if name and fnmatch(name, pattern):
-                    result = docker_config.get('image', None)
-                    if result:
-                        return result
+                if fnmatch(command_name, pattern):
+                    image = docker_config.get('image', image)
+                    rm = docker_config.get('rm', rm)
+                    name = docker_config.get('name', name)
 
-        raise CommandError("Could not find docker image for %s" % name)
-
-    @classmethod
-    def _add_config_docker_options(cls, get_config, name, root_node):
-        for key_val in get_config('/ENVIRONMENT/variable_map', {}).items():
-            root_node['env'].append("--env=%s=%s" % key_val)
-
-        for patterns, docker_config in get_config('/DOCKER/options', {}).items():
-            for pattern in (patterns if _is_tuple(patterns) else [patterns]):
-                if name and fnmatch(name, pattern):
-                    cls._add_docker_variable_list(docker_config, root_node)
-                    cls._add_docker_volume_list(docker_config, root_node)
-                    cls._add_docker_volumes_from_list(docker_config, root_node)
-                    cls._add_linked_container_list(docker_config, root_node)
+                    cls._add_docker_variable_list(docker_config, docker_node)
+                    cls._add_docker_volume_list(docker_config, docker_node)
+                    cls._add_docker_volumes_from_list(docker_config, docker_node)
+                    cls._add_linked_container_list(docker_config, docker_node)
                     for x in docker_config.get('extra_options', []):
-                        root_node['other'].append(x)
+                        docker_node['other'].append(x)
+
+        for key_val in get_config('/ENVIRONMENT/variable_map', {}).items():
+            docker_node['env'].append("--env=%s=%s" % key_val)
+        if rm:
+            docker_node['basic'].append('--rm')
+        docker_node["name"].append("--name=%s" % name)
+        if is_interactive:
+            docker_node['basic'].append('--interactive')
+            docker_node['basic'].append('--tty')
+        if cwd:
+            docker_node['workdir'].append('--workdir=' + cwd)
+        docker_node["image"].append(image)
+
+        return docker_node, image, name
 
     def add_arguments(self, decorated, parser):  # noqa
         parser.add_argument(
@@ -98,43 +112,6 @@ class Decorator:  # noqa
     ):  # noqa
         decorated.opt_non_interactive = non_interactive
         decorated.opt_kill_existing = kill_existing
-
-    @classmethod
-    def _add_options(cls, decorated, cwd, root_node):
-        name = None
-
-        if not hasattr(decorated, 'docker_rm') or decorated.docker_rm:
-            root_node['basic'].append('--rm')
-        if not decorated.opt_non_interactive:
-            root_node['basic'].append('--interactive')
-            root_node['basic'].append('--tty')
-        if cwd:
-            root_node['workdir'].append('--workdir=' + cwd)
-        if hasattr(decorated, "docker_options"):
-            for p in decorated.docker_options:
-                try:
-                    key, val = p
-                    if key == "name":
-                        name = val
-                    child_name = key if root_node.has_child(key) else "other"
-                    root_node[child_name].append(cls._to_opt(key, val))
-                except:
-                    raise CommandError(
-                        "Elements of docker_options must be tuples of type (key, val)"
-                    )
-
-        return name
-
-    @classmethod
-    def _to_opt(cls, key, val):
-        return '--%s' % key if val is None else '--%s=%s' % (key, val)
-
-    @classmethod
-    def _container_name(cls, options):
-        for key, val in options:
-            if key == 'name':
-                return val
-        return ""
 
     def _kill_existing_container(self, name):
         docker = local['docker']
@@ -156,30 +133,15 @@ class Decorator:  # noqa
             docker("rm", name)
 
     def modify_args(self, decorated, root_node, cwd):  # noqa
-        docker_node = ArgsTreeNode("docker", args=['docker', 'run'])
-        docker_node.add_child(ArgsTreeNode("basic"))
-        docker_node.add_child(ArgsTreeNode("name"))
-        docker_node.add_child(ArgsTreeNode("link"))
-        docker_node.add_child(ArgsTreeNode("volume", is_horizontal=False))
-        docker_node.add_child(ArgsTreeNode("volumes-from"))
-        docker_node.add_child(ArgsTreeNode("env", is_horizontal=False))
-        docker_node.add_child(ArgsTreeNode("other"))
-        docker_node.add_child(ArgsTreeNode("workdir"))
-
-        name = self._add_options(decorated, cwd, docker_node)
-        if decorated.opt_kill_existing and name:
-            self._kill_existing_container(name)
-
-        self._add_config_docker_options(decorated.get_config, name, docker_node)
-
-        image_name = (
-            decorated.docker_image
-            if hasattr(decorated, 'docker_image') else
-            self.get_image_name(decorated.get_config, name)
+        docker_node, _, docker_name = self.docker_node(
+            decorated.get_config,
+            decorated.name,
+            cwd,
+            not decorated.opt_non_interactive
         )
-        docker_node.add_child(
-            ArgsTreeNode("image", args=[image_name])
-        )
+
+        if decorated.opt_kill_existing:
+            self._kill_existing_container(docker_name)
 
         docker_node.add_child(root_node)
         return docker_node, local.cwd

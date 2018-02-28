@@ -25,7 +25,9 @@ class Command(DodoCommand):  # noqa
             ):
                 args.extend(["-v", path])
 
-            args.append(self.get_config("/DOCKER/image"))
+            args.append(self.get_config(
+                "/DOCKER/container_types/%s/image" % container_type
+            ))
             self.runcmd(args)
 
         config = ConfigIO().load(load_layers=False)

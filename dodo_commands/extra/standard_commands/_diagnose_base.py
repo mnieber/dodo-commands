@@ -16,10 +16,11 @@ class DiagnoseBase:
             self.prnt_error("Docker is not installed")
 
     def _image(self, key_or_name):
-        image = (
-            self.get_config(key_or_name, None) or
-            DockerDecorator.get_image_name(self.get_config, key_or_name)
-        )
+        image = self.get_config(key_or_name, None)
+        if not image:
+            _, image, _ = DockerDecorator.docker_node(
+                self.get_config, key_or_name, "", False
+            )
 
         if not image:
             self.prnt_error("Missing docker image configuration value for docker with name: %s" % key_or_name)

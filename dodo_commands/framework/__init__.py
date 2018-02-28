@@ -111,7 +111,7 @@ def load_command_class(module_dir, name):
             print(traceback.print_exc(e))
             sys.exit(1)
 
-    return module.Command()
+    return module.Command(name)
 
 
 def get_commands():

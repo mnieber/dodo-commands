@@ -75,8 +75,9 @@ class BaseCommand(object):  # noqa
     _called_from_command_line = False
     can_import_settings = True
 
-    def __init__(self):
+    def __init__(self, name):
         self.config = load_dodo_config()
+        self.name = name
 
     def usage(self, subcommand):  # noqa
         """
