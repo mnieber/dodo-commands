@@ -53,7 +53,7 @@ class Decorator:  # noqa
 
     @classmethod
     def docker_node(cls, get_config, command_name, cwd, is_interactive):
-        command_name = get_config(
+        key = get_config(
             '/DOCKER/aliases/%s' % command_name, command_name
         )
 
@@ -74,7 +74,7 @@ class Decorator:  # noqa
         rm = True
         for patterns, docker_config in get_config('/DOCKER/options', {}).items():
             for pattern in (patterns if _is_tuple(patterns) else [patterns]):
-                if fnmatch(command_name, pattern):
+                if fnmatch(key, pattern):
                     image = docker_config.get('image', image)
                     rm = docker_config.get('rm', rm)
                     name = docker_config.get('name', name)

@@ -12,6 +12,11 @@ class Command(DodoCommand):  # noqa
             .setdefault('aliases', {}) \
             .setdefault('docker', name)
 
+        self.get_config('/DOCKER', {}) \
+            .setdefault('options', {}) \
+            .setdefault(name, {}) \
+            .setdefault('name', name)
+
         self.runcmd(
             ["/bin/bash"] + (["-c", command] if command else []),
             cwd=self.get_config("/DOCKER/default_cwd", None))
