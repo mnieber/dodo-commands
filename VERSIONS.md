@@ -1,5 +1,10 @@
 # Version history
 
+## 0.13.1
+
+- Raise an error if no image was found in /DOCKER/options
+- Use /DOCKER/aliases in docker decorator
+
 ## 0.13.0
 
 - Merge check-config-version command into check-version
