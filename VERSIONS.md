@@ -1,5 +1,9 @@
 # Version history
 
+## 0.13.2
+
+- Fix: keep original command name when using /DOCKER/aliases
+
 ## 0.13.1
 
 - Raise an error if no image was found in /DOCKER/options
