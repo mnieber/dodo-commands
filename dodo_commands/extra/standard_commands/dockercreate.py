@@ -20,7 +20,9 @@ class Command(DodoCommand):  # noqa
                 "--name", name,
             ]
 
-            for path in self.get_config("/DOCKER/container_types/%s" % container_type):
+            for path in self.get_config(
+                "/DOCKER/container_types/%s/dirs" % container_type
+            ):
                 args.extend(["-v", path])
 
             args.append(self.get_config("/DOCKER/image"))
