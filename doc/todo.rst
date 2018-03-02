@@ -5,7 +5,6 @@ To do
 *****
 
 - add port_map so ports can be published
-- add ('publish', "${/DJANGO/port}:${/DJANGO/port}") to django-manage docker options
 - rename /VIRT_ROOT to /SERVER
 
 Nice to have

@@ -53,6 +53,10 @@ class Decorator:  # noqa
 
     @classmethod
     def docker_node(cls, get_config, command_name, cwd, is_interactive):
+        command_name = get_config(
+            '/DOCKER/aliases/%s' % command_name, command_name
+        )
+
         docker_node = ArgsTreeNode("docker", args=['docker', 'run'])
 
         docker_node.add_child(ArgsTreeNode("basic"))

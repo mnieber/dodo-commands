@@ -8,11 +8,9 @@ class Command(DodoCommand):  # noqa
         parser.add_argument('--name')
 
     def handle_imp(self, command, name, **kwargs):  # noqa
-        options = dict(
-            self.get_config('/DOCKER/options/%s' % name, {})
-        )
-        options['name'] = name
-        self.config['DOCKER']['options'].setdefault('docker', options)
+        self.get_config('/DOCKER', {}) \
+            .setdefault('aliases', {}) \
+            .setdefault('docker', name)
 
         self.runcmd(
             ["/bin/bash"] + (["-c", command] if command else []),
