@@ -1,5 +1,3 @@
-.. _decorators:
-
 *********************
 The DodoCommand class
 *********************
@@ -29,6 +27,8 @@ Note that since command scripts are written in Python, the script may choose to 
 
         # rest of the command goes here...
 
+
+.. _decorators:
 
 Decorators
 ==========
@@ -78,82 +78,3 @@ Note that not all decorators are compatible with all commands. For example, only
         debugger: ['*', '!foo']
         # cmake and runserver can be run inside docker
         docker: ['cmake', 'runserver']
-
-The docker decorator
-====================
-
-If the "docker" decorator is used, then all command lines will be prefixed with ``/usr/bin/docker run`` and related docker arguments:
-
-#. ``decorated.docker_options`` is a list of ``(key, value)`` tuples that are added as docker options. Use this mechanism to give a name to the running docker container:
-
-.. code-block:: python
-
-    class Command(DodoCommand):  # noqa
-        help = ""
-        docker_options = [
-            ('name', 'mongodb'),
-        ]
-
-
-#. each key-value pair in ``$(/DOCKER/options/<pattern>/volume_map}`` - where ``<pattern>`` matches the name of the docker container - will be added as a docker volume (where 'key' in the host maps to 'value' in the docker container)
-
-.. code-block:: yaml
-
-    DOCKER:
-      options:
-        # * will match any name
-        '*':
-          volume_map:
-            ${/ROOT/src_dir}: ${/VIRT_ROOT/src_dir}
-        # docker options when running the 'mongodb' container
-        'mongodb':
-          extra_options:
-          - '--publish=127.0.0.1:27017:27017'
-
-
-#. each item in ``$(/DOCKER/options/<pattern>/volume_list}`` will be added as a docker volume (where 'item' in the host maps to 'item' in the docker container)
-
-#. each item in ``$(/DOCKER/options/<pattern>/volumes_from_list}`` will be added as a docker "volumes_from" argument
-
-#. each item in ``$(/DOCKER/options/<pattern>/link_list}`` will be added as a docker "link" argument
-
-#. each environment variable listed in ``$(/DOCKER/options/<pattern>/variable_list}`` or ``$(/DOCKER/options/<pattern>/variable_map}`` will be added as an environment variable in the docker container. Variables in ``variable_list`` have the same name in the host and in the container.
-
-#. arguments in ``${/DOCKER/options/<pattern>/extra_options}`` are passed as extra options to the docker command line call.
-
-#. each key-value pair in ``$(/ENVIRONMENT/variable_map}`` will be added as an environment variable in the docker container.
-
-#. the ``--rm`` flag is added by default, unless ``decorated.rm`` is False. The ``-i`` and ``-t`` flags are added unless you pass the ``--non-interactive`` flag when running the dodo command.
-
-
-Example docker configuration
-============================
-
-Below is a simple Docker configuration. It specifies that all docker commands (that match the '*' wildcard) use the ``foobar:base`` image, and map the source directory to /srv/foobar/src. For more elaborate examples, see <<REF>>.
-
-.. code-block:: yaml
-
-    DOCKER:
-        options:
-            '*':
-                image: foobar:base
-                volume_map:
-                    ${/ROOT/src_dir}: /srv/foobar/src
-            'django-runserver':
-                extra_options:
-                    - --publish=127.0.0.1:80:80
-
-Note that - in this example - when you run ``dodo django-runserver``, then the ``--publish=127.0.0.1:80:80`` is added to the docker call:
-
-.. code-block:: bash
-
-    dodo django-manage --echo
-
-    # prints:
-    # docker run
-    #     --rm --interactive --tty
-    #     --name=django-manage
-    #     --volume=/home/maarten/projects/foobar/src:/srv/foobar/src
-    #     --publish=127.0.0.1:80:80
-    #     foobar:base
-    #     python manage.py
