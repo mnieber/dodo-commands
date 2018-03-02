@@ -1,5 +1,13 @@
 # Version history
 
+## 0.13.0
+
+- Merge check-config-version command into check-version
+- Activate previously active project with "dodo activate -"
+- Obtain docker arguments only from /DOCKER/options
+- Use /DOCKER/images instead of /DOCKER/image in dockerbuild
+- Add dockercreate and dockerexec commands (previously part of webdev_commands)
+
 ## 0.12.0
 
 - Fix import path
