@@ -52,19 +52,34 @@ class ConfigIO:
             result.extend(x for x in glob.glob(pattern))
         return result
 
-    def _add_layer_to_config(self, config, layer):
-        for section in (layer or {}):
-            if section not in config:
-                config[section] = layer[section]
-                continue
-            for key, value in layer[section].items():
-                has_key = key in config[section]
-                if has_key and isinstance(value, type(dict())):
-                    config[section][key].update(value)
-                elif has_key and isinstance(value, type(list())):
-                    config[section][key].extend(value)
-                else:
-                    config[section][key] = value
+    def _add_layer_to_config(self, config, layer, xpath=None):
+        def _is_list(x):
+            return isinstance(x, type(list()))
+
+        def _is_dict(x):
+            return isinstance(x, type(dict()))
+
+        def _raise(xpath):
+            raise CommandError(
+                "Cannot merge configurations. Check key /%s" % '/'.join(new_xpath)
+            )
+
+        xpath = xpath or []
+        for key, val in (layer or {}).items():
+            new_xpath = xpath + [key]
+
+            if key not in config:
+                config[key] = val
+            elif _is_dict(val):
+                if not _is_dict(config[key]):
+                    _raise(new_xpath)
+                self._add_layer_to_config(config[key], val, new_xpath)
+            elif _is_list(val):
+                if not _is_list(config[key]):
+                    _raise(new_xpath)
+                config[key].extend(val)
+            else:
+                config[key] = val
 
     def _load_layers(self, config):
         for layer_filename in self._layers(config):
