@@ -2,6 +2,7 @@
 
 from plumbum import local
 from dodo_commands.framework.args_tree import ArgsTreeNode
+from dodo_commands.framework.command_error import CommandError
 from fnmatch import fnmatch
 
 
@@ -91,6 +92,12 @@ class Decorator:  # noqa
             docker_node['basic'].append('--tty')
         if cwd:
             docker_node['workdir'].append('--workdir=' + cwd)
+
+        if not image:
+            raise CommandError(
+                "No docker image found in /DOCKER/options for command %s"
+                % command_name
+            )
         docker_node["image"].append(image)
 
         return docker_node, image, name
