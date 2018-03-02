@@ -20,6 +20,36 @@ def _default_config_base_dir(project_dir):
     return os.path.join(project_dir, "dodo_commands", "res")
 
 
+def merge_into_config(config, layer, xpath=None):
+    def _is_list(x):
+        return isinstance(x, type(list()))
+
+    def _is_dict(x):
+        return isinstance(x, type(dict()))
+
+    def _raise(xpath):
+        raise CommandError(
+            "Cannot merge configurations. Check key /%s" % '/'.join(new_xpath)
+        )
+
+    xpath = xpath or []
+    for key, val in (layer or {}).items():
+        new_xpath = xpath + [key]
+
+        if key not in config:
+            config[key] = val
+        elif _is_dict(val):
+            if not _is_dict(config[key]):
+                _raise(new_xpath)
+            merge_into_config(config[key], val, new_xpath)
+        elif _is_list(val):
+            if not _is_list(config[key]):
+                _raise(new_xpath)
+            config[key].extend(val)
+        else:
+            config[key] = val
+
+
 class ConfigIO:
     """Read and write the dodo configuration."""
 
@@ -52,39 +82,10 @@ class ConfigIO:
             result.extend(x for x in glob.glob(pattern))
         return result
 
-    def _add_layer_to_config(self, config, layer, xpath=None):
-        def _is_list(x):
-            return isinstance(x, type(list()))
-
-        def _is_dict(x):
-            return isinstance(x, type(dict()))
-
-        def _raise(xpath):
-            raise CommandError(
-                "Cannot merge configurations. Check key /%s" % '/'.join(new_xpath)
-            )
-
-        xpath = xpath or []
-        for key, val in (layer or {}).items():
-            new_xpath = xpath + [key]
-
-            if key not in config:
-                config[key] = val
-            elif _is_dict(val):
-                if not _is_dict(config[key]):
-                    _raise(new_xpath)
-                self._add_layer_to_config(config[key], val, new_xpath)
-            elif _is_list(val):
-                if not _is_list(config[key]):
-                    _raise(new_xpath)
-                config[key].extend(val)
-            else:
-                config[key] = val
-
     def _load_layers(self, config):
         for layer_filename in self._layers(config):
             if os.path.exists(layer_filename):
-                self._add_layer_to_config(
+                merge_into_config(
                     config, self.load(layer_filename, load_layers=False)
                 )
             else:
