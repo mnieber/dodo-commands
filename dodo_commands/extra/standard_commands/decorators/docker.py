@@ -23,6 +23,17 @@ class Decorator:  # noqa
             root_node['volume'].append(x)
 
     @classmethod
+    def _add_docker_publish_list(cls, docker_config, root_node):
+        publish_list = docker_config.get('publish_list', [])
+        publish_map = docker_config.get('publish_map', {})
+        options = (
+            ['--publish=%s:%s' % (x, x) for x in publish_list] +
+            ['--publish=%s:%s' % key_val for key_val in publish_map.items()]
+        )
+        for x in options:
+            root_node['publish'].append(x)
+
+    @classmethod
     def _add_docker_volumes_from_list(cls, docker_config, root_node):
         volumes_from_list = docker_config.get('volumes_from_list', [])
         options = (
@@ -62,6 +73,7 @@ class Decorator:  # noqa
         docker_node.add_child(ArgsTreeNode("basic"))
         docker_node.add_child(ArgsTreeNode("name"))
         docker_node.add_child(ArgsTreeNode("link"))
+        docker_node.add_child(ArgsTreeNode("publish"))
         docker_node.add_child(ArgsTreeNode("volume", is_horizontal=False))
         docker_node.add_child(ArgsTreeNode("volumes-from"))
         docker_node.add_child(ArgsTreeNode("env", is_horizontal=False))
@@ -81,6 +93,7 @@ class Decorator:  # noqa
 
                     cls._add_docker_variable_list(docker_config, docker_node)
                     cls._add_docker_volume_list(docker_config, docker_node)
+                    cls._add_docker_publish_list(docker_config, docker_node)
                     cls._add_docker_volumes_from_list(docker_config, docker_node)
                     cls._add_linked_container_list(docker_config, docker_node)
                     for x in docker_config.get('extra_options', []):
