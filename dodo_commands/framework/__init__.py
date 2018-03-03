@@ -41,7 +41,7 @@ import subprocess
 import sys
 import traceback
 from importlib import import_module
-
+from dodo_commands.framework.util import query_yes_no
 from dodo_commands.framework.config import (
     CommandPath, get_project_dir, load_dodo_config
 )
@@ -81,14 +81,19 @@ def load_command_class(module_dir, name):
         """Pip install packages found in meta_data_filename."""
         with open(meta_data_filename) as f:
             meta_data = ruamel.yaml.round_trip_load(f.read())
-            print("\n--- Installing from %s ---" % meta_data_filename)
-            pip = os.path.join(
-                get_project_dir(),
-                "dodo_commands/env/bin/pip"
-            )
-            subprocess.check_call(
-                [pip, "install"] + meta_data['requirements'])
-            print("--- Done ---\n\n")
+            print("This command wants to install additional packages:\n")
+            print(meta_data['requirements'])
+            if query_yes_no("Install (yes), or abort (no)?"):
+                print("\n--- Installing from %s ---" % meta_data_filename)
+                pip = os.path.join(
+                    get_project_dir(),
+                    "dodo_commands/env/bin/pip"
+                )
+                subprocess.check_call(
+                    [pip, "install"] + meta_data['requirements'])
+                print("--- Done ---\n\n")
+            else:
+                sys.exit(1)
 
     package_path = module_dir.replace("/", ".")
     import_path = '%s.%s' % (package_path, name)
