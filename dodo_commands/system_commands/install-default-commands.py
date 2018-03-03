@@ -1,5 +1,7 @@
 # noqa
 from dodo_commands.system_commands import DodoCommand, CommandError
+from dodo_commands.framework.util import is_using_system_dodo
+
 import sys
 import os
 
@@ -101,9 +103,7 @@ class Command(DodoCommand):  # noqa
         ])
 
     def handle_imp(self, paths, pip, **kwargs):  # noqa
-        import dodo_commands
-        dodo_commands_path = dodo_commands.__path__[0]
-        if os.path.realpath(dodo_commands_path) != dodo_commands_path:
+        if pip and not is_using_system_dodo():
             raise CommandError("Please deactivate your dodo project first by running 'deactivate'.")
 
         if paths:

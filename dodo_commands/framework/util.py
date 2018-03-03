@@ -82,3 +82,9 @@ def bordered(text):
         res.append('│' + (s + ' ' * width)[:width] + '│')
     res.append('└' + '─' * width + '┘')
     return '\n'.join(res)
+
+
+def is_using_system_dodo():
+    import dodo_commands
+    dodo_commands_path = dodo_commands.__path__[0]
+    return os.path.realpath(dodo_commands_path) == dodo_commands_path
