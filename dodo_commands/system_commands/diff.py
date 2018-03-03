@@ -3,7 +3,7 @@
 from . import DodoCommand, CommandError
 from six.moves import configparser
 import os
-
+from dodo_commands.framework.config import get_project_dir
 
 class Command(DodoCommand):  # noqa
     def add_arguments_imp(self, parser):  # noqa
@@ -31,7 +31,7 @@ class Command(DodoCommand):  # noqa
 
     def handle_imp(self, file, project_name, defaults_dir, **kwargs):  # noqa
         file = file or '.'
-        project_dir = self.get_config("/ROOT/project_dir", "")
+        project_dir = get_project_dir()
         default_project_path = os.path.join(
             project_dir, "dodo_commands", "default_project"
         )

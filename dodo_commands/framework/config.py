@@ -144,8 +144,22 @@ class ConfigLoader:
             [os.path.dirname(self._system_commands_dir()), "system_commands"]
         )
 
+    def _report(self, x):
+        sys.stderr.write(x)
+        sys.stderr.flush()
+
     def load(self, config_base_dir=None):
-        config = ConfigIO(config_base_dir).load() or dict(ROOT={})
+        fallback_config = dict(ROOT={})
+        try:
+            config = ConfigIO(config_base_dir).load() or fallback_config
+        except ruamel.yaml.scanner.ScannerError:
+            config = fallback_config
+            self._report(
+                "There was an error while loading the configuration. "
+                "Run 'dodo diff' to compare your configuration to the "
+                "default one.\n"
+            )
+
         self._extend_command_path(config)
         self._extend_config(config)
         ConfigExpander().run(config)
