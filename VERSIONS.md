@@ -1,5 +1,12 @@
 # Version history
 
+## 0.13.3
+
+- Support publish_map and publish_list in docker decorator
+- Make diff a system command so it can repair broken configurations
+- Ask before installing additional packages
+- Only require 'deactivate' if using pip in install-default-commands
+
 ## 0.13.2
 
 - Fix: keep original command name when using /DOCKER/aliases
