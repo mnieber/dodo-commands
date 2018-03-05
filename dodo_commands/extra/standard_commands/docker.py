@@ -4,8 +4,11 @@ from . import DodoCommand
 
 class Command(DodoCommand):  # noqa
     def add_arguments_imp(self, parser):  # noqa
+        parser.add_argument(
+            'name',
+            choices=self.get_config('/DOCKER/options', {}).keys()
+        )
         parser.add_argument('command', nargs='?')
-        parser.add_argument('--name')
 
     def handle_imp(self, command, name, **kwargs):  # noqa
         self.get_config('/DOCKER', {}) \
@@ -19,4 +22,4 @@ class Command(DodoCommand):  # noqa
 
         self.runcmd(
             ["/bin/bash"] + (["-c", command] if command else []),
-            cwd=self.get_config("/DOCKER/default_cwd", None))
+            cwd=self.get_config("/DOCKER/default_cwd", "/"))
