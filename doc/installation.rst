@@ -63,3 +63,10 @@ The first time you call :code:`dodo`, a global :code:`~/.dodo_commands/config` f
 .. code-block:: bash
 
     dodo global-config diff_tool meld
+
+Upgrading
+=========
+
+To upgrade Dodo Commands, you need to upgrade its pip package. If you have activated a Dodo Commands project with ``$(dodo activate foo)`` then the first step is to deactivate it by typing ``deactivate``. The reason is that the ``pip`` executable points to the one in the project's virtual environment, and we need to use the ``pip`` executable that was used to install Dodo Commands.
+
+Now, to upgrade, simply run ``pip install --upgrade dodo_commands``. To upgrade a commands package (for example: dodo_git_commands), simply install it again using ``dodo install-default-commands --pip dodo_git_commands``.
