@@ -8,7 +8,10 @@ class Command(DodoCommand):  # noqa
     decorators = []
 
     def add_arguments_imp(self, parser):  # noqa
-        parser.add_argument('container_type')
+        parser.add_argument(
+            'container_type',
+            choices=self.get_config('/DOCKER/container_types', {}).keys()
+        )
         parser.add_argument('name')
 
     def handle_imp(self, container_type, name, **kwargs):  # noqa
@@ -31,5 +34,5 @@ class Command(DodoCommand):  # noqa
             self.runcmd(args)
 
         config = ConfigIO().load(load_layers=False)
-        config['DOCKER']['containers'][container_type] = name
+        config['DOCKER'].setdefault('containers', {})[container_type] = name
         ConfigIO().save(config)
