@@ -1,5 +1,12 @@
 # Version history
 
+## 0.13.4
+
+- Remove upgrade command
+- Add documentation on upgrading
+- Replace --name with positional name argument in dodo docker
+- Fix: config key may be missing in dockercreate
+
 ## 0.13.3
 
 - Support publish_map and publish_list in docker decorator
