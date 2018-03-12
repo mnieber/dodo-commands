@@ -88,3 +88,15 @@ def is_using_system_dodo():
     import dodo_commands
     dodo_commands_path = dodo_commands.__path__[0]
     return os.path.realpath(dodo_commands_path) == dodo_commands_path
+
+
+try:
+    import textwrap
+    textwrap.indent
+except AttributeError:  # undefined function (wasn't added until Python 3.3)
+    def indent(text, amount, ch=' '):
+        padding = amount * ch
+        return ''.join(padding + line for line in text.splitlines(True))
+else:
+    def indent(text, amount, ch=' '):
+        return textwrap.indent(text, amount * ch)
