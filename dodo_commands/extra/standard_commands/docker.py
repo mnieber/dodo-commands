@@ -1,5 +1,8 @@
 """This command opens a bash shell in the docker container."""
 from . import DodoCommand
+from dodo_commands.extra.standard_commands.decorators.docker import (
+    Decorator as DockerDecorator
+)
 
 
 class Command(DodoCommand):  # noqa
@@ -7,8 +10,7 @@ class Command(DodoCommand):  # noqa
         parser.add_argument(
             'service',
             choices=self.get_config('/DOCKER/options', {}).keys(),
-            nargs='?',
-            help=("Use this key to look up the docker image in /DOCKER/options")
+            help=("Use this key to look up the docker options in /DOCKER/options")
         )
         parser.add_argument(
             '--image',
@@ -21,29 +23,21 @@ class Command(DodoCommand):  # noqa
         )
         parser.add_argument('--command', default='/bin/bash')
 
-    def _get_docker_options(self, command_name):
-        return self.get_config('/DOCKER', {}) \
-            .setdefault('options', {}) \
-            .setdefault(command_name, {})
-
     def handle_imp(self, service, image, name, command, **kwargs):  # noqa
-        if service:
-            self.get_config('/DOCKER', {}) \
-                .setdefault('aliases', {}) \
-                .setdefault('docker', service)
-        else:
-            service = self.name
+        docker_options = DockerDecorator.merged_options(
+            self.get_config, service
+        )
 
         if image:
-            docker_image = self.get_config(
+            docker_options['image'] = self.get_config(
                 '/DOCKER/images/%s/image' % image,
                 image
             )
-            self._get_docker_options(service)['image'] = docker_image
 
         if name:
-            self._get_docker_options(service)['name'] = name
+            docker_options['name'] = name
 
+        self.get_config('/DOCKER')['options'] = {self.name: docker_options}
         self.runcmd(
             ["/bin/bash"] + (["-c", command] if command else []),
             cwd=self.get_config("/DOCKER/default_cwd", "/"))
