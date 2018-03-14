@@ -3,6 +3,7 @@
 from plumbum import local
 from dodo_commands.framework.args_tree import ArgsTreeNode
 from dodo_commands.framework.command_error import CommandError
+from dodo_commands.framework.config import merge_into_config
 from fnmatch import fnmatch
 
 
@@ -63,15 +64,23 @@ class Decorator:  # noqa
             root_node['link'].append(x)
 
     @classmethod
-    def docker_node(cls, get_config, command_name, cwd, is_interactive):
-        key = get_config(
-            '/DOCKER/aliases/%s' % command_name, command_name
-        )
+    def merged_options(cls, get_config, command_name):
+        merged = {}
+        for patterns, docker_config in get_config('/DOCKER/options', {}).items():
+            for pattern in (patterns if _is_tuple(patterns) else [patterns]):
+                if fnmatch(command_name, pattern):
+                    merge_into_config(merged, docker_config)
+        return merged
+
+    @classmethod
+    def docker_node(
+        cls, get_config, command_name, cwd, is_interactive
+    ):
+        merged = cls.merged_options(get_config, command_name)
 
         docker_node = ArgsTreeNode("docker", args=['docker', 'run'])
-
-        docker_node.add_child(ArgsTreeNode("basic"))
         docker_node.add_child(ArgsTreeNode("name"))
+        docker_node.add_child(ArgsTreeNode("basic"))
         docker_node.add_child(ArgsTreeNode("link"))
         docker_node.add_child(ArgsTreeNode("publish"))
         docker_node.add_child(ArgsTreeNode("volume", is_horizontal=False))
@@ -81,41 +90,38 @@ class Decorator:  # noqa
         docker_node.add_child(ArgsTreeNode("workdir"))
         docker_node.add_child(ArgsTreeNode("image"))
 
-        name = command_name
-        image = None
-        rm = True
-        for patterns, docker_config in get_config('/DOCKER/options', {}).items():
-            for pattern in (patterns if _is_tuple(patterns) else [patterns]):
-                if fnmatch(key, pattern):
-                    image = docker_config.get('image', image)
-                    rm = docker_config.get('rm', rm)
-                    name = docker_config.get('name', name)
+        cls._add_linked_container_list(merged, docker_node)
+        cls._add_docker_publish_list(merged, docker_node)
+        cls._add_docker_volume_list(merged, docker_node)
+        cls._add_docker_volumes_from_list(merged, docker_node)
+        cls._add_docker_variable_list(merged, docker_node)
 
-                    cls._add_docker_variable_list(docker_config, docker_node)
-                    cls._add_docker_volume_list(docker_config, docker_node)
-                    cls._add_docker_publish_list(docker_config, docker_node)
-                    cls._add_docker_volumes_from_list(docker_config, docker_node)
-                    cls._add_linked_container_list(docker_config, docker_node)
-                    for x in docker_config.get('extra_options', []):
-                        docker_node['other'].append(x)
-
-        for key_val in get_config('/ENVIRONMENT/variable_map', {}).items():
-            docker_node['env'].append("--env=%s=%s" % key_val)
-        if rm:
+        if merged.get('rm', True):
             docker_node['basic'].append('--rm')
-        docker_node["name"].append("--name=%s" % name)
+
         if is_interactive:
             docker_node['basic'].append('--interactive')
             docker_node['basic'].append('--tty')
+
+        name = merged.get('name', command_name)
+        docker_node["name"].append("--name=%s" % name)
+
+        for key_val in get_config('/ENVIRONMENT/variable_map', {}).items():
+            docker_node['env'].append("--env=%s=%s" % key_val)
+
+        for x in merged.get('extra_options', []):
+            docker_node['other'].append(x)
+
         if cwd:
             docker_node['workdir'].append('--workdir=' + cwd)
 
+        image = merged.get('image')
         if not image:
             raise CommandError(
                 "No docker image found in /DOCKER/options for command %s"
                 % command_name
             )
-        docker_node["image"].append(image)
+        docker_node['image'].append(image)
 
         return docker_node, image, name
 

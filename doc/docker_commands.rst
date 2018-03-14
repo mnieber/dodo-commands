@@ -66,17 +66,6 @@ Running the ``django-manage`` command will produce something like this:
 #. the ``-i`` and ``-t`` flags are added unless you pass the ``--non-interactive`` flag when running the dodo command.
 
 
-Aliases
-=======
-Sometimes it's convenient to use the same docker settings for multiple commands. To use the docker settings for ``bar`` also when running the ``foo`` command, use:
-
-.. code-block:: yaml
-
-    DOCKER:
-      aliases:
-        foo: bar
-
-
 The dockerbuild command
 =======================
 
