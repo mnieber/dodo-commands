@@ -40,4 +40,5 @@ class Command(DodoCommand):  # noqa
         self.get_config('/DOCKER')['options'] = {self.name: docker_options}
         self.runcmd(
             ["/bin/bash"] + (["-c", command] if command else []),
-            cwd=self.get_config("/DOCKER/default_cwd", "/"))
+            cwd=docker_options.get("cwd", "/")
+        )
