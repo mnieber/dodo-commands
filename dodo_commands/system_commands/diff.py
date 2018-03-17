@@ -1,9 +1,9 @@
 """Show diff for a file in the Dodo Commands system directory."""
 
 from . import DodoCommand, CommandError
-from six.moves import configparser
 import os
-from dodo_commands.framework.config import get_project_dir
+from dodo_commands.framework.config import get_project_dir, get_global_config
+
 
 class Command(DodoCommand):  # noqa
     def add_arguments_imp(self, parser):  # noqa
@@ -25,9 +25,7 @@ class Command(DodoCommand):  # noqa
         )
 
     def _diff_tool(self):
-        config = configparser.ConfigParser()
-        config.read(os.path.expanduser("~/.dodo_commands/config"))
-        return config.get("DodoCommands", "diff_tool")
+        return get_global_config().get("DodoCommands", "diff_tool")
 
     def handle_imp(self, file, project_name, defaults_dir, **kwargs):  # noqa
         file = file or '.'

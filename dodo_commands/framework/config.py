@@ -7,8 +7,15 @@ import glob
 import json
 import os
 import re
+from six.moves import configparser
 import sys
 import ruamel.yaml
+
+
+def get_global_config():
+    config = configparser.ConfigParser()
+    config.read(os.path.expanduser("~/.dodo_commands/config"))
+    return config
 
 
 def get_project_dir():

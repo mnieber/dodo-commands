@@ -7,6 +7,7 @@ from six.moves import configparser
 from dodo_commands.framework import (BaseCommand, CommandPath)
 from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.args_tree import ArgsTreeNode
+from dodo_commands.framework.config import get_global_config
 
 from importlib import import_module
 from plumbum import FG, ProcessExecutionError, local
@@ -90,10 +91,8 @@ class DodoCommand(BaseCommand):  # noqa
         return self._loaded_decorators
 
     def _default_pretty_print(self):
-        config = configparser.ConfigParser()
-        config.read(os.path.expanduser("~/.dodo_commands/config"))
         try:
-            return config.get("DodoCommands", "pretty_print")
+            return get_global_config().get("DodoCommands", "pretty_print")
         except configparser.NoOptionError:
             return "true"
 

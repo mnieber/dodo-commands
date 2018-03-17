@@ -1,8 +1,9 @@
 """Finds a directory or file inside the current project."""
 from . import DodoCommand
-from dodo_commands.framework.config import (CommandPath, get_project_dir)
+from dodo_commands.framework.config import (
+    CommandPath, get_project_dir, get_global_config
+)
 import os
-from six.moves import configparser
 import sys
 
 
@@ -58,9 +59,9 @@ class Command(DodoCommand):  # noqa
         return self.get_config("/ROOT/%s_dir" % directory, None)
 
     def _projects_dir(self):
-        config = configparser.ConfigParser()
-        config.read(os.path.expanduser("~/.dodo_commands/config"))
-        return os.path.expanduser(config.get("DodoCommands", "projects_dir"))
+        return os.path.expanduser(
+            get_global_config().get("DodoCommands", "projects_dir")
+        )
 
     def handle_imp(self, what, config, global_config, script, directory, decorators, projects, **kwargs):
         if config:
