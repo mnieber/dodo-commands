@@ -29,7 +29,11 @@ class Command(DodoCommand):  # noqa
 
     def handle_imp(self, file, project_name, defaults_dir, **kwargs):  # noqa
         file = file or '.'
+
         project_dir = get_project_dir()
+        if not project_dir:
+            raise CommandError("No active dodo commands project")
+
         default_project_path = os.path.join(
             project_dir, "dodo_commands", "default_project"
         )
