@@ -1,10 +1,11 @@
 """Decorates command lines with docker arguments."""
 
-from plumbum import local
 from dodo_commands.framework.args_tree import ArgsTreeNode
 from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.config import merge_into_config
 from fnmatch import fnmatch
+from plumbum import local
+import os
 
 
 def _is_tuple(x):
@@ -16,6 +17,15 @@ class Decorator:  # noqa
     def _add_docker_volume_list(cls, docker_config, root_node):
         volume_list = docker_config.get('volume_list', [])
         volume_map = docker_config.get('volume_map', {})
+
+        volume_map_strict = docker_config.get('volume_map_strict', {})
+        for key, val in volume_map_strict.items():
+            if not os.path.exists(key):
+                raise CommandError(
+                    "Path in volume_map_strict not found: %s" % key
+                )
+            volume_map[key] = val
+
         options = (
             ['--volume=%s:%s' % (x, x) for x in volume_list] +
             ['--volume=%s:%s' % key_val for key_val in volume_map.items()]

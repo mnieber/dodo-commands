@@ -45,6 +45,8 @@ Running the ``django-manage`` command will produce something like this:
 
 #. each key-value pair in ``$(/DOCKER/options/<pattern>/volume_map}`` will be added as a docker volume (where 'key' in the host maps to 'value' in the docker container)
 
+#. each key-value pair in ``$(/DOCKER/options/<pattern>/volume_map_strict}`` is also added as a docker volume. If the key does not exist as a local path, an error is raised.
+
 #. each item in ``$(/DOCKER/options/<pattern>/volume_list}`` will be added as a docker volume (where 'item' in the host maps to 'item' in the docker container)
 
 #. each key-value pair in ``$(/DOCKER/options/<pattern>/publish_map}`` and each item in ``$(/DOCKER/options/<pattern>/publish_list}`` will be added as a docker published port
