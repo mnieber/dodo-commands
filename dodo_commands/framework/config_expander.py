@@ -1,6 +1,7 @@
 from dodo_commands.framework.command_error import CommandError
 import os
 import re
+import sys
 
 
 class KeyNotFound(CommandError):
@@ -49,7 +50,7 @@ class Key:
         del node[self.xpath[-1]]
 
     def __repr__(self):  # noqa
-        return str(self.xpath)
+        return "/" + "/".join(self.xpath)
 
 
 class ConfigExpander:
@@ -177,6 +178,18 @@ class ConfigExpander:
         )
 
     @classmethod
+    def _report_unexpanded_keys(cls, all_keys):
+        all_xpaths = [str(x) for x in all_keys]
+        for xpath in all_xpaths:
+            skip = False
+            for other_xpath in all_xpaths:
+                if xpath != other_xpath:
+                    if other_xpath.startswith(xpath):
+                        skip = True
+            if not skip:
+                sys.stderr.write("Warning: unexpanded key: %s\n" % xpath)
+
+    @classmethod
     def run(cls, config):  # noqa
         all_keys = []
         cls._for_each_xpath(
@@ -209,4 +222,4 @@ class ConfigExpander:
                     changed = True
 
         if all_keys:
-            print("Warning: unexpanded keys %s" % all_keys)
+            cls._report_unexpanded_keys(all_keys)
