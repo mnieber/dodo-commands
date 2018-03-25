@@ -20,6 +20,7 @@ Contents:
    configuration
    dodo-command
    sharing-projects
+   diagnose
 
 Indices and tables
 ==================
