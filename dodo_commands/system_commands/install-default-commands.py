@@ -42,7 +42,6 @@ class Command(DodoCommand):  # noqa
         "paths argument: dodo install-default-commands " +
         "/path/to/my/commands. " + _packages_in_extra_dir()
     )
-    safe = False
 
     def add_arguments_imp(self, parser):  # noqa
         parser.add_argument(
@@ -78,7 +77,7 @@ class Command(DodoCommand):  # noqa
             return False
 
         try:
-            os.symlink(os.path.abspath(path), dest_dir)
+            self.runcmd(['ln', '-s', os.path.abspath(path), dest_dir])
         except:
             self._report_error("Error: could not create a symlink in %s." % dest_dir)
             return False
