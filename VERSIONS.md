@@ -1,5 +1,16 @@
 # Version history
 
+## 0.13.5
+
+-  Use --image, --name and --command args in 'dodo docker'
+-  Use sphinx for diagnose output
+-  Add documentation for the diagnose command
+-  Remove 'aliases' in /DOCKER/options
+-  Use 'cwd' key in /DOCKER/options
+-  Add dockercommit command
+-  Use volume_map_strict in docker decorator
+-  Improve reporting of broken config keys
+
 ## 0.13.4
 
 - Remove upgrade command
