@@ -96,13 +96,19 @@ class ConfigIO:
         return result
 
     def _load_layers(self, config):
-        for layer_filename in self._layers(config):
-            if os.path.exists(layer_filename):
-                merge_into_config(
-                    config, self.load(layer_filename, load_layers=False)
-                )
-            else:
+        def layer_exists(layer_filename):
+            if not os.path.exists(layer_filename):
                 print("Warning: layer not found: %s" % layer_filename)
+                return False
+            return True
+
+        layer_filenames = [x for x in self._layers(config) if layer_exists(x)]
+        layers = [
+            self.load(x, load_layers=False)
+            for x in layer_filenames
+        ]
+        for layer in layers:
+            merge_into_config(config, layer)
 
     def load(self, config_filename='config.yaml', load_layers=True):
         """Get configuration."""
@@ -114,7 +120,6 @@ class ConfigIO:
             config = ruamel.yaml.round_trip_load(f.read())
         if load_layers:
             self._load_layers(config)
-
         return config
 
     def save(self, config, config_filename='config.yaml'):
