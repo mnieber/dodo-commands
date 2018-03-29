@@ -28,16 +28,21 @@ class ArgsTreeNode:
             result.extend(x.flatten())
         return result
 
-    def to_str(self, indent=0):
+    def to_str(self, indent=0, slash=False):
+        terminal = "  \\\n" if slash else "\n"
+
         if self.is_horizontal:
             if self.args:
-                result = indent * " " + " ".join(self.args) + "\n"
+                result = indent * " " + " ".join(self.args) + terminal
             else:
                 result = ""
         else:
             result = ""
             for x in self.args:
-                result += indent * " " + x + "\n"
+                result += indent * " " + x + terminal
         for child in self.children:
-            result += child.to_str(indent=indent + 2)
+            last_root_child = indent == 0 and child == self.children[-1]
+            result += child.to_str(
+                indent=indent + 2, slash=slash and not last_root_child
+            )
         return result
