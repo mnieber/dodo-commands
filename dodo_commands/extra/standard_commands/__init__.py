@@ -2,24 +2,20 @@
 import fnmatch
 import inspect
 import os
-from six.moves import configparser
 
 from dodo_commands.framework import (BaseCommand, CommandPath)
 from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.args_tree import ArgsTreeNode
-from dodo_commands.framework.config import get_global_config
 
 from importlib import import_module
 from plumbum import FG, ProcessExecutionError, local
 from dodo_commands.framework.util import query_yes_no
 
 
-def _ask_to_continue(args, cwd, is_echo, is_confirm, pretty_print):
+def _ask_to_continue(args, cwd, is_echo, is_confirm):
     """Ask the user whether to continue with executing func."""
     def to_str():
-        if pretty_print:
-            return args.to_str()
-        return " ".join(args.flatten())
+        return args.to_str(slash=args.children)
 
     if is_echo:
         print(to_str())
@@ -90,12 +86,6 @@ class DodoCommand(BaseCommand):  # noqa
             ]
         return self._loaded_decorators
 
-    def _default_pretty_print(self):
-        try:
-            return get_global_config().get("DodoCommands", "pretty_print")
-        except configparser.NoOptionError:
-            return "true"
-
     def add_arguments(self, parser):
         """Entry point for subclassed commands to add custom arguments."""
 
@@ -111,13 +101,6 @@ class DodoCommand(BaseCommand):  # noqa
             help="Print all commands instead of running them"
         )
 
-        parser.add_argument(
-            '--pretty-print', '--pp',
-            default=self._default_pretty_print(),
-            choices=['yes', 'true', 't', 'y', '1', 'no', 'false', 'f', 'n', '0'],
-            help="Use pretty printing for --echo and --confirm options"
-        )
-
         for decorator in self._get_decorators():
             decorator.add_arguments(self, parser)
 
@@ -130,12 +113,10 @@ class DodoCommand(BaseCommand):  # noqa
         self,
         confirm=False,
         echo=False,
-        pretty_print=True,
         **kwargs
     ):
         self.opt_confirm = confirm
         self.opt_echo = echo
-        self.opt_pretty_print = pretty_print
 
         if echo and not self.safe:
             raise CommandError(
@@ -169,8 +150,7 @@ class DodoCommand(BaseCommand):  # noqa
             root_node,
             cwd,
             self.opt_echo,
-            self.opt_confirm,
-            self.opt_pretty_print in ('yes', 'true', 't', 'y', '1')
+            self.opt_confirm
         ):
             return False
 
