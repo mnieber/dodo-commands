@@ -3,13 +3,13 @@
 from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.config_expander import ConfigExpander
 from dodo_commands.framework.config_expander import Key, KeyNotFound  # noqa
+from six.moves import configparser
 import glob
 import json
 import os
 import re
-from six.moves import configparser
-import sys
 import ruamel.yaml
+import sys
 
 
 def get_global_config():
@@ -77,16 +77,22 @@ class ConfigIO:
 
     def _layers(self, config):
         """Returns list of layer filenames"""
-        result = []
-        root = config.get('ROOT', {})
-        layer_dir = root.get('layer_dir', '')
-        for layer_filename in root.get('layers', []):
-            pattern = os.path.expanduser(
-                layer_filename
-                if os.path.dirname(layer_filename) else
-                self._path_to([layer_dir, layer_filename])
+        def add_prefix(filename):
+            return (
+                filename
+                if filename.startswith('/') else
+                self._path_to([filename])
             )
-            result.extend(x for x in glob.glob(pattern))
+
+        patterns = [
+            add_prefix(os.path.expanduser(pattern))
+            for pattern in
+            config.get('ROOT', {}).get('layers', [])
+        ]
+
+        result = []
+        for pattern in patterns:
+            result.extend([x for x in glob.glob(pattern)])
         return result
 
     def _load_layers(self, config):
