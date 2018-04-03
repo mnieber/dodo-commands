@@ -184,10 +184,6 @@ class ConfigLoader:
         return config
 
 
-def load_dodo_config(config_base_dir=None):
-    return ConfigLoader().load(config_base_dir)
-
-
 class CommandPath:
     """Read search paths for command scripts from the configuration."""
 

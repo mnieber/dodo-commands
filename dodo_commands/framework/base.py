@@ -40,7 +40,7 @@ import sys
 import argcomplete
 from argparse import ArgumentParser, SUPPRESS
 from dodo_commands.framework.config import (
-    look_up_key, load_dodo_config
+    look_up_key, ConfigLoader
 )
 from dodo_commands.framework.command_error import CommandError
 
@@ -76,7 +76,7 @@ class BaseCommand(object):  # noqa
     can_import_settings = True
 
     def __init__(self, name):
-        self.config = load_dodo_config()
+        self.config = ConfigLoader().load()
         self.name = name
 
     def usage(self, subcommand):  # noqa

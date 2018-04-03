@@ -43,7 +43,7 @@ import traceback
 from importlib import import_module
 from dodo_commands.framework.util import query_yes_no
 from dodo_commands.framework.config import (
-    CommandPath, get_project_dir, load_dodo_config
+    CommandPath, get_project_dir, ConfigLoader
 )
 from dodo_commands.framework.base import (
     BaseCommand, CommandError
@@ -128,7 +128,7 @@ def get_commands():
     load_command_class(module_name, command_name)
     """
     commands = {}
-    command_path = CommandPath(load_dodo_config())
+    command_path = CommandPath(ConfigLoader().load())
     command_path.extend_sys_path()
     for item in command_path.items:
         for command in find_commands(item.full_path):
@@ -289,5 +289,6 @@ class ManagementUtility(object):
 
 def execute_from_command_line(argv):
     """A simple method that runs a ManagementUtility."""
+    import pudb; pudb.set_trace();  # noqa
     utility = ManagementUtility(argv)
     utility.execute()
