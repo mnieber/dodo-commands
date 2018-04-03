@@ -18,12 +18,16 @@ class Command(DodoCommand):  # noqa
             help=("Use the docker image stored under this key in /DOCKER/images")
         )
         parser.add_argument(
+            '--image-name',
+            help=("Use the docker image with this name")
+        )
+        parser.add_argument(
             '--name',
             help=("Override the name of the started docker container")
         )
         parser.add_argument('--command', default='/bin/bash')
 
-    def handle_imp(self, service, image, name, command, **kwargs):  # noqa
+    def handle_imp(self, service, image, image_name, name, command, **kwargs):  # noqa
         docker_options = DockerDecorator.merged_options(
             self.get_config, service
         )
@@ -33,6 +37,8 @@ class Command(DodoCommand):  # noqa
                 '/DOCKER/images/%s/image' % image,
                 image
             )
+        elif image_name:
+            docker_options['image'] = image_name
 
         if name:
             docker_options['name'] = name
