@@ -50,7 +50,7 @@ class Key:
         del node[self.xpath[-1]]
 
     def __repr__(self):  # noqa
-        return "/" + "/".join(self.xpath)
+        return "/" + "/".join([str(x) for x in self.xpath])
 
 
 class ConfigExpander:
