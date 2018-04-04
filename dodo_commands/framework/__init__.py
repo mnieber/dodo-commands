@@ -1,36 +1,3 @@
-# This file is based on source code from the Django Software Foundation,
-# using the following license:
-
-# Copyright (c) Django Software Foundation and individual contributors.
-# All rights reserved.
-
-# Redistribution and use in source and binary forms, with or without modification,          # noqa
-# are permitted provided that the following conditions are met:
-
-#     1. Redistributions of source code must retain the above copyright notice,
-#        this list of conditions and the following disclaimer.
-
-#     2. Redistributions in binary form must reproduce the above copyright
-#        notice, this list of conditions and the following disclaimer in the
-#        documentation and/or other materials provided with the distribution.
-
-#     3. Neither the name of Django nor the names of its contributors may be used           # noqa
-#        to endorse or promote products derived from this software without
-#        specific prior written permission.
-
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND           # noqa
-# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR           # noqa
-# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES            # noqa
-# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON            # noqa
-# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-"""Root of the framework module."""
-
 import argcomplete
 from argparse import ArgumentParser
 from collections import defaultdict
@@ -45,31 +12,16 @@ from dodo_commands.framework.util import query_yes_no
 from dodo_commands.framework.config import (
     CommandPath, get_project_dir, ConfigLoader
 )
-from dodo_commands.framework.base import (
-    BaseCommand, CommandError
-)
+from dodo_commands.framework.singleton import Dodo
+from dodo_commands.framework.command_error import CommandError  # noqa
+
 
 
 def get_version():  # noqa
     return "0.13.5"
 
 
-def find_commands(module_dir):
-    """
-    Return a list of all the command names.
-
-    Given a path to a dodo_commands directory, returns a list of all the
-    command names that are available.
-
-    Returns an empty list if no commands are defined.
-    """
-    return [
-        name for _, name, is_pkg in pkgutil.iter_modules([module_dir])
-        if not is_pkg and not name.startswith('_')
-    ]
-
-
-def load_command_class(module_dir, name):
+def execute_script(module_dir, name):
     """
     Return the Command class instance for module_dir and name.
 
@@ -101,14 +53,14 @@ def load_command_class(module_dir, name):
         import_path = name
 
     try:
-        module = import_module(import_path)
+        import_module(import_path)
     except ImportError as e:
         try:
             base_path = import_module(package_path).__path__[0]
             meta_data_filename = os.path.join(base_path, name + ".meta")
             if os.path.exists(meta_data_filename):
                 install_packages(meta_data_filename)
-                module = import_module(import_path)
+                import_module(import_path)
             else:
                 print(traceback.print_exc(e))
                 sys.exit(1)
@@ -116,63 +68,23 @@ def load_command_class(module_dir, name):
             print(traceback.print_exc(e))
             sys.exit(1)
 
-    return module.Command(name)
-
 
 def get_commands():
     """
     Return a dictionary mapping command names to their Python module directory.
-
-    The dictionary is in the format {command_name: module_name}. Key-value
-    pairs from this dictionary can then be used in calls to
-    load_command_class(module_name, command_name)
+    The dictionary is in the format {command_name: module_name}.
     """
-    commands = {}
+    result = {}
     command_path = CommandPath(ConfigLoader().load())
     command_path.extend_sys_path()
     for item in command_path.items:
-        for command in find_commands(item.full_path):
-            commands[command] = item.module_path
-    return commands
-
-
-def call_command(name, *args, **options):
-    """
-    Call the given command, with the given options and args/kwargs.
-
-    This is the primary API you should use for calling specific commands.
-    """
-    # Load the command object.
-    try:
-        module_name = get_commands()[name]
-    except KeyError:
-        raise CommandError("Unknown command: %r" % name)
-
-    if isinstance(module_name, BaseCommand):
-        # If the command is already loaded, use it directly.
-        command = module_name
-    else:
-        command = load_command_class(module_name, name)
-
-    # Simulate argument parsing to get the option defaults.
-    parser = command.create_parser('', name)
-    # Use the `dest` option name from the parser option
-    opt_mapping = {
-        sorted(
-            s_opt.option_strings
-        )[0].lstrip('-').replace('-', '_'): s_opt.dest
-        for s_opt in parser._actions if s_opt.option_strings
-    }
-    arg_options = {
-        opt_mapping.get(key, key): value
-        for key, value in options.items()
-    }
-    defaults = parser.parse_args(args=args)
-    defaults = dict(defaults._get_kwargs(), **arg_options)
-    # Move positional args out of options to mimic legacy optparse
-    args = defaults.pop('args', ())
-
-    return command.handle(*args, **defaults)
+        commands = [
+            name for _, name, is_pkg in pkgutil.iter_modules([item.full_path])
+            if not is_pkg and not name.startswith('_')
+        ]
+        for command in commands:
+            result[command] = item.module_path
+    return result
 
 
 class ManagementUtility(object):
@@ -210,29 +122,6 @@ class ManagementUtility(object):
 
         return '\n'.join(usage)
 
-    def fetch_command(self, subcommand, commands=None):
-        """
-        Fetch the given subcommand.
-
-        Tries to fetch the given subcommand, printing a message with the
-        appropriate command called from the command line if it can't be found.
-        """
-        # Get commands outside of try block to prevent swallowing exceptions
-        if commands is None:
-            commands = get_commands()
-
-        if subcommand not in commands:
-            print("Unknown dodo command: %s" % subcommand)
-            sys.exit(1)
-
-        module_name = commands[subcommand]
-        if isinstance(module_name, BaseCommand):
-            # If the command is already loaded, use it directly.
-            klass = module_name
-        else:
-            klass = load_command_class(module_name, subcommand)
-        return klass
-
     def execute(self):
         """
         Execute subcommand.
@@ -264,31 +153,41 @@ class ManagementUtility(object):
             except IndexError:
                 subcommand = 'help'  # Display help if no arguments were given.
 
-        args = self.argv[2:]
-
         if subcommand == '--version':
             sys.stdout.write(get_version() + '\n')
         elif subcommand == 'help':
-            if '--commands' in args:
+            if '--commands' in sys.argv:
                 sys.stdout.write(
                     self.main_help_text(
                         commands_only=True, commands=commands
                     ) + '\n'
                 )
-            elif len(args) < 1:
-                sys.stdout.write(self.main_help_text() + '\n')
             else:
-                self.fetch_command(
-                    args[0], commands
-                ).print_help(self.prog_name, args[0])
+                sys.stdout.write(self.main_help_text() + '\n')
         else:
-            self.fetch_command(subcommand, commands).run_from_argv(
-                self.argv, subcommand
-            )
+            if subcommand not in commands:
+                print("Unknown dodo command: %s" % subcommand)
+                sys.exit(1)
+
+            module_dir = commands[subcommand]
+            Dodo.command_name = subcommand
+
+            try:
+                execute_script(module_dir, subcommand)
+            except KeyboardInterrupt:
+                print('\n')
+                sys.exit(1)
+            except Exception as e:
+                if (
+                    getattr(Dodo.args, 'traceback', False) or
+                    not isinstance(e, CommandError)
+                ):
+                    raise
+                sys.stderr.write('%s: %s\n' % (e.__class__.__name__, e))
+                sys.exit(1)
 
 
 def execute_from_command_line(argv):
     """A simple method that runs a ManagementUtility."""
-    import pudb; pudb.set_trace();  # noqa
     utility = ManagementUtility(argv)
     utility.execute()

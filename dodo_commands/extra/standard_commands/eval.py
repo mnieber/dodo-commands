@@ -1,15 +1,17 @@
-# noqa
-from dodo_commands.system_commands import DodoCommand
+from argparse import ArgumentParser
+from dodo_commands.framework import Dodo
 from dodo_commands.framework.config import expand_keys
 
 
-class Command(DodoCommand):  # noqa
-    help = ""
+def _args():
+    parser = ArgumentParser()
+    parser.add_argument(
+        'text'
+    )
+    args = Dodo.parse_args(parser)
+    return args
 
-    def add_arguments_imp(self, parser):  # noqa
-        parser.add_argument(
-            'text'
-        )
 
-    def handle_imp(self, text, **kwargs):  # noqa
-        print(expand_keys(text, self.config))
+if Dodo.is_main(__name__):
+    args = _args()
+    print(expand_keys(args.text, Dodo.config))

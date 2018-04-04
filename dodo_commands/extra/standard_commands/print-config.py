@@ -1,29 +1,32 @@
-"""Print the full configuration."""
-
 import ruamel.yaml
 import re
-from . import DodoCommand
+from argparse import ArgumentParser
+from dodo_commands.framework import Dodo
 
 
-class Command(DodoCommand):  # noqa
-    def add_arguments_imp(self, parser):  # noqa
-        parser.add_argument('--key')
+def _args():
+    parser = ArgumentParser(description="Print the full configuration.")
+    parser.add_argument('--key')
+    args = Dodo.parse_args(parser)
+    return args
 
-    def handle_imp(self, key, **kwargs):  # noqa
-        if key:
-            print("%s" % str(self.get_config(key, '')))
-        else:
-            content = re.sub(
-                r'^([0-9_A-Z]+\:)$',
-                r'\n\1',
-                ruamel.yaml.round_trip_dump(self.config),
+
+if Dodo.is_main(__name__):
+    args = _args()
+    if args.key:
+        print("%s" % str(Dodo.get_config(args.key, '')))
+    else:
+        content = re.sub(
+            r'^([0-9_A-Z]+\:)$',
+            r'\n\1',
+            ruamel.yaml.round_trip_dump(Dodo.config),
+            flags=re.MULTILINE
+        )
+        print(
+            re.sub(
+                r'^\n\n',
+                r'\n',
+                content,
                 flags=re.MULTILINE
             )
-            print(
-                re.sub(
-                    r'^\n\n',
-                    r'\n',
-                    content,
-                    flags=re.MULTILINE
-                )
-            )
+        )

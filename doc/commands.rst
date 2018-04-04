@@ -78,29 +78,41 @@ Each Dodo command should ideally run out-of-the-box. If your ``foo`` command nee
 In this example, calling the ``foo`` command will automatically install the ``dominate`` package into the python virtual environment of the active Dodo Commands project.
 
 
-The BaseCommand class
-=====================
+The structure of a command script
+=================================
 
-When you run a command with :code:`dodo foo --bar`, the foo.py script is searched in the configured command_path, as described above. The foo.py script:
+When you run a command with :code:`dodo foo --bar`, the foo.py script is searched in the configured command_path, as described above. There are no restrictions on how you organize the foo.py script, but to take advantage of the Dodo Command features, you should:
 
-- should declare a :code:`Command` class that derives from :code:`BaseCommand`
-- can override :code:`add_arguments` to add more arguments to the command
-- should override :code:`handle` to implement the command action
-- can call :code:`self.get_config` to get configuration values
+- use `if Dodo.is_main(__name__)` instead of the usual `if __name__ == '__main__'. This allows Dodo Commands to execute your script also when its invoked through `dodo foo`.
+
+- use `args = Dodo.parse_args(parser)` instead of `args = parser.parse_args()`. This allows Dodo Commands to add a few extra command line parameters to your script.
+
+- use `Dodo.runcmd` to execute shell commands. This allows Dodo Commands to intercept the shell command call, and do some special operations (such as asking you for confirmation before executing the command).
+
+- call :code:`Dodo.get_config` to get values from the configuration file
 
 The following example illustrates this.
 
 .. code-block:: python
 
-    from dodo_commands.framework import BaseCommand
+    from argparse import ArgumentParser
+    from dodo_commands.framework import Dodo
 
-    class Command(BaseCommand):
-        def add_arguments(self, parser):
-            parser.add_argument(
-                '--bar',
-                action="store_true",
-            )
 
-        def handle(self, bar, **kwargs):
-            project_dir = self.get_config("/ROOT/project_dir")
-            sys.stdout.write("bar=%d" % bar)
+    def _args():
+        parser = ArgumentParser()
+        parser.add_argument(
+            '--bar',
+            action="store_true",
+        )
+        args = Dodo.parse_args(parser)
+
+        # augment the args with a value from the configuration
+        args.project_dir = Dodo.get_config("/ROOT/project_dir")
+
+        return args
+
+    if Dodo.is_main(__name__):
+        args = _args()
+        sys.stdout.write("project dir=%d" % args.project_dir)
+        sys.stdout.write("bar=%d" % args.bar)

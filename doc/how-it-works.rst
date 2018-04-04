@@ -4,7 +4,7 @@
 How the Dodo Commands system works
 **********************************
 
-After following the :ref:`installation` steps, you now have a ``dodo`` executable (called the "system" dodo) that you can use to create new projects in the projects directory. To see where it's located type:
+After following the :ref:`installation` steps, you now have a ``dodo`` executable that you can use to create new projects in the projects directory. To see where it's located type:
 
 .. code-block:: bash
 

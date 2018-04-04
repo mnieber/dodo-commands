@@ -1,23 +1,26 @@
-# noqa
-from dodo_commands.system_commands import DodoCommand
+from argparse import ArgumentParser
+from dodo_commands.framework import Dodo
 import os
 
 
-class Command(DodoCommand):  # noqa
-    help = (
-        "Writes (or removes) a small script that activates the latest " +
-        "Dodo Commands project"
+def _args():
+    parser = ArgumentParser(
+        description=(
+            "Writes (or removes) a small script that activates the latest " +
+            "Dodo Commands project"
+        )
     )
-    safe = False
+    parser.add_argument('status', choices=['on', 'off'])
+    return Dodo.parse_args(parser)
 
-    def add_arguments_imp(self, parser):  # noqa
-        parser.add_argument('status', choices=['on', 'off'])
 
-    def handle_imp(self, status, **kwargs):  # noqa
-        script = os.path.expanduser("~/.dodo_commands_autostart")
-        if status == "on" and not os.path.exists(script):
-            with open(script, "w") as f:
-                f.write("$(dodo activate --latest)\n")
-                f.write("dodo check-version --dodo --config\n")
-        if status == "off" and os.path.exists(script):
-            os.unlink(script)
+if Dodo.is_main(__name__, safe=False):
+    args = _args()
+
+    script = os.path.expanduser("~/.dodo_commands_autostart")
+    if args.status == "on" and not os.path.exists(script):
+        with open(script, "w") as f:
+            f.write("$(dodo activate --latest)\n")
+            f.write("dodo check-version --dodo --config\n")
+    if args.status == "off" and os.path.exists(script):
+        os.unlink(script)

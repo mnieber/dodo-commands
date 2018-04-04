@@ -68,6 +68,15 @@ def create_global_config():
             pass
 
 
+class classproperty(object):  # noqa
+    def __init__(self, f):
+        self.f = f
+
+    def __get__(self, obj, owner):
+        """Return read-only property value."""
+        return self.f(owner)
+
+
 def remove_trailing_dashes(args):
     """Removes first -- item from args."""
     return args[1:] if args[:1] == ['--'] else args
