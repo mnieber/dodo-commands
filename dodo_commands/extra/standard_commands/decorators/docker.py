@@ -1,8 +1,7 @@
 """Decorates command lines with docker arguments."""
-
 from dodo_commands.framework.args_tree import ArgsTreeNode
-from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.config import merge_into_config
+from dodo_commands.framework import Dodo, CommandError
 from fnmatch import fnmatch
 from plumbum import local
 import os
@@ -135,7 +134,7 @@ class Decorator:  # noqa
 
         return docker_node, image, name
 
-    def add_arguments(self, decorated, parser):  # noqa
+    def add_arguments(self, parser):  # noqa
         parser.add_argument(
             '--non-interactive',
             action='store_true',
@@ -146,12 +145,6 @@ class Decorator:  # noqa
             action='store_true',
             help="Kill and remove existing docker container with the same name"
         )
-
-    def handle(
-        self, decorated, non_interactive, kill_existing, **kwargs
-    ):  # noqa
-        decorated.opt_non_interactive = non_interactive
-        decorated.opt_kill_existing = kill_existing
 
     def _kill_existing_container(self, name):
         docker = local['docker']
@@ -172,15 +165,15 @@ class Decorator:  # noqa
         if len(exited_containers):
             docker("rm", name)
 
-    def modify_args(self, decorated, root_node, cwd):  # noqa
+    def modify_args(self, root_node, cwd):  # noqa
         docker_node, _, docker_name = self.docker_node(
-            decorated.get_config,
-            decorated.name,
+            Dodo.get_config,
+            Dodo.command_name,
             cwd,
-            not decorated.opt_non_interactive
+            not Dodo.args.non_interactive
         )
 
-        if decorated.opt_kill_existing:
+        if Dodo.args.kill_existing:
             self._kill_existing_container(docker_name)
 
         docker_node.add_child(root_node)

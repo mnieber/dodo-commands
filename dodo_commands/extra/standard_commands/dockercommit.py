@@ -1,39 +1,46 @@
-# noqa
-from dodo_commands.system_commands import DodoCommand
+from argparse import ArgumentParser
+from dodo_commands.framework import Dodo
 from plumbum.cmd import docker
 from six.moves import input as raw_input
+import sys
 
 
-class Command(DodoCommand):  # noqa
-    help = ""
+def _args():
+    parser = ArgumentParser()
+    args = Dodo.parse_args(parser)
+    return args
 
-    def _containers(self):
-        result = []
-        for line in docker("ps", "--format", "{{.ID}} {{.Names}} {{.Image}}").split('\n'):
-            if line:
-                cid, name, image = line.split()
-                result.append(dict(name=name, cid=cid, image=image))
-        return result
 
-    def handle_imp(self, **kwargs):  # noqa
-        containers = self._containers()
+def _containers():
+    result = []
+    for line in docker("ps", "--format", "{{.ID}} {{.Names}} {{.Image}}").split('\n'):
+        if line:
+            cid, name, image = line.split()
+            result.append(dict(name=name, cid=cid, image=image))
+    return result
 
-        print("0 - exit")
-        for idx, container in enumerate(containers):
-            print("%d - %s" % (idx + 1, container['name']))
 
-        print("\nSelect a container: ")
-        choice = int(raw_input()) - 1
+if Dodo.is_main(__name__):
+    args = _args()
+    containers = _containers()
 
-        if choice == -1:
-            return
-        container = containers[choice]
+    print("0 - exit")
+    for idx, container in enumerate(containers):
+        print("%d - %s" % (idx + 1, container['name']))
 
-        self.runcmd(
-            [
-                'docker',
-                'commit',
-                container['cid'],
-                container['image'],
-            ],
-        )
+    print("\nSelect a container: ")
+    choice = int(raw_input()) - 1
+
+    if choice == -1:
+        sys.exit(0)
+
+    container = containers[choice]
+
+    Dodo.runcmd(
+        [
+            'docker',
+            'commit',
+            container['cid'],
+            container['image'],
+        ],
+    )

@@ -1,7 +1,15 @@
-"""Print hello world."""
-from dodo_commands.framework import BaseCommand
+from argparse import ArgumentParser
+from dodo_commands.framework import Dodo
 
 
-class Command(BaseCommand):  # noqa
-    def handle(self, *args, **kwargs):  # noqa
-        print ("Hello world")
+def _args():  # noqa
+    parser = ArgumentParser(
+        description=('Print hello world.')
+    )
+    args = Dodo.parse_args(parser)
+    return args
+
+
+if Dodo.is_main(__name__):
+    args = _args()
+    Dodo.runcmd(['echo', 'Hello world'])

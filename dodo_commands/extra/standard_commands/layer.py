@@ -1,9 +1,20 @@
-"""Enable or disable a layer in the configuration."""
-
-from . import DodoCommand
+from argparse import ArgumentParser
+from dodo_commands.framework import Dodo
 from dodo_commands.framework.config import ConfigIO
 from dodo_commands.framework import CommandError
 import os
+import sys
+
+
+def _args():
+    parser = ArgumentParser(
+        description="Enable or disable a layer in the configuration."
+    )
+    parser.add_argument('layer')
+    parser.add_argument('value', nargs='?', default=False)
+    parser.add_argument('--force', action="store_true")
+    args = Dodo.parse_args(parser)
+    return args
 
 
 def _update_list_of_layers(layers, new_layer_name, new_layer_variant):
@@ -43,30 +54,23 @@ def _layer_value(layers, layer):
     return None
 
 
-class Command(DodoCommand):  # noqa
-    safe = False
+if Dodo.is_main(__name__, safe=False):
+    args = _args()
+    config = ConfigIO().load(load_layers=False)
+    layers = config.get('ROOT', {}).get('layers', [])
+    if args.value == False:  # noqa
+        print(_layer_value(layers, args.layer))
+        sys.exit(0)
 
-    def add_arguments_imp(self, parser):  # noqa
-        parser.add_argument('layer')
-        parser.add_argument('value', nargs='?', default=False)
-        parser.add_argument('--force', action="store_true")
+    layer_file = os.path.join(
+        Dodo.get_config("/ROOT/res_dir"),
+        Dodo.get_config("/ROOT/layer_dir", ""),
+        "%s.%s.yaml" % (args.layer, args.value)
+    )
 
-    def handle_imp(self, layer, value, force, **kwargs):  # noqa
-        config = ConfigIO().load(load_layers=False)
-        layers = config.get('ROOT', {}).get('layers', [])
-        if value == False:  # noqa
-            print(_layer_value(layers, layer))
-            return
+    if not args.force and not os.path.exists(layer_file):
+        raise CommandError("Layer file %s does not exist" % layer_file)
 
-        layer_file = os.path.join(
-            self.get_config("/ROOT/res_dir"),
-            self.get_config("/ROOT/layer_dir", ""),
-            "%s.%s.yaml" % (layer, value)
-        )
-
-        if not force and not os.path.exists(layer_file):
-            raise CommandError("Layer file %s does not exist" % layer_file)
-
-        newlayers = _update_list_of_layers(layers, layer, value)
-        config['ROOT']['layers'] = newlayers
-        ConfigIO().save(config)
+    newlayers = _update_list_of_layers(layers, args.layer, args.value)
+    config['ROOT']['layers'] = newlayers
+    ConfigIO().save(config)

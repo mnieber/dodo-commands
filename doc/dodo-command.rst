@@ -1,31 +1,56 @@
-*********************
-The DodoCommand class
-*********************
+******************
+The Dodo singleton
+******************
 
-The :code:`BaseCommand` class is pretty simple: it offers a command line parser and access to the project configuration. The :code:`DodoCommand` class extends BaseCommand with advanced features.
+This chapter describes the functions offered by the Dodo singleton class. You can use these functions in any Dodo Command script.
 
 
-The runcmd function, and --confirm and --echo flags
-===================================================
+The runcmd function
+===================
 
-The :code:`DodoCommand` class adds a helper function :code:`runcmd` and two additional flags:
+The ``Dodo.runcmd`` function takes a list of arguments (and a current working directory) and runs them on the command line. Moreover, it adds all variables in ``${/ENVIRONMENT/variable_map}`` to the system environment (for the duration of running the command).
 
-#. the ``runcmd`` function takes a list of arguments and runs them on the command line. Moreover, it adds all variables in ``${/ENVIRONMENT/variable_map}`` to the system environment (for the duration of running the command).
+.. code-block:: python
+
+    if Dodo.is_main(__name__):
+        # You must call Dodo.parse_args first, otherwise any
+        # subsequent call to Dodo.runcmd will immediately raise an exception
+        parser = ArgumentParser()
+        args = Dodo.parse_args(parser)
+
+        # say hello
+        Dodo.runcmd(['echo', 'hello'], cwd='/tmp')
+
+
+The --confirm and --echo flags
+==============================
+
+The ``Dodo.parse_args(parser)`` function adds an ``--echo`` and ``--confirm`` flag the to command line arguments of your script. These flags control what happens in the ``Dodo.runcmd`` function:
 
 #. the :code:`--echo` flag changes the behaviour of :code:`runcmd` so that it only prints a command line instead of executing the command.
 
 #. the :code:`--confirm` flag changes the behaviour of :code:`runcmd` so that it prints a command line and asks for confirmation before executing the command.
 
-Because the ``DodoCommand`` class implements :code:`add_arguments` and :code:`handle`, subclasses of ``DodoCommand`` must implement :code:`add_arguments_imp` and :code:`handle_imp` if they wish to customize the commands' argument or ``handle`` function.
 
-Note that since command scripts are written in Python, the script may choose to perform any operation without explicitly asking your permission. In other words, it may choose to ignore the --confirm and --echo options. This sitation should of course be avoided. However, if a Command script does not completely honor the ``--confirm`` and ``--echo`` flags, it should be marked with ``safe = False``, as shown in the example below. Unsafe commands will not run with the --echo flag, and will pause with a warning when run with the --confirm flag.
+Marking a script as unsafe
+==========================
+
+Since command scripts are written in Python, the script can in principle perform any operation without explicitly asking your permission. In other words, it may choose to ignore the --confirm and --echo options. This sitation should of course be avoided. However, if a Command script does not completely honor the ``--confirm`` and ``--echo`` flags, it should pass ``safe=False`` when it calls ``Dodo.is_main``, as shown in the example below. Unsafe commands will not run with the --echo flag, and will pause with a warning when run with the --confirm flag.
 
 .. code-block:: python
 
-    class Command(DodoCommand):  # noqa
-        safe = False
+    if Dodo.is_main(__name__, safe=False):
+        parser = ArgumentParser()
+        args = Dodo.parse_args(parser)
 
-        # rest of the command goes here...
+        # Do destructive things without asking permission. Having this call
+        # is the reason we used safe=False to mark the script as unsafe.
+        os.unlink('/tmp/foo.text')
+
+        # Delete the /tmp directory. Since this time we are using Dodo.runcmd,
+        # the user can use the --confirm flag to inspect and cancel it.
+        # This makes this call *relatively* safe.
+        Dodo.runcmd(['rm', '-rf', '/tmp'])
 
 
 .. _decorators:
@@ -33,14 +58,14 @@ Note that since command scripts are written in Python, the script may choose to 
 Decorators
 ==========
 
-A Decorator is a class that alters the workings of a DodoCommand class. It can extend or modify the arguments that are passed to ``DodoCommand.handle``. The decorator should be placed in a ``decorators`` directory inside a commands directory. This is illustrated by the following example (note that the decorated DodoCommand instance is passed in as the ``decorated`` argument):
+A Decorator is a class that alters the workings of a Dodo Command script. It can extend or modify the arguments that are passed to ``Dodo.runcmd``. The decorator should be placed in a ``decorators`` directory inside a commands directory. This is illustrated by the following example (note that the decorated DodoCommand instance is passed in as the ``decorated`` argument):
 
 .. code-block:: python
 
     # file: my_commands/decorators/debugger.py
 
     class Decorator:  # noqa
-        def add_arguments(self, decorated, parser):  # noqa
+        def add_arguments(self, parser):  # noqa
             parser.add_argument(
                 '--use-debugger',
                 action='store_true',
@@ -48,18 +73,14 @@ A Decorator is a class that alters the workings of a DodoCommand class. It can e
                 help="Run the command through the debugger"
             )
 
-        def handle(self, decorated, use_debugger, **kwargs):  # noqa
-            decorated.opt_use_debugger = use_debugger
-
-
-        def modify_args(self, decorated, root_node, cwd):  # noqa
-            if not decorated.opt_use_debugger:
+        def modify_args(self, args, root_node, cwd):  # noqa
+            if not args.use_debugger:
                 return root_node, cwd
 
             # Create a command argument with the path to the debugger
             # Note that "debugger" is a tag which is only used internally
             debugger_node = ArgsTreeNode(
-                "debugger", args=[decorated.get_config('/BUILD/debugger')]
+                "debugger", args=[Dodo.get_config('/BUILD/debugger')]
             )
 
             # create a new command by using debugger_node as a prefix, and

@@ -1,35 +1,41 @@
-# noqa
-from dodo_commands.system_commands import DodoCommand
+from argparse import ArgumentParser
+from dodo_commands.framework import Dodo
 from six.moves import configparser
 import os
 
 
-class Command(DodoCommand):  # noqa
-    safe = False
-    help = "Write a value of the global Dodo Command configuration"
+def _args():
+    parser = ArgumentParser(
+        description="Write a value of the global Dodo Command configuration"
+    )
+    parser.add_argument('key')
+    parser.add_argument('val', nargs='?')
+    args = Dodo.parse_args(parser)
+    return args
 
-    def add_arguments_imp(self, parser):  # noqa
-        parser.add_argument('key')
-        parser.add_argument('val', nargs='?')
 
-    def _config_filename(self):
-        return os.path.expanduser("~/.dodo_commands/config")
+def _config_filename():
+    return os.path.expanduser("~/.dodo_commands/config")
 
-    def _write_config(self, config):
-        """Save configuration."""
-        with open(self._config_filename(), "w") as f:
-            config.write(f)
 
-    def _read_config(self):
-        """Save configuration."""
-        config = configparser.ConfigParser()
-        config.read(self._config_filename())
-        return config
+def _write_config(config):
+    """Save configuration."""
+    with open(_config_filename(), "w") as f:
+        config.write(f)
 
-    def handle_imp(self, key, val, **kwargs):  # noqa
-        config = self._read_config()
-        if val:
-            config.set("DodoCommands", key, val)
-            self._write_config(config)
-        else:
-            print(config.get("DodoCommands", key))
+
+def _read_config():
+    """Save configuration."""
+    config = configparser.ConfigParser()
+    config.read(_config_filename())
+    return config
+
+
+if Dodo.is_main(__name__, safe=False):
+    args = _args()
+    config = _read_config()
+    if args.val:
+        config.set("DodoCommands", args.key, args.val)
+        _write_config(config)
+    else:
+        print(config.get("DodoCommands", args.key))

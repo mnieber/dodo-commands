@@ -1,4 +1,4 @@
-from dodo_commands.system_commands import CommandError
+from dodo_commands.framework import CommandError, Dodo
 from dodo_commands.extra.standard_commands.decorators.docker import (
     Decorator as DockerDecorator
 )
@@ -31,7 +31,7 @@ def register_diagnose_test(name=None):
 
 @register_diagnose_filter('dodo_expand')
 def _dodo_expand(
-    self,
+    args,
     key_str,
     key=None,
     layout=None,
@@ -56,10 +56,11 @@ def _dodo_expand(
         link = False
 
     if "${" not in key_str:
-        val = self.get_config(key_str)
+        import pudb; pudb.set_trace();  # noqa
+        val = Dodo.get_config(key_str)
         key_str = '${' + key_str + '}'
     else:
-        val = expand_keys(key_str, self.config)
+        val = expand_keys(key_str, Dodo.config)
 
     quoted_key_str = _quote_key(key_str)
     val_str = _quote_val(str(val))
@@ -91,7 +92,7 @@ def _dodo_expand(
 
 
 @register_diagnose_filter('leaf')
-def _leaf(self, str_arg):
+def _leaf(args, str_arg):
     return str_arg.split("/")[-1]
 
 
@@ -102,29 +103,29 @@ def _docker():
         raise CommandError("Docker is not installed")
 
 
-def _image(get_config, key_or_name):
-    image = get_config(key_or_name, None)
+def _image(key_or_name):
+    image = Dodo.get_config(key_or_name, None)
     if not image:
         _, image, _ = DockerDecorator.docker_node(
-            self.get_config, key_or_name, "", False
+            Dodo.get_config, key_or_name, "", False
         )
     return image
 
 
 @register_diagnose_test('existing_docker_image')
-def _is_existing_docker_image(self, key):
-    image = _image(self.get_config, key)
+def _is_existing_docker_image(args, key):
+    image = _image(Dodo.get_config, key)
     return _docker()("images", "-q", image)
 
 
 @register_diagnose_test('existing_container')
-def _is_existing_container(self, key):
-    image = _image(self.get_config, key)
+def _is_existing_container(args, key):
+    image = _image(Dodo.get_config, key)
     return image in _docker()(
         "ps", "-a", "--filter=name=%s" % image
     )
 
 
 @register_diagnose_test('path_exists')
-def _path_exists(self, path):
+def _path_exists(args, path):
     return os.path.exists(path)

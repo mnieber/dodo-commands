@@ -1,38 +1,42 @@
-# noqa
-from dodo_commands.extra.standard_commands import DodoCommand
+from argparse import ArgumentParser
+from dodo_commands.framework import Dodo
 from dodo_commands.framework.config import ConfigIO
 from plumbum.cmd import docker
 
-class Command(DodoCommand):  # noqa
-    help = ""
-    decorators = []
 
-    def add_arguments_imp(self, parser):  # noqa
-        parser.add_argument(
-            'container_type',
-            choices=self.get_config('/DOCKER/container_types', {}).keys()
-        )
-        parser.add_argument('name')
+def _args():
+    parser = ArgumentParser()
+    parser.add_argument(
+        'container_type',
+        choices=Dodo.get_config('/DOCKER/container_types', {}).keys()
+    )
+    parser.add_argument('name')
+    args = Dodo.parse_args(parser)
+    args.dirs = Dodo.get_config(
+        "/DOCKER/container_types/%s/dirs" % args.container_type
+    )
+    args.image = Dodo.get_config(
+        "/DOCKER/container_types/%s/image" % args.container_type
+    )
+    return args
 
-    def handle_imp(self, container_type, name, **kwargs):  # noqa
-        existing = docker("ps", "-a", "--quiet", "--filter", "name=" + name)
-        if not existing:
-            args = [
-                "docker",
-                "create",
-                "--name", name,
-            ]
 
-            for path in self.get_config(
-                "/DOCKER/container_types/%s/dirs" % container_type
-            ):
-                args.extend(["-v", path])
+if Dodo.is_main(__name__):
+    args = _args()
+    existing = docker("ps", "-a", "--quiet", "--filter", "name=" + args.name)
+    if not existing:
+        cmd_args = [
+            "docker",
+            "create",
+            "--name", args.name,
+        ]
 
-            args.append(self.get_config(
-                "/DOCKER/container_types/%s/image" % container_type
-            ))
-            self.runcmd(args)
+        for path in args.dirs:
+            cmd_args.extend(["-v", path])
 
-        config = ConfigIO().load(load_layers=False)
-        config['DOCKER'].setdefault('containers', {})[container_type] = name
-        ConfigIO().save(config)
+        cmd_args.append(args.image)
+        Dodo.runcmd(cmd_args)
+
+    config = ConfigIO().load(load_layers=False)
+    config['DOCKER'].setdefault('containers', {})[args.container_type] = args.name
+    ConfigIO().save(config)
