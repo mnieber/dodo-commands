@@ -10,7 +10,7 @@ import traceback
 from importlib import import_module
 from dodo_commands.framework.util import query_yes_no
 from dodo_commands.framework.config import (
-    CommandPath, get_project_dir, ConfigLoader
+    CommandPath, get_project_dir, ConfigLoader, get_global_config
 )
 from dodo_commands.framework.singleton import Dodo
 from dodo_commands.framework.command_error import CommandError  # noqa
@@ -152,6 +152,12 @@ class ManagementUtility(object):
                 subcommand = self.argv[1]
             except IndexError:
                 subcommand = 'help'  # Display help if no arguments were given.
+
+        global_config = get_global_config()
+        if global_config.has_section('alias'):
+            for key, val in global_config.items('alias'):
+                if key == subcommand:
+                    subcommand = val
 
         if subcommand == '--version':
             sys.stdout.write(get_version() + '\n')
