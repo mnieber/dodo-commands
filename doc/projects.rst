@@ -1,8 +1,8 @@
 .. _how-it-works:
 
-**********************************
-How the Dodo Commands system works
-**********************************
+***************************
+Creating and using projects
+***************************
 
 After following the :ref:`installation` steps, you now have a ``dodo`` executable that you can use to create new projects in the projects directory. To see where it's located type:
 
@@ -35,7 +35,7 @@ This call will execute the following steps:
 
 #. the foo.py script is found and run with the --bar option
 
-#. the foo.py script can access the project configuration and does some operation on the project (such as deleting all build results in ~/projects/FooBar/build/debug)
+#. the foo.py script can access the project's configuration and does some operation on the project (such as deleting all build results in ~/projects/FooBar/build/debug)
 
 Activating a project
 ====================
