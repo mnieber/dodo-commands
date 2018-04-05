@@ -1,8 +1,30 @@
+.. _singleton:
+
 ******************
 The Dodo singleton
 ******************
 
 This chapter describes the functions offered by the Dodo singleton class. You can use these functions in any Dodo Command script.
+
+
+The is_main function
+====================
+
+Using ``if Dodo.is_main(__name__)`` instead of the usual ``if __name__ == '__main__'`` allows Dodo Commands to execute your script also when its invoked through calling ``dodo``.
+
+
+.. code-block:: python
+
+    from dodo_commands.framework import Dodo
+
+    if Dodo.is_main(__name__):
+        print("Hello world")
+
+
+The get_config function
+=======================
+
+Calling ``Dodo.get_config('/ROOT/my/key', 'default-value')`` will retrieve a value from the project's :ref:`configuration`. Use ``Dodo.config`` to get direct access to the configuration object.
 
 
 The runcmd function
@@ -13,13 +35,18 @@ The ``Dodo.runcmd`` function takes a list of arguments (and a current working di
 .. code-block:: python
 
     if Dodo.is_main(__name__):
-        # You must call Dodo.parse_args first, otherwise any
-        # subsequent call to Dodo.runcmd will immediately raise an exception
+        # You must call Dodo.parse_args before calling Dodo.runcmd,
+        # or an exception will be raised
         parser = ArgumentParser()
+        parser.add_argument(
+            '--verbose',
+            action="store_true",
+        )
         args = Dodo.parse_args(parser)
 
         # say hello
-        Dodo.runcmd(['echo', 'hello'], cwd='/tmp')
+        if args.verbose:
+            Dodo.runcmd(['echo', 'hello'], cwd='/tmp')
 
 
 The --confirm and --echo flags

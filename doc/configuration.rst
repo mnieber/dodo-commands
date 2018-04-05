@@ -1,3 +1,5 @@
+.. _configuration:
+
 *******************
 Configuration files
 *******************
@@ -56,8 +58,3 @@ Layers can be switched on and off with the ``dodo layer`` command (except for th
 
 
 5. the following magic values are automatically added: ``${/ROOT/project_name}``, ``${/ROOT/project_dir}``, ``${/ROOT/res_dir}``. Finally the system_commands directory is automatically added to ``${/ROOT/command_path}``.
-
-Using the configuration
-=======================
-
-As explained in the :ref:`commands` section, commands can obtain configuration values by calling :code:`self.get_config(<key>)`.

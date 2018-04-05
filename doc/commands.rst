@@ -62,7 +62,7 @@ Use ``${/ROOT/command_path_exclude}`` to exclude certain paths from the command 
 System commands
 ===============
 
-System commands such as ``dodo activate`` are part of the ``dodo_commands.system_commands`` python package. An entry for these commands is added automatically to the command path (you can inspect this with ``dodo print-config``).
+System commands such as ``dodo activate`` are part of the ``dodo_commands.system_commands`` python package. An entry for these commands is added automatically to the command path (you can inspect this with ``dodo print-config ROOT/command_path``).
 
 
 Specifying command dependencies in the .meta file
@@ -81,38 +81,4 @@ In this example, calling the ``foo`` command will automatically install the ``do
 The structure of a command script
 =================================
 
-When you run a command with :code:`dodo foo --bar`, the foo.py script is searched in the configured command_path, as described above. There are no restrictions on how you organize the foo.py script, but to take advantage of the Dodo Command features, you should:
-
-- use `if Dodo.is_main(__name__)` instead of the usual `if __name__ == '__main__'. This allows Dodo Commands to execute your script also when its invoked through `dodo foo`.
-
-- use `args = Dodo.parse_args(parser)` instead of `args = parser.parse_args()`. This allows Dodo Commands to add a few extra command line parameters to your script.
-
-- use `Dodo.runcmd` to execute shell commands. This allows Dodo Commands to intercept the shell command call, and do some special operations (such as asking you for confirmation before executing the command).
-
-- call :code:`Dodo.get_config` to get values from the configuration file
-
-The following example illustrates this.
-
-.. code-block:: python
-
-    from argparse import ArgumentParser
-    from dodo_commands.framework import Dodo
-
-
-    def _args():
-        parser = ArgumentParser()
-        parser.add_argument(
-            '--bar',
-            action="store_true",
-        )
-        args = Dodo.parse_args(parser)
-
-        # augment the args with a value from the configuration
-        args.project_dir = Dodo.get_config("/ROOT/project_dir")
-
-        return args
-
-    if Dodo.is_main(__name__):
-        args = _args()
-        sys.stdout.write("project dir=%d" % args.project_dir)
-        sys.stdout.write("bar=%d" % args.bar)
+When you run a command with ``dodo foo --bar``, the foo.py script is searched in the configured command_path, as described above, and imported. This import will not have any effect if you are using a standard ``if __name__ == '__main__'`` clause. Therefore, you should instead use ``if Dodo.is_main(__name__)``, as explained in :ref:`singleton`. Apart from this restriction, you can do anything you like in the script. To take advantage of the Dodo Command features, read about the Dodo singleton (:ref:`singleton`).

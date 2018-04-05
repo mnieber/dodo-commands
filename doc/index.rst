@@ -15,10 +15,10 @@ Contents:
 
    goals
    installation
-   how-it-works
+   projects
    commands
+   dodo-singleton
    configuration
-   dodo-command
    sharing-projects
    diagnose
 
