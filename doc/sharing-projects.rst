@@ -52,7 +52,7 @@ You (as the initial creator of the project) don't have this symlink, but you can
 
 .. code-block:: bash
 
-    dodo global-config diff_tool meld
+    dodo global-config settings.diff_tool meld
 
 - To synchronize only config.yaml, call ``dodo diff config.yaml``. It's a good practice to use the value ``${/ROOT/version}`` to track whether the copied configuration is up-to-date or not (see :ref:`check_config`).
 

@@ -62,7 +62,7 @@ The first time you call :code:`dodo`, a global :code:`~/.dodo_commands/config` f
 
 .. code-block:: bash
 
-    dodo global-config diff_tool meld
+    dodo global-config settings.diff_tool meld
 
 Upgrading
 =========

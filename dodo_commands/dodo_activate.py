@@ -58,7 +58,7 @@ class Activator:
     def _create_virtual_env(self):
         """Install a virtual env."""
         local["virtualenv"](
-            "-p", self.config.get("DodoCommands", "python_interpreter"),
+            "-p", self.config.get("settings", "python_interpreter"),
             os.path.join(self._dodo_commands_dir, "env")
         )
 
@@ -147,7 +147,7 @@ class Activator:
     @property
     def _project_dir(self):
         return os.path.expanduser(os.path.join(
-            self.config.get("DodoCommands", "projects_dir"),
+            self.config.get("settings", "projects_dir"),
             self.project
         ))
 
@@ -155,18 +155,18 @@ class Activator:
     def _dodo_commands_dir(self):
         return os.path.join(self._project_dir, "dodo_commands")
 
-    def _config_get(self, key, default=""):
+    def _config_get(self, section, key, default=""):
         return (
-            self.config.get("DodoCommands", key)
-            if self.config.has_option("DodoCommands", key) else
+            self.config.get(section, key)
+            if self.config.has_option(section, key) else
             default
         )
 
     def run(self, project, latest, create):
         """Activate or create a project in the projects dir."""
         self.config = self._config()
-        latest_project = self._config_get("latest_project")
-        previous_project = self._config_get("previous_project")
+        latest_project = self._config_get("recent", "latest_project")
+        previous_project = self._config_get("recent", "previous_project")
 
         if project == '-':
             project = previous_project
@@ -203,8 +203,8 @@ class Activator:
             return
 
         if self.project != latest_project:
-            self.config.set("DodoCommands", "previous_project", latest_project)
-            self.config.set("DodoCommands", "latest_project", self.project)
+            self.config.set("recent", "previous_project", latest_project)
+            self.config.set("recent", "latest_project", self.project)
             self._write_config()
 
         sys.stdout.write("source %s\n" % self._activate_script())
