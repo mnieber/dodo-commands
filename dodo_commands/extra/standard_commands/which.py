@@ -63,7 +63,7 @@ def _which_dir(directory):
 
 def _projects_dir():
     return os.path.expanduser(
-        get_global_config().get("DodoCommands", "projects_dir")
+        get_global_config().get("settings", "projects_dir")
     )
 
 

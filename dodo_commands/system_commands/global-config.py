@@ -34,8 +34,9 @@ def _read_config():
 if Dodo.is_main(__name__, safe=False):
     args = _args()
     config = _read_config()
+    section, key = args.key.split('.')
     if args.val:
-        config.set("DodoCommands", args.key, args.val)
+        config.set(section, key, args.val)
         _write_config(config)
     else:
-        print(config.get("DodoCommands", args.key))
+        print(config.get(section, key))

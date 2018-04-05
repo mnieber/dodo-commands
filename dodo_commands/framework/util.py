@@ -40,7 +40,7 @@ def query_yes_no(question, default="yes"):
 
 
 _global_config = """
-[DodoCommands]
+[settings]
 projects_dir=~/projects
 python_interpreter=python
 diff_tool=diff

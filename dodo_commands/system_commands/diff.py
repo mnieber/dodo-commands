@@ -26,7 +26,7 @@ def _args():
 
 
 def _diff_tool():
-    return get_global_config().get("DodoCommands", "diff_tool")
+    return get_global_config().get("settings", "diff_tool")
 
 
 if Dodo.is_main(__name__):
