@@ -17,7 +17,7 @@ Dodo Commands is a small framework for creating separated development environmen
 
 ## License
 
-MIT License (see the enclosed license file). Files that are based on source code from the Django Software Foundation contain a copy of the associated license at the start of the file.
+MIT License (see the enclosed license file).
 
 ## Rationale
 
@@ -85,22 +85,29 @@ The following steps install a pre-existing Dodo Commands project that offers a `
     you will see that it refers to configuration file values such as `/ROOT/build_dir`:
 
     ```python
-    """Configure code with CMake."""
-    from dodo_commands.system_commands import DodoCommand
+    from argparse import ArgumentParser
+    from dodo_commands.framework import Dodo
 
-    class Command(DodoCommand):  # noqa
-        docker_options = [('name', 'cmake')]
 
-        def handle_imp(self, **kwargs):  # noqa
-            self.runcmd(
-                ["cmake"] +
-                [
-                    "-D%s=%s" % x for x in
-                    self.get_config('/CMAKE/variables').items()
-                ] +
-                [self.get_config("/ROOT/src_dir")],
-                cwd=self.get_config("/ROOT/build_dir")
-            )
+    def _args():  # noqa
+        parser = ArgumentParser(description='Configure code with CMake')
+        args = Dodo.parse_args(parser)
+        args.src_dir = Dodo.get_config("/ROOT/src_dir")
+        args.build_dir = Dodo.get_config("/ROOT/build_dir")
+        return args
+
+
+    if Dodo.is_main(__name__):
+        args = _args()
+        Dodo.runcmd(
+            ["cmake"] +
+            [
+                "-D%s=%s" % x for x in
+                Dodo.get_config('/CMAKE/variables').items()
+            ] +
+            [args.src_dir],
+            cwd=args.build_dir
+        )
     ```
 
 4. Do a trial run of the cmake command, without actually running it:
