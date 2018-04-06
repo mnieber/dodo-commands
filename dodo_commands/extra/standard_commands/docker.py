@@ -49,6 +49,8 @@ if Dodo.is_main(__name__):
 
     if args.name:
         docker_options['name'] = args.name
+    else:
+        docker_options['name'] = args.service
 
     Dodo.get_config('/DOCKER')['options'] = {
         Dodo.command_name: docker_options
