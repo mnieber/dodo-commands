@@ -21,9 +21,9 @@ def get_version():  # noqa
     return "0.13.5"
 
 
-def execute_script(module_dir, command_name):
+def execute_script(package_path, command_name):
     """
-    Return the Command class instance for module_dir and command_name.
+    Return the Command class instance for package_path and command_name.
 
     Given a command_name and module directory, returns the Command
     class instance. All errors raised by the import process
@@ -47,9 +47,8 @@ def execute_script(module_dir, command_name):
             else:
                 sys.exit(1)
 
-    package_path = module_dir.replace("/", ".")
     import_path = '%s.%s' % (package_path, command_name)
-    if module_dir in ("", None, "."):
+    if package_path in ("", None, "."):
         import_path = command_name
 
     try:
@@ -83,7 +82,7 @@ def get_command_map():
             if not is_pkg and not name.startswith('_')
         ]
         for command_name in commands:
-            command_map[command_name] = item.module_path
+            command_map[command_name] = item.module_path.replace("/", ".")
     return command_map
 
 
@@ -112,11 +111,11 @@ class ManagementUtility(object):
                 "Available commands (dodo help --commands):",
             ]
             command_groups = defaultdict(lambda: [])
-            for command_name, module_dir in command_map.items():
-                command_groups[module_dir].append(command_name)
-            for module_dir in sorted(command_groups.keys()):
+            for command_name, package_path in command_map.items():
+                command_groups[package_path].append(command_name)
+            for package_path in sorted(command_groups.keys()):
                 usage.append("")
-                for command_name in sorted(command_groups[module_dir]):
+                for command_name in sorted(command_groups[package_path]):
                     usage.append("    %s" % command_name)
 
         return '\n'.join(usage)
@@ -174,11 +173,12 @@ class ManagementUtility(object):
                 print("Unknown dodo command: %s" % command_name)
                 sys.exit(1)
 
-            module_dir = command_map[command_name]
+            package_path = command_map[command_name]
             Dodo.command_name = command_name
+            Dodo.package_path = package_path
 
             try:
-                execute_script(module_dir, command_name)
+                execute_script(package_path, command_name)
             except KeyboardInterrupt:
                 print('\n')
                 sys.exit(1)
