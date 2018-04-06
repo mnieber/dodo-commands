@@ -67,7 +67,10 @@ class Dodo:
     def is_main(cls, name, safe=None):
         if safe is not None:
             cls.safe = safe
-        return name == '__main__' or cls.command_name
+        return name in (
+            '__main__',
+            cls.package_path + '.' + cls.command_name
+        )
 
     @classmethod
     def _get_decorators(cls):
