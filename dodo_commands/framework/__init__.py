@@ -21,11 +21,11 @@ def get_version():  # noqa
     return "0.13.5"
 
 
-def execute_script(module_dir, name):
+def execute_script(module_dir, command_name):
     """
-    Return the Command class instance for module_dir and name.
+    Return the Command class instance for module_dir and command_name.
 
-    Given a command name and module directory, returns the Command
+    Given a command_name and module directory, returns the Command
     class instance. All errors raised by the import process
     (ImportError, AttributeError) are allowed to propagate.
     """
@@ -48,16 +48,16 @@ def execute_script(module_dir, name):
                 sys.exit(1)
 
     package_path = module_dir.replace("/", ".")
-    import_path = '%s.%s' % (package_path, name)
+    import_path = '%s.%s' % (package_path, command_name)
     if module_dir in ("", None, "."):
-        import_path = name
+        import_path = command_name
 
     try:
         import_module(import_path)
     except ImportError as e:
         try:
             base_path = import_module(package_path).__path__[0]
-            meta_data_filename = os.path.join(base_path, name + ".meta")
+            meta_data_filename = os.path.join(base_path, command_name + ".meta")
             if os.path.exists(meta_data_filename):
                 install_packages(meta_data_filename)
                 import_module(import_path)
@@ -69,12 +69,12 @@ def execute_script(module_dir, name):
             sys.exit(1)
 
 
-def get_commands():
+def get_command_map():
     """
     Return a dictionary mapping command names to their Python module directory.
     The dictionary is in the format {command_name: module_name}.
     """
-    result = {}
+    command_map = {}
     command_path = CommandPath(ConfigLoader().load())
     command_path.extend_sys_path()
     for item in command_path.items:
@@ -82,9 +82,9 @@ def get_commands():
             name for _, name, is_pkg in pkgutil.iter_modules([item.full_path])
             if not is_pkg and not name.startswith('_')
         ]
-        for command in commands:
-            result[command] = item.module_path
-    return result
+        for command_name in commands:
+            command_map[command_name] = item.module_path
+    return command_map
 
 
 class ManagementUtility(object):
@@ -94,92 +94,91 @@ class ManagementUtility(object):
         self.argv = argv
         self.prog_name = os.path.basename(self.argv[0])
 
-    def main_help_text(self, commands_only=False, commands=None):
+    def main_help_text(self, commands_only=False, command_map=None):
         """Return the script's main help text, as a string."""
-        if commands is None:
-            commands = get_commands()
+        if command_map is None:
+            command_map = get_command_map()
 
         if commands_only:
-            usage = sorted(commands.keys())
+            usage = sorted(command_map.keys())
         else:
             usage = [
                 "",
                 "Version %s (%s --version)." % (
                     get_version(), self.prog_name
                 ),
-                "Type '%s help <subcommand>' for help on "
-                "a specific subcommand." % self.prog_name,
-                "Available subcommands (dodo help --commands):",
+                "Type '%s help <command>' for help on "
+                "a specific command." % self.prog_name,
+                "Available commands (dodo help --commands):",
             ]
-            commands_dict = defaultdict(lambda: [])
-            for name, app in commands.items():
-                app = app.rpartition('.')[-1]
-                commands_dict[app].append(name)
-            for app in sorted(commands_dict.keys()):
+            command_groups = defaultdict(lambda: [])
+            for command_name, module_dir in command_map.items():
+                command_groups[module_dir].append(command_name)
+            for module_dir in sorted(command_groups.keys()):
                 usage.append("")
-                for name in sorted(commands_dict[app]):
-                    usage.append("    %s" % name)
+                for command_name in sorted(command_groups[module_dir]):
+                    usage.append("    %s" % command_name)
 
         return '\n'.join(usage)
 
     def execute(self):
         """
-        Execute subcommand.
+        Execute command.
 
-        Given the command-line arguments, this figures out which subcommand is
+        Given the command-line arguments, this figures out which command is
         being run, creates a parser appropriate to that command, and runs it.
         """
-        commands = get_commands()
+        command_map = get_command_map()
 
         if "_ARGCOMPLETE" in os.environ:
             words = os.environ['COMP_LINE'].split()
-            subcommand = words[1]
+            command_name = words[1]
 
-            if subcommand not in commands:
+            if command_name not in command_map:
                 parser = ArgumentParser()
                 parser.add_argument(
                     'command',
-                    choices=[x for x in commands.keys()]
+                    choices=[x for x in command_map.keys()]
                 )
                 argcomplete.autocomplete(parser)
 
             os.environ['COMP_LINE'] = ' '.join(words[:1] + words[2:])
             os.environ['COMP_POINT'] = str(
-                int(os.environ['COMP_POINT']) - (len(subcommand) + 1)
+                int(os.environ['COMP_POINT']) - (len(command_name) + 1)
             )
         else:
             try:
-                subcommand = self.argv[1]
+                command_name = self.argv[1]
             except IndexError:
-                subcommand = 'help'  # Display help if no arguments were given.
+                command_name = 'help'  # Display help if no arguments were given.
 
         global_config = get_global_config()
         if global_config.has_section('alias'):
             for key, val in global_config.items('alias'):
-                if key == subcommand:
-                    subcommand = val
+                if key == command_name:
+                    command_name = val
 
-        if subcommand == '--version':
+        if command_name == '--version':
             sys.stdout.write(get_version() + '\n')
-        elif subcommand == 'help':
+        elif command_name == 'help':
             if '--commands' in sys.argv:
                 sys.stdout.write(
                     self.main_help_text(
-                        commands_only=True, commands=commands
+                        commands_only=True, command_map=command_map
                     ) + '\n'
                 )
             else:
                 sys.stdout.write(self.main_help_text() + '\n')
         else:
-            if subcommand not in commands:
-                print("Unknown dodo command: %s" % subcommand)
+            if command_name not in command_map:
+                print("Unknown dodo command: %s" % command_name)
                 sys.exit(1)
 
-            module_dir = commands[subcommand]
-            Dodo.command_name = subcommand
+            module_dir = command_map[command_name]
+            Dodo.command_name = command_name
 
             try:
-                execute_script(module_dir, subcommand)
+                execute_script(module_dir, command_name)
             except KeyboardInterrupt:
                 print('\n')
                 sys.exit(1)
