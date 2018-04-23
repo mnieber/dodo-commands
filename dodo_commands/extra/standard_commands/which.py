@@ -42,6 +42,10 @@ def _args():  # noqa
         '--projects',
         action="store_true",
         help='Prints which projects are available')
+    group.add_argument(
+        '--default-commands',
+        action="store_true",
+        help='Prints the directory where default commands are stored')
 
     return Dodo.parse_args(parser)
 
@@ -78,6 +82,8 @@ if Dodo.is_main(__name__):
         )
     elif args.global_config:
         sys.stdout.write(os.path.expanduser('~/.dodo_commands/config\n'))
+    elif args.default_commands:
+        sys.stdout.write(os.path.expanduser('~/.dodo_commands/default_commands\n'))
     elif args.script:
         sys.stdout.write(_which_script(args.script) + "\n")
     elif args.directory:
