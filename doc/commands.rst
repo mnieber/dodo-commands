@@ -47,7 +47,7 @@ In the example below, all subdirectories of the default commands are used (note 
         - - ${/ROOT/src_dir}
           - special_commands
 
-In this case, the final command_path contains ``~/projects/FooBar/src/special_commands``, ``~/projects/FooBar/dodo_commands/default_commands/standard_commands`` and ``~/projects/FooBar/dodo_commands/default_commands/mycommands``.
+In this case, the final command_path contains ``~/projects/FooBar/src/special_commands``, ``~/.dodo_commands/default_commands/standard_commands`` and ``~/.dodo_commands/default_commands/mycommands``.
 
 Use ``${/ROOT/command_path_exclude}`` to exclude certain paths from the command path:
 
