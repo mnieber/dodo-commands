@@ -27,7 +27,7 @@ def _args():
         '--name',
         help=("Override the name of the started docker container")
     )
-    parser.add_argument('--command', default='/bin/bash')
+    parser.add_argument('--command')
     args = Dodo.parse_args(parser)
     return args
 
