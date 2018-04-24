@@ -1,5 +1,16 @@
 # Version history
 
+## 0.14.0
+
+- Add dodo dockerkill command
+- Remove --pretty-print option. Instead, print "\" at each line ending
+- Remove name argument from dodo dockercommit
+- Fix printing a config key with non-string contents
+- Replace DodoCommand class with Dodo singleton
+- Rename [DodoCommands] to [settings] in global config
+- Allow to add aliases in [alias] section of global config
+- Set docker instance name to args.service by default
+-
 ## 0.13.5
 
 -  Use --image, --name and --command args in 'dodo docker'
