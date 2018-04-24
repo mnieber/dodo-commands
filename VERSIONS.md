@@ -1,5 +1,9 @@
 # Version history
 
+## 0.14.2
+
+- Update documentation
+
 ## 0.14.1
 
 - Update documentation
