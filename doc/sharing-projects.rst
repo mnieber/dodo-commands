@@ -92,5 +92,5 @@ A monolithic repository may contain several projects that each have their own Do
 Checking the config version
 ===========================
 
-The ``dodo check-config --config`` command compares the ``${/ROOT/version}`` value in your local configuration with the value in the (shared) default configuration. If someone bumped the version in the shared configuration, it will tell you that your local configuration is not up-to-date (in that case, use ``dodo diff .`` to synchronize).
-One of the values that you synchronize with ``dodo diff .`` is ``${/ROOT/required_dodo_commands_version}``. The ``dodo check-version --dodo`` command reads this value and warns you if your Dodo Commands version is too old. The small script written by ``dodo autostart on`` (see :ref:`autostart`) calls both checks, and this helps you to stay synchronized.
+The ``dodo check-config --config`` command compares the ``${/ROOT/version}`` value in your local configuration with the value in the (shared) default configuration. If someone bumped the version in the shared configuration, it will tell you that your local configuration is not up-to-date (in that case, use ``dodo diff`` to synchronize).
+One of the synchronized values is ``${/ROOT/required_dodo_commands_version}``. The ``dodo check-version --dodo`` command reads this value and warns you if your Dodo Commands version is too old. The small script written by ``dodo autostart on`` (see :ref:`autostart`) calls both checks, and this helps you to stay synchronized.

@@ -4,7 +4,7 @@
 The diagnose command
 ********************
 
-When a colleague shares a Dodo Commands project with you, then you obtain a set of commands for working with this environment. However, to be in control, it's still required to understand how the commands work. Questions you will have include:
+When a colleague shares a Dodo Commands project with you, then you obtain a set of commands for working with this environment. However, to be in control, it's still required to understand how all these commands work. Questions you will have include:
 
 - which tasks are supported by the environment?
 - which commands are available to perform these tasks?
@@ -28,7 +28,7 @@ Diagnose dodo configuration
 
 The typical Dodo configuration for the diagnose command is:
 
-.. yaml::
+.. code-block:: yaml
 
     DIAGNOSE:
         # Documentation .rst is read from here
@@ -48,7 +48,7 @@ Note that you should have a `index.rst` file in the diagnose source directory, w
 The dodo_expand jinja2 filter
 -----------------------------
 
-The `dodo_exand` filter is used to print configuration values:
+The `dodo_expand` filter is used to print configuration values:
 
 - to print a configuration value in the documentation output, use `{{ '/ROOT/some/key' | dodo_expand }}`
 

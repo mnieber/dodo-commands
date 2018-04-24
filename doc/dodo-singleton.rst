@@ -110,8 +110,8 @@ A Decorator is a class that alters the workings of a Dodo Command script. It can
                 "debugger", args=[Dodo.get_config('/BUILD/debugger')]
             )
 
-            # create a new command by using debugger_node as a prefix, and
-            # adding the existing root_node command as a postfix
+            # create a new command line using debugger_node as a prefix and
+            # the existing root_node command as a postfix
             debugger_node.add_child(root_node)
             return debugger_node, cwd
 

@@ -81,4 +81,4 @@ In this example, calling the ``foo`` command will automatically install the ``do
 The structure of a command script
 =================================
 
-When you run a command with ``dodo foo --bar``, the foo.py script is searched in the configured command_path, as described above, and imported. This import will not have any effect if you are using a standard ``if __name__ == '__main__'`` clause. Therefore, you should instead use ``if Dodo.is_main(__name__)``, as explained in :ref:`singleton`. Apart from this restriction, you can do anything you like in the script. To take advantage of the Dodo Command features, read about the Dodo singleton (:ref:`singleton`).
+When you run a command with ``dodo foo --bar``, the foo.py script is searched in the configured command_path, as described above, and imported. This import will not have any effect if you are using a standard ``if __name__ == '__main__'`` clause. Therefore, you should instead use ``if Dodo.is_main(__name__)``, as explained in :ref:`singleton`. Apart from this restriction, you can do anything you like in the script. To take advantage of the Dodo Command features, read about (:ref:`singleton`).
