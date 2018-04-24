@@ -85,7 +85,7 @@ Since command scripts are written in Python, the script can in principle perform
 Decorators
 ==========
 
-A Decorator is a class that alters the workings of a Dodo Command script. It can extend or modify the arguments that are passed to ``Dodo.runcmd``. The decorator should be placed in a ``decorators`` directory inside a commands directory. This is illustrated by the following example (note that the decorated DodoCommand instance is passed in as the ``decorated`` argument):
+A Decorator is a class that alters the workings of a Dodo Command script. It can extend or modify the arguments that are passed to ``Dodo.runcmd``. The decorator should be placed in a ``decorators`` directory inside a commands directory. This is illustrated by the following example:
 
 .. code-block:: python
 
@@ -100,8 +100,8 @@ A Decorator is a class that alters the workings of a Dodo Command script. It can
                 help="Run the command through the debugger"
             )
 
-        def modify_args(self, args, root_node, cwd):  # noqa
-            if not args.use_debugger:
+        def modify_args(self, root_node, cwd):  # noqa
+            if not Dodo.args.use_debugger:
                 return root_node, cwd
 
             # Create a command argument with the path to the debugger
