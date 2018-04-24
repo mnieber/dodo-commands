@@ -20,7 +20,7 @@ Dodo Commands depends on the python-virtualenv package. In addition, some of the
     # install default commands
     dodo install-default-commands standard_commands --pip dodo_webdev_commands --pip dodo_git_commands
 
-The :code:`standard_commands` directory was found "magically" because it comes with the Dodo Commands python package. Commands are installed in the ``~/.dodo_commands/default_commands`` directory. To read more about installing default commands, see :ref:`commands`.
+The :code:`standard_commands` directory was found "magically" because it comes with the Dodo Commands python package. Commands are installed in the ``~/.dodo_commands/default_commands`` directory. See :ref:`commands` to read more about installing default commands.
 
 .. tip::
 
@@ -67,6 +67,6 @@ The first time you call :code:`dodo`, a global :code:`~/.dodo_commands/config` f
 Upgrading
 =========
 
-To upgrade Dodo Commands, you need to upgrade its pip package. If you have activated a Dodo Commands project with ``$(dodo activate foo)`` then the first step is to deactivate it by typing ``deactivate``. This is necessary because the ``pip`` executable points to the one in the project's virtual environment, and we need to use the ``pip`` executable that was used to install Dodo Commands.
+To upgrade Dodo Commands, you need to upgrade its pip package. If you have activated a Dodo Commands project with ``$(dodo activate foo)`` then the first step is to deactivate it by typing ``deactivate``. This is necessary because we don't want to use the ``pip`` from the virtual environment.
 
 Now, to upgrade, simply run ``pip install --upgrade dodo_commands``. To upgrade a commands package (for example: dodo_git_commands), simply install it again using ``dodo install-default-commands --pip dodo_git_commands``.

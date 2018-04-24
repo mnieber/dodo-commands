@@ -20,7 +20,7 @@ Projects are created with the ``dodo activate`` command::
 
     dodo activate FooBar --create
 
-Running this command creates a new FooBar project directory with various files. The most important one is the ``~/projects/FooBar/dodo_commands/env/bin/dodo`` script file. This copy of the ``dodo`` script is specific to the created project. When you call this ``dodo`` script, it's implied that you are operating on the ``FooBar`` project.
+Running this command creates a new FooBar project directory with various files. The most important one is the ``~/projects/FooBar/dodo_commands/env/bin/dodo`` script file. This copy of the ``dodo`` script is specific to the created project. Calling it implies that you are operating on the ``FooBar`` project.
 
 Running a command
 =================
@@ -29,7 +29,7 @@ You run a command on a project by calling its ``dodo`` script with the name of t
 
     ~/projects/FooBar/dodo_commands/env/bin/dodo foo --bar
 
-This call will execute the following steps:
+This will execute the following steps:
 
 #. the ``dodo`` script will read the ``command_path`` (a list of directories with command scripts) from the project's configuration file (``~/projects/FooBar/dodo_commands/res/config.yaml``).
 
@@ -46,7 +46,7 @@ The ``~/projects/FooBar/dodo_commands/env/bin/dodo`` script is part of a virtual
 
     source ~/projects/FooBar/dodo_commands/env/bin/activate
 
-This has the effect that running ``dodo`` will now find the project-specific dodo script, rather than the "system" dodo script. You can now run commands against the activated project with:
+Running ``dodo`` will now find the project-specific dodo script, rather than the "system" one. You can run commands against the activated project with:
 
 .. code-block:: bash
 
@@ -71,7 +71,7 @@ If you activated a project and you want to go back to the previously active proj
 Activating the last used project
 ================================
 
-Dodo Commands remembers which project was last activated. You can activate the last used project with ``$(dodo activate --latest)``. It's usually convenient to activate the latest project whenever you open a terminal. To facilitate this, you can call ``dodo autostart on`` to write a small script file to ``~/.dodo_commands_autostart``.
+You can activate the last used project with ``$(dodo activate --latest)``. It's convenient to activate the latest project whenever you open a terminal. To facilitate this, you can call ``dodo autostart on`` to write a small script file to ``~/.dodo_commands_autostart``.
 
 .. code-block:: bash
 

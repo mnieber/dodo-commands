@@ -9,17 +9,17 @@ Single entry point to run a variety of command scripts
 ======================================================
 
 If you have a large number of command scripts, it becomes tedious to remember where
-they are stored. When you type :code:`dodo foo --bar`, then Dodo Commands will find the foo.py script for you and run it with the --bar option. When you run :code:`dodo help` you will see the list of available commands.
+they are stored. When you type :code:`dodo foo --bar` then Dodo Commands finds the foo.py script for you and runs it with the --bar option. When you run :code:`dodo help` you will see the list of available commands.
 
 Show what each command script does
 ==================================
 
-When you run :code:`dodo foo --bar --confirm` then the foo.py script will print each command line call before it is executed, and ask for confirmation. This allows you to see exactly what the script does. By copy-and-pasting the printed command, you will be able to run it manually.
+Running :code:`dodo foo --bar --confirm` makes the foo.py script print each command line call that it executes, and ask for confirmation. This allows you to see exactly what the script does. By copy-and-pasting the printed command, you will be able to run it manually.
 
 Give access to the configuration of the current project
 =======================================================
 
-Script code and configuration values should remain separate. When you run :code:`dodo foo --bar` then the foo.py script will have access to the configuration values of the currently active project.
+Dodo Commands try to replace long command line calls with short aliases that fetch their arguments from the configuration file of the currently active project. Running :code:`dodo foo --bar` gives the ``foo.py`` script access to the current project's configuration.
 
 Run commands in a docker container
 ==================================
@@ -34,4 +34,4 @@ By specifying the dependencies of a command script in a :code:`<script-name>.met
 Auto-completion
 ===============
 
-Dodo Commands provides auto-completion of the command names and their arguments (all argument parsing is done with the argparse package).
+When using bash, Dodo Commands provides auto-completion of the command names and their arguments (all argument parsing is done with the argparse package).
