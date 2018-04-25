@@ -23,11 +23,9 @@ def get_version():  # noqa
 
 def execute_script(package_path, command_name):
     """
-    Return the Command class instance for package_path and command_name.
-
-    Given a command_name and module directory, returns the Command
-    class instance. All errors raised by the import process
-    (ImportError, AttributeError) are allowed to propagate.
+    Executes the script associated with command_name by importing its package.
+    The script is assumed to have an entry point that is executed if
+    Dodo.is_main(__name__) is True.
     """
     def install_packages(meta_data_filename):
         """Pip install packages found in meta_data_filename."""
