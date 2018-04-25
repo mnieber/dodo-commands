@@ -63,7 +63,7 @@ def _copy_defaults(args, project_defaults_dir):
     for filename in glob.glob(os.path.join(project_defaults_dir, "*")):
         dest_path = os.path.join(res_dir, os.path.basename(filename))
         if os.path.exists(dest_path):
-            if args.opt_confirm:
+            if args.confirm:
                 print("Warning, destination path already exists: %s" % dest_path)
             elif args.use_force:
                 print("Overwriting existing path: %s" % dest_path)
