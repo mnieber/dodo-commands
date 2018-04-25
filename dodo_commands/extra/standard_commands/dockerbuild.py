@@ -90,13 +90,13 @@ def _remove_extra_dirs(local_dir, extra_dirs):
         Dodo.runcmd(['rm', "rm", "-rf", local_path])
 
 
-if Dodo.is_main(__name__, safe=False):
-    args = (
-        _convert_dodo_args()
-        if Dodo.command_name else
-        _args()
-    )
+args = (
+    _convert_dodo_args()
+    if Dodo.command_name else
+    _args()
+)
 
+if Dodo.is_main(__name__, safe=len(args.extra_dirs) == 0):
     _copy_extra_dirs(args.build_dir, args.extra_dirs)
 
     try:
