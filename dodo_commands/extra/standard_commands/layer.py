@@ -64,7 +64,6 @@ if Dodo.is_main(__name__, safe=False):
 
     layer_file = os.path.join(
         Dodo.get_config("/ROOT/res_dir"),
-        Dodo.get_config("/ROOT/layer_dir", ""),
         "%s.%s.yaml" % (args.layer, args.value)
     )
 

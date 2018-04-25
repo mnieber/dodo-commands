@@ -12,7 +12,6 @@ class TestConfigIO:  # noqa
         foo_dir = os.path.join(str(tmpdir), 'foo')
         return {
             'ROOT': {
-                'layer_dir': 'layers',
                 'layers': ['mylayer.yml'],
                 'command_path': [
                     [foo_dir, 'bar']
@@ -50,9 +49,7 @@ class TestConfigIO:  # noqa
     @pytest.fixture
     def create_layer(self, tmpdir, layer):
         """Create a config layer file in the tmpdir."""
-        layer_dir = os.path.join(str(tmpdir), "layers")
-        os.mkdir(layer_dir)
-        layer_filename = os.path.join(layer_dir, "mylayer.yml")
+        layer_filename = os.path.join(str(tmpdir), "mylayer.yml")
         with open(layer_filename, "w") as f:
             f.write(ruamel.yaml.round_trip_dump(layer))
 
