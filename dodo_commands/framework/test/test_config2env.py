@@ -1,7 +1,7 @@
 """Tests for config.py."""
 
 from ..config import ConfigExpander
-from ..base import CommandError
+from .. import CommandError
 import pytest
 
 
