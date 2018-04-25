@@ -83,14 +83,17 @@ class TestConfigIO:  # noqa
         assert "" == dodo('check-version', '--dodo')[:-1]
 
         # dodo diff
-        assert "meld %s/src/extra/dodo_commands/res %s/." % (dodo_test_dir, res_dir) == dodo('diff', '.', '--echo', '--pp=0')[:-1]
+        result = dodo('diff', '.', '--echo').replace('\n', '')
+        assert "meld %s/src/extra/dodo_commands/res %s/." % (dodo_test_dir, res_dir) == result
 
         # dodo docker
         dodo('layer', 'docker', 'on')
-        assert "docker run --rm --interactive --tty --name=foo --volume=%s/log:/var/log dodo_tutorial:1604 /bin/bash" % dodo_test_dir == dodo('docker', '--name=foo', '--echo', '--pp=0')[:-1]
+        result = dodo('docker', '*', '--name', 'foo', '--echo').replace('\n', '').replace('  \\', '').replace('  ', ' ')
+        assert "docker run --name=foo --rm --interactive --tty --volume=%s/log:/var/log --workdir=/ dodo_tutorial:1604 /bin/bash" % dodo_test_dir == result
 
         # dodo dockerbuild
-        assert "docker build -t dodo_tutorial:1604 -f Dockerfile ." == dodo('dockerbuild', '--echo', '--pp=0', 'base')[:-1]
+        result = dodo('dockerbuild', '--echo', 'base').replace('\n', '').replace('  \\', '')
+        assert "docker build -t dodo_tutorial:1604 -f Dockerfile ." == result
 
         # dodo autostart
         autostart_file = os.path.expanduser('~/.dodo_commands_autostart')
