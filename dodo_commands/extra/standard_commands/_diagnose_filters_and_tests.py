@@ -56,7 +56,6 @@ def _dodo_expand(
         link = False
 
     if "${" not in key_str:
-        import pudb; pudb.set_trace();  # noqa
         val = Dodo.get_config(key_str)
         key_str = '${' + key_str + '}'
     else:
