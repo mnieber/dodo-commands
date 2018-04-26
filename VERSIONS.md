@@ -1,5 +1,11 @@
 # Version history
 
+## 0.14.3
+
+- Several refactorings
+- Bugfixes related to the 0.14.0 refactoring
+- Fixed a few tests that were no longer green
+
 ## 0.14.2
 
 - Update documentation
