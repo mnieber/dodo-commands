@@ -79,7 +79,7 @@ class ConfigIO:
         """Return path composed of config_base_dir and post_fix_paths list."""
         return os.path.join(self.config_base_dir, *post_fix_paths)
 
-    def _layers(self, config):
+    def get_layers(self, config):
         """Returns list of layer filenames"""
         def add_prefix(filename):
             return (
@@ -106,7 +106,7 @@ class ConfigIO:
                 return False
             return True
 
-        layer_filenames = [x for x in self._layers(config) if layer_exists(x)]
+        layer_filenames = [x for x in self.get_layers(config) if layer_exists(x)]
         layers = [
             self.load(x, load_layers=False)
             for x in layer_filenames
