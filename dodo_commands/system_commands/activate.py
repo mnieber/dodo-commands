@@ -1,7 +1,9 @@
 """Script for activating/creating a project in the projects dir."""
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo, CommandError
-from six.moves import configparser
+from dodo_commands.framework.config import (
+    get_global_config, global_config_filename
+)
 import os
 import sys
 import ruamel.yaml
@@ -38,18 +40,9 @@ if __name__ == "__main__":
 class Activator:
     """Creates and activates projects."""
 
-    def _config_filename(self):
-        return os.path.expanduser("~/.dodo_commands/config")
-
-    def _config(self):
-        """Get configuration."""
-        config = configparser.ConfigParser()
-        config.read(self._config_filename())
-        return config
-
     def _write_config(self):
         """Save configuration."""
-        with open(self._config_filename(), "w") as f:
+        with open(global_config_filename(), "w") as f:
             self.config.write(f)
 
     def _activate_script(self):
@@ -164,7 +157,7 @@ class Activator:
 
     def run(self, project, latest, create):
         """Activate or create a project in the projects dir."""
-        self.config = self._config()
+        self.config = get_global_config()
         latest_project = self._config_get("recent", "latest_project")
         previous_project = self._config_get("recent", "previous_project")
 

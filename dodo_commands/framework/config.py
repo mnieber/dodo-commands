@@ -12,9 +12,13 @@ import ruamel.yaml
 import sys
 
 
+def global_config_filename():
+    return os.path.expanduser("~/.dodo_commands/config")
+
+
 def get_global_config():
     config = configparser.ConfigParser()
-    config.read(os.path.expanduser("~/.dodo_commands/config"))
+    config.read(global_config_filename())
     return config
 
 

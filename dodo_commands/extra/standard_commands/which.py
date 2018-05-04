@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo
 from dodo_commands.framework.config import (
-    CommandPath, get_project_dir, get_global_config
+    CommandPath, get_project_dir, get_global_config, global_config_filename
 )
 import os
 import sys
@@ -81,7 +81,7 @@ if Dodo.is_main(__name__):
             )
         )
     elif args.global_config:
-        sys.stdout.write(os.path.expanduser('~/.dodo_commands/config\n'))
+        sys.stdout.write(global_config_filename() + '\n')
     elif args.default_commands:
         sys.stdout.write(os.path.expanduser('~/.dodo_commands/default_commands\n'))
     elif args.script:
