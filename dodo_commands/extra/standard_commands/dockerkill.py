@@ -1,8 +1,8 @@
 from argparse import ArgumentParser
-from dodo_commands.framework import Dodo
+from dodo_commands.framework import Dodo, CommandError
 from plumbum.cmd import docker
 from six.moves import input as raw_input
-import sys
+import re
 
 
 def _args():
@@ -20,30 +20,36 @@ def _containers():
     return result
 
 
+def _filter_choices(all_choices, raw_choice):
+    regexp = r"(\d)+(\-(\d)+)?,?"
+    result = []
+    span = [None, None]
+    for choice in [x for x in re.finditer(regexp, raw_choice)]:
+        if span[0] is None:
+            span[0] = choice.span()[0]
+        if span[1] is None or span[1] == choice.span()[0]:
+            span[1] = choice.span()[1]
+        from_index = int(choice.group(1)) - 1
+        to_index = int(choice.group(3)) - 1 if choice.group(3) else from_index
+        for idx in range(from_index, to_index + 1):
+            result.append(all_choices[idx])
+    return result, span
+
+
 if Dodo.is_main(__name__):
     args = _args()
-    while True:
-        containers = _containers()
+    containers = _containers()
 
-        print("0 - exit")
-        for idx, container in enumerate(containers):
-            print("%d - %s" % (idx + 1, container['name']))
-        print("999 - all of the above")
+    for idx, container in enumerate(containers):
+        print("%d - %s" % (idx + 1, container['name']))
 
-        print("\nSelect a container: ")
-        raw_choice = int(raw_input())
-        kill_all = raw_choice == 999
-        choice = raw_choice - 1
+    raw_choice = raw_input("Select a container: ")
 
-        if choice == -1:
-            sys.exit(0)
-        elif kill_all:
-            pass
-        else:
-            containers = [containers[choice]]
-        for container in containers:
+    selected_containers, span = _filter_choices(containers, raw_choice)
+    if span == [0, len(raw_choice)]:
+        for container in selected_containers:
             Dodo.runcmd(
                 ['docker', 'kill', container['cid']],
             )
-        if kill_all:
-            sys.exit(0)
+    else:
+        raise CommandError("Syntax error")
