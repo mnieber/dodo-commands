@@ -31,7 +31,6 @@ def register_diagnose_test(name=None):
 
 @register_diagnose_filter('dodo_expand')
 def _dodo_expand(
-    args,
     key_str,
     key=None,
     layout=None,
@@ -91,7 +90,7 @@ def _dodo_expand(
 
 
 @register_diagnose_filter('leaf')
-def _leaf(args, str_arg):
+def _leaf(str_arg):
     return str_arg.split("/")[-1]
 
 
@@ -112,13 +111,13 @@ def _image(key_or_name):
 
 
 @register_diagnose_test('existing_docker_image')
-def _is_existing_docker_image(args, key):
+def _is_existing_docker_image(key):
     image = _image(Dodo.get_config, key)
     return _docker()("images", "-q", image)
 
 
 @register_diagnose_test('existing_container')
-def _is_existing_container(args, key):
+def _is_existing_container(key):
     image = _image(Dodo.get_config, key)
     return image in _docker()(
         "ps", "-a", "--filter=name=%s" % image
@@ -126,5 +125,5 @@ def _is_existing_container(args, key):
 
 
 @register_diagnose_test('path_exists')
-def _path_exists(args, path):
+def _path_exists(path):
     return os.path.exists(path)

@@ -6,7 +6,6 @@ import glob
 import os
 import sphinx  # noqa
 import sys
-from functools import partial
 from importlib import import_module
 
 
@@ -80,8 +79,8 @@ def _create_jinja_environment(args):
         import_module(basename)
         sys.path.pop()
 
-    env.tests.update(_tests(args))
-    env.filters.update(_filters(args))
+    env.tests.update(_tests())
+    env.filters.update(_filters())
     return env
 
 
@@ -89,19 +88,19 @@ def _report_error(errors, error):
     errors.append(error)
 
 
-def _tests(args):
+def _tests():
     result = {}
     from dodo_commands.extra.standard_commands._diagnose_filters_and_tests import tests
     for name, func in tests.items():
-        result[name] = partial(func, args)
+        result[name] = func
     return result
 
 
-def _filters(args):
+def _filters():
     result = {}
     from dodo_commands.extra.standard_commands._diagnose_filters_and_tests import filters
     for name, func in filters.items():
-        result[name] = partial(func, args)
+        result[name] = func
     return result
 
 
