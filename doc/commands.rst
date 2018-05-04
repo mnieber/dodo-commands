@@ -78,6 +78,17 @@ Each Dodo command should ideally run out-of-the-box. If your ``foo`` command nee
 In this example, calling the ``foo`` command will automatically install the ``dominate`` package into the python virtual environment of the active Dodo Commands project.
 
 
+Aliases
+=======
+
+You can added aliases for any dodo command in the ``aliases`` section of :ref:`global_config`, e.g.
+
+.. code-block:: ini
+
+    [alias]
+    wh = which
+    pc = print-config
+
 The structure of a command script
 =================================
 

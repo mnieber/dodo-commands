@@ -58,3 +58,11 @@ Layers can be switched on and off with the ``dodo layer`` command (except for th
 
 
 5. the following magic values are automatically added: ``${/ROOT/project_name}``, ``${/ROOT/project_dir}``, ``${/ROOT/res_dir}``. Finally the system_commands directory is automatically added to ``${/ROOT/command_path}``.
+
+
+.. _global_config:
+
+The global configuration file
+=============================
+
+The location of the global configuration file can be obtained with ``dodo which --global-config``. From the command line, you can set a global configuration value ``foo`` in the ``bar`` section using ``dodo global-config bar.foo somenewvalue``.
