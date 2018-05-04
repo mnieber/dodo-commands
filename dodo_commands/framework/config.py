@@ -270,7 +270,7 @@ def look_up_key(config, key, default_value="__not_set_234234__"):
     return default_value
 
 
-def expand_keys(text, config):
+def expand_keys(config, text):
     result = ""
     val_terms = re.split('\$\{([^\}]+)\}', text)
     for idx, term in enumerate(val_terms):

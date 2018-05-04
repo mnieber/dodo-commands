@@ -14,4 +14,4 @@ def _args():
 
 if Dodo.is_main(__name__):
     args = _args()
-    print(expand_keys(args.text, Dodo.config))
+    print(expand_keys(Dodo.config, args.text))
