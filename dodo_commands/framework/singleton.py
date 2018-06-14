@@ -175,7 +175,7 @@ class Dodo:
         return cls.args
 
     @classmethod
-    def runcmd(cls, args, cwd=None):
+    def runcmd(cls, args, cwd=None, quiet=False):
         if not hasattr(cls.args, 'echo'):
             raise CommandError(
                 'Dodo.runcmd was called without first calling '
@@ -205,5 +205,7 @@ class Dodo:
                     func & FG
                 return True
             except ProcessExecutionError:
-                print("\nDodo Commands error while running this command:\n\n%s" % func)
+                if not quiet:
+                    print("\nDodo Commands error while running this command:")
+                    print("\n\n%s" % func)
                 return False
