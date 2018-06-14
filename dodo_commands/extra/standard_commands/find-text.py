@@ -14,6 +14,6 @@ if Dodo.is_main(__name__):
     args = _args()
     Dodo.runcmd(
         [
-            'grep', '-rnw', args.where, '-e', args.what
+            'grep', '-rnw', args.where, '-e', "'{}'".format(args.what)
         ],
     )

@@ -4,7 +4,7 @@ from dodo_commands.framework import Dodo, CommandError
 from dodo_commands.framework.config import (
     get_global_config, global_config_filename, ConfigIO
 )
-from configparser import NoOptionError
+from six.moves import configparser
 import os
 
 
@@ -19,7 +19,7 @@ def _args():
 if Dodo.is_main(__name__, safe=True):
     try:
         args = _args()
-    except NoOptionError as e:
+    except configparser.NoOptionError as e:
         raise CommandError("{error}. Please check {filename}".format(
             error=str(e),
             filename=global_config_filename()

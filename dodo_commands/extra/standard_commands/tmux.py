@@ -2,21 +2,16 @@ from argparse import ArgumentParser
 from dodo_commands.framework import Dodo, CommandError
 import os
 from six.moves import input as raw_input
-from .dockerkill import _filter_choices
+from ._docker import _filter_choices
 from plumbum.cmd import tmux
 
 
 session_id = os.path.expandvars('$USER')
 
 
-# # Kill previous session
-# Dodo.runcmd(
-#     ['tmux', 'kill-session', '-t', session_id],
-# )
-
-
 def _args():
     parser = ArgumentParser()
+    parser.add_argument('--kill-session', action='store_true')
     args = Dodo.parse_args(parser)
     args.commands = Dodo.get_config('/TMUX/commands', [])
     return args
@@ -47,6 +42,11 @@ if Dodo.is_main(__name__):
             has_session = has_session or session.startswith('%s:' % session_id)
     except:
         pass
+
+    if has_session and args.kill_session:
+        Dodo.runcmd(
+            ['tmux', 'kill-session', '-t', session_id],
+        )
 
     if not has_session:
         _create_tmux_window()

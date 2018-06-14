@@ -91,8 +91,8 @@ class TestConfigIO:  # noqa
         result = dodo('docker', '*', '--name', 'foo', '--echo').replace('\n', '').replace('  \\', '').replace('  ', ' ')
         assert "docker run --name=foo --rm --interactive --tty --volume=%s/log:/var/log --workdir=/ dodo_tutorial:1604 /bin/bash" % dodo_test_dir == result
 
-        # dodo dockerbuild
-        result = dodo('dockerbuild', '--echo', 'base').replace('\n', '').replace('  \\', '')
+        # dodo docker-build
+        result = dodo('docker-build', '--echo', 'base').replace('\n', '').replace('  \\', '')
         assert "docker build -t dodo_tutorial:1604 -f Dockerfile ." == result
 
         # dodo autostart
