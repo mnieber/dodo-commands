@@ -27,7 +27,7 @@ def _ask_to_continue(args, cwd, is_echo, is_confirm):
         if not query_yes_no("continue?"):
             return False
         else:
-            print()
+            print("")
 
     return True
 
