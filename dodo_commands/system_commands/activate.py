@@ -158,6 +158,9 @@ class Activator:
     def run(self, project, latest, create):
         """Activate or create a project in the projects dir."""
         self.config = get_global_config()
+        if not self.config.has_section('recent'):
+            self.config.add_section('recent')
+
         latest_project = self._config_get("recent", "latest_project")
         previous_project = self._config_get("recent", "previous_project")
 

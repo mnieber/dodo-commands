@@ -39,11 +39,12 @@ def query_yes_no(question, default="yes"):
                              "(or 'y' or 'n').\n")
 
 
-_global_config = """
-[settings]
+_global_config = """[settings]
 projects_dir=~/projects
 python_interpreter=python
 diff_tool=diff
+
+[recent]
 """
 
 
