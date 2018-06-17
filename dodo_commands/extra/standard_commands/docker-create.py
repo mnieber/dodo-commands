@@ -21,7 +21,7 @@ def _args():
     return args
 
 
-if Dodo.is_main(__name__):
+if Dodo.is_main(__name__, safe=False):
     args = _args()
     existing = docker("ps", "-a", "--quiet", "--filter", "name=" + args.name)
     if not existing:
