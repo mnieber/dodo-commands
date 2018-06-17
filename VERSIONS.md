@@ -1,5 +1,12 @@
 # Version history
 
+## 0.14.4
+
+- Refactor dodo tmux command and move to standard_commands
+- Make naming of dodo command scripts consistent
+- Fix spurious parentheses in console output
+- Fix spurious parentheses in console output
+
 ## 0.14.3
 
 - Several refactorings
