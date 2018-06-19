@@ -1,8 +1,8 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo, CommandError
+from dodo_commands.framework.util import filter_choices
 from plumbum.cmd import docker
 from six.moves import input as raw_input
-from ._docker import _filter_choices
 
 
 def _args():
@@ -29,7 +29,7 @@ if Dodo.is_main(__name__):
 
     raw_choice = raw_input("Select a container: ")
 
-    selected_containers, span = _filter_choices(containers, raw_choice)
+    selected_containers, span = filter_choices(containers, raw_choice)
     if span == [0, len(raw_choice)]:
         for container in selected_containers:
             Dodo.runcmd(

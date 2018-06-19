@@ -2,7 +2,7 @@ from argparse import ArgumentParser
 from dodo_commands.framework import Dodo, CommandError
 import os
 from six.moves import input as raw_input
-from ._docker import _filter_choices
+from dodo_commands.framework.util import filter_choices
 from plumbum.cmd import tmux
 
 
@@ -63,7 +63,7 @@ if Dodo.is_main(__name__):
                 print("%d - %s" % (idx + 1, command))
 
             raw_choice = raw_input('Select one or more commands (e.g. 1,3-4), or type a command: ')
-            selected_commands, span = _filter_choices(args.commands, raw_choice)
+            selected_commands, span = filter_choices(args.commands, raw_choice)
             if span != [0, len(raw_choice)]:
                 selected_commands = [raw_choice]
 

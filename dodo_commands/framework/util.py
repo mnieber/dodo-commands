@@ -4,6 +4,7 @@
 from six.moves import input as raw_input
 import os
 import sys
+import re
 
 
 def query_yes_no(question, default="yes"):
@@ -109,3 +110,23 @@ except AttributeError:  # undefined function (wasn't added until Python 3.3)
 else:
     def indent(text, amount, ch=' '):
         return textwrap.indent(text, amount * ch)
+
+
+def filter_choices(all_choices, raw_choice):
+    regexp = r"(\d)+(\-(\d)+)?,?"
+    result = []
+    span = [None, None]
+    for choice in [x for x in re.finditer(regexp, raw_choice)]:
+        if span[0] is None:
+            span[0] = choice.span()[0]
+        if span[1] is None or span[1] == choice.span()[0]:
+            span[1] = choice.span()[1]
+        from_index = int(choice.group(1)) - 1
+        if from_index < 0:
+            raise Exception("Invalid index")
+        to_index = int(choice.group(3)) - 1 if choice.group(3) else from_index
+        if to_index >= len(all_choices):
+            raise Exception("Invalid index")
+        for idx in range(from_index, to_index + 1):
+            result.append(all_choices[idx])
+    return result, span
