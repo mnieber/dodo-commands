@@ -175,7 +175,7 @@ class Dodo:
         return cls.args
 
     @classmethod
-    def runcmd(cls, args, cwd=None, quiet=False):
+    def runcmd(cls, args, cwd=None, quiet=False, capture=False):
         if not hasattr(cls.args, 'echo'):
             raise CommandError(
                 'Dodo.runcmd was called without first calling '
@@ -199,13 +199,15 @@ class Dodo:
         with local.cwd(cwd or local.cwd):
             flat_args = root_node.flatten()
             func = local[flat_args[0]][flat_args[1:]]
-            try:
-                variable_map = cls.get_config('/ENVIRONMENT/variable_map', {})
-                with local.env(**variable_map):
+            variable_map = cls.get_config('/ENVIRONMENT/variable_map', {})
+            with local.env(**variable_map):
+                if capture:
+                    return func()
+                try:
                     func & FG
-                return True
-            except ProcessExecutionError:
-                if not quiet:
-                    print("\nDodo Commands error while running this command:")
-                    print("\n\n%s" % func)
-                return False
+                    return True
+                except ProcessExecutionError:
+                    if not quiet:
+                        print("\nDodo Commands error while running this command:")
+                        print("\n\n%s" % func)
+                    return False
