@@ -83,7 +83,7 @@ class Decorator:  # noqa
 
     @classmethod
     def docker_node(
-        cls, get_config, command_name, cwd, is_interactive
+        cls, get_config, command_name, cwd
     ):
         merged = cls.merged_options(get_config, command_name)
 
@@ -108,7 +108,7 @@ class Decorator:  # noqa
         if merged.get('rm', True):
             docker_node['basic'].append('--rm')
 
-        if is_interactive:
+        if merged.get('is_interactive', True):
             docker_node['basic'].append('--interactive')
             docker_node['basic'].append('--tty')
 
@@ -135,11 +135,6 @@ class Decorator:  # noqa
         return docker_node, image, name
 
     def add_arguments(self, parser):  # noqa
-        parser.add_argument(
-            '--non-interactive',
-            action='store_true',
-            help="Run docker calls without -i and -t"
-        )
         parser.add_argument(
             '--kill-existing',
             action='store_true',
@@ -169,8 +164,7 @@ class Decorator:  # noqa
         docker_node, _, docker_name = self.docker_node(
             Dodo.get_config,
             Dodo.command_name,
-            cwd,
-            not Dodo.args.non_interactive
+            cwd
         )
 
         if Dodo.args.kill_existing:
