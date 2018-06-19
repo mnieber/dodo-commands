@@ -53,9 +53,7 @@ def _args():  # noqa
 def _which_script(script):
     command_path = CommandPath(Dodo.config)
     for item in command_path.items:
-        script_path = os.path.join(
-            item.full_path, script + ".py"
-        )
+        script_path = os.path.join(item, script + ".py")
         if os.path.exists(script_path):
             return script_path
     return None

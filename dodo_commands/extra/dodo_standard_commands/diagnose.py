@@ -90,7 +90,7 @@ def _report_error(errors, error):
 
 def _tests():
     result = {}
-    from dodo_commands.extra.standard_commands._diagnose_filters_and_tests import tests
+    from dodo_standard_commands._diagnose_filters_and_tests import tests
     for name, func in tests.items():
         result[name] = func
     return result
@@ -98,7 +98,7 @@ def _tests():
 
 def _filters():
     result = {}
-    from dodo_commands.extra.standard_commands._diagnose_filters_and_tests import filters
+    from dodo_standard_commands._diagnose_filters_and_tests import filters
     for name, func in filters.items():
         result[name] = func
     return result

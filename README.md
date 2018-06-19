@@ -41,7 +41,7 @@ The following steps install a pre-existing Dodo Commands project that offers a `
     ```bash
     > sudo apt-get install python-virtualenv git
     > pip install dodo_commands
-    > dodo install-default-commands standard_commands
+    > dodo install-default-commands dodo_standard_commands
     ```
 
 1. Create a new (empty) `dodo_tutorial` project and bootstrap it by copying some configuration files from the pre-existing `dodo_commands_tutorial` project
@@ -69,10 +69,8 @@ The following steps install a pre-existing Dodo Commands project that offers a `
       build_dir: ${/ROOT/project_dir}/build/${/CMAKE/variables/CMAKE_BUILD_TYPE}
       src_dir: ${/ROOT/project_dir}/src
       command_path:
-      - - ~/.dodo_commands/
-        - default_commands/*
-      - - ${/ROOT/src_dir}/extra/dodo_commands
-        - tutorial_commands
+      - - ~/.dodo_commands/default_commands/*
+      - - ${/ROOT/src_dir}/extra/dodo_commands/tutorial_commands
       version: 1.0.0
     ```
 

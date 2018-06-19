@@ -57,7 +57,7 @@ Layers can be switched on and off with the ``dodo layer`` command (except for th
     dodo layer buildtype release
 
 
-5. the following magic values are automatically added: ``${/ROOT/project_name}``, ``${/ROOT/project_dir}``, ``${/ROOT/res_dir}``. Finally the system_commands directory is automatically added to ``${/ROOT/command_path}``.
+5. the following magic values are automatically added: ``${/ROOT/project_name}``, ``${/ROOT/project_dir}``, ``${/ROOT/res_dir}``. Finally the dodo_system_commands directory is automatically added to ``${/ROOT/command_path}``.
 
 
 .. _global_config:

@@ -76,11 +76,11 @@ def get_command_map():
     command_path.extend_sys_path()
     for item in command_path.items:
         commands = [
-            name for _, name, is_pkg in pkgutil.iter_modules([item.full_path])
+            name for _, name, is_pkg in pkgutil.iter_modules([item])
             if not is_pkg and not name.startswith('_')
         ]
         for command_name in commands:
-            command_map[command_name] = item.module_path.replace("/", ".")
+            command_map[command_name] = os.path.basename(item)
     return command_map
 
 
@@ -118,6 +118,15 @@ class ManagementUtility(object):
 
         return '\n'.join(usage)
 
+    def _handle_exception(self, e):
+        if (
+            getattr(Dodo.args, 'traceback', False) or
+            not isinstance(e, CommandError)
+        ):
+            raise
+        sys.stderr.write('%s: %s\n' % (e.__class__.__name__, e))
+        sys.exit(1)
+
     def execute(self):
         """
         Execute command.
@@ -125,7 +134,10 @@ class ManagementUtility(object):
         Given the command-line arguments, this figures out which command is
         being run, creates a parser appropriate to that command, and runs it.
         """
-        command_map = get_command_map()
+        try:
+            command_map = get_command_map()
+        except Exception as e:
+            self._handle_exception(e)
 
         if "_ARGCOMPLETE" in os.environ:
             words = os.environ['COMP_LINE'].split()
@@ -181,13 +193,7 @@ class ManagementUtility(object):
                 print('\n')
                 sys.exit(1)
             except Exception as e:
-                if (
-                    getattr(Dodo.args, 'traceback', False) or
-                    not isinstance(e, CommandError)
-                ):
-                    raise
-                sys.stderr.write('%s: %s\n' % (e.__class__.__name__, e))
-                sys.exit(1)
+                self._handle_exception(e)
 
 
 def execute_from_command_line(argv):

@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo
-from dodo_commands.extra.standard_commands.decorators.docker import (
+from dodo_standard_commands.decorators.docker import (
     Decorator as DockerDecorator
 )
 

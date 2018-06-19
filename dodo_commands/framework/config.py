@@ -10,6 +10,7 @@ import os
 import re
 import ruamel.yaml
 import sys
+import hashlib
 
 
 def global_config_filename():
@@ -141,8 +142,8 @@ class ConfigLoader:
 
     def _system_commands_dir(self):
         """Return directory where system command scripts are stored"""
-        import dodo_commands.system_commands
-        return os.path.dirname(dodo_commands.system_commands.__file__)
+        import dodo_commands.dodo_system_commands
+        return os.path.dirname(dodo_commands.dodo_system_commands.__file__)
 
     def _extend_config(self, config):
         """Add special values to the project's config"""
@@ -163,7 +164,7 @@ class ConfigLoader:
         """Add the system commands to the command path"""
         self._add_to_config(config, "ROOT", "command_path", [])
         config['ROOT']['command_path'].append(
-            [os.path.dirname(self._system_commands_dir()), "system_commands"]
+            self._system_commands_dir()
         )
 
     def _report(self, x):
@@ -191,14 +192,6 @@ class ConfigLoader:
 class CommandPath:
     """Read search paths for command scripts from the configuration."""
 
-    class Item:  # noqa
-        sys_path = ""
-        module_path = ""
-
-        @property
-        def full_path(self):  # noqa
-            return os.path.join(self.sys_path, self.module_path)
-
     def __init__(self, config):
         """config_base_dir is the directory where config files are searched.
 
@@ -206,15 +199,20 @@ class CommandPath:
         _default_project_base_dir(project_dir).
         """
         exclude_patterns = self._exclude_patterns(config)
-        excluded_command_dirs = [
-            x.full_path for x in self._create_items(exclude_patterns)
-        ]
+        excluded_command_dirs = self._create_items(exclude_patterns)
 
         include_patterns = self._include_patterns(config)
-        self.items = [
+        self.items = sorted([
             x for x in self._create_items(include_patterns)
-            if x.full_path not in excluded_command_dirs
-        ]
+            if x not in excluded_command_dirs
+        ])
+
+        basenames = [os.path.basename(x) for x in self.items]
+        for basename in basenames:
+            if basenames.count(basename) > 1:
+                raise CommandError(
+                    "More than 1 command path with name %s" % basename
+                )
 
     def _include_patterns(self, config):
         return config.get('ROOT', {}).get('command_path', [])
@@ -223,41 +221,37 @@ class CommandPath:
         return config.get('ROOT', {}).get('command_path_exclude', [])
 
     def _create_items(self, patterns):
-        items = []
+        result = []
         for pattern in patterns:
-            sys_path, module_path = self._split_pattern(pattern)
-            for command_dir in self._glob_command_dirs(sys_path, module_path):
-                items.append(self._create_item(sys_path, command_dir))
-        return items
+            for x in glob.glob(os.path.expanduser(pattern)):
+                if os.path.isdir(x):
+                    result.append(x)
+        return result
 
-    def _create_item(self, sys_path, command_dir):
-        item = CommandPath.Item()
-        item.sys_path = sys_path
-        item.module_path = os.path.relpath(command_dir, sys_path)
-        return item
+    def _create_search_path_dir(self):
+        hash_code = hashlib.md5(json.dumps(self.items).encode('utf-8')).hexdigest()
+        search_path_dir = os.path.join(
+            os.path.expanduser("~/.dodo_commands"),
+            "dodo_search_path",
+            hash_code
+        )
 
-    def _glob_command_dirs(self, sys_path, module_path):
-        return [
-            x for x in glob.glob(os.path.join(sys_path, module_path))
-            if os.path.isdir(x)
-        ]
+        if not os.path.exists(search_path_dir):
+            os.makedirs(search_path_dir)
+            open(os.path.join(search_path_dir, "__init__.py"), 'a').close()
+            for item in self.items:
+                basename = os.path.basename(item)
+                os.symlink(
+                    item,
+                    os.path.join(search_path_dir, basename),
+                )
 
-    def _split_pattern(self, pattern):
-        try:
-            sys_path, module_path = pattern
-            sys_path = os.path.expanduser(sys_path)
-        except:
-            raise CommandError(
-                "Patterns in command_path should be of " +
-                "type [<sys-path>, <module-path>]. " +
-                "Failing pattern: %s" % pattern
-            )
-        return sys_path, module_path
+        return search_path_dir
 
     def extend_sys_path(self):  # noqa
-        for item in self.items:
-            if item.sys_path not in sys.path:
-                sys.path.append(item.sys_path)
+        search_path_dir = self._create_search_path_dir()
+        if search_path_dir not in sys.path:
+            sys.path.append(search_path_dir)
 
 
 def look_up_key(config, key, default_value="__not_set_234234__"):

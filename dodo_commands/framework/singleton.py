@@ -104,8 +104,7 @@ class Dodo:
     @classmethod
     def _load_decorator(cls, name, directory):
         """Load and return decorator class in module with given name."""
-        module = import_module(directory.replace("/", ".") + "." + name)
-        return module.Decorator()
+        return import_module(directory + "." + name).Decorator()
 
     @classmethod
     def all_decorators(cls):
@@ -115,8 +114,8 @@ class Dodo:
         result = {}
         for item in command_path.items:
             try:
-                module_path = os.path.join(item.module_path, "decorators")
-                module = import_module(module_path.replace("/", "."))
+                module_path = os.path.basename(item) + ".decorators"
+                module = import_module(module_path)
                 for decorator in os.listdir(module.__path__[0]):
                     name, ext = os.path.splitext(decorator)
                     if ext == '.py' and name != '__init__':

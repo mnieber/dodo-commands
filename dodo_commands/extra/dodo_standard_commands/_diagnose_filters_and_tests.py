@@ -1,5 +1,5 @@
 from dodo_commands.framework import CommandError, Dodo
-from dodo_commands.extra.standard_commands.decorators.docker import (
+from dodo_standard_commands.decorators.docker import (
     Decorator as DockerDecorator
 )
 from dodo_commands.framework.config import expand_keys

@@ -12,14 +12,14 @@ setup(name='dodo_commands',
       packages=[
           'dodo_commands',
           'dodo_commands.framework',
-          'dodo_commands.system_commands',
+          'dodo_commands.dodo_system_commands',
       ],
       package_data={
           'dodo_commands': [
               'extra/__init__.py',
-              'extra/standard_commands/*.py',
-              'extra/standard_commands/*.meta',
-              'extra/standard_commands/decorators/*.py',
+              'extra/dodo_standard_commands/*.py',
+              'extra/dodo_standard_commands/*.meta',
+              'extra/dodo_standard_commands/decorators/*.py',
           ]
       },
       entry_points={

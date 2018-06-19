@@ -4,8 +4,8 @@
 Commands
 ********
 
-Command paths and default commands
-==================================
+Default commands
+================
 
 The default Dodo Commands scripts are stored in :code:`~/.dodo_commands/default_commands`. These commands are available in any Dodo Commands project you create. You can install additional default commands using:
 
@@ -22,32 +22,22 @@ or
     # ``my_commands`` package
     dodo install-default-commands --pip my_commands
 
-The search path for commands is determined by the ``${/ROOT/command_path}`` setting in config.yaml:
+
+Command path
+============
+
+The search path for commands is determined by the ``${/ROOT/command_path}`` setting in config.yaml. The ``dodo_system_commands`` module is added to the command path by default. In the example below, all subdirectories of the default commands are used (note the ``*`` wildcard), as well as the :code:`special_commands` directory:
 
 .. code-block:: yaml
 
     ROOT:
         command_path:
-        - - ~/.dodo_commands
-          - default_commands/*
+        - ~/.dodo_commands/default_commands/*
+        - ${/ROOT/src_dir}/special_commands
 
-Each item in ``${/ROOT/command_path}`` is itself a list of two elements:
+In this case, in addition to ``dodo_system_commands``, the final command_path contains ``~/projects/FooBar/src/dodo_special_commands``, ``~/.dodo_commands/default_commands/dodo_standard_commands`` and ``~/.dodo_commands/default_commands/dodo_my_commands``.
 
-- a prefix path that is added to :code:`sys.path`
-- a postfix path that must be importable as a python module
-
-In the example below, all subdirectories of the default commands are used (note the ``*`` wildcard), as well as the :code:`special_commands` directory:
-
-.. code-block:: yaml
-
-    ROOT:
-        command_path:
-        - - ~/.dodo_commands
-          - default_commands/*
-        - - ${/ROOT/src_dir}
-          - special_commands
-
-In this case, the final command_path contains ``~/projects/FooBar/src/special_commands``, ``~/.dodo_commands/default_commands/standard_commands`` and ``~/.dodo_commands/default_commands/mycommands``.
+In your Dodo command script, you can import a symbol from another module in the command path using (for example) ``import foo from dodo_my_commands.bar``. Note that the names of the modules in the command path must be unique.
 
 Use ``${/ROOT/command_path_exclude}`` to exclude certain paths from the command path:
 
@@ -55,14 +45,7 @@ Use ``${/ROOT/command_path_exclude}`` to exclude certain paths from the command 
 
     ROOT:
         command_path_exclude:
-        - - ~/.dodo_commands
-          - default_commands/foo
-
-
-System commands
-===============
-
-System commands such as ``dodo activate`` are part of the ``dodo_commands.system_commands`` python package. An entry for these commands is added automatically to the command path (you can inspect this with ``dodo print-config ROOT/command_path``).
+        - - ~/.dodo_commands/default_commands/foo
 
 
 Specifying command dependencies in the .meta file
@@ -88,6 +71,7 @@ You can added aliases for any dodo command in the ``aliases`` section of :ref:`g
     [alias]
     wh = which
     pc = print-config
+
 
 The structure of a command script
 =================================
