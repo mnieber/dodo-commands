@@ -13,6 +13,10 @@ class ArgsTreeNode:
     def __getitem__(self, name):  # noqa
         return next(x for x in self.children if x.name == name)
 
+    def get(self, name, default_value):
+        values = [x for x in self.children if x.name == name]
+        return next(values) if values else default_value
+
     def has_child(self, name):  # noqa
         return len([x for x in self.children if x.name == name])
 
