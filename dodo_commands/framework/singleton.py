@@ -38,7 +38,6 @@ class Dodo:
     args = argparse.Namespace()
 
     _config = None
-    _loaded_decorators = None
 
     @classproperty
     def config(cls):  # noqa
@@ -74,13 +73,11 @@ class Dodo:
 
     @classmethod
     def _get_decorators(cls):
-        if cls._loaded_decorators is None:
-            cls._loaded_decorators = [
-                cls._load_decorator(name, directory)
-                for name, directory in cls.all_decorators().items()
-                if cls._uses_decorator(name)
-            ]
-        return cls._loaded_decorators
+        return [
+            cls._load_decorator(name, directory)
+            for name, directory in cls.all_decorators().items()
+            if cls._uses_decorator(name)
+        ]
 
     @classmethod
     def _uses_decorator(cls, decorator_name):
