@@ -10,23 +10,24 @@ def _args():
     parser = ArgumentParser(
         description="Enable or disable a layer in the configuration."
     )
-    parser.add_argument('layer')
+    parser.add_argument('layer', nargs='?', default=False)
     parser.add_argument('value', nargs='?', default=False)
     parser.add_argument('--force', action="store_true")
     args = Dodo.parse_args(parser)
     return args
 
 
-def _update_list_of_layers(layers, new_layer_name, new_layer_variant):
-    def _layer_name(x):
-        # layers with a prefix path are not named
-        if os.path.dirname(x):
-            return None
-        try:
-            return x.split(".")[0]
-        except ValueError:
-            return None
+def _layer_name(x):
+    # layers with a prefix path are not named
+    if os.path.dirname(x):
+        return None
+    try:
+        return x.split(".")[0]
+    except ValueError:
+        return None
 
+
+def _update_list_of_layers(layers, new_layer_name, new_layer_variant):
     def _new_layer():
         return "%s.%s.yaml" % (new_layer_name, new_layer_variant)
 
@@ -48,7 +49,9 @@ def _layer_value(layers, layer):
     for l in layers:
         if l.startswith(layer + "."):
             try:
-                return l.split(".")[1]
+                parts = l.split(".")
+                if len(parts) == 3:
+                    return parts[1]
             except ValueError:
                 pass
     return None
@@ -58,6 +61,16 @@ if Dodo.is_main(__name__, safe=False):
     args = _args()
     config = ConfigIO().load(load_layers=False)
     layers = config.get('ROOT', {}).get('layers', [])
+
+    if args.layer == False:  # noqa
+        for layer in layers:
+            name = _layer_name(layer)
+            if name:
+                value = _layer_value(layers, name)
+                if value:
+                    print(name + ': ' + _layer_value(layers, name))
+        sys.exit(0)
+
     if args.value == False:  # noqa
         print(_layer_value(layers, args.layer))
         sys.exit(0)
