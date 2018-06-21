@@ -167,7 +167,7 @@ class Decorator:  # noqa
             cwd
         )
 
-        if Dodo.args.kill_existing:
+        if getattr(Dodo.args, 'kill_existing', False):
             self._kill_existing_container(docker_name)
 
         docker_node.add_child(root_node)
