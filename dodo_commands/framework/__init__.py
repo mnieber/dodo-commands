@@ -9,12 +9,10 @@ import sys
 import traceback
 from importlib import import_module
 from dodo_commands.framework.util import query_yes_no
-from dodo_commands.framework.config import (
-    CommandPath, get_project_dir, ConfigLoader, get_global_config
-)
+from dodo_commands.framework.config import (CommandPath, get_project_dir,
+                                            ConfigLoader, get_global_config)
 from dodo_commands.framework.singleton import Dodo
 from dodo_commands.framework.command_error import CommandError  # noqa
-
 
 
 def get_version():  # noqa
@@ -27,6 +25,7 @@ def execute_script(package_path, command_name):
     The script is assumed to have an entry point that is executed if
     Dodo.is_main(__name__) is True.
     """
+
     def install_packages(meta_data_filename):
         """Pip install packages found in meta_data_filename."""
         with open(meta_data_filename) as f:
@@ -35,12 +34,10 @@ def execute_script(package_path, command_name):
             print(meta_data['requirements'])
             if query_yes_no("Install (yes), or abort (no)?"):
                 print("\n--- Installing from %s ---" % meta_data_filename)
-                pip = os.path.join(
-                    get_project_dir(),
-                    "dodo_commands/env/bin/pip"
-                )
-                subprocess.check_call(
-                    [pip, "install"] + meta_data['requirements'])
+                pip = os.path.join(get_project_dir(),
+                                   "dodo_commands/env/bin/pip")
+                subprocess.check_call([pip, "install"] +
+                                      meta_data['requirements'])
                 print("--- Done ---\n\n")
             else:
                 sys.exit(1)
@@ -54,7 +51,8 @@ def execute_script(package_path, command_name):
     except ImportError as e:
         try:
             base_path = import_module(package_path).__path__[0]
-            meta_data_filename = os.path.join(base_path, command_name + ".meta")
+            meta_data_filename = os.path.join(base_path,
+                                              command_name + ".meta")
             if os.path.exists(meta_data_filename):
                 install_packages(meta_data_filename)
                 import_module(import_path)
@@ -101,9 +99,7 @@ class ManagementUtility(object):
         else:
             usage = [
                 "",
-                "Version %s (%s --version)." % (
-                    get_version(), self.prog_name
-                ),
+                "Version %s (%s --version)." % (get_version(), self.prog_name),
                 "Type '%s help <command>' for help on "
                 "a specific command." % self.prog_name,
                 "Available commands (dodo help --commands):",
@@ -119,10 +115,8 @@ class ManagementUtility(object):
         return '\n'.join(usage)
 
     def _handle_exception(self, e):
-        if (
-            getattr(Dodo.args, 'traceback', False) or
-            not isinstance(e, CommandError)
-        ):
+        if (getattr(Dodo.args, 'traceback', False)
+                or not isinstance(e, CommandError)):
             raise
         sys.stderr.write('%s: %s\n' % (e.__class__.__name__, e))
         sys.exit(1)
@@ -146,15 +140,12 @@ class ManagementUtility(object):
             if command_name not in command_map:
                 parser = ArgumentParser()
                 parser.add_argument(
-                    'command',
-                    choices=[x for x in command_map.keys()]
-                )
+                    'command', choices=[x for x in command_map.keys()])
                 argcomplete.autocomplete(parser)
 
             os.environ['COMP_LINE'] = ' '.join(words[:1] + words[2:])
             os.environ['COMP_POINT'] = str(
-                int(os.environ['COMP_POINT']) - (len(command_name) + 1)
-            )
+                int(os.environ['COMP_POINT']) - (len(command_name) + 1))
         else:
             try:
                 command_name = self.argv[1]
@@ -173,9 +164,7 @@ class ManagementUtility(object):
             if '--commands' in sys.argv:
                 sys.stdout.write(
                     self.main_help_text(
-                        commands_only=True, command_map=command_map
-                    ) + '\n'
-                )
+                        commands_only=True, command_map=command_map) + '\n')
             else:
                 sys.stdout.write(self.main_help_text() + '\n')
         else:
