@@ -1,5 +1,13 @@
 # Version history
 
+## 0.15.0
+
+- Simplify CommandPath, and rename dodo command modules
+- Add flag capture to runcmd
+- Move is_interactive argument to the docker options dict
+- Dodo layer prints all layer values if no layer name is given
+- Use command groups in dodo tmux
+
 ## 0.14.4
 
 - Refactor dodo tmux command and move to standard_commands
