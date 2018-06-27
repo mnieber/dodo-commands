@@ -105,7 +105,7 @@ class Activator:
         config_filename = os.path.join(res_dir, "config.yaml")
         default_config = {
             'ROOT': {
-                'command_path': [['~/.dodo_commands', 'default_commands/*']],
+                'command_path': ['~/.dodo_commands/default_commands/*'],
                 'version': '1.0.0'
             }
         }
