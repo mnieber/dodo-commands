@@ -1,5 +1,10 @@
 # Version history
 
+## 0.15.1
+
+- Run yapf on all files
+- Dodo activate created a wrong config.yaml file
+
 ## 0.15.0
 
 - Simplify CommandPath, and rename dodo command modules
