@@ -8,16 +8,13 @@ def _args():
     parser = ArgumentParser()
     parser.add_argument(
         'container_type',
-        choices=Dodo.get_config('/DOCKER/container_types', {}).keys()
-    )
+        choices=Dodo.get_config('/DOCKER/container_types', {}).keys())
     parser.add_argument('name')
     args = Dodo.parse_args(parser)
     args.dirs = Dodo.get_config(
-        "/DOCKER/container_types/%s/dirs" % args.container_type
-    )
+        "/DOCKER/container_types/%s/dirs" % args.container_type)
     args.image = Dodo.get_config(
-        "/DOCKER/container_types/%s/image" % args.container_type
-    )
+        "/DOCKER/container_types/%s/image" % args.container_type)
     return args
 
 
@@ -28,7 +25,8 @@ if Dodo.is_main(__name__, safe=False):
         cmd_args = [
             "docker",
             "create",
-            "--name", args.name,
+            "--name",
+            args.name,
         ]
 
         for path in args.dirs:
@@ -38,5 +36,6 @@ if Dodo.is_main(__name__, safe=False):
         Dodo.runcmd(cmd_args)
 
     config = ConfigIO().load(load_layers=False)
-    config['DOCKER'].setdefault('containers', {})[args.container_type] = args.name
+    config['DOCKER'].setdefault('containers',
+                                {})[args.container_type] = args.name
     ConfigIO().save(config)

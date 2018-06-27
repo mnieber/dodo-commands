@@ -1,14 +1,12 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo
-from dodo_commands.framework.config import (
-    get_global_config, global_config_filename
-)
+from dodo_commands.framework.config import (get_global_config,
+                                            global_config_filename)
 
 
 def _args():
     parser = ArgumentParser(
-        description="Write a value of the global Dodo Command configuration"
-    )
+        description="Write a value of the global Dodo Command configuration")
     parser.add_argument('key')
     parser.add_argument('val', nargs='?')
     args = Dodo.parse_args(parser)

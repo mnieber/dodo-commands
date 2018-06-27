@@ -8,12 +8,8 @@ import pytest
 class TestConfigExpander:  # noqa
     simple_config = {
         'ROOT': {
-            'command_path': [
-                'foo',
-                'bar'
-            ]
+            'command_path': ['foo', 'bar']
         },
-
         'FOO': {
             'bar': {
                 'one': 'two'
@@ -31,27 +27,19 @@ class TestConfigExpander:  # noqa
                     'three': '(7 + 8)'
                 }
             },
-            'one_EVAL': [
-                '(1 + 2)',
-                '(2 + 3)',
-                {
-                    'two': {
-                        'three': '(7 + 8)'
-                    }
+            'one_EVAL': ['(1 + 2)', '(2 + 3)', {
+                'two': {
+                    'three': '(7 + 8)'
                 }
-            ],
+            }],
             'two_EVAL': '(10 + 11)'
         }
     }
 
     config_with_refs = {
         'ROOT': {
-            'command_path': [
-                'foo $PATH',
-                'bar'
-            ]
+            'command_path': ['foo $PATH', 'bar']
         },
-
         'FOO': {
             'bar': {
                 'one': '${/ROOT/command_path/1} and ${/FOO/two}'
@@ -89,9 +77,7 @@ class TestConfigExpander:  # noqa
             }
         }
         assert self.config_with_eval['ROOT']['one_EVAL'] == [
-            3,
-            5,
-            {
+            3, 5, {
                 'two': {
                     'three': '(7 + 8)'
                 }

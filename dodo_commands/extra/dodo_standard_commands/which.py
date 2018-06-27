@@ -1,18 +1,15 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo
 from dodo_commands.framework.config import (
-    CommandPath, get_project_dir, get_global_config, global_config_filename
-)
+    CommandPath, get_project_dir, get_global_config, global_config_filename)
 import os
 import sys
 
 
 def _args():  # noqa
     parser = ArgumentParser(
-        description=(
-            'Print the value of /ROOT/<what>_dir. For example: ' +
-            '"dodo which src" prints the value of /ROOT/src_dir.')
-    )
+        description=('Print the value of /ROOT/<what>_dir. For example: ' +
+                     '"dodo which src" prints the value of /ROOT/src_dir.'))
     parser.add_argument(
         'what',
         nargs='?',
@@ -20,9 +17,7 @@ def _args():  # noqa
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
-        '--config',
-        action="store_true",
-        help='Print where the config file is')
+        '--config', action="store_true", help='Print where the config file is')
     group.add_argument(
         '--global-config',
         action="store_true",
@@ -33,7 +28,9 @@ def _args():  # noqa
     group.add_argument(
         '--dir',
         dest='directory',
-        help='Finds the X_dir value in the configuration, where X is the given option value')
+        help=
+        'Finds the X_dir value in the configuration, where X is the given option value'
+    )
     group.add_argument(
         '--decorators',
         action="store_true",
@@ -64,34 +61,32 @@ def _which_dir(directory):
 
 
 def _projects_dir():
-    return os.path.expanduser(
-        get_global_config().get("settings", "projects_dir")
-    )
+    return os.path.expanduser(get_global_config().get("settings",
+                                                      "projects_dir"))
 
 
 if Dodo.is_main(__name__):
     args = _args()
 
     if args.config:
-        print(
-            os.path.join(
-                get_project_dir(), "dodo_commands", "res", "config.yaml"
-            )
-        )
+        print(os.path.join(get_project_dir(), "dodo_commands", "res",
+                           "config.yaml"))
     elif args.global_config:
         sys.stdout.write(global_config_filename() + '\n')
     elif args.default_commands:
-        sys.stdout.write(os.path.expanduser('~/.dodo_commands/default_commands\n'))
+        sys.stdout.write(
+            os.path.expanduser('~/.dodo_commands/default_commands\n'))
     elif args.script:
         sys.stdout.write(_which_script(args.script) + "\n")
     elif args.directory:
         sys.stdout.write(_which_dir(args.directory) + "\n")
     elif args.decorators:
-        sys.stdout.write(", ".join(sorted(Dodo.all_decorators().keys())) + "\n")
+        sys.stdout.write(", ".join(sorted(Dodo.all_decorators().keys())) +
+                         "\n")
     elif args.projects:
         projects = [
-            x for x in os.listdir(_projects_dir())
-            if os.path.isdir(os.path.join(_projects_dir(), x, "dodo_commands", "res"))
+            x for x in os.listdir(_projects_dir()) if os.path.isdir(
+                os.path.join(_projects_dir(), x, "dodo_commands", "res"))
         ]
         sys.stdout.write("\n".join(sorted(projects)) + "\n")
     elif args.what:

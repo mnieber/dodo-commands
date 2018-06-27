@@ -11,8 +11,7 @@ from importlib import import_module
 
 def _args():
     parser = ArgumentParser(
-        description='Create documentation based on the dodo config'
-    )
+        description='Create documentation based on the dodo config')
     args = Dodo.parse_args(parser)
     args.src_dir = Dodo.get_config('/DIAGNOSE/src_dir')
     args.output_dir = Dodo.get_config('/DIAGNOSE/output_dir')
@@ -36,34 +35,27 @@ def _create_sphinx_conf(args):
         Dodo.runcmd(['cp', src_conf_file, target_conf_file])
     elif not os.path.exists(target_conf_file):
         Dodo.runcmd(
-            [
-                'sphinx-quickstart',
-                '--project=%s' % args.project_name
-            ],
-            cwd=args.output_dir
-        )
+            ['sphinx-quickstart',
+             '--project=%s' % args.project_name],
+            cwd=args.output_dir)
 
 
 def _sphinx_build(args):
-    Dodo.runcmd(
-        [
-            'sphinx-build',
-            '-q',
-            '-b',
-            'html',
-            args.output_dir,
-            os.path.join(args.output_dir, 'html'),
-        ],
-    )
+    Dodo.runcmd([
+        'sphinx-build',
+        '-q',
+        '-b',
+        'html',
+        args.output_dir,
+        os.path.join(args.output_dir, 'html'),
+    ], )
 
 
 def _open_browser(args):
-    Dodo.runcmd(
-        [
-            'xdg-open',
-            os.path.join(args.output_dir, 'html', 'index.html'),
-        ],
-    )
+    Dodo.runcmd([
+        'xdg-open',
+        os.path.join(args.output_dir, 'html', 'index.html'),
+    ], )
 
 
 def _create_jinja_environment(args):
@@ -127,11 +119,8 @@ if Dodo.is_main(__name__, safe=False):
 
     if errors:
         print("")
-        print(
-            bordered("Warning, there were errors:") +
-            "\n" +
-            ("\n".join(errors))
-        )
+        print(bordered("Warning, there were errors:") + "\n" +
+              ("\n".join(errors)))
         print("")
     _create_sphinx_conf(args)
     _sphinx_build(args)

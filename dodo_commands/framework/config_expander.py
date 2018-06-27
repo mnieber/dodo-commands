@@ -20,9 +20,7 @@ class DictKey:
 
     def warning_msg_not_expanded(self):
         return "Unexpanded key {key} at location /{xpath}".format(
-            key=self.key,
-            xpath='/'.join([str(x) for x in self.xpath])
-        )
+            key=self.key, xpath='/'.join([str(x) for x in self.xpath]))
 
     def create_dict_val(self, expanded_key):  # noqa
         if expanded_key != self.key:
@@ -44,19 +42,14 @@ class DictVal:
         self.dict[self.key] = new_value
 
     def must_eval(self):
-        return (
-            isinstance(self.xpath[-1], str) and self.xpath[-1].endswith('_EVAL') or
-            (
-                len(self.xpath) >= 2 and
-                isinstance(self.xpath[-2], str) and self.xpath[-2].endswith('_EVAL')
-            )
-        )
+        return (isinstance(self.xpath[-1], str)
+                and self.xpath[-1].endswith('_EVAL')
+                or (len(self.xpath) >= 2 and isinstance(self.xpath[-2], str)
+                    and self.xpath[-2].endswith('_EVAL')))
 
     def warning_msg_not_expanded(self):
         return "Unexpanded value {val} at location /{xpath}".format(
-            val=self.get_value(),
-            xpath='/'.join([str(x) for x in self.xpath])
-        )
+            val=self.get_value(), xpath='/'.join([str(x) for x in self.xpath]))
 
     def __repr__(self):  # noqa
         return "DV[%s]" % self.key
@@ -75,16 +68,12 @@ class ListVal:
         self.list[self.idx] = new_value
 
     def must_eval(self):
-        return (
-            len(self.xpath) >= 2 and
-            isinstance(self.xpath[-2], str) and self.xpath[-2].endswith('_EVAL')
-        )
+        return (len(self.xpath) >= 2 and isinstance(self.xpath[-2], str)
+                and self.xpath[-2].endswith('_EVAL'))
 
     def warning_msg_not_expanded(self):
         return "Unexpanded value {val} at location /{xpath}".format(
-            val=self.get_value(),
-            xpath='/'.join([str(x) for x in self.xpath])
-        )
+            val=self.get_value(), xpath='/'.join([str(x) for x in self.xpath]))
 
     def __repr__(self):  # noqa
         return "L[%s]" % self.idx
@@ -116,7 +105,8 @@ class Key:
         for xpath_node in self.xpath:
             if isinstance(config_node, dict) and xpath_node in config_node:
                 config_node = config_node[xpath_node]
-            elif isinstance(config_node, list) and int(xpath_node) < len(config_node):
+            elif isinstance(config_node,
+                            list) and int(xpath_node) < len(config_node):
                 config_node = config_node[int(xpath_node)]
             else:
                 return False
@@ -155,7 +145,9 @@ class ConfigExpander:
 
     def _expand_str(self, current_str):
         expanded_str = current_str
-        key_expressions = [x for x in re.finditer(self._key_regexp, current_str)]
+        key_expressions = [
+            x for x in re.finditer(self._key_regexp, current_str)
+        ]
         known_strs = []
 
         while (key_expressions):
@@ -167,10 +159,8 @@ class ConfigExpander:
                 key = Key(self.config, xpath)
                 if key.exists():
                     expanded_str = (
-                        expanded_str[:key_expression.start()] +
-                        str(key.get()) +
-                        expanded_str[key_expression.end():]
-                    )
+                        expanded_str[:key_expression.start()] + str(
+                            key.get()) + expanded_str[key_expression.end():])
 
                     if expanded_str not in known_strs:
                         known_strs.append(expanded_str)
@@ -180,7 +170,9 @@ class ConfigExpander:
                 return None
 
             current_str = expanded_str
-            key_expressions = [x for x in re.finditer(self._key_regexp, current_str)]
+            key_expressions = [
+                x for x in re.finditer(self._key_regexp, current_str)
+            ]
 
         return os.path.expandvars(expanded_str)
 
@@ -192,7 +184,10 @@ class ConfigExpander:
             return [self._expand(x) for x in raw_obj]
 
         if isinstance(raw_obj, dict):
-            return {self._expand(k): self._expand(v) for k, v in raw_obj.items()}
+            return {
+                self._expand(k): self._expand(v)
+                for k, v in raw_obj.items()
+            }
 
         return raw_obj
 
@@ -212,10 +207,7 @@ class ConfigExpander:
         except:
             raise CommandError(
                 "Cannot evaluate {value} at location {xpath}".format(
-                    value=value,
-                    xpath=xpath
-                )
-            )
+                    value=value, xpath=xpath))
 
     def run(self, config):  # noqa
         nodes = []
@@ -246,9 +238,7 @@ class ConfigExpander:
                             changed = True
                             node.replace_value(
                                 self._eval(expanded_value, node.xpath)
-                                if node.must_eval() else
-                                expanded_value
-                            )
+                                if node.must_eval() else expanded_value)
                 else:
                     raise CommandError("Should not reach here")
             nodes = new_nodes

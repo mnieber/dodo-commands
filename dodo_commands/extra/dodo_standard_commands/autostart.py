@@ -7,9 +7,7 @@ def _args():
     parser = ArgumentParser(
         description=(
             "Writes (or removes) a small script that activates the latest " +
-            "Dodo Commands project"
-        )
-    )
+            "Dodo Commands project"))
     parser.add_argument('status', choices=['on', 'off'])
     return Dodo.parse_args(parser)
 

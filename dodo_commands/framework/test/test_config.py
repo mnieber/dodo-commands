@@ -13,9 +13,7 @@ class TestConfigIO:  # noqa
         return {
             'ROOT': {
                 'layers': ['mylayer.yml'],
-                'command_path': [
-                    [foo_dir, 'bar']
-                ],
+                'command_path': [[foo_dir, 'bar']],
                 'foo': {
                     'bar': 'foobar',
                     'one': 'two'

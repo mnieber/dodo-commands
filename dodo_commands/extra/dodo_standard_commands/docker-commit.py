@@ -13,7 +13,8 @@ def _args():
 
 def _containers():
     result = []
-    for line in docker("ps", "--format", "{{.ID}} {{.Names}} {{.Image}}").split('\n'):
+    for line in docker("ps", "--format",
+                       "{{.ID}} {{.Names}} {{.Image}}").split('\n'):
         if line:
             cid, name, image = line.split()
             result.append(dict(name=name, cid=cid, image=image))
@@ -36,11 +37,9 @@ if Dodo.is_main(__name__):
 
     container = containers[choice]
 
-    Dodo.runcmd(
-        [
-            'docker',
-            'commit',
-            container['cid'],
-            container['image'],
-        ],
-    )
+    Dodo.runcmd([
+        'docker',
+        'commit',
+        container['cid'],
+        container['image'],
+    ], )

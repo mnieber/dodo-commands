@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 """Utilities."""
 from six.moves import input as raw_input
 import os
@@ -17,8 +16,7 @@ def query_yes_no(question, default="yes"):
 
     The "answer" return value is True for "yes" or False for "no".
     """
-    valid = {"yes": True, "y": True, "ye": True,
-             "no": False, "n": False}
+    valid = {"yes": True, "y": True, "ye": True, "no": False, "n": False}
     if default is None:
         prompt = " [y/n] "
     elif default == "yes":
@@ -104,10 +102,12 @@ try:
     import textwrap
     textwrap.indent
 except AttributeError:  # undefined function (wasn't added until Python 3.3)
+
     def indent(text, amount, ch=' '):
         padding = amount * ch
         return ''.join(padding + line for line in text.splitlines(True))
 else:
+
     def indent(text, amount, ch=' '):
         return textwrap.indent(text, amount * ch)
 

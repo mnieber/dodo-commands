@@ -8,8 +8,7 @@ class Decorator:  # noqa
         parser.add_argument(
             '--pause-ms',
             type=int,
-            help="Pause in milliseconds before continuing"
-        )
+            help="Pause in milliseconds before continuing")
 
     def modify_args(self, root_node, cwd):  # noqa
         if Dodo.args.pause_ms:

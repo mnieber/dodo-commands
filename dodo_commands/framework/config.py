@@ -41,8 +41,7 @@ def merge_into_config(config, layer, xpath=None):
 
     def _raise(xpath):
         raise CommandError(
-            "Cannot merge configurations. Check key /%s" % '/'.join(new_xpath)
-        )
+            "Cannot merge configurations. Check key /%s" % '/'.join(new_xpath))
 
     xpath = xpath or []
     for key, val in (layer or {}).items():
@@ -70,11 +69,8 @@ class ConfigIO:
 
         Arg config_base_dir defaults to get_project_dir()/dodo_commands/res.
         """
-        self.config_base_dir = (
-            _default_config_base_dir(get_project_dir())
-            if config_base_dir is None else
-            config_base_dir
-        )
+        self.config_base_dir = (_default_config_base_dir(get_project_dir()) if
+                                config_base_dir is None else config_base_dir)
 
     def _path_to(self, post_fix_paths):
         """Return path composed of config_base_dir and post_fix_paths list."""
@@ -82,17 +78,14 @@ class ConfigIO:
 
     def get_layers(self, config):
         """Returns list of layer filenames"""
+
         def add_prefix(filename):
-            return (
-                filename
-                if filename.startswith('/') else
-                self._path_to([filename])
-            )
+            return (filename
+                    if filename.startswith('/') else self._path_to([filename]))
 
         patterns = [
             add_prefix(os.path.expanduser(pattern))
-            for pattern in
-            config.get('ROOT', {}).get('layers', [])
+            for pattern in config.get('ROOT', {}).get('layers', [])
         ]
 
         result = []
@@ -107,11 +100,10 @@ class ConfigIO:
                 return False
             return True
 
-        layer_filenames = [x for x in self.get_layers(config) if layer_exists(x)]
-        layers = [
-            self.load(x, load_layers=False)
-            for x in layer_filenames
+        layer_filenames = [
+            x for x in self.get_layers(config) if layer_exists(x)
         ]
+        layers = [self.load(x, load_layers=False) for x in layer_filenames]
         for layer in layers:
             merge_into_config(config, layer)
 
@@ -135,6 +127,7 @@ class ConfigIO:
 
 class ConfigLoader:
     """Load the project's dodo config and expand it."""
+
     def _add_to_config(self, config, section, key, value):
         if section in config:
             if key not in config[section]:
@@ -149,23 +142,16 @@ class ConfigLoader:
         """Add special values to the project's config"""
         project_dir = get_project_dir()
         if project_dir:
-            self._add_to_config(
-                config, "ROOT", "project_name", os.path.basename(project_dir))
-            self._add_to_config(
-                config, "ROOT", "project_dir", project_dir)
-            self._add_to_config(
-                config,
-                "ROOT",
-                "res_dir",
-                _default_config_base_dir(project_dir)
-            )
+            self._add_to_config(config, "ROOT", "project_name",
+                                os.path.basename(project_dir))
+            self._add_to_config(config, "ROOT", "project_dir", project_dir)
+            self._add_to_config(config, "ROOT", "res_dir",
+                                _default_config_base_dir(project_dir))
 
     def _extend_command_path(self, config):
         """Add the system commands to the command path"""
         self._add_to_config(config, "ROOT", "command_path", [])
-        config['ROOT']['command_path'].append(
-            self._system_commands_dir()
-        )
+        config['ROOT']['command_path'].append(self._system_commands_dir())
 
     def _report(self, x):
         sys.stderr.write(x)
@@ -180,8 +166,7 @@ class ConfigLoader:
             self._report(
                 "There was an error while loading the configuration. "
                 "Run 'dodo diff' to compare your configuration to the "
-                "default one.\n"
-            )
+                "default one.\n")
 
         self._extend_command_path(config)
         self._extend_config(config)
@@ -211,8 +196,7 @@ class CommandPath:
         for basename in basenames:
             if basenames.count(basename) > 1:
                 raise CommandError(
-                    "More than 1 command path with name %s" % basename
-                )
+                    "More than 1 command path with name %s" % basename)
 
     def _include_patterns(self, config):
         return config.get('ROOT', {}).get('command_path', [])
@@ -229,12 +213,11 @@ class CommandPath:
         return result
 
     def _create_search_path_dir(self):
-        hash_code = hashlib.md5(json.dumps(self.items).encode('utf-8')).hexdigest()
+        hash_code = hashlib.md5(json.dumps(
+            self.items).encode('utf-8')).hexdigest()
         search_path_dir = os.path.join(
-            os.path.expanduser("~/.dodo_commands"),
-            "dodo_search_path",
-            hash_code
-        )
+            os.path.expanduser("~/.dodo_commands"), "dodo_search_path",
+            hash_code)
 
         if not os.path.exists(search_path_dir):
             os.makedirs(search_path_dir)

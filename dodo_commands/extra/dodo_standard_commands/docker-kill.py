@@ -13,7 +13,8 @@ def _args():
 
 def _containers():
     result = []
-    for line in docker("ps", "--format", "{{.ID}} {{.Names}} {{.Image}}").split('\n'):
+    for line in docker("ps", "--format",
+                       "{{.ID}} {{.Names}} {{.Image}}").split('\n'):
         if line:
             cid, name, image = line.split()
             result.append(dict(name=name, cid=cid, image=image))
@@ -32,8 +33,6 @@ if Dodo.is_main(__name__):
     selected_containers, span = filter_choices(containers, raw_choice)
     if span == [0, len(raw_choice)]:
         for container in selected_containers:
-            Dodo.runcmd(
-                ['docker', 'kill', container['cid']],
-            )
+            Dodo.runcmd(['docker', 'kill', container['cid']], )
     else:
         raise CommandError("Syntax error")

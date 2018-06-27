@@ -5,9 +5,7 @@ from dodo_commands.framework.config import expand_keys
 
 def _args():
     parser = ArgumentParser()
-    parser.add_argument(
-        'text'
-    )
+    parser.add_argument('text')
     args = Dodo.parse_args(parser)
     return args
 

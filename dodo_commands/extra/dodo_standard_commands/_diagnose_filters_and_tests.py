@@ -1,13 +1,11 @@
 from dodo_commands.framework import CommandError, Dodo
-from dodo_standard_commands.decorators.docker import (
-    Decorator as DockerDecorator
-)
+from dodo_standard_commands.decorators.docker import (Decorator as
+                                                      DockerDecorator)
 from dodo_commands.framework.config import expand_keys
 from dodo_commands.framework.util import indent
 import os
 import plumbum
 import ruamel.yaml
-
 
 filters = {}
 tests = {}
@@ -18,6 +16,7 @@ def register_diagnose_filter(name=None):
         global filters
         filters[name or func.__name__] = func
         return func
+
     return decorator
 
 
@@ -26,18 +25,17 @@ def register_diagnose_test(name=None):
         global tests
         tests[name or func.__name__] = func
         return func
+
     return decorator
 
 
 @register_diagnose_filter('dodo_expand')
-def _dodo_expand(
-    key_str,
-    key=None,
-    layout=None,
-    quote_key=True,
-    quote_val=True,
-    link=None
-):
+def _dodo_expand(key_str,
+                 key=None,
+                 layout=None,
+                 quote_key=True,
+                 quote_val=True,
+                 link=None):
     def _quote_val(val):
         if link or not quote_val:
             return val
@@ -73,14 +71,9 @@ def _dodo_expand(
     elif layout:
         if key:
             result += "%s:\n" % quoted_key_str
-        result += (
-            "\n\n.. code-block:: yaml\n\n" +
-            indent("# %s\n" % key_str, 4) +
-            indent(
-                ruamel.yaml.round_trip_dump(val, indent=4).strip(),
-                amount=4
-            )
-        )
+        result += ("\n\n.. code-block:: yaml\n\n" + indent(
+            "# %s\n" % key_str, 4) + indent(
+                ruamel.yaml.round_trip_dump(val, indent=4).strip(), amount=4))
     else:
         if key:
             result += "%s = " % quoted_key_str
@@ -104,9 +97,8 @@ def _docker():
 def _image(key_or_name):
     image = Dodo.get_config(key_or_name, None)
     if not image:
-        _, image, _ = DockerDecorator.docker_node(
-            Dodo.get_config, key_or_name, "", False
-        )
+        _, image, _ = DockerDecorator.docker_node(Dodo.get_config, key_or_name,
+                                                  "", False)
     return image
 
 
@@ -119,9 +111,7 @@ def _is_existing_docker_image(key):
 @register_diagnose_test('existing_container')
 def _is_existing_container(key):
     image = _image(Dodo.get_config, key)
-    return image in _docker()(
-        "ps", "-a", "--filter=name=%s" % image
-    )
+    return image in _docker()("ps", "-a", "--filter=name=%s" % image)
 
 
 @register_diagnose_test('path_exists')

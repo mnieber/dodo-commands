@@ -21,14 +21,12 @@ class Decorator:  # noqa
         for key, val in volume_map_strict.items():
             if not os.path.exists(key):
                 raise CommandError(
-                    "Path in volume_map_strict not found: %s" % key
-                )
+                    "Path in volume_map_strict not found: %s" % key)
             volume_map[key] = val
 
         options = (
             ['--volume=%s:%s' % (x, x) for x in volume_list] +
-            ['--volume=%s:%s' % key_val for key_val in volume_map.items()]
-        )
+            ['--volume=%s:%s' % key_val for key_val in volume_map.items()])
         for x in options:
             root_node['volume'].append(x)
 
@@ -38,17 +36,14 @@ class Decorator:  # noqa
         publish_map = docker_config.get('publish_map', {})
         options = (
             ['--publish=%s:%s' % (x, x) for x in publish_list] +
-            ['--publish=%s:%s' % key_val for key_val in publish_map.items()]
-        )
+            ['--publish=%s:%s' % key_val for key_val in publish_map.items()])
         for x in options:
             root_node['publish'].append(x)
 
     @classmethod
     def _add_docker_volumes_from_list(cls, docker_config, root_node):
         volumes_from_list = docker_config.get('volumes_from_list', [])
-        options = (
-            ['--volumes-from=%s' % x for x in volumes_from_list]
-        )
+        options = (['--volumes-from=%s' % x for x in volumes_from_list])
         for x in options:
             root_node['volumes-from'].append(x)
 
@@ -57,12 +52,8 @@ class Decorator:  # noqa
         variable_list = docker_config.get('variable_list', [])
         variable_map = docker_config.get('variable_map', {})
         options = (
-            ['--env=%s' % x for x in variable_list] +
-            [
-                '--env=%s=%s' % key_val
-                for key_val in variable_map.items()
-            ]
-        )
+            ['--env=%s' % x for x in variable_list
+             ] + ['--env=%s=%s' % key_val for key_val in variable_map.items()])
         for x in options:
             root_node['env'].append(x)
 
@@ -75,16 +66,15 @@ class Decorator:  # noqa
     @classmethod
     def merged_options(cls, get_config, command_name):
         merged = {}
-        for patterns, docker_config in get_config('/DOCKER/options', {}).items():
+        for patterns, docker_config in get_config('/DOCKER/options',
+                                                  {}).items():
             for pattern in (patterns if _is_tuple(patterns) else [patterns]):
                 if fnmatch(command_name, pattern):
                     merge_into_config(merged, docker_config)
         return merged
 
     @classmethod
-    def docker_node(
-        cls, get_config, command_name, cwd
-    ):
+    def docker_node(cls, get_config, command_name, cwd):
         merged = cls.merged_options(get_config, command_name)
 
         docker_node = ArgsTreeNode("docker", args=['docker', 'run'])
@@ -127,9 +117,8 @@ class Decorator:  # noqa
         image = merged.get('image')
         if not image:
             raise CommandError(
-                "No docker image found in /DOCKER/options for command %s"
-                % command_name
-            )
+                "No docker image found in /DOCKER/options for command %s" %
+                command_name)
         docker_node['image'].append(image)
 
         return docker_node, image, name
@@ -143,29 +132,19 @@ class Decorator:  # noqa
 
     def _kill_existing_container(self, name):
         docker = local['docker']
-        live_containers = docker(
-            "ps",
-            "--format={{.Names}}",
-            "--filter=name=^/%s$" % name
-        )
+        live_containers = docker("ps", "--format={{.Names}}",
+                                 "--filter=name=^/%s$" % name)
         if len(live_containers):
             docker("stop", name)
 
-        exited_containers = docker(
-            "ps",
-            "-a",
-            "--format={{.Names}}",
-            "--filter=name=^/%s$" % name
-        )
+        exited_containers = docker("ps", "-a", "--format={{.Names}}",
+                                   "--filter=name=^/%s$" % name)
         if len(exited_containers):
             docker("rm", name)
 
     def modify_args(self, root_node, cwd):  # noqa
-        docker_node, _, docker_name = self.docker_node(
-            Dodo.get_config,
-            Dodo.command_name,
-            cwd
-        )
+        docker_node, _, docker_name = self.docker_node(Dodo.get_config,
+                                                       Dodo.command_name, cwd)
 
         if getattr(Dodo.args, 'kill_existing', False):
             self._kill_existing_container(docker_name)

@@ -8,8 +8,7 @@ import sys
 
 def _args():
     parser = ArgumentParser(
-        description="Enable or disable a layer in the configuration."
-    )
+        description="Enable or disable a layer in the configuration.")
     parser.add_argument('layer', nargs='?', default=False)
     parser.add_argument('value', nargs='?', default=False)
     parser.add_argument('--force', action="store_true")
@@ -77,8 +76,7 @@ if Dodo.is_main(__name__, safe=False):
 
     layer_file = os.path.join(
         Dodo.get_config("/ROOT/res_dir"),
-        "%s.%s.yaml" % (args.layer, args.value)
-    )
+        "%s.%s.yaml" % (args.layer, args.value))
 
     if not args.force and not os.path.exists(layer_file):
         raise CommandError("Layer file %s does not exist" % layer_file)

@@ -46,17 +46,12 @@ class TestConfigIO:  # noqa
 
         dodo = local[os.path.join(dodo_test_dir, 'dodo_commands/env/bin/dodo')]
         if not skip_install:
-            dodo(
-                'bootstrap',
-                'src',
-                'extra/dodo_commands/res',
-                '--force',
-                '--git-url', 'https://github.com/mnieber/dodo_commands_tutorial.git'
-            )
+            dodo('bootstrap', 'src', 'extra/dodo_commands/res', '--force',
+                 '--git-url',
+                 'https://github.com/mnieber/dodo_commands_tutorial.git')
 
-        config_filename = os.path.join(
-            dodo_test_dir, 'dodo_commands', 'res', 'config.yaml'
-        )
+        config_filename = os.path.join(dodo_test_dir, 'dodo_commands', 'res',
+                                       'config.yaml')
         res_dir = os.path.join(dodo_test_dir, 'dodo_commands', 'res')
 
         # dodo which
@@ -72,27 +67,33 @@ class TestConfigIO:  # noqa
 
         # dodo check-version --config
         self._set_config_version(config_filename, '0.1.0')
-        assert "Configuration needs update (0.1.0 < 1.0.0)" in dodo('check-version', '--config')[:-1]
+        assert "Configuration needs update (0.1.0 < 1.0.0)" in dodo(
+            'check-version', '--config')[:-1]
         self._set_config_version(config_filename, '1.0.0')
         assert "" == dodo('check-version', '--config')[:-1]
 
         # dodo check-version --dodo
         self._set_required_dodo_version(config_filename, '10000.0.0')
-        assert "The dodo_commands package needs to be upgraded" in dodo('check-version', '--dodo')[:-1]
-        self._set_required_dodo_version(config_filename, dodo('--version')[:-1])
+        assert "The dodo_commands package needs to be upgraded" in dodo(
+            'check-version', '--dodo')[:-1]
+        self._set_required_dodo_version(config_filename,
+                                        dodo('--version')[:-1])
         assert "" == dodo('check-version', '--dodo')[:-1]
 
         # dodo diff
         result = dodo('diff', '.', '--echo').replace('\n', '')
-        assert "meld %s/src/extra/dodo_commands/res %s/." % (dodo_test_dir, res_dir) == result
+        assert "meld %s/src/extra/dodo_commands/res %s/." % (dodo_test_dir,
+                                                             res_dir) == result
 
         # dodo docker
         dodo('layer', 'docker', 'on')
-        result = dodo('docker', '*', '--name', 'foo', '--echo').replace('\n', '').replace('  \\', '').replace('  ', ' ')
+        result = dodo('docker', '*', '--name', 'foo', '--echo').replace(
+            '\n', '').replace('  \\', '').replace('  ', ' ')
         assert "docker run --name=foo --rm --interactive --tty --volume=%s/log:/var/log --workdir=/ dodo_tutorial:1604 /bin/bash" % dodo_test_dir == result
 
         # dodo docker-build
-        result = dodo('docker-build', '--echo', 'base').replace('\n', '').replace('  \\', '')
+        result = dodo('docker-build', '--echo',
+                      'base').replace('\n', '').replace('  \\', '')
         assert "docker build -t dodo_tutorial:1604 -f Dockerfile ." == result
 
         # dodo autostart
@@ -110,16 +111,23 @@ class TestConfigIO:  # noqa
         # dodo layer
         self._clear_layers(config_filename)
         dodo('layer', 'debug', 'on')
-        assert self._load_config(config_filename)['ROOT']['layers'] == ['debug.on.yaml']
+        assert self._load_config(config_filename)['ROOT']['layers'] == [
+            'debug.on.yaml'
+        ]
         dodo('layer', 'debug', 'off')
-        assert self._load_config(config_filename)['ROOT']['layers'] == ['debug.off.yaml']
+        assert self._load_config(config_filename)['ROOT']['layers'] == [
+            'debug.off.yaml'
+        ]
 
         # dodo new-command
-        expected_new_command_file = os.path.join(dodo_test_dir, "src/extra/dodo_commands/tutorial_commands", "foo.py")
+        expected_new_command_file = os.path.join(
+            dodo_test_dir, "src/extra/dodo_commands/tutorial_commands",
+            "foo.py")
         if os.path.exists(expected_new_command_file):
             os.unlink(expected_new_command_file)
         dodo('new-command', 'foo', '--next-to', 'cmake')
         assert os.path.exists(expected_new_command_file)
 
         # dodo print-config
-        assert "CMAKE_INSTALL_PREFIX: %s/install" % dodo_test_dir in dodo("print-config")
+        assert "CMAKE_INSTALL_PREFIX: %s/install" % dodo_test_dir in dodo(
+            "print-config")

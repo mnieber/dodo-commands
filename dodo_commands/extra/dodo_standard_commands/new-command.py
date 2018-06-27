@@ -10,8 +10,7 @@ def _args():
     parser.add_argument(
         '--next-to',
         required=True,
-        help='Create the new command at the location of this command'
-    )
+        help='Create the new command at the location of this command')
     args = Dodo.parse_args(parser)
     return args
 
@@ -32,19 +31,14 @@ if Dodo.is_main(__name__, safe=True):
     Dodo.runcmd([], cwd='.')
 """
 
-
 if Dodo.is_main(__name__, safe=False):
     args = _args()
     dest_path = None
     command_path = CommandPath(Dodo.config)
     for item in command_path.items:
-        script_path = os.path.join(
-            item.full_path, args.next_to + ".py"
-        )
+        script_path = os.path.join(item.full_path, args.next_to + ".py")
         if os.path.exists(script_path):
-            dest_path = os.path.join(
-                item.full_path, args.name + ".py"
-            )
+            dest_path = os.path.join(item.full_path, args.name + ".py")
 
     if not dest_path:
         raise CommandError("Script not found: %s" % args.next_to)

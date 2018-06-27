@@ -7,39 +7,29 @@ import os
 
 def _args():
     parser = ArgumentParser(
-        description=(
-            "Install default command directories supplied by the " +
-            "paths argument: dodo install-default-commands " +
-            "/path/to/my/commands. " + _packages_in_extra_dir()
-        )
-    )
+        description=("Install default command directories supplied by the " +
+                     "paths argument: dodo install-default-commands " +
+                     "/path/to/my/commands. " + _packages_in_extra_dir()))
     parser.add_argument(
         "paths",
         nargs='*',
-        help='Create symlinks to these command directories'
-    )
+        help='Create symlinks to these command directories')
     parser.add_argument(
-        "--pip",
-        nargs='*',
-        help='Pip install the commands in these packages'
-    )
+        "--pip", nargs='*', help='Pip install the commands in these packages')
     args = Dodo.parse_args(parser)
     return args
 
 
 def _extra_dir():
     import dodo_commands
-    return os.path.join(
-        os.path.dirname(dodo_commands.__file__), "extra"
-    )
+    return os.path.join(os.path.dirname(dodo_commands.__file__), "extra")
 
 
 def _packages_in_extra_dir():
     extra_dir = _extra_dir()
     packages = [
         x for x in os.listdir(extra_dir)
-        if os.path.isdir(os.path.join(extra_dir, x))
-        and not x.startswith('__')
+        if os.path.isdir(os.path.join(extra_dir, x)) and not x.startswith('__')
     ]
 
     if len(packages) == 0:
@@ -51,10 +41,9 @@ def _packages_in_extra_dir():
         packages[-1] = "and " + packages[-1]
         msg = " The %s packages are found automagically " % ", ".join(packages)
 
-    return (
-        msg + " in the dodo_commands.extra package" +
-        ", e.g. the following works: dodo install-default-commands %s." % packages[0]
-    )
+    return (msg + " in the dodo_commands.extra package" +
+            ", e.g. the following works: dodo install-default-commands %s." %
+            packages[0])
 
 
 def _report_error(msg):
@@ -65,8 +54,7 @@ def _install_commands(path):
     """Install the dir with the default commands."""
     dest_dir = os.path.join(
         os.path.expanduser("~/.dodo_commands/default_commands"),
-        os.path.basename(path)
-    )
+        os.path.basename(path))
 
     if not os.path.exists(path):
         alt_path = os.path.join(_extra_dir(), path)
@@ -96,11 +84,11 @@ def _install_package(package):
             pip = alt_pip
         else:
             raise CommandError(
-                "Expected to find a pip executable at location %s or %s."
-                % (pip, alt_pip)
-            )
+                "Expected to find a pip executable at location %s or %s." %
+                (pip, alt_pip))
 
-    default_commands_dir = os.path.expanduser("~/.dodo_commands/default_commands")
+    default_commands_dir = os.path.expanduser(
+        "~/.dodo_commands/default_commands")
     Dodo.runcmd([
         pip, 'install', '--upgrade', '--target', default_commands_dir, package
     ])
@@ -109,7 +97,9 @@ def _install_package(package):
 if Dodo.is_main(__name__):
     args = _args()
     if args.pip and not is_using_system_dodo():
-        raise CommandError("Please deactivate your dodo project first by running 'deactivate'.")
+        raise CommandError(
+            "Please deactivate your dodo project first by running 'deactivate'."
+        )
 
     if args.paths:
         for path in args.paths:
