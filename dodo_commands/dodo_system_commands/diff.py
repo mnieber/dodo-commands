@@ -1,7 +1,8 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo, CommandError
 import os
-from dodo_commands.framework.config import get_project_dir, get_global_config
+from dodo_commands.framework.config import load_global_config_parser
+from dodo_commands.framework.paths import Paths
 
 
 def _args():
@@ -19,14 +20,14 @@ def _args():
 
 
 def _diff_tool():
-    return get_global_config().get("settings", "diff_tool")
+    return load_global_config_parser().get("settings", "diff_tool")
 
 
 if Dodo.is_main(__name__):
     args = _args()
     file = args.file or '.'
 
-    project_dir = get_project_dir()
+    project_dir = Paths().project_dir()
     if not project_dir:
         raise CommandError("No active dodo commands project")
 
@@ -55,6 +56,6 @@ if Dodo.is_main(__name__):
     else:
         original_file = os.path.realpath(
             os.path.join(default_project_path, file))
-        copied_file = os.path.join(project_dir, "dodo_commands", "res", file)
+        copied_file = os.path.join(Paths().res_dir(), file)
 
     Dodo.runcmd([_diff_tool(), original_file, copied_file])

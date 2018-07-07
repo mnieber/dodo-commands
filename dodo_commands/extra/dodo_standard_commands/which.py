@@ -1,7 +1,8 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo
-from dodo_commands.framework.config import (
-    CommandPath, get_project_dir, get_global_config, global_config_filename)
+from dodo_commands.framework.paths import Paths
+from dodo_commands.framework.config import (CommandPath,
+                                            load_global_config_parser)
 import os
 import sys
 
@@ -61,21 +62,19 @@ def _which_dir(directory):
 
 
 def _projects_dir():
-    return os.path.expanduser(get_global_config().get("settings",
-                                                      "projects_dir"))
+    return os.path.expanduser(load_global_config_parser().get(
+        "settings", "projects_dir"))
 
 
 if Dodo.is_main(__name__):
     args = _args()
 
     if args.config:
-        print(os.path.join(get_project_dir(), "dodo_commands", "res",
-                           "config.yaml"))
+        print(os.path.join(Paths().res_dir(), "config.yaml"))
     elif args.global_config:
-        sys.stdout.write(global_config_filename() + '\n')
+        sys.stdout.write(Paths().global_config_filename() + '\n')
     elif args.default_commands:
-        sys.stdout.write(
-            os.path.expanduser('~/.dodo_commands/default_commands\n'))
+        sys.stdout.write(Paths().default_commands_dir() + '/n')
     elif args.script:
         sys.stdout.write(_which_script(args.script) + "\n")
     elif args.directory:

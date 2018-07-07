@@ -3,6 +3,7 @@
 from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.config_expander import ConfigExpander
 from dodo_commands.framework.config_expander import Key, KeyNotFound  # noqa
+from dodo_commands.framework.paths import Paths
 from six.moves import configparser
 import glob
 import json
@@ -13,23 +14,46 @@ import sys
 import hashlib
 
 
-def global_config_filename():
-    return os.path.expanduser("~/.dodo_commands/config")
+def load_global_config_parser():
+    config_parser = configparser.ConfigParser()
+    config_parser.read(Paths().global_config_filename())
+    return config_parser
 
 
-def get_global_config():
-    config = configparser.ConfigParser()
-    config.read(global_config_filename())
-    return config
+def write_global_config_parser(config_parser):
+    """Save configuration."""
+    with open(Paths().global_config_filename(), "w") as f:
+        config_parser.write(f)
 
 
-def get_project_dir():
-    """Return the root dir of the current project."""
-    return os.environ['DODO_COMMANDS_PROJECT_DIR']
+_global_config = """[settings]
+projects_dir=~/projects
+python_interpreter=python
+diff_tool=diff
+
+[recent]
+"""
 
 
-def _default_config_base_dir(project_dir):
-    return os.path.join(project_dir, "dodo_commands", "res")
+def create_global_config():
+    """Create config file and default_commands dir."""
+    base_dir = Paths().global_config_dir()
+    if not os.path.exists(base_dir):
+        os.mkdir(base_dir)
+
+    config_filename = Paths().global_config_filename()
+    if not os.path.exists(config_filename):
+        with open(config_filename, 'w') as f:
+            f.write(_global_config)
+
+    default_commands_dir = Paths().default_commands_dir()
+    if not os.path.exists(default_commands_dir):
+        os.mkdir(default_commands_dir)
+
+    init_py = os.path.join(default_commands_dir, "__init__.py")
+    if not os.path.exists(init_py):
+        with open(init_py, 'w') as f:
+            pass
 
 
 def merge_into_config(config, layer, xpath=None):
@@ -67,10 +91,10 @@ class ConfigIO:
     def __init__(self, config_base_dir=None):
         """Arg config_base_dir is where config files are searched.
 
-        Arg config_base_dir defaults to get_project_dir()/dodo_commands/res.
+        Arg config_base_dir defaults to Paths().res_dir().
         """
-        self.config_base_dir = (_default_config_base_dir(get_project_dir()) if
-                                config_base_dir is None else config_base_dir)
+        self.config_base_dir = (Paths().res_dir() if config_base_dir is None
+                                else config_base_dir)  # noqa
 
     def _path_to(self, post_fix_paths):
         """Return path composed of config_base_dir and post_fix_paths list."""
@@ -140,13 +164,12 @@ class ConfigLoader:
 
     def _extend_config(self, config):
         """Add special values to the project's config"""
-        project_dir = get_project_dir()
+        project_dir = Paths().project_dir()
         if project_dir:
             self._add_to_config(config, "ROOT", "project_name",
                                 os.path.basename(project_dir))
             self._add_to_config(config, "ROOT", "project_dir", project_dir)
-            self._add_to_config(config, "ROOT", "res_dir",
-                                _default_config_base_dir(project_dir))
+            self._add_to_config(config, "ROOT", "res_dir", Paths().res_dir())
 
     def _extend_command_path(self, config):
         """Add the system commands to the command path"""
@@ -215,9 +238,8 @@ class CommandPath:
     def _create_search_path_dir(self):
         hash_code = hashlib.md5(json.dumps(
             self.items).encode('utf-8')).hexdigest()
-        search_path_dir = os.path.join(
-            os.path.expanduser("~/.dodo_commands"), "dodo_search_path",
-            hash_code)
+        search_path_dir = os.path.join(Paths().global_config_dir(),
+                                       "dodo_search_path", hash_code)
 
         if not os.path.exists(search_path_dir):
             os.makedirs(search_path_dir)

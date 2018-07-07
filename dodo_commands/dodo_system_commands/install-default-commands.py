@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo, CommandError
+from dodo_commands.framework.paths import Paths
 from dodo_commands.framework.util import is_using_system_dodo
 import sys
 import os
@@ -52,9 +53,8 @@ def _report_error(msg):
 
 def _install_commands(path):
     """Install the dir with the default commands."""
-    dest_dir = os.path.join(
-        os.path.expanduser("~/.dodo_commands/default_commands"),
-        os.path.basename(path))
+    dest_dir = os.path.join(Paths().default_commands_dir(),
+                            os.path.basename(path))
 
     if not os.path.exists(path):
         alt_path = os.path.join(_extra_dir(), path)
@@ -87,10 +87,9 @@ def _install_package(package):
                 "Expected to find a pip executable at location %s or %s." %
                 (pip, alt_pip))
 
-    default_commands_dir = os.path.expanduser(
-        "~/.dodo_commands/default_commands")
     Dodo.runcmd([
-        pip, 'install', '--upgrade', '--target', default_commands_dir, package
+        pip, 'install', '--upgrade', '--target',
+        Paths().default_commands_dir(), package
     ])
 
 

@@ -98,8 +98,8 @@ def _link(src_dir, link_dir):
 
 
 def _create_symlink_to_defaults(project_defaults_dir):
-    target_dir = os.path.join(args.project_dir,
-                              "dodo_commands/default_project")
+    target_dir = os.path.join(args.project_dir, 'dodo_commands',
+                              'default_project')
     if os.path.exists(target_dir):
         Dodo.runcmd(["rm", target_dir])
     Dodo.runcmd(["ln", "-s", project_defaults_dir, target_dir])

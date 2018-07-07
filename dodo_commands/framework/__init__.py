@@ -9,8 +9,9 @@ import sys
 import traceback
 from importlib import import_module
 from dodo_commands.framework.util import query_yes_no
-from dodo_commands.framework.config import (CommandPath, get_project_dir,
-                                            ConfigLoader, get_global_config)
+from dodo_commands.framework.config import (CommandPath, ConfigLoader,
+                                            load_global_config_parser)
+from dodo_commands.framework.paths import Paths
 from dodo_commands.framework.singleton import Dodo
 from dodo_commands.framework.command_error import CommandError  # noqa
 
@@ -34,8 +35,7 @@ def execute_script(package_path, command_name):
             print(meta_data['requirements'])
             if query_yes_no("Install (yes), or abort (no)?"):
                 print("\n--- Installing from %s ---" % meta_data_filename)
-                pip = os.path.join(get_project_dir(),
-                                   "dodo_commands/env/bin/pip")
+                pip = os.path.join(Paths.virtual_env_bin_dir(), 'pip')
                 subprocess.check_call([pip, "install"] +
                                       meta_data['requirements'])
                 print("--- Done ---\n\n")
@@ -152,7 +152,7 @@ class ManagementUtility(object):
             except IndexError:
                 command_name = 'help'  # Display help if no arguments were given.
 
-        global_config = get_global_config()
+        global_config = load_global_config_parser()
         if global_config.has_section('alias'):
             for key, val in global_config.items('alias'):
                 if key == command_name:

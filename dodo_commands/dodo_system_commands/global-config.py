@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo
-from dodo_commands.framework.config import (get_global_config,
-                                            global_config_filename)
+from dodo_commands.framework.config import (load_global_config_parser,
+                                            write_global_config_parser)
 
 
 def _args():
@@ -13,18 +13,12 @@ def _args():
     return args
 
 
-def _write_config(config):
-    """Save configuration."""
-    with open(global_config_filename(), "w") as f:
-        config.write(f)
-
-
 if Dodo.is_main(__name__, safe=False):
     args = _args()
-    config = get_global_config()
+    config = load_global_config_parser()
     section, key = args.key.split('.')
     if args.val:
         config.set(section, key, args.val)
-        _write_config(config)
+        write_global_config_parser(config)
     else:
         print(config.get(section, key))

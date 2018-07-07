@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo
+from dodo_commands.framework.paths import Paths
 import os
 
 
@@ -15,7 +16,7 @@ def _args():
 if Dodo.is_main(__name__, safe=False):
     args = _args()
 
-    script = os.path.expanduser("~/.dodo_commands_autostart")
+    script = os.path.join(Paths().home_dir(), '.dodo_commands_autostart')
     if args.status == "on" and not os.path.exists(script):
         with open(script, "w") as f:
             f.write("$(dodo activate --latest)\n")

@@ -1,8 +1,9 @@
 """Script for activating/creating a project in the projects dir."""
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo, CommandError
-from dodo_commands.framework.config import (get_global_config,
-                                            global_config_filename)
+from dodo_commands.framework.paths import Paths
+from dodo_commands.framework.config import (load_global_config_parser,
+                                            write_global_config_parser)
 import os
 import sys
 import ruamel.yaml
@@ -36,33 +37,42 @@ if __name__ == "__main__":
 """
 
 
+class NewPaths(Paths):
+    def __init__(self, config, project):
+        self.config = config
+        self.project = project
+
+    def project_dir(self):
+        return os.path.expanduser(
+            os.path.join(
+                self.config.get("settings", "projects_dir"), self.project))
+
+    def dodo_commands_dir(self):
+        return os.path.join(self.project_dir(), "dodo_commands")
+
+
 class Activator:
     """Creates and activates projects."""
 
-    def _write_config(self):
-        """Save configuration."""
-        with open(global_config_filename(), "w") as f:
-            self.config.write(f)
-
-    def _activate_script(self):
-        return os.path.join(self._dodo_commands_dir, "env", "bin", "activate")
+    def _virtual_env_filename(self, basename):
+        return os.path.join(self.paths.virtual_env_bin_dir(), basename)
 
     def _create_virtual_env(self):
         """Install a virtual env."""
         local["virtualenv"]("-p",
                             self.config.get("settings", "python_interpreter"),
-                            os.path.join(self._dodo_commands_dir, "env"))
+                            self.paths.virtual_env_dir())
 
         # update activate script so that it shows the name of the
         # current project in the prompt
-        with open(self._activate_script()) as f:
+        with open(self._virtual_env_filename("activate")) as f:
             lines = f.read()
-        with open(self._activate_script(), "w") as f:
+        with open(self._virtual_env_filename("activate"), "w") as f:
             f.write(
                 lines.replace(r'PS1="(`basename \"$VIRTUAL_ENV\"`) $PS1"',
                               r'PS1="(%s) $PS1"' % self.project))
 
-        pip = local[os.path.join(self._dodo_commands_dir, "env/bin", "pip")]
+        pip = local[self._virtual_env_filename('pip')]
         pip(
             "install",
             "ansimarkup",
@@ -74,46 +84,43 @@ class Activator:
             "six",
         )
 
-        python = local[os.path.join(self._dodo_commands_dir, "env/bin",
-                                    "python")]
-        site_packages_dir = python(
-            "-c", "from distutils.sysconfig import get_python_lib; " +
-            "print(get_python_lib())")[:-1]
         os.symlink(
             os.path.dirname(dodo_commands.__file__),
-            os.path.join(site_packages_dir, "dodo_commands"))
+            os.path.join(self.paths.site_packages_dir(), "dodo_commands"))
 
     def _register_autocomplete(self):
         """Install a virtual env."""
-        register = local[os.path.join(self._dodo_commands_dir, "env/bin",
-                                      "register-python-argcomplete")]
-        (register >> self._activate_script())("dodo")
+        register = local[self._virtual_env_filename(
+            'register-python-argcomplete')]
+        (register >> self._virtual_env_filename("activate"))("dodo")
 
     def _create_dodo_script(self):
         """Install the dodo entry point script."""
-        env_dir = os.path.join(self._dodo_commands_dir, "env/bin")
-        dodo_file = os.path.join(env_dir, "dodo")
+        dodo_file = self._virtual_env_filename('dodo')
         with open(dodo_file, "w") as of:
-            of.write('#!%s/python\n' % env_dir)
+            of.write('#!%s/python\n' % self.paths.virtual_env_bin_dir())
             of.write(dodo_template)
         _make_executable(dodo_file)
 
     def _create_res_dir(self):
         """Install the dir with dodo_commands resources."""
-        res_dir = os.path.join(self._dodo_commands_dir, "res")
+        res_dir = self.paths.res_dir()
         os.makedirs(res_dir)
         config_filename = os.path.join(res_dir, "config.yaml")
         default_config = {
             'ROOT': {
-                'command_path': ['~/.dodo_commands/default_commands/*'],
-                'version': '1.0.0'
+                'command_path':
+                [os.path.join(self.paths.default_commands_dir(), '*')],
+                'version':
+                '1.0.0'
             }
         }
         with open(config_filename, "w") as f:
             f.write(ruamel.yaml.round_trip_dump(default_config))
 
     def _create_project(self):
-        self._report("Creating project at location %s ..." % self._project_dir)
+        self._report(
+            "Creating project at location %s ..." % self.paths.project_dir())
         self._create_res_dir()
         self._create_virtual_env()
         self._register_autocomplete()
@@ -125,23 +132,14 @@ class Activator:
         sys.stderr.write(x)
         sys.stderr.flush()
 
-    @property
-    def _project_dir(self):
-        return os.path.expanduser(
-            os.path.join(
-                self.config.get("settings", "projects_dir"), self.project))
-
-    @property
-    def _dodo_commands_dir(self):
-        return os.path.join(self._project_dir, "dodo_commands")
-
     def _config_get(self, section, key, default=""):
         return (self.config.get(section, key)
                 if self.config.has_option(section, key) else default)
 
     def run(self, project, latest, create):
         """Activate or create a project in the projects dir."""
-        self.config = get_global_config()
+        self.config = load_global_config_parser()
+
         if not self.config.has_section('recent'):
             self.config.add_section('recent')
 
@@ -164,25 +162,27 @@ class Activator:
                 self._report("There is no latest project\n")
                 return
 
+        self.paths = NewPaths(self.config, self.project)
         if create:
-            if os.path.exists(self._dodo_commands_dir):
+            if os.path.exists(self.paths.dodo_commands_dir()):
                 self._report(
-                    "Project already exists: %s\n" % self._project_dir)
+                    "Project already exists: %s\n" % self.paths.project_dir())
                 return
             if not self._create_project():
                 return
-        elif not os.path.exists(self._project_dir):
+        elif not os.path.exists(self.paths.project_dir()):
             self._report(
                 'Project not found: %s. Use the --create flag to create it\n' %
-                self._project_dir)
+                self.paths.project_dir())
             return
 
         if self.project != latest_project:
             self.config.set("recent", "previous_project", latest_project)
             self.config.set("recent", "latest_project", self.project)
-            self._write_config()
+            write_global_config_parser(self.config)
 
-        sys.stdout.write("source %s\n" % self._activate_script())
+        sys.stdout.write(
+            "source %s\n" % self._virtual_env_filename("activate"))
 
 
 def _args():
