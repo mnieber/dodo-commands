@@ -121,7 +121,7 @@ class TestConfigIO:  # noqa
 
         # dodo new-command
         expected_new_command_file = os.path.join(
-            dodo_test_dir, "src/extra/dodo_commands/tutorial_commands",
+            dodo_test_dir, "src/extra/dodo_commands/dodo_tutorial_commands",
             "foo.py")
         if os.path.exists(expected_new_command_file):
             os.unlink(expected_new_command_file)

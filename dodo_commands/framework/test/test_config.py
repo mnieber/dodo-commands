@@ -13,7 +13,7 @@ class TestConfigIO:  # noqa
         return {
             'ROOT': {
                 'layers': ['mylayer.yml'],
-                'command_path': [[foo_dir, 'bar']],
+                'command_path': [os.path.join(foo_dir, 'bar')],
                 'foo': {
                     'bar': 'foobar',
                     'one': 'two'
@@ -28,7 +28,7 @@ class TestConfigIO:  # noqa
         return {
             'ROOT': {
                 'command_path': [
-                    [foo_dir, 'foobar'],
+                    os.path.join(foo_dir, 'foobar'),
                 ],
                 'foo': {
                     'bar': 'barfoo',
@@ -64,8 +64,8 @@ class TestConfigIO:  # noqa
         full_config = configIO.load()
 
         assert full_config['ROOT']['command_path'] == [
-            [foo_dir, 'bar'],
-            [foo_dir, 'foobar'],
+            os.path.join(foo_dir, 'bar'),
+            os.path.join(foo_dir, 'foobar'),
         ]
         assert full_config['ROOT']['foo'] == {
             'bar': 'barfoo',

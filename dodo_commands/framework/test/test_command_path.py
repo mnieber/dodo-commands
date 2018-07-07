@@ -12,10 +12,10 @@ class TestCommandPaths:  # noqa
         return {
             'ROOT': {
                 'command_path': [
-                    [foo_dir, '*'],
+                    os.path.join(foo_dir, '*'),
                 ],
                 'command_path_exclude': [
-                    [foo_dir, 'bar'],
+                    os.path.join(foo_dir, 'bar'),
                 ],
             }
         }
@@ -38,5 +38,5 @@ class TestCommandPaths:  # noqa
         config = ConfigIO(str(tmpdir)).load()
         command_path = CommandPath(config)
         expected_path = os.path.join(str(tmpdir), "foo", "foobar")
-        actual_paths = [x.full_path for x in command_path.items]
+        actual_paths = [x for x in command_path.items]
         assert [expected_path] == actual_paths
