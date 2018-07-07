@@ -56,14 +56,15 @@ if Dodo.is_main(__name__):
                 label_size = max(label_size, len(label))
             label_prefix = "%0" + str(label_size) + "s"
 
+            print()
             for label in args.commands:
                 for command in args.commands[label]:
                     commands.append(command)
-                    format_string = "%02d [" + label_prefix + "] - %s"
-                    print(format_string % (len(commands), label, command))
+                    format_string = "%02s [" + label_prefix + "] - %s"
+                    print(format_string % (str(len(commands)), label, command))
 
             raw_choice = raw_input(
-                'Select one or more commands (e.g. 1,3-4), or type a command: '
+                '\nSelect one or more commands (e.g. 1,3-4), or type a command: '
             )
             selected_commands, span = filter_choices(commands, raw_choice)
             if span != [0, len(raw_choice)]:
