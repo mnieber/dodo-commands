@@ -90,11 +90,14 @@ def _cookiecutter(src_dir, cookiecutter_url):
     Dodo.runcmd(["cookiecutter", cookiecutter_url, "-o", src_dir])
 
 
-def _link(src_dir, link_dir):
-    if os.path.exists(src_dir):
+def _link_dir(link_target, link_name):
+    if os.path.exists(link_name):
         raise CommandError(
-            "Cannot create a link because %s already exists" % src_dir)
-    Dodo.runcmd(["ln", "-s", link_dir, src_dir])
+            "Cannot create a link because %s already exists" % link_name)
+    if os.name == 'nt' and not args.confirm:
+        os.symlink(link_target, link_name, target_is_directory=True)
+    else:
+        Dodo.runcmd(["ln", "-s", link_target, link_name])
 
 
 def _create_symlink_to_defaults(project_defaults_dir):
@@ -126,7 +129,7 @@ if Dodo.is_main(__name__, safe=False):
     if args.git_url:
         _clone(args, full_src_dir)
     elif args.link_dir:
-        _link(full_src_dir, os.path.expanduser(args.link_dir))
+        _link_dir(os.path.expanduser(args.link_dir), full_src_dir)
     elif args.cookiecutter_url:
         _cookiecutter(full_src_dir, os.path.expanduser(args.cookiecutter_url))
 

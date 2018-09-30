@@ -63,7 +63,10 @@ def _install_commands(path):
         return False
 
     try:
-        Dodo.runcmd(['ln', '-s', os.path.abspath(path), dest_dir])
+        if os.name == 'nt' and not args.confirm:
+            os.symlink(os.path.abspath(path), dest_dir)
+        else:
+            Dodo.runcmd(['ln', '-s', os.path.abspath(path), dest_dir])
     except:
         _report_error("Error: could not create a symlink in %s." % dest_dir)
         return False
