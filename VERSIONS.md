@@ -1,5 +1,15 @@
 # Version history
 
+## 0.16.0
+
+- Add commit-config command
+- Use /ROOT/shared_config_dir to find the shared configuration files
+- Prefer os.symlink to 'ln' on windows
+- By default install dodo_standard_commands
+- Use pip install -e to install dodo_commands in dodo projects
+- Fix the new-command command and tests
+- Improve text formatting in dodo tmux
+
 ## 0.15.1
 
 - Run yapf on all files
