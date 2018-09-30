@@ -74,23 +74,23 @@ if Dodo.is_main(__name__):
     elif args.global_config:
         sys.stdout.write(Paths().global_config_filename() + '\n')
     elif args.default_commands:
-        sys.stdout.write(Paths().default_commands_dir() + '/n')
+        sys.stdout.write(Paths().default_commands_dir() + '\n')
     elif args.script:
-        sys.stdout.write(_which_script(args.script) + "\n")
+        sys.stdout.write(_which_script(args.script) + '\n')
     elif args.directory:
-        sys.stdout.write(_which_dir(args.directory) + "\n")
+        sys.stdout.write(_which_dir(args.directory) + '\n')
     elif args.decorators:
         sys.stdout.write(", ".join(sorted(Dodo.all_decorators().keys())) +
-                         "\n")
+                         '\n')
     elif args.projects:
         projects = [
             x for x in os.listdir(_projects_dir()) if os.path.isdir(
                 os.path.join(_projects_dir(), x, "dodo_commands", "res"))
         ]
-        sys.stdout.write("\n".join(sorted(projects)) + "\n")
+        sys.stdout.write('\n'.join(sorted(projects)) + '\n')
     elif args.what:
         x = _which_script(args.what) or _which_dir(args.what)
         if x:
-            sys.stdout.write(x + "\n")
+            sys.stdout.write(x + '\n')
     else:
-        sys.stdout.write(Dodo.get_config("/ROOT/project_name") + "\n")
+        sys.stdout.write(Dodo.get_config("/ROOT/project_name") + '\n')
