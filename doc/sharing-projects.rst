@@ -22,19 +22,19 @@ Bootstrapping
 
 To share your project with new members, follow these steps:
 
-- copy your Dodo Commands configuration files to the location ``~/projects/FooBar/src/extra/dodo_commands/res`` and commit this to your git repository. These copies are the project's default Dodo configuration.
+- copy your Dodo Commands configuration files to the location ``~/projects/FooBar/src/extra/dodo_commands/res`` and commit this to your git repository. These copies are the project's shared Dodo configuration.
 
 - your colleague starts out by creating an empty Dodo Commands project using ``dodo activate FooBar --create``.
 
-Your colleague then calls the ``bootstrap`` command to clone the project repository and initialize their Dodo Commands configuration with the default configuration files:
+Your colleague then calls the ``bootstrap`` command to clone the project repository and initialize their local Dodo Commands configuration with copies of the shared configuration files:
 
 .. code-block:: bash
 
     dodo bootstrap src extra/dodo_commands/res --force --git-url https://github.com/foo/foobar.git
 
-In the above example, the repository is cloned to the ``src`` subdirectory of the project directory. The default configuration files are copied from the ``extra/dodo_commands/res`` location (which is relative to the root of the cloned repository) to ``~/projects/FooBar/dodo_commands/res``. Finally, the location of the cloned sources (``src``) is stored in the configuration under the ``${/ROOT/src_dir}`` key.
+In the above example, the repository is cloned to the ``src`` subdirectory of the project directory. The shared configuration files are copied from the ``extra/dodo_commands/res`` location (which is relative to the root of the cloned repository) to ``~/projects/FooBar/dodo_commands/res``. Finally, the location of the cloned sources (``src``) is stored in the configuration under the ``${/ROOT/src_dir}`` key, and the location of the shared configuration files is stored under ``${/ROOT/shared_config_dir}``.
 
-At this point, your colleague has the same directory structure as you, with one additional symlink:
+At this point, your colleague has the same directory structure as you:
 
 .. code-block:: bash
 
@@ -42,13 +42,10 @@ At this point, your colleague has the same directory structure as you, with one 
     ~/projects/FooBar/src                            # cloned https://github.com/foo/foobar.git repository
     ~/projects/FooBar/src/extra/dodo_commands/res    # default Dodo Commands configuration files
     ~/projects/FooBar/dodo_commands/res              # local copies of the default Dodo Commands configuration files
-    ~/projects/FooBar/dodo_commands/default_project  # symlink to ~/projects/FooBar/src/extra/dodo_commands/res
 
-- the additional symlink is used by the ``dodo diff`` command to show the differences between your local configuration files and the default files. Your colleague can freely change their local configuration files and use `dodo diff .` to update the default files and push them.
+- the ``${/ROOT/shared_config_dir}`` directory is used by the ``dodo diff`` command to show the differences between your local configuration files and the shared files. If you are using the recommended diff tool (meld) then you will now be able to copy parts of your location configuration to the shared one. When you push these changes to version control, your colleages will later be able to incorporate your changes when they run ``dodo diff``.
 
-You (as the initial creator of the project) don't have this symlink, but you can create it manually with the ``ln -s <from> <to>`` command. Then, call ``dodo diff`` to test if you have set it up correctly.
-
-- we recommend to set :code:`meld` as the ``diff_tool`` in :code:`~/.dodo_commands/config`:
+- As mentioned, we recommend to set :code:`meld` as the ``diff_tool`` in :code:`~/.dodo_commands/config`:
 
 .. code-block:: bash
 
@@ -92,5 +89,5 @@ A monolithic repository may contain several projects that each have their own Do
 Checking the config version
 ===========================
 
-The ``dodo check-config --config`` command compares the ``${/ROOT/version}`` value in your local configuration with the value in the (shared) default configuration. If someone bumped the version in the shared configuration, it will tell you that your local configuration is not up-to-date (in that case, use ``dodo diff`` to synchronize).
+The ``dodo check-config --config`` command compares the ``${/ROOT/version}`` value in your local configuration with the value in the shared configuration. If someone bumped the version in the shared configuration, it will tell you that your local configuration is not up-to-date (in that case, use ``dodo diff`` to synchronize).
 One of the synchronized values is ``${/ROOT/required_dodo_commands_version}``. The ``dodo check-version --dodo`` command reads this value and warns you if your Dodo Commands version is too old. The small script written by ``dodo autostart on`` (see :ref:`autostart`) calls both checks, and this helps you to stay synchronized.

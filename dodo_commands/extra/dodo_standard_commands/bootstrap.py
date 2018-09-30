@@ -12,9 +12,9 @@ def _args():
     parser.add_argument(
         'src_dir', help="The src directory for the bootstrapped project")
     parser.add_argument(
-        'project_defaults_dir',
+        'shared_config_dir',
         help=
-        "Location relative to src_dir where the default project config is stored",
+        "Location relative to src_dir where the shared project config is stored",
     )
     parser.add_argument('--force', dest="use_force", action="store_true")
 
@@ -51,9 +51,9 @@ def _report(msg):
     sys.stderr.write(msg + "\n")
 
 
-def _copy_defaults(args, project_defaults_dir):
+def _copy_defaults(args, shared_config_dir):
     res_dir = os.path.join(args.project_dir, "dodo_commands", "res")
-    for filename in glob.glob(os.path.join(project_defaults_dir, "*")):
+    for filename in glob.glob(os.path.join(shared_config_dir, "*")):
         dest_path = os.path.join(res_dir, os.path.basename(filename))
         if os.path.exists(dest_path):
             if args.confirm:
@@ -100,17 +100,10 @@ def _link_dir(link_target, link_name):
         Dodo.runcmd(["ln", "-s", link_target, link_name])
 
 
-def _create_symlink_to_defaults(project_defaults_dir):
-    target_dir = os.path.join(args.project_dir, 'dodo_commands',
-                              'default_project')
-    if os.path.exists(target_dir):
-        Dodo.runcmd(["rm", target_dir])
-    Dodo.runcmd(["ln", "-s", project_defaults_dir, target_dir])
-
-
-def _write_src_dir(src_dir):
+def _update_config(src_dir, shared_config_dir):
     config = ConfigIO().load(load_layers=False)
     config['ROOT']['src_dir'] = src_dir
+    config['ROOT']['shared_config_dir'] = shared_config_dir
     ConfigIO().save(config)
 
 
@@ -133,14 +126,12 @@ if Dodo.is_main(__name__, safe=False):
     elif args.cookiecutter_url:
         _cookiecutter(full_src_dir, os.path.expanduser(args.cookiecutter_url))
 
-    full_project_defaults_dir = os.path.join(full_src_dir,
-                                             args.project_defaults_dir)
-    if not os.path.exists(full_project_defaults_dir):
-        raise CommandError("Default project location %s not found." %
-                           full_project_defaults_dir)
+    shared_config_dir = os.path.join(full_src_dir, args.shared_config_dir)
+    if not os.path.exists(shared_config_dir):
+        raise CommandError(
+            "Shared config directory %s not found." % shared_config_dir)
 
-    _create_symlink_to_defaults(full_project_defaults_dir)
-    _copy_defaults(args, full_project_defaults_dir)
-    _write_src_dir(
+    _copy_defaults(args, shared_config_dir)
+    _update_config(
         args.src_dir if os.path.isabs(args.src_dir) else os.path.join(
-            "${/ROOT/project_dir}", args.src_dir))
+            "${/ROOT/project_dir}", args.src_dir), shared_config_dir)

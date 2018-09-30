@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo
+from dodo_commands.framework.paths import Paths
 from dodo_commands.framework import get_version
 from dodo_commands.framework.util import bordered
 from semantic_version import Version
@@ -29,6 +30,14 @@ def _args():
     return args
 
 
+def _shared_config_dir():
+    src_dir = Dodo.get_config("/ROOT/src_dir", None)
+    default_shared_config_dir = os.path.join(src_dir, "extra", "dodo_commands",
+                                             "res") if src_dir else None
+    return Dodo.get_config("/ROOT/shared_config_dir",
+                           default_shared_config_dir)
+
+
 def _get_root_config_field(config_filename, field_name):
     with open(config_filename) as f:
         config = ruamel.yaml.round_trip_load(f.read())
@@ -41,9 +50,7 @@ def _partial_sem_version(version):
 
 
 def _config_filename():
-    return os.path.join(
-        Dodo.get_config("/ROOT/project_dir", ""), "dodo_commands", "res",
-        "config.yaml")
+    return os.path.join(Paths().res_dir(), "config.yaml")
 
 
 def check_dodo_commands_version():  # noqa
@@ -63,9 +70,7 @@ def check_dodo_commands_version():  # noqa
 
 
 def check_config_version():  # noqa
-    project_dir = Dodo.get_config("/ROOT/project_dir", "")
-    original_file = os.path.join(project_dir, "dodo_commands",
-                                 "default_project", "config.yaml")
+    original_file = os.path.join(_shared_config_dir(), "config.yaml")
     if not os.path.exists(original_file):
         return
 
@@ -75,8 +80,7 @@ def check_config_version():  # noqa
             "No version found in original file %s\n" % original_file)
         return
 
-    copied_file = os.path.join(project_dir, "dodo_commands", "res",
-                               "config.yaml")
+    copied_file = os.path.join(Paths().res_dir(), "config.yaml")
     copied_version = _get_root_config_field(copied_file, 'version')
     if not copied_version:
         sys.stderr.write(
