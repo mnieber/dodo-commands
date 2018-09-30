@@ -33,3 +33,10 @@ class Paths:
 
     def res_dir(self):
         return os.path.join(self.project_dir(), "dodo_commands", "res")
+
+    def package_dir(self):
+        import dodo_commands
+        return os.path.dirname(dodo_commands.__file__)
+
+    def extra_dir(self):
+        return os.path.join(self.package_dir(), "extra")

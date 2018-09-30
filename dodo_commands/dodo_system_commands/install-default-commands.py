@@ -21,13 +21,8 @@ def _args():
     return args
 
 
-def _extra_dir():
-    import dodo_commands
-    return os.path.join(os.path.dirname(dodo_commands.__file__), "extra")
-
-
 def _packages_in_extra_dir():
-    extra_dir = _extra_dir()
+    extra_dir = Paths().extra_dir()
     packages = [
         x for x in os.listdir(extra_dir)
         if os.path.isdir(os.path.join(extra_dir, x)) and not x.startswith('__')
@@ -57,7 +52,7 @@ def _install_commands(path):
                             os.path.basename(path))
 
     if not os.path.exists(path):
-        alt_path = os.path.join(_extra_dir(), path)
+        alt_path = os.path.join(Paths().extra_dir(), path)
         if os.path.exists(alt_path):
             path = alt_path
         else:
