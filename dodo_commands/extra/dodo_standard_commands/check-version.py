@@ -4,6 +4,7 @@ from dodo_commands.framework.paths import Paths
 from dodo_commands.framework import get_version
 from dodo_commands.framework.util import bordered
 from semantic_version import Version
+from plumbum import local
 import os
 import ruamel.yaml
 import sys
@@ -99,9 +100,28 @@ def check_config_version():  # noqa
         sys.stdout.write('\n')
 
 
+def check_config_changes():  # noqa
+    if os.path.exists(os.path.join(Paths().res_dir(), '.git')):
+        with local.cwd(Paths().res_dir()):
+            changes = local['git']('status', '--short')
+            if changes:
+                sys.stdout.write(
+                    bordered(
+                        'Configuration has changes (tip: use "dodo commit-config"):\n'
+                        + changes))
+                sys.stdout.write('\n')
+    else:
+        sys.stdout.write(
+            bordered(
+                'Configuration has not been commit to a local git (tip: use "dodo commit-config"):\n'
+            ))
+        sys.stdout.write('\n')
+
+
 if Dodo.is_main(__name__, safe=False):
     args = _args()
     if args.check_dodo:
         check_dodo_commands_version()
     if args.check_config:
         check_config_version()
+        check_config_changes()
