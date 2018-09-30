@@ -18,21 +18,19 @@ def _make_executable(script_filename):
 
 dodo_template = """
 import os
-from os.path import abspath, dirname
+from os.path import abspath, realpath, dirname
 import sys
 from dodo_commands.framework import execute_from_command_line
 
-
 if __name__ == "__main__":
-    if not dirname(abspath(__file__)).endswith("env/bin"):
+    exe_dir = dirname(realpath(abspath(__file__)))
+    if not exe_dir.endswith("env/bin"):
         sys.stderr.write(
-            'Error: this script must be run from the env/bin directory'
-        )
+            'Error: this script must be run from the env/bin directory')
         sys.exit(1)
 
-    os.environ["DODO_COMMANDS_PROJECT_DIR"] = abspath(
-        dirname(dirname(dirname(dirname(__file__))))
-    )
+    os.environ["DODO_COMMANDS_PROJECT_DIR"] = dirname(
+        dirname(dirname(exe_dir)))
     execute_from_command_line(sys.argv)
 """
 
