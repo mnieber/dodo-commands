@@ -206,11 +206,6 @@ class CommandPath:
     """Read search paths for command scripts from the configuration."""
 
     def __init__(self, config):
-        """config_base_dir is the directory where config files are searched.
-
-        The config_base_dir arg defaults to_
-        _default_project_base_dir(project_dir).
-        """
         exclude_patterns = self._exclude_patterns(config)
         excluded_command_dirs = self._create_items(exclude_patterns)
 
