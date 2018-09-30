@@ -49,6 +49,11 @@ def create_global_config():
     default_commands_dir = Paths().default_commands_dir()
     if not os.path.exists(default_commands_dir):
         os.mkdir(default_commands_dir)
+        os.symlink(
+            os.path.join(Paths().extra_dir(), "dodo_standard_commands"),
+            os.path.join(Paths().default_commands_dir(),
+                         "dodo_standard_commands"),
+            target_is_directory=True)
 
     init_py = os.path.join(default_commands_dir, "__init__.py")
     if not os.path.exists(init_py):
