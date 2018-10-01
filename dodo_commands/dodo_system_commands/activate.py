@@ -71,9 +71,20 @@ class Activator:
                               r'PS1="(%s) $PS1"' % self.project))
 
         pip = local[self._virtual_env_filename('pip')]
-        pip("install", "ansimarkup", "semantic_version", "pudb")
-        pip('install', '-e',
-            os.path.dirname(os.path.dirname(dodo_commands.__file__)))
+        pip(
+            "install",
+            "ansimarkup",
+            "argcomplete",
+            "parsimonious",
+            "plumbum",
+            "ruamel.yaml",
+            "semantic_version",
+            "six",
+        )
+
+        os.symlink(
+            os.path.dirname(dodo_commands.__file__),
+            os.path.join(self.paths.site_packages_dir(), "dodo_commands"))
 
     def _register_autocomplete(self):
         """Install a virtual env."""
