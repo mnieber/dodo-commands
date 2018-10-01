@@ -1,5 +1,11 @@
 # Version history
 
+## 0.16.2
+
+- rename dodo_search_path to search_path
+- Fix: use /ROOT/src_dir in setting of shared_config_dir
+- Fix: Adapt paths if running on Windows
+
 ## 0.16.1
 
 - Revert use of pip install -e
