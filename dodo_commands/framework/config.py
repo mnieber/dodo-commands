@@ -239,7 +239,7 @@ class CommandPath:
         hash_code = hashlib.md5(json.dumps(
             self.items).encode('utf-8')).hexdigest()
         search_path_dir = os.path.join(Paths().global_config_dir(),
-                                       "dodo_search_path", hash_code)
+                                       "search_path", hash_code)
 
         if not os.path.exists(search_path_dir):
             os.makedirs(search_path_dir)
