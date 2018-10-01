@@ -4,6 +4,7 @@ from dodo_commands.framework import Dodo, CommandError
 from dodo_commands.framework.paths import Paths
 from dodo_commands.framework.config import (load_global_config_parser,
                                             write_global_config_parser)
+from dodo_commands.framework.util import is_windows
 import os
 import sys
 import ruamel.yaml
@@ -24,15 +25,15 @@ from dodo_commands.framework import execute_from_command_line
 
 if __name__ == "__main__":
     exe_dir = dirname(realpath(abspath(__file__)))
-    if not exe_dir.endswith("env/bin"):
+    if not exe_dir.endswith("env/{bin}"):
         sys.stderr.write(
-            'Error: this script must be run from the env/bin directory')
+            'Error: this script must be run from the env/{bin} directory')
         sys.exit(1)
 
     os.environ["DODO_COMMANDS_PROJECT_DIR"] = dirname(
         dirname(dirname(exe_dir)))
     execute_from_command_line(sys.argv)
-"""
+""".format(bin='Scripts' if is_windows() else 'bin')
 
 
 class NewPaths(Paths):
@@ -70,8 +71,7 @@ class Activator:
                 lines.replace(r'PS1="(`basename \"$VIRTUAL_ENV\"`) $PS1"',
                               r'PS1="(%s) $PS1"' % self.project))
 
-        pip = local[self._virtual_env_filename('pip')]
-        pip(
+        local[self.paths.pip()](
             "install",
             "ansimarkup",
             "argcomplete",
@@ -121,7 +121,8 @@ class Activator:
             "Creating project at location %s ..." % self.paths.project_dir())
         self._create_res_dir()
         self._create_virtual_env()
-        self._register_autocomplete()
+        if not is_windows():
+            self._register_autocomplete()
         self._create_dodo_script()
         self._report(" done\n")
         return True

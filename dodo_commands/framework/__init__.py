@@ -35,7 +35,7 @@ def execute_script(package_path, command_name):
             print(meta_data['requirements'])
             if query_yes_no("Install (yes), or abort (no)?"):
                 print("\n--- Installing from %s ---" % meta_data_filename)
-                pip = os.path.join(Paths.virtual_env_bin_dir(), 'pip')
+                pip = Paths().pip()
                 subprocess.check_call([pip, "install"] +
                                       meta_data['requirements'])
                 print("--- Done ---\n\n")

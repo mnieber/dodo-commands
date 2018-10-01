@@ -64,7 +64,8 @@ def _install_commands(path):
 
     try:
         if os.name == 'nt' and not args.confirm:
-            os.symlink(os.path.abspath(path), dest_dir)
+            os.symlink(
+                os.path.abspath(path), dest_dir, target_is_directory=True)
         else:
             Dodo.runcmd(['ln', '-s', os.path.abspath(path), dest_dir])
     except:
@@ -75,7 +76,7 @@ def _install_commands(path):
 
 
 def _install_package(package):
-    pip = os.path.join(os.path.dirname(sys.executable), "pip")
+    pip = Paths().pip()
     if pip.startswith('/usr/') and not os.path.exists(pip):
         alt_pip = pip.replace("/usr/", "/usr/local/")
         if os.path.exists(alt_pip):

@@ -102,3 +102,7 @@ def filter_choices(all_choices, raw_choice):
         for idx in range(from_index, to_index + 1):
             result.append(all_choices[idx])
     return result, span
+
+
+def is_windows():
+    return os.name == 'nt'
