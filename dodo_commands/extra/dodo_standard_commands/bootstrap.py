@@ -100,10 +100,11 @@ def _link_dir(link_target, link_name):
         Dodo.runcmd(["ln", "-s", link_target, link_name])
 
 
-def _update_config(src_dir, shared_config_dir):
+def _update_config(src_dir, relative_shared_config_dir):
     config = ConfigIO().load(load_layers=False)
     config['ROOT']['src_dir'] = src_dir
-    config['ROOT']['shared_config_dir'] = shared_config_dir
+    config['ROOT'][
+        'shared_config_dir'] = '${/ROOT/src_dir}/%s' % relative_shared_config_dir
     ConfigIO().save(config)
 
 
@@ -134,4 +135,5 @@ if Dodo.is_main(__name__, safe=False):
     _copy_defaults(args, shared_config_dir)
     _update_config(
         args.src_dir if os.path.isabs(args.src_dir) else os.path.join(
-            "${/ROOT/project_dir}", args.src_dir), shared_config_dir)
+            "${/ROOT/project_dir}", args.src_dir),
+        os.path.join(args.src_subdir or '', args.shared_config_dir))
