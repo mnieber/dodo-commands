@@ -1,5 +1,9 @@
 # Version history
 
+## 0.16.1
+
+- Revert use of pip install -e
+
 ## 0.16.0
 
 - Add commit-config command
