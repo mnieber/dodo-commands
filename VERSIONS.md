@@ -1,10 +1,9 @@
 # Version history
 
-## 0.16.2
+## 0.16.3
 
-- rename dodo_search_path to search_path
-- Fix: use /ROOT/src_dir in setting of shared_config_dir
-- Fix: Adapt paths if running on Windows
+- Fix issues with file paths under windows
+- Add symlink fallback for python 2 on windows
 
 ## 0.16.1
 
