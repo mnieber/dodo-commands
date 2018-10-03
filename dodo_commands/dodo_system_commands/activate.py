@@ -25,15 +25,16 @@ from dodo_commands.framework import execute_from_command_line
 
 if __name__ == "__main__":
     exe_dir = dirname(realpath(abspath(__file__)))
-    if not exe_dir.endswith("env/{bin}"):
+    if not exe_dir.endswith("env{sep}{bin}"):
         sys.stderr.write(
-            'Error: this script must be run from the env/{bin} directory')
+            'Error: this script must be run from the env{sep}{bin} directory')
         sys.exit(1)
 
     os.environ["DODO_COMMANDS_PROJECT_DIR"] = dirname(
         dirname(dirname(exe_dir)))
     execute_from_command_line(sys.argv)
-""".format(bin='Scripts' if is_windows() else 'bin')
+""".format(
+    bin='Scripts' if is_windows() else 'bin', sep=os.sep)
 
 
 class NewPaths(Paths):

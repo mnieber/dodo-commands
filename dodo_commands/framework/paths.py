@@ -36,9 +36,13 @@ class Paths:
     def site_packages_dir(self):
         python = local[os.path.join(self.virtual_env_bin_dir(),
                                     "python" + _ext())]
-        return python(
+
+        result = python(
             "-c", "from distutils.sysconfig import get_python_lib; " +
-            "print(get_python_lib())")[:-1]
+            "print(get_python_lib())")
+        while result[-1] in ['\n', '\r']:
+            result = result[:-1]
+        return result
 
     def project_dir(self):
         """Return the root dir of the current project."""
