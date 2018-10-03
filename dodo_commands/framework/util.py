@@ -4,8 +4,6 @@ from six.moves import input as raw_input
 import os
 import sys
 import re
-# support legacy
-from .config import create_global_config  # noqa
 
 
 def query_yes_no(question, default="yes"):
@@ -106,3 +104,18 @@ def filter_choices(all_choices, raw_choice):
 
 def is_windows():
     return os.name == 'nt'
+
+
+def symlink(source, link_name, target_is_directory=False):
+    import os
+    os_symlink = getattr(os, "symlink", None)
+    if callable(os_symlink):
+        os_symlink(source, link_name, target_is_directory)
+    else:
+        import ctypes
+        csl = ctypes.windll.kernel32.CreateSymbolicLinkW
+        csl.argtypes = (ctypes.c_wchar_p, ctypes.c_wchar_p, ctypes.c_uint32)
+        csl.restype = ctypes.c_ubyte
+        flags = 1 if os.path.isdir(source) else 0
+        if csl(link_name, source, flags) == 0:
+            raise ctypes.WinError()

@@ -4,7 +4,7 @@ from dodo_commands.framework import Dodo, CommandError
 from dodo_commands.framework.paths import Paths
 from dodo_commands.framework.config import (load_global_config_parser,
                                             write_global_config_parser)
-from dodo_commands.framework.util import is_windows
+from dodo_commands.framework.util import is_windows, symlink
 import os
 import sys
 import ruamel.yaml
@@ -82,9 +82,10 @@ class Activator:
             "six",
         )
 
-        os.symlink(
+        symlink(
             os.path.dirname(dodo_commands.__file__),
-            os.path.join(self.paths.site_packages_dir(), "dodo_commands"))
+            os.path.join(self.paths.site_packages_dir(), "dodo_commands"),
+            target_is_directory=True)
 
     def _register_autocomplete(self):
         """Install a virtual env."""

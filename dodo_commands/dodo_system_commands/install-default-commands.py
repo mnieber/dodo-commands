@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo, CommandError
 from dodo_commands.framework.paths import Paths
-from dodo_commands.framework.util import is_using_system_dodo
+from dodo_commands.framework.util import is_using_system_dodo, symlink
 import sys
 import os
 
@@ -64,8 +64,7 @@ def _install_commands(path):
 
     try:
         if os.name == 'nt' and not args.confirm:
-            os.symlink(
-                os.path.abspath(path), dest_dir, target_is_directory=True)
+            symlink(os.path.abspath(path), dest_dir, target_is_directory=True)
         else:
             Dodo.runcmd(['ln', '-s', os.path.abspath(path), dest_dir])
     except:

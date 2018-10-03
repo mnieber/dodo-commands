@@ -2,6 +2,7 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo, CommandError
 from dodo_commands.framework.config import ConfigIO
+from dodo_commands.framework.util import symlink
 import glob
 import os
 import sys
@@ -95,7 +96,7 @@ def _link_dir(link_target, link_name):
         raise CommandError(
             "Cannot create a link because %s already exists" % link_name)
     if os.name == 'nt' and not args.confirm:
-        os.symlink(link_target, link_name, target_is_directory=True)
+        symlink(link_target, link_name, target_is_directory=True)
     else:
         Dodo.runcmd(["ln", "-s", link_target, link_name])
 

@@ -4,6 +4,7 @@ from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.config_expander import ConfigExpander
 from dodo_commands.framework.config_expander import Key, KeyNotFound  # noqa
 from dodo_commands.framework.paths import Paths
+from dodo_commands.framework.util import symlink
 from six.moves import configparser
 import glob
 import json
@@ -49,7 +50,7 @@ def create_global_config():
     default_commands_dir = Paths().default_commands_dir()
     if not os.path.exists(default_commands_dir):
         os.mkdir(default_commands_dir)
-        os.symlink(
+        symlink(
             os.path.join(Paths().extra_dir(), "dodo_standard_commands"),
             os.path.join(Paths().default_commands_dir(),
                          "dodo_standard_commands"),
@@ -246,10 +247,10 @@ class CommandPath:
             open(os.path.join(search_path_dir, "__init__.py"), 'a').close()
             for item in self.items:
                 basename = os.path.basename(item)
-                os.symlink(
+                symlink(
                     item,
                     os.path.join(search_path_dir, basename),
-                )
+                    target_is_directory=True)
 
         return search_path_dir
 
