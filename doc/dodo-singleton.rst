@@ -10,7 +10,7 @@ This chapter describes the functions offered by the Dodo singleton class. You ca
 The is_main function
 ====================
 
-Using ``if Dodo.is_main(__name__)`` instead of the usual ``if __name__ == '__main__'`` allows Dodo Commands to execute your script also when its invoked through calling ``dodo``.
+Using ``if Dodo.is_main(__name__)`` instead of the usual ``if __name__ == '__main__'`` allows Dodo Commands to execute your script when its invoked through calling ``dodo``.
 
 
 .. code-block:: python
@@ -30,7 +30,7 @@ Calling ``Dodo.get_config('/ROOT/my/key', 'default-value')`` will retrieve a val
 The runcmd function
 ===================
 
-The ``Dodo.runcmd`` function takes a list of arguments (and a current working directory) and runs them on the command line. Moreover, it adds all variables in ``${/ENVIRONMENT/variable_map}`` to the system environment (for the duration of running the command).
+The ``Dodo.runcmd`` function takes a list of arguments (and a current working directory) and runs them on the command line. It also adds all variables in ``${/ENVIRONMENT/variable_map}`` to the system environment (for the duration of running the command).
 
 .. code-block:: python
 
@@ -62,21 +62,25 @@ The ``Dodo.parse_args(parser)`` function adds an ``--echo`` and ``--confirm`` fl
 Marking a script as unsafe
 ==========================
 
-Since command scripts are written in Python, the script can in principle perform any operation without explicitly asking your permission. In other words, it may choose to ignore the --confirm and --echo options. This sitation should of course be avoided. However, if a Command script does not completely honor the ``--confirm`` and ``--echo`` flags, it should pass ``safe=False`` when it calls ``Dodo.is_main``, as shown in the example below. Unsafe commands will not run with the --echo flag, and will pause with a warning when run with the --confirm flag.
+Since command scripts are written in Python, the script can in principle perform any operation without explicitly asking your permission. In other words, it may choose to ignore the ``--confirm`` and ``--echo`` options. This sitation should of course be avoided. However, if a Command script does not completely honor the ``--confirm`` and ``--echo`` flags, it should pass ``safe=False`` when it calls ``Dodo.is_main``, as shown in the example below. Unsafe commands will not run with the --echo flag, and will pause with a warning when run with the --confirm flag.
 
 .. code-block:: python
 
-    if Dodo.is_main(__name__, safe=False):
+    if Dodo.is_main(__name__, safe=False): # NOTE: setting the _safe flag here
         parser = ArgumentParser()
         args = Dodo.parse_args(parser)
 
         # Do destructive things without asking permission. Having this call
         # is the reason we used safe=False to mark the script as unsafe.
+        # Running the script with ``--echo`` is not possible, because that would
+        # lead to unpleasant surprises. Running with ``--confirm`` will inform
+        # you that unpleasant surprises can be expected if you continue.
         os.unlink('/tmp/foo.text')
 
         # Delete the /tmp directory. Since this time we are using Dodo.runcmd,
         # the user can use the --confirm flag to inspect and cancel it.
-        # This makes this call *relatively* safe.
+        # This makes this call *relatively* safe, but if you blindly run this script (without
+        # using ``--confirm``) you may still be unpleasantly surprised.
         Dodo.runcmd(['rm', '-rf', '/tmp'])
 
 
@@ -116,7 +120,7 @@ A Decorator is a class that alters the workings of a Dodo Command script. It can
             return debugger_node, cwd
 
 
-Note that not all decorators are compatible with all commands. For example, only some commands can be run inside a debugger. Therefore, for each decorator you should list in the configuration which commands are decorated. When listing the commands, wildcards are allowed, and you can exclude commands by prefixing them with an exclamation mark:
+Note that not all decorators are compatible with all commands. For example, only some commands can be run inside a debugger. Therefore, the configuration contains a list of decorated command for each decorator. In this list, wildcards are allowed, and you can exclude commands by prefixing them with an exclamation mark:
 
 .. code-block:: yaml
 

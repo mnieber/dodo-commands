@@ -26,7 +26,7 @@ or
 Command path
 ============
 
-The search path for commands is determined by the ``${/ROOT/command_path}`` setting in config.yaml. The ``dodo_system_commands`` module is added to the command path by default. In the example below, all subdirectories of the default commands are used (note the ``*`` wildcard), as well as the :code:`special_commands` directory:
+The search path for commands is determined by the ``${/ROOT/command_path}`` setting in ``config.yaml``. The ``dodo_system_commands`` module is added to the command path by default. In the example below, all subdirectories of the default commands are used (note the ``*`` wildcard), as well as the :code:`special_commands` directory:
 
 .. code-block:: yaml
 
@@ -76,4 +76,4 @@ You can added aliases for any dodo command in the ``aliases`` section of :ref:`g
 The structure of a command script
 =================================
 
-When you run a command with ``dodo foo --bar``, the foo.py script is searched in the configured command_path, as described above, and imported. This import will not have any effect if you are using a standard ``if __name__ == '__main__'`` clause. Therefore, you should instead use ``if Dodo.is_main(__name__)``, as explained in :ref:`singleton`. Apart from this restriction, you can do anything you like in the script. To take advantage of the Dodo Command features, read about (:ref:`singleton`).
+When you run a command with ``dodo foo --bar``, the foo.py script is searched in the configured command_path, as described above, and imported. To make sure that something happens when the script is imported, you should replace the standard ``if __name__ == '__main__'`` clause with ``if Dodo.is_main(__name__)``. Apart from this restriction, you can do anything you like in the script. More details are given in :ref:`singleton`.

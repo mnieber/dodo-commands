@@ -16,9 +16,9 @@ Contents:
    goals
    installation
    projects
+   configuration
    commands
    dodo-singleton
-   configuration
    sharing-projects
    diagnose
 

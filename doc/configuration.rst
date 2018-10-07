@@ -14,7 +14,7 @@ A new configuration file is created automatically when the project is first crea
 
 1. environment variables (such as ``$PATH``) in values are expanded automatically
 
-2. special "dodo environment" variables refer to other values in the configuration file:
+2. values may contain cross-references to other values in the configuration file:
 
 .. code-block:: yaml
 

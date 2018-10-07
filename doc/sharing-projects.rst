@@ -7,7 +7,7 @@ Sharing projects
 Objectives
 ==========
 
-If someone joins your project, then it makes sense to share your working environment with them. At the same time, you want working environments to be independent, so that each project member can arrange it to their preferences. How this is achieved should become clear in this chapter.
+If someone joins your project, then it makes sense to share your working environment with them. At the same time, you want working environments to be independent, so that each project member can arrange it to their preferences. This is achieved by having a shared configuration from which you cherry-pick the parts you need (this is somewhat comparable to how remote repositories work in git)
 
 In the explanation below, we'll assume that you have the following project directory layout:
 
@@ -20,19 +20,19 @@ In the explanation below, we'll assume that you have the following project direc
 Bootstrapping
 =============
 
-To share your project with new members, follow these steps:
+To share an existing project with new team members, follow these steps:
 
 - copy your Dodo Commands configuration files to the location ``~/projects/FooBar/src/extra/dodo_commands/res`` and commit this to your git repository. These copies are the project's shared Dodo configuration.
 
-- your colleague starts out by creating an empty Dodo Commands project using ``dodo activate FooBar --create``.
+- ask your colleague to create an empty Dodo Commands project using ``dodo activate FooBar --create``.
 
-Your colleague then calls the ``bootstrap`` command to clone the project repository and initialize their local Dodo Commands configuration with copies of the shared configuration files:
+Your colleague then calls the ``bootstrap`` command to clone ``foobar.git`` and initialize their local Dodo Commands configuration with copies of the shared configuration files:
 
 .. code-block:: bash
 
     dodo bootstrap src extra/dodo_commands/res --force --git-url https://github.com/foo/foobar.git
 
-In the above example, the repository is cloned to the ``src`` subdirectory of the project directory. The shared configuration files are copied from the ``extra/dodo_commands/res`` location (which is relative to the root of the cloned repository) to ``~/projects/FooBar/dodo_commands/res``. Finally, the location of the cloned sources (``src``) is stored in the configuration under the ``${/ROOT/src_dir}`` key, and the location of the shared configuration files is stored under ``${/ROOT/shared_config_dir}``.
+In the above example, the repository is cloned to the ``src`` subdirectory of the project directory. The shared configuration files are copied from the ``extra/dodo_commands/res`` location (which is relative to ``src``) to ``~/projects/FooBar/dodo_commands/res``. Finally, the location of the cloned sources (``src``) is stored in the configuration under the ``${/ROOT/src_dir}`` key, and the location of the shared configuration files is stored under ``${/ROOT/shared_config_dir}``.
 
 At this point, your colleague has the same directory structure as you:
 
@@ -54,10 +54,19 @@ At this point, your colleague has the same directory structure as you:
 - To synchronize only config.yaml, call ``dodo diff config.yaml``. It's a good practice to use the value ``${/ROOT/version}`` to track whether the copied configuration is up-to-date or not (see :ref:`check_config`).
 
 
+.. _check_config:
+
+Checking the config version
+===========================
+
+The ``dodo check-config --config`` command compares the ``${/ROOT/version}`` value in your local configuration with the value in the shared configuration. If someone bumped the version in the shared configuration, it will tell you that your local configuration is not up-to-date (in that case, use ``dodo diff`` to synchronize).
+One of the synchronized values is ``${/ROOT/required_dodo_commands_version}``. The ``dodo check-version --dodo`` command reads this value and warns you if your Dodo Commands version is too old. The small script written by ``dodo autostart on`` (see :ref:`autostart`) calls both checks, and this helps you to stay synchronized.
+
+
 Starting a project from a cookiecutter template
 ===============================================
 
-It's convenient to start a new project from a cookiecutter template. This can be achieved by using the ``cookiecutter-url`` option instead of ``git-url`` in the ``bootstrap`` call:
+It's convenient to start a brand new project from a cookiecutter template. This can be achieved by using the ``cookiecutter-url`` option instead of ``git-url`` in the ``bootstrap`` call:
 
 .. code-block:: bash
 
@@ -83,11 +92,3 @@ A monolithic repository may contain several projects that each have their own Do
     # Bootstrap the foobar project without cloning the sources, copying the
     # configuration from ~/sources/monolith/foobar/extra/dodo_commands/res
     dodo bootstrap --link-dir ~/sources/monolith/foobar extra/dodo_commands/res --force
-
-.. _check_config:
-
-Checking the config version
-===========================
-
-The ``dodo check-config --config`` command compares the ``${/ROOT/version}`` value in your local configuration with the value in the shared configuration. If someone bumped the version in the shared configuration, it will tell you that your local configuration is not up-to-date (in that case, use ``dodo diff`` to synchronize).
-One of the synchronized values is ``${/ROOT/required_dodo_commands_version}``. The ``dodo check-version --dodo`` command reads this value and warns you if your Dodo Commands version is too old. The small script written by ``dodo autostart on`` (see :ref:`autostart`) calls both checks, and this helps you to stay synchronized.
