@@ -1,5 +1,9 @@
 # Version history
 
+## 0.16.4
+
+- Improve documentation
+
 ## 0.16.3
 
 - Fix issues with file paths under windows
