@@ -4,13 +4,13 @@
 Creating and using projects
 ***************************
 
-After following the :ref:`installation` steps, you now have a ``dodo`` executable that you can use to create new projects in the projects directory (which is ``~/projects`` by default). To see where it's located type:
+The :ref:`installation` steps have created a ``dodo`` executable that you can use to create new projects in the projects directory (which is ``~/projects`` by default). To see where the ``dodo`` script is located type:
 
 .. code-block:: bash
 
     which dodo
 
-Each dodo project has it's own copy of the dodo executable (called the "project" dodo). By calling the "project" dodo, you can operate on the project. We'll explain how this works the long and clunky way, and then how the same can be done much faster.
+Each dodo project has it's own copy of the dodo executable. By calling the project-specific dodo executable, you can operate on the project. We'll explain how this works the long and clunky way, and then how the same can be done much faster.
 
 
 Creating a project
@@ -35,14 +35,12 @@ This will execute the following steps:
 
 #. the ``dodo`` script will read the ``command_path`` (a list of directories with command scripts) from the project's configuration file (``~/projects/FooBar/dodo_commands/res/config.yaml``).
 
-#. the foo.py script is found and run with the --bar option
-
-#. the foo.py script can access the project's configuration and does some operation on the project (such as deleting all build results in ~/projects/FooBar/build/debug)
+#. the foo.py script is found somewhere on the ``command_path`` and run with the --bar option
 
 Activating a project
 ====================
 
-The ``~/projects/FooBar/dodo_commands/env/bin/dodo`` script is part of a virtual python environment that was installed when we called ``dodo activate FooBar --create``. You can save some typing by first activating this python environment with:
+The ``~/projects/FooBar/dodo_commands/env/bin/dodo`` script is part of a virtual python environment that was installed when we called ``dodo activate FooBar --create``. To avoid having to type the full path to the project specific dodo executable, you can first activate this python environment with:
 
 .. code-block:: bash
 
@@ -60,7 +58,7 @@ The short-cut to activating the python environment is using:
 
     $(dodo activate FooBar)
 
-If you omit the ``$()`` part then ``dodo activate`` prints the line ``source ~/projects/FooBar/dodo_commands/env/bin/activate``. The ``$(...)`` syntax takes care of executing this in the shell. To create a new project and activate it at the same time, call:
+Note that if you omit the ``$()`` part then ``dodo activate`` prints the line ``source ~/projects/FooBar/dodo_commands/env/bin/activate``. The ``$(...)`` syntax takes care of executing this in the shell. To create a new project and activate it at the same time, call:
 
 .. code-block:: bash
 
@@ -80,9 +78,13 @@ You can activate the last used project with ``$(dodo activate --latest)``. To pe
     dodo autostart on
     cat ~/.dodo_commands_autostart
 
-    > $(dodo activate --latest)
-    > dodo check-config-version
-    > dodo check-version
+which will print
+
+.. code-block:: bash
+
+    $(dodo activate --latest)
+    dodo check-config-version
+    dodo check-version
 
 Then, add the following lines to your ``~/.bashrc`` to execute this script when a terminal is opened:
 

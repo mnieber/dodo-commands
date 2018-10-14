@@ -4,7 +4,7 @@
 Configuration files
 *******************
 
-Activating a project such as FooBar with :code:`$(dodo activate FooBar)` implies that this project's configuration file is accessible to any command that you execute. This chapter explains how to store values in the configuration file and use them in a command script.
+After activating a project such as FooBar with :code:`$(dodo activate FooBar)`, the project's configuration file is accessible to any command that you execute. This chapter explains how to store values in the configuration file and use them in a command script.
 
 
 Configuration files
@@ -22,7 +22,7 @@ A new configuration file is created automatically when the project is first crea
         nr_of_threads: 2
     FOO:
         bar: ${/BUILD/nr_of_threads}      # value will be the number 2
-        ${/BUILD/nr_of_threads}_foo: bar  # key will be the string "2_foo"
+        ${/BUILD/nr_of_threads}_foo: baz  # key will be the string "2_foo"
 
 3. if a configuration key ends in _EVAL, then its associated value is evaluated in Python and stored as a string. If the associated value is a list or dictionary, then every value in that list or dictionary is evaluated (but not recursively). Use with caution! For example:
 

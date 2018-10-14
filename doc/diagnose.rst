@@ -4,7 +4,7 @@
 The diagnose command
 ********************
 
-When a colleague shares a Dodo Commands project with you, then you obtain a set of commands for working with this environment. However, to be in control, it's still required to understand how all these commands work. Questions you will have include:
+When a colleague shares a Dodo Commands project with you, then you obtain a set of commands for working with this environment. However, it's still necessary to understand how all these commands work. Questions you will have include:
 
 - which tasks are supported by the environment?
 - which commands are available to perform these tasks?
@@ -39,8 +39,8 @@ The typical Dodo configuration for the diagnose command is:
 
         # Import custom jinja2 filters and tests
         filters:
-            - - ${/DIAGNOSE/src_dir}
-              - filters
+            - - ${/DIAGNOSE/src_dir}  # added to sys.path
+              - filters               # relative module import path
 
 Note that you should have a `index.rst` file in the diagnose source directory, which has a table of contents that references the other .rst files.
 

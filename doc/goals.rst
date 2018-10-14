@@ -2,7 +2,7 @@
 Goals of the Dodo Commands system
 *********************************
 
-The Dodo Commands system supports various goals, the main one being: associate a set of short commands with each project to automate frequent tasks. The following list skips some of the details, but gives a general overview. To see a use-case, visit this `page <https://github.com/mnieber/dodo_commands>`_.
+The Dodo Commands system supports various goals, the main one being: associate a set of short commands with each project to automate frequent tasks. The following list skips some of the details, but gives a general overview. We also encourage you to try the tutorial on this `page <https://github.com/mnieber/dodo_commands>`_.
 
 Provide a per-project environment
 =================================

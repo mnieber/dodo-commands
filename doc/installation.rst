@@ -17,11 +17,6 @@ Dodo Commands depends on the python-virtualenv package. In addition, some of the
     # install dodo commands
     sudo pip install dodo_commands
 
-    # install default commands
-    dodo install-default-commands dodo_standard_commands --pip dodo_webdev_commands --pip dodo_git_commands
-
-The :code:`dodo_standard_commands` directory was found "magically" because it comes with the Dodo Commands python package. Commands are installed in the ``~/.dodo_commands/default_commands`` directory. See :ref:`commands` to read more about installing default commands.
-
 .. tip::
 
    On Mac you may need to create a file ``~/.distutils.cfg`` that `sets an empty prefix <http://stackoverflow.com/a/24357384/301034>`_ to prevent errors stating "must supply either home or prefix/exec-prefix -- not both".
@@ -63,6 +58,15 @@ The first time you call :code:`dodo`, a global :code:`~/.dodo_commands/config` f
 .. code-block:: bash
 
     dodo global-config settings.diff_tool meld
+
+Step 5: (Optional) Install extra default commands
+=================================================
+
+The :code:`dodo_standard_commands` directory is added by default to the ``~/.dodo_commands/default_commands`` directory where default commands are installed. To install additional commands into this directory, you can run
+
+.. code-block:: bash
+
+    dodo install-default-commands --pip dodo_webdev_commands --pip dodo_git_commands
 
 Upgrading
 =========

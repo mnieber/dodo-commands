@@ -24,18 +24,18 @@ Using ``if Dodo.is_main(__name__)`` instead of the usual ``if __name__ == '__mai
 The get_config function
 =======================
 
-Calling ``Dodo.get_config('/ROOT/my/key', 'default-value')`` will retrieve a value from the project's :ref:`configuration`. Use ``Dodo.config`` to get direct access to the configuration object.
+Calling ``Dodo.get_config('/ROOT/my/key', 'default-value')`` will retrieve a value from the project's :ref:`configuration`. Use ``Dodo.config`` to get direct access to the configuration dictionary.
 
 
 The runcmd function
 ===================
 
-The ``Dodo.runcmd`` function takes a list of arguments (and a current working directory) and runs them on the command line. It also adds all variables in ``${/ENVIRONMENT/variable_map}`` to the system environment (for the duration of running the command).
+The ``Dodo.runcmd`` function takes a list of arguments (and a current working directory) and runs them on the command line. It also adds all variables in ``${/ENVIRONMENT/variable_map}`` to the system environment for the duration of running the command.
 
 .. code-block:: python
 
     if Dodo.is_main(__name__):
-        # You must call Dodo.parse_args before calling Dodo.runcmd,
+        # Note that you must call Dodo.parse_args before calling Dodo.runcmd,
         # or an exception will be raised
         parser = ArgumentParser()
         parser.add_argument(
@@ -128,5 +128,5 @@ Note that not all decorators are compatible with all commands. For example, only
       decorators:
         # Use a wildcard to decorate all commands, but exclude the foo command
         debugger: ['*', '!foo']
-        # cmake and runserver can be run inside docker
+        # The cmake and runserver scripts can be run inside docker
         docker: ['cmake', 'runserver']

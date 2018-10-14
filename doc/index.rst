@@ -15,6 +15,7 @@ Contents:
 
    goals
    installation
+   dodo-commands-script
    projects
    configuration
    commands
