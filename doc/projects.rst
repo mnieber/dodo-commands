@@ -10,7 +10,7 @@ The :ref:`installation` steps have created a ``dodo`` executable that you can us
 
     which dodo
 
-Each dodo project has it's own copy of the dodo executable. By calling the project-specific dodo executable, you can operate on the project. We'll explain how this works the long and clunky way, and then how the same can be done much faster.
+Each dodo project has it's own copy of the dodo executable through which you can operate on the project. We'll explain how this works the long and clunky way, and then how the same can be done much faster.
 
 
 Creating a project
@@ -35,12 +35,12 @@ This will execute the following steps:
 
 #. the ``dodo`` script will read the ``command_path`` (a list of directories with command scripts) from the project's configuration file (``~/projects/FooBar/dodo_commands/res/config.yaml``).
 
-#. the foo.py script is found somewhere on the ``command_path`` and run with the --bar option
+#. the foo.py script is found on the ``command_path`` and run with the --bar option
 
 Activating a project
 ====================
 
-The ``~/projects/FooBar/dodo_commands/env/bin/dodo`` script is part of a virtual python environment that was installed when we called ``dodo activate FooBar --create``. To avoid having to type the full path to the project specific dodo executable, you can first activate this python environment with:
+The ``~/projects/FooBar/dodo_commands/env/bin/dodo`` script is part of a virtual python environment that was installed when we called ``dodo activate FooBar --create``. To avoid having to type the full path to ``dodo``, you can first activate this python environment with:
 
 .. code-block:: bash
 
@@ -76,9 +76,8 @@ You can activate the last used project with ``$(dodo activate --latest)``. To pe
 .. code-block:: bash
 
     dodo autostart on
-    cat ~/.dodo_commands_autostart
 
-which will print
+Inspecting the result with ``cat ~/.dodo_commands_autostart`` will print
 
 .. code-block:: bash
 
