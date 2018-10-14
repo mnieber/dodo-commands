@@ -27,7 +27,7 @@ Call `$(dodo activate fooProject)` to activate its Python virtual environment.
 
 2. Each project contains a set of short commands. This allows you to run common operations quickly without having to remember too much about them.
 
-For example, you may call `dodo cmake` to invoke the cmake executable in the project's C++ build directory, passing it a list of flags and the desired C++ source directory. It's enough to type `dodo cmake` because all other required information is read from the project's configuration file.
+For example, you may call `dodo cmake` to invoke the cmake executable in the project's C++ build directory. It's enough to type `dodo cmake` because all other required information (the list of cmake flags and the desired C++ source directory) is read from the project's configuration file.
 
 3. If you switch to a different project with `$(dodo activate barProject)`, you still call `dodo cmake` to invoke the cmake compiler, but now the C++ build directory location and cmake parameters are read from `barProject`'s configuration file.
 
@@ -41,7 +41,6 @@ The following steps install a pre-existing Dodo Commands project that offers a `
     ```bash
     > sudo apt-get install python-virtualenv git
     > pip install dodo_commands
-    > dodo install-default-commands dodo_standard_commands
     ```
 
 1. Create a new (empty) `dodo_tutorial` project and bootstrap it by copying some configuration files from the pre-existing `dodo_commands_tutorial` project
@@ -72,6 +71,7 @@ The following steps install a pre-existing Dodo Commands project that offers a `
       - - ~/.dodo_commands/default_commands/*
       - - ${/ROOT/src_dir}/extra/dodo_commands/tutorial_commands
       version: 1.0.0
+      shared_config_dir: ${/ROOT/src_dir}/extra/dodo_commands/res
     ```
 
 3. If you inspect the code of the 'cmake' command script with:
