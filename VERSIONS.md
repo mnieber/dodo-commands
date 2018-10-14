@@ -1,5 +1,9 @@
 # Version history
 
+## 0.16.6
+
+- Improve documentation
+
 ## 0.16.5
 
 - Improve documentation
