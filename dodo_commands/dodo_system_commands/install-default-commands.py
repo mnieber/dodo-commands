@@ -17,6 +17,10 @@ def _args():
         help='Create symlinks to these command directories')
     parser.add_argument(
         "--pip", nargs='*', help='Pip install the commands in these packages')
+    parser.add_argument(
+        "--remove",
+        action='store_true',
+        help='Remove commands from the default commands directory')
     args = Dodo.parse_args(parser)
     return args
 
@@ -44,6 +48,16 @@ def _packages_in_extra_dir():
 
 def _report_error(msg):
     sys.stderr.write(msg + os.linesep)
+
+
+def _remove_commands(path):
+    """Install the dir with the default commands."""
+    dest_dir = os.path.join(Paths().default_commands_dir(),
+                            os.path.basename(path))
+
+    if not os.path.exists(dest_dir):
+        raise CommandError("Directory does not exist: %s" % dest_dir)
+    Dodo.runcmd(['rm', '-rf', dest_dir])
 
 
 def _install_commands(path):
@@ -74,6 +88,15 @@ def _install_commands(path):
     return True
 
 
+def _remove_package(package):
+    """Install the dir with the default commands."""
+    dest_dir = os.path.join(Paths().default_commands_dir(), package)
+
+    if not os.path.exists(dest_dir):
+        raise CommandError("Directory does not exist: %s" % dest_dir)
+    Dodo.runcmd(['rm', '-rf', dest_dir])
+
+
 def _install_package(package):
     pip = Paths().pip()
     if pip.startswith('/usr/') and not os.path.exists(pip):
@@ -100,8 +123,14 @@ if Dodo.is_main(__name__):
 
     if args.paths:
         for path in args.paths:
-            _install_commands(path)
+            if args.remove:
+                _remove_commands(path)
+            else:
+                _install_commands(path)
 
     if args.pip:
         for package in args.pip:
-            _install_package(package)
+            if args.remove:
+                _remove_package(package)
+            else:
+                _install_package(package)
