@@ -20,6 +20,7 @@ Contents:
    configuration
    commands
    dodo-singleton
+   decorators
    sharing-projects
    diagnose
 
