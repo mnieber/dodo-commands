@@ -27,6 +27,8 @@ Running the ``django-manage`` command will produce something like this:
 
 .. code-block:: bash
 
+    # note that docker options for django-manage are looked up in ${/DOCKER/options}
+    # where it will match with '*' and 'django-manage'
     dodo django-manage --echo
 
     # outputs:
@@ -51,8 +53,6 @@ Running the ``django-manage`` command will produce something like this:
 
 #. each key-value pair in ``$(/DOCKER/options/<pattern>/publish_map}`` and each item in ``$(/DOCKER/options/<pattern>/publish_list}`` will be added as a docker published port
 
-#. each key-value pair in ``$(/DOCKER/options/<pattern>/volume_map}`` and each item in ``$(/DOCKER/options/<pattern>/volume_list}`` will be added as a docker volume (where 'item' in the host maps to 'item' in the docker container)
-
 #. each item in ``$(/DOCKER/options/<pattern>/volumes_from_list}`` will be added as a docker "volumes_from" argument
 
 #. each item in ``$(/DOCKER/options/<pattern>/link_list}`` will be added as a docker "link" argument
@@ -65,13 +65,13 @@ Running the ``django-manage`` command will produce something like this:
 
 #. The docker container is automatically removed depending on ``$(/DOCKER/options/<pattern>/rm}`` (defaults to True).
 
-#. the ``-i`` and ``-t`` flags are added unless you pass the ``--non-interactive`` flag when running the dodo command.
+#. the ``-i`` and ``-t`` flags are added unless the ``$(/DOCKER/options/<pattern>/is_interactive}`` flag is set to ``False``.
 
 
 The docker-build command
 =======================
 
-Though you can refer to a docker image in ``$(/DOCKER/options/<pattern>/image}``, you may also needs to ensure this image is built. The details for building an image are specified in ``$(/DOCKER/images}``:
+When referring to a docker image in ``$(/DOCKER/options/<pattern>/image}``, you may also need to ensure this image is built. The details for building an image are specified in ``$(/DOCKER/images}``:
 
 .. code-block:: yaml
 
@@ -97,6 +97,12 @@ The docker-exec command
 ======================
 
 To inspect a running docker container, run ``dodo docker-exec``. This will print a list of running containers, allowing you to select one. A bash shell will be opened giving you access to the container.
+
+
+The docker-kill command
+======================
+
+Similar to how ``dodo docker-exec`` works, this command kills a selected docker container.
 
 
 The docker-create command
