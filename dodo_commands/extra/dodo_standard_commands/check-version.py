@@ -110,12 +110,6 @@ def check_config_changes():  # noqa
                         'Configuration has changes (tip: use "dodo commit-config"):\n'
                         + changes))
                 sys.stdout.write('\n')
-    else:
-        sys.stdout.write(
-            bordered(
-                'Configuration has not been commit to a local git (tip: use "dodo commit-config"):\n'
-            ))
-        sys.stdout.write('\n')
 
 
 if Dodo.is_main(__name__, safe=False):
