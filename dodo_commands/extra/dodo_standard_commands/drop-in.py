@@ -69,7 +69,6 @@ def _package_to_drop_src_dir():
     return package_to_drop_src_dir
 
 
-__import__('pudb').set_trace()
 if Dodo.is_main(__name__, safe=True):
     args = _args()
 
