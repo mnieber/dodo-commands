@@ -17,9 +17,6 @@ def _args():
 
 
 def _layer_name(x):
-    # layers with a prefix path are not named
-    if os.path.dirname(x):
-        return None
     try:
         return x.split(".")[0]
     except ValueError:
