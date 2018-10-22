@@ -1,5 +1,12 @@
 # Version history
 
+## 0.17.0
+
+- Add drop-in command
+- Add Dodo.decorator function
+- Move diff.py back to dodo_standard_commands
+- Allow to toggle a layer that has a prefix path
+
 ## 0.16.6
 
 - Improve documentation
