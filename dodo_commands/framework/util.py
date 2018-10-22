@@ -119,3 +119,9 @@ def symlink(source, link_name):
         flags = 1 if os.path.isdir(source) else 0
         if csl(link_name, source, flags) == 0:
             raise ctypes.WinError()
+
+
+def chop(path):
+    while path and path[-1] in ('\n', '\r'):
+        path = path[:-1]
+    return path
