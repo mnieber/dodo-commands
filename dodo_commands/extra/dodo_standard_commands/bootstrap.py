@@ -96,7 +96,7 @@ def _link_dir(link_target, link_name):
         raise CommandError(
             "Cannot create a link because %s already exists" % link_name)
     if os.name == 'nt' and not args.confirm:
-        symlink(link_target, link_name, target_is_directory=True)
+        symlink(link_target, link_name)
     else:
         Dodo.runcmd(["ln", "-s", link_target, link_name])
 

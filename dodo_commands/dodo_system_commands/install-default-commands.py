@@ -78,7 +78,7 @@ def _install_commands(path):
 
     try:
         if os.name == 'nt' and not args.confirm:
-            symlink(os.path.abspath(path), dest_dir, target_is_directory=True)
+            symlink(os.path.abspath(path), dest_dir)
         else:
             Dodo.runcmd(['ln', '-s', os.path.abspath(path), dest_dir])
     except:

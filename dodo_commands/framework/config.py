@@ -53,8 +53,7 @@ def create_global_config():
         symlink(
             os.path.join(Paths().extra_dir(), "dodo_standard_commands"),
             os.path.join(Paths().default_commands_dir(),
-                         "dodo_standard_commands"),
-            target_is_directory=True)
+                         "dodo_standard_commands"))
 
     init_py = os.path.join(default_commands_dir, "__init__.py")
     if not os.path.exists(init_py):
@@ -247,10 +246,7 @@ class CommandPath:
             open(os.path.join(search_path_dir, "__init__.py"), 'a').close()
             for item in self.items:
                 basename = os.path.basename(item)
-                symlink(
-                    item,
-                    os.path.join(search_path_dir, basename),
-                    target_is_directory=True)
+                symlink(item, os.path.join(search_path_dir, basename))
 
         return search_path_dir
 

@@ -106,11 +106,11 @@ def is_windows():
     return os.name == 'nt'
 
 
-def symlink(source, link_name, target_is_directory=False):
+def symlink(source, link_name):
     import os
     os_symlink = getattr(os, "symlink", None)
     if callable(os_symlink):
-        os_symlink(source, link_name, target_is_directory)
+        os_symlink(source, link_name)
     else:
         import ctypes
         csl = ctypes.windll.kernel32.CreateSymbolicLinkW

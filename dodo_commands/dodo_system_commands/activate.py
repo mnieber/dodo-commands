@@ -85,8 +85,7 @@ class Activator:
 
         symlink(
             os.path.dirname(dodo_commands.__file__),
-            os.path.join(self.paths.site_packages_dir(), "dodo_commands"),
-            target_is_directory=True)
+            os.path.join(self.paths.site_packages_dir(), "dodo_commands"))
 
     def _register_autocomplete(self):
         """Install a virtual env."""
