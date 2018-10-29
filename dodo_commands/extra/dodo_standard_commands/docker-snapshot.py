@@ -17,8 +17,8 @@ def _docker_run(output_dir, args):
     Dodo.runcmd(
         [
             'docker', 'run', '--rm', '--volumes-from', container_name,
-            '--volume',
-            '%s:/tmp/docker-snapshot' % output_dir, container_type['image']
+            '--volume', '%s:/tmp/docker-snapshot' % output_dir,
+            container_type['image']
         ] + args,
         cwd='.')
 
@@ -50,9 +50,7 @@ if Dodo.is_main(__name__, safe=True):
             if os.path.exists(host_output_path):
                 Dodo.runcmd(['rm', '-rf', host_output_path], cwd='.')
             Dodo.runcmd(
-                ['mkdir', '-p',
-                 os.path.dirname(host_output_path)], cwd='.')
-            _docker_run(
-                args.output_dir,
-                ['cp', '-rf', path,
-                 os.path.dirname(docker_output_path)])
+                ['mkdir', '-p', os.path.dirname(host_output_path)], cwd='.')
+            _docker_run(args.output_dir, [
+                'cp', '-rf', path, os.path.dirname(docker_output_path)
+            ])

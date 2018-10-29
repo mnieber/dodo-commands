@@ -7,8 +7,8 @@ from dodo_commands.framework.paths import Paths
 
 def _args():
     parser = ArgumentParser(
-        description=
-        "Show diff for a file in the Dodo Commands system directory.")
+        description="Show diff for a file in the Dodo Commands system directory."
+    )
     parser.add_argument('file', nargs='?', help='Show diff for this file')
     parser.add_argument(
         '--project-name', help='Compare to files from an alternative project')

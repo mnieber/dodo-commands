@@ -22,8 +22,8 @@ def _convert_dodo_args():
     gc = Dodo.create_get_config(dodo_args.__dict__)
     args = argparse.Namespace()
     args.build_dir = gc(key='/DOCKER/images/{name}/build_dir', default='.')
-    args.docker_file = gc(
-        key='/DOCKER/images/{name}/docker_file', default='Dockerfile')
+    args.docker_file = gc(key='/DOCKER/images/{name}/docker_file',
+                          default='Dockerfile')
     args.extra_dirs = gc(key='/DOCKER/images/{name}/extra_dirs', default=[])
     args.docker_image = gc(key='/DOCKER/images/{name}/image')
     args.build_args = dodo_args.build_args
@@ -74,9 +74,7 @@ if Dodo.is_main(__name__, safe=len(args.extra_dirs) == 0):
                 args.docker_image,
                 "-f",
                 args.docker_file,
-            ] + remove_trailing_dashes(args.build_args) + [
-                ".",
-            ],
+            ] + remove_trailing_dashes(args.build_args) + [".", ],
             cwd=args.build_dir)
     finally:
         _remove_extra_dirs(args.build_dir, args.extra_dirs)

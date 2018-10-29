@@ -31,8 +31,8 @@ if Dodo.is_main(__name__):
                                                     args.service)
 
     if args.image:
-        docker_options['image'] = Dodo.get_config(
-            '/DOCKER/images/%s/image' % args.image, args.image)
+        docker_options['image'] = Dodo.get_config('/DOCKER/images/%s/image' %
+                                                  args.image, args.image)
     elif args.image_name:
         docker_options['image'] = args.image_name
 

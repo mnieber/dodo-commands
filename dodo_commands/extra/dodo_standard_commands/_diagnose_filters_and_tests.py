@@ -73,7 +73,8 @@ def _dodo_expand(key_str,
             result += "%s:\n" % quoted_key_str
         result += ("\n\n.. code-block:: yaml\n\n" + indent(
             "# %s\n" % key_str, 4) + indent(
-                ruamel.yaml.round_trip_dump(val, indent=4).strip(), amount=4))
+                ruamel.yaml.round_trip_dump(
+                    val, indent=4).strip(), amount=4))
     else:
         if key:
             result += "%s = " % quoted_key_str

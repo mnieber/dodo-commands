@@ -77,8 +77,8 @@ if Dodo.is_main(__name__, safe=True):
         raise CommandError("No drop-in found for package %s" % args.package)
 
     if not os.path.isdir(drop_src_dir):
-        raise CommandError(
-            "The drop-in directory does not exist: %s" % drop_src_dir)
+        raise CommandError("The drop-in directory does not exist: %s" %
+                           drop_src_dir)
 
     res_dir = Dodo.get_config('/ROOT/res_dir')
     drops_dir = os.path.join(res_dir, 'drops')

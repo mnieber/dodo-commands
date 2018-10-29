@@ -34,12 +34,13 @@ def _ask_to_continue(args, cwd, is_echo, is_confirm):
 
 class DecoratorScope:
     def __init__(self, decorator_name):
-        self.decorators = Dodo.config['ROOT']['decorators'].setdefault(decorator_name, [])
+        self.decorators = Dodo.config['ROOT']['decorators'].setdefault(
+            decorator_name, [])
 
     def __enter__(self):  # noqa
         self.decorators.append(Dodo.command_name)
 
-    def __exit__(self ,type, value, traceback):  # noqa
+    def __exit__(self, type, value, traceback):  # noqa
         self.decorators.remove(Dodo.command_name)
 
 
@@ -95,12 +96,14 @@ class Dodo:
             decorator_name, []))
         command_name = cls.command_name
         approved = [
-            pattern for pattern in patterns if not pattern.startswith("!")
-            and fnmatch.filter([command_name], pattern)
+            pattern for pattern in patterns
+            if not pattern.startswith("!") and fnmatch.filter([command_name],
+                                                              pattern)
         ]
         rejected = [
-            pattern for pattern in patterns if pattern.startswith("!")
-            and fnmatch.filter([command_name], pattern[1:])
+            pattern for pattern in patterns
+            if pattern.startswith("!") and fnmatch.filter([command_name],
+                                                          pattern[1:])
         ]
         return len(approved) and not len(rejected)
 
@@ -199,8 +202,7 @@ class Dodo:
                 except ProcessExecutionError:
                     if not quiet:
                         print(
-                            "\nDodo Commands error while running this command:"
-                        )
+                            "\nDodo Commands error while running this command:")
                         print("\n\n%s" % func)
                     return False
 

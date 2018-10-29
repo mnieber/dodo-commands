@@ -20,8 +20,8 @@ class Decorator:  # noqa
         volume_map_strict = docker_config.get('volume_map_strict', {})
         for key, val in volume_map_strict.items():
             if not os.path.exists(key):
-                raise CommandError(
-                    "Path in volume_map_strict not found: %s" % key)
+                raise CommandError("Path in volume_map_strict not found: %s" %
+                                   key)
             volume_map[key] = val
 
         options = (
@@ -127,8 +127,7 @@ class Decorator:  # noqa
         parser.add_argument(
             '--kill-existing',
             action='store_true',
-            help="Kill and remove existing docker container with the same name"
-        )
+            help="Kill and remove existing docker container with the same name")
 
     def _kill_existing_container(self, name):
         docker = local['docker']

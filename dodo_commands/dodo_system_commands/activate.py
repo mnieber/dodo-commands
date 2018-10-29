@@ -94,16 +94,15 @@ class Activator:
             'ROOT': {
                 'command_path':
                 [os.path.join(self.paths.default_commands_dir(), '*')],
-                'version':
-                '1.0.0'
+                'version': '1.0.0'
             }
         }
         with open(config_filename, "w") as f:
             f.write(ruamel.yaml.round_trip_dump(default_config))
 
     def _create_project(self):
-        self._report(
-            "Creating project at location %s ..." % self.paths.project_dir())
+        self._report("Creating project at location %s ..." %
+                     self.paths.project_dir())
         self._create_res_dir()
         self._create_virtual_env()
         if not is_windows():
@@ -153,8 +152,8 @@ class Activator:
         if create:
             if os.path.exists(
                     os.path.join(self.paths.project_dir(), "dodo_commands")):
-                self._report(
-                    "Project already exists: %s\n" % self.paths.project_dir())
+                self._report("Project already exists: %s\n" %
+                             self.paths.project_dir())
                 return
             if not self._create_project():
                 return
@@ -169,8 +168,8 @@ class Activator:
             self.config.set("recent", "latest_project", self.project)
             write_global_config_parser(self.config)
 
-        sys.stdout.write(
-            "source %s\n" % self._virtual_env_filename("activate"))
+        sys.stdout.write("source %s\n" %
+                         self._virtual_env_filename("activate"))
 
 
 def _args():

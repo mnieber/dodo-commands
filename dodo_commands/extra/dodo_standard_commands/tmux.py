@@ -22,8 +22,7 @@ def _create_tmux_window():
 
     # Create a tmux window
     Dodo.runcmd(
-        ['tmux', 'new-window', '-t',
-         '%s:1' % session_id, '-n', 'Logs'], )
+        ['tmux', 'new-window', '-t', '%s:1' % session_id, '-n', 'Logs'], )
 
 
 if Dodo.is_main(__name__):

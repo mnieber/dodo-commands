@@ -27,9 +27,7 @@ class TestConfigIO:  # noqa
         foo_dir = os.path.join(str(tmpdir), 'foo')
         return {
             'ROOT': {
-                'command_path': [
-                    os.path.join(foo_dir, 'foobar'),
-                ],
+                'command_path': [os.path.join(foo_dir, 'foobar'), ],
                 'foo': {
                     'bar': 'barfoo',
                     'three': 4

@@ -69,8 +69,8 @@ def merge_into_config(config, layer, xpath=None):
         return isinstance(x, type(dict()))
 
     def _raise(xpath):
-        raise CommandError(
-            "Cannot merge configurations. Check key /%s" % '/'.join(new_xpath))
+        raise CommandError("Cannot merge configurations. Check key /%s" %
+                           '/'.join(new_xpath))
 
     xpath = xpath or []
     for key, val in (layer or {}).items():
@@ -218,8 +218,8 @@ class CommandPath:
         basenames = [os.path.basename(x) for x in self.items]
         for basename in basenames:
             if basenames.count(basename) > 1:
-                raise CommandError(
-                    "More than 1 command path with name %s" % basename)
+                raise CommandError("More than 1 command path with name %s" %
+                                   basename)
 
     def _include_patterns(self, config):
         return config.get('ROOT', {}).get('command_path', [])
@@ -236,8 +236,8 @@ class CommandPath:
         return result
 
     def _create_search_path_dir(self):
-        hash_code = hashlib.md5(json.dumps(
-            self.items).encode('utf-8')).hexdigest()
+        hash_code = hashlib.md5(json.dumps(self.items).encode(
+            'utf-8')).hexdigest()
         search_path_dir = os.path.join(Paths().global_config_dir(),
                                        "search_path", hash_code)
 

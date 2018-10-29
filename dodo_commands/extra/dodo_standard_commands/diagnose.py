@@ -35,8 +35,7 @@ def _create_sphinx_conf(args):
         Dodo.runcmd(['cp', src_conf_file, target_conf_file])
     elif not os.path.exists(target_conf_file):
         Dodo.runcmd(
-            ['sphinx-quickstart',
-             '--project=%s' % args.project_name],
+            ['sphinx-quickstart', '--project=%s' % args.project_name],
             cwd=args.output_dir)
 
 
@@ -62,8 +61,7 @@ def _create_jinja_environment(args):
     env = Environment(
         loader=FileSystemLoader(args.src_dir),
         trim_blocks=True,
-        lstrip_blocks=True,
-    )
+        lstrip_blocks=True, )
 
     # import more filters and tests
     for syspath, basename in args.filters:
@@ -119,8 +117,9 @@ if Dodo.is_main(__name__, safe=False):
 
     if errors:
         print("")
-        print(bordered("Warning, there were errors:") + "\n" +
-              ("\n".join(errors)))
+        print(
+            bordered("Warning, there were errors:") + "\n" + ("\n".join(errors)
+                                                              ))
         print("")
     _create_sphinx_conf(args)
     _sphinx_build(args)
