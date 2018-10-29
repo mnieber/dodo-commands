@@ -11,6 +11,10 @@ def _ext():
 
 
 class Paths:
+    def __init__(self, project_dir=None):
+        self._project_dir = project_dir or os.environ.get(
+            'DODO_COMMANDS_PROJECT_DIR')
+
     def home_dir(self):
         return os.path.expanduser('~')
 
@@ -34,19 +38,19 @@ class Paths:
         return os.path.join(self.virtual_env_bin_dir(), 'pip' + _ext())
 
     def site_packages_dir(self):
-        python = local[os.path.join(self.virtual_env_bin_dir(),
-                                    "python" + _ext())]
+        python = local[os.path.join(self.virtual_env_bin_dir(), "python" +
+                                    _ext())]
 
-        result = python(
-            "-c", "from distutils.sysconfig import get_python_lib; " +
-            "print(get_python_lib())")
+        result = python("-c",
+                        "from distutils.sysconfig import get_python_lib; " +
+                        "print(get_python_lib())")
         while result[-1] in ['\n', '\r']:
             result = result[:-1]
         return result
 
     def project_dir(self):
         """Return the root dir of the current project."""
-        return os.environ['DODO_COMMANDS_PROJECT_DIR']
+        return self._project_dir
 
     def res_dir(self):
         return os.path.join(self.project_dir(), "dodo_commands", "res")

@@ -37,20 +37,6 @@ if __name__ == "__main__":
     bin='Scripts' if is_windows() else 'bin', sep=os.sep)
 
 
-class NewPaths(Paths):
-    def __init__(self, config, project):
-        self.config = config
-        self.project = project
-
-    def project_dir(self):
-        return os.path.expanduser(
-            os.path.join(
-                self.config.get("settings", "projects_dir"), self.project))
-
-    def dodo_commands_dir(self):
-        return os.path.join(self.project_dir(), "dodo_commands")
-
-
 class Activator:
     """Creates and activates projects."""
 
@@ -59,9 +45,8 @@ class Activator:
 
     def _create_virtual_env(self):
         """Install a virtual env."""
-        local["virtualenv"]("-p",
-                            self.config.get("settings", "python_interpreter"),
-                            self.paths.virtual_env_dir())
+        local["virtualenv"]("-p", self.config.get(
+            "settings", "python_interpreter"), self.paths.virtual_env_dir())
 
         # update activate script so that it shows the name of the
         # current project in the prompt
@@ -80,8 +65,7 @@ class Activator:
             "plumbum",
             "ruamel.yaml",
             "semantic_version",
-            "six",
-        )
+            "six", )
 
         symlink(
             os.path.dirname(dodo_commands.__file__),
@@ -162,9 +146,13 @@ class Activator:
                 self._report("There is no latest project\n")
                 return
 
-        self.paths = NewPaths(self.config, self.project)
+        self.paths = Paths(project_dir=os.path.expanduser(
+            os.path.join(
+                self.config.get("settings", "projects_dir"), self.project)))
+
         if create:
-            if os.path.exists(self.paths.dodo_commands_dir()):
+            if os.path.exists(
+                    os.path.join(self.paths.project_dir(), "dodo_commands")):
                 self._report(
                     "Project already exists: %s\n" % self.paths.project_dir())
                 return
