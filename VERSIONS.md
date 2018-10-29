@@ -1,5 +1,12 @@
 # Version history
 
+## 0.17.1
+
+- Rename runcmd to run
+- Improve output when printing a single value with print-config
+- Fix broken tests and remove stray pudb
+- Apply yapf
+
 ## 0.17.0
 
 - Add drop-in command
