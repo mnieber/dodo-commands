@@ -70,8 +70,6 @@ class TestConfigIO:  # noqa
         assert "Configuration needs update (0.1.0 < 1.0.0)" in dodo(
             'check-version', '--config')[:-1]
         self._set_config_version(config_filename, '1.0.0')
-        assert "Configuration has not been commit to a local git" in dodo(
-            'check-version', '--config')[:-1]
 
         # dodo check-version --dodo
         self._set_required_dodo_version(config_filename, '10000.0.0')
