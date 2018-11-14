@@ -18,11 +18,10 @@ def _args():
 
 def _create_tmux_window():
     # Create tmux session
-    Dodo.runcmd(['tmux', '-2', 'new-session', '-d', '-s', session_id], )
+    Dodo.run(['tmux', '-2', 'new-session', '-d', '-s', session_id], )
 
     # Create a tmux window
-    Dodo.runcmd(
-        ['tmux', 'new-window', '-t', '%s:1' % session_id, '-n', 'Logs'], )
+    Dodo.run(['tmux', 'new-window', '-t', '%s:1' % session_id, '-n', 'Logs'], )
 
 
 if Dodo.is_main(__name__):
@@ -40,13 +39,13 @@ if Dodo.is_main(__name__):
         pass
 
     if has_session and args.kill_session:
-        Dodo.runcmd(['tmux', 'kill-session', '-t', session_id], )
+        Dodo.run(['tmux', 'kill-session', '-t', session_id], )
 
     if not has_session:
         _create_tmux_window()
-        Dodo.runcmd(['tmux', 'send-keys', 'dodo tmux', 'C-m'], )
+        Dodo.run(['tmux', 'send-keys', 'dodo tmux', 'C-m'], )
         # Attach to tmux session
-        Dodo.runcmd(['tmux', '-2', 'attach-session', '-t', session_id], )
+        Dodo.run(['tmux', '-2', 'attach-session', '-t', session_id], )
     else:
         while True:
             commands = []
@@ -70,8 +69,8 @@ if Dodo.is_main(__name__):
                 selected_commands = [raw_choice]
 
             for idx, command in enumerate(selected_commands):
-                Dodo.runcmd(['tmux', 'split-window', '-v'], )
-                Dodo.runcmd(['tmux', 'send-keys', command, 'C-m'], )
+                Dodo.run(['tmux', 'split-window', '-v'], )
+                Dodo.run(['tmux', 'send-keys', command, 'C-m'], )
 
             # Set default window
             tmux('select-pane', '-t', '0')

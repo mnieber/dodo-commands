@@ -26,4 +26,4 @@ if Dodo.is_main(__name__, safe=True):
                       ConfigIO().get_layers(Dodo.config))
 
     yaml_filenames.append(Paths().global_config_filename())
-    Dodo.runcmd([args.editor] + yaml_filenames, cwd='.')
+    Dodo.run([args.editor] + yaml_filenames, cwd='.')

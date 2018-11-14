@@ -12,4 +12,4 @@ def _args():
 
 if Dodo.is_main(__name__):
     args = _args()
-    Dodo.runcmd(['grep', '-rnw', args.where, '-e', "'{}'".format(args.what)], )
+    Dodo.run(['grep', '-rnw', args.where, '-e', "'{}'".format(args.what)], )

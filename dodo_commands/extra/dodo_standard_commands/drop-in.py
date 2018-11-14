@@ -77,13 +77,13 @@ if Dodo.is_main(__name__, safe=True):
         raise CommandError("No drop-in found for package %s" % args.package)
 
     if not os.path.isdir(drop_src_dir):
-        raise CommandError("The drop-in directory does not exist: %s" %
-                           drop_src_dir)
+        raise CommandError(
+            "The drop-in directory does not exist: %s" % drop_src_dir)
 
     res_dir = Dodo.get_config('/ROOT/res_dir')
     drops_dir = os.path.join(res_dir, 'drops')
     if not os.path.exists(drops_dir):
-        Dodo.runcmd(['mkdir', drops_dir])
+        Dodo.run(['mkdir', drops_dir])
     drop_dest_dir = os.path.join(drops_dir, args.package)
 
     if os.path.exists(drop_dest_dir):
@@ -95,8 +95,8 @@ if Dodo.is_main(__name__, safe=True):
         msg += '%s %s %s' % (_diff_tool(), drop_src_dir, drop_dest_dir)
         raise CommandError(msg)
 
-    Dodo.runcmd(['cp', '-rf', drop_src_dir, drop_dest_dir])
+    Dodo.run(['cp', '-rf', drop_src_dir, drop_dest_dir])
 
     readme_path = os.path.join(drop_src_dir, 'README.md')
     if os.path.exists(readme_path):
-        Dodo.runcmd(['cat', readme_path])
+        Dodo.run(['cat', readme_path])

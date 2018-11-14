@@ -22,8 +22,8 @@ def _convert_dodo_args():
     gc = Dodo.create_get_config(dodo_args.__dict__)
     args = argparse.Namespace()
     args.build_dir = gc(key='/DOCKER/images/{name}/build_dir', default='.')
-    args.docker_file = gc(key='/DOCKER/images/{name}/docker_file',
-                          default='Dockerfile')
+    args.docker_file = gc(
+        key='/DOCKER/images/{name}/docker_file', default='Dockerfile')
     args.extra_dirs = gc(key='/DOCKER/images/{name}/extra_dirs', default=[])
     args.docker_image = gc(key='/DOCKER/images/{name}/image')
     args.build_args = dodo_args.build_args
@@ -50,14 +50,14 @@ def _copy_extra_dirs(local_dir, extra_dirs):
         if not os.path.exists(extra_dir_path):
             raise CommandError("Cannot copy from non-existing path: " +
                                extra_dir_path)
-        Dodo.runcmd(['cp', '-rf', extra_dir_path, local_path])
+        Dodo.run(['cp', '-rf', extra_dir_path, local_path])
 
 
 def _remove_extra_dirs(local_dir, extra_dirs):
     for extra_dir in (extra_dirs or []):
         extra_dir_name, extra_dir_path = extra_dir.split('=')
         local_path = os.path.join(local_dir, extra_dir_name)
-        Dodo.runcmd(['rm', "rm", "-rf", local_path])
+        Dodo.run(['rm', "rm", "-rf", local_path])
 
 
 args = (_convert_dodo_args() if Dodo.command_name else _args())
@@ -66,7 +66,7 @@ if Dodo.is_main(__name__, safe=len(args.extra_dirs) == 0):
     _copy_extra_dirs(args.build_dir, args.extra_dirs)
 
     try:
-        Dodo.runcmd(
+        Dodo.run(
             [
                 "docker",
                 "build",
@@ -74,7 +74,9 @@ if Dodo.is_main(__name__, safe=len(args.extra_dirs) == 0):
                 args.docker_image,
                 "-f",
                 args.docker_file,
-            ] + remove_trailing_dashes(args.build_args) + [".", ],
+            ] + remove_trailing_dashes(args.build_args) + [
+                ".",
+            ],
             cwd=args.build_dir)
     finally:
         _remove_extra_dirs(args.build_dir, args.extra_dirs)

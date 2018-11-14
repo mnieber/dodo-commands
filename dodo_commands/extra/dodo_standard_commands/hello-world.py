@@ -10,4 +10,4 @@ def _args():  # noqa
 
 if Dodo.is_main(__name__):
     args = _args()
-    Dodo.runcmd(['echo', 'Hello world'])
+    Dodo.run(['echo', 'Hello world'])

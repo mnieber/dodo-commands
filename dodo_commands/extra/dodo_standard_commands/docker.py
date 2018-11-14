@@ -31,8 +31,8 @@ if Dodo.is_main(__name__):
                                                     args.service)
 
     if args.image:
-        docker_options['image'] = Dodo.get_config('/DOCKER/images/%s/image' %
-                                                  args.image, args.image)
+        docker_options['image'] = Dodo.get_config(
+            '/DOCKER/images/%s/image' % args.image, args.image)
     elif args.image_name:
         docker_options['image'] = args.image_name
 
@@ -42,6 +42,6 @@ if Dodo.is_main(__name__):
         docker_options['name'] = args.service
 
     Dodo.get_config('/DOCKER')['options'] = {Dodo.command_name: docker_options}
-    Dodo.runcmd(
+    Dodo.run(
         ["/bin/bash"] + (["-c", args.command] if args.command else []),
         cwd=docker_options.get("cwd", "/"))

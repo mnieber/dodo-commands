@@ -11,10 +11,10 @@ def _args():
         choices=Dodo.get_config('/DOCKER/container_types', {}).keys())
     parser.add_argument('name')
     args = Dodo.parse_args(parser)
-    args.dirs = Dodo.get_config("/DOCKER/container_types/%s/dirs" %
-                                args.container_type)
-    args.image = Dodo.get_config("/DOCKER/container_types/%s/image" %
-                                 args.container_type)
+    args.dirs = Dodo.get_config(
+        "/DOCKER/container_types/%s/dirs" % args.container_type)
+    args.image = Dodo.get_config(
+        "/DOCKER/container_types/%s/image" % args.container_type)
     return args
 
 
@@ -33,7 +33,7 @@ if Dodo.is_main(__name__, safe=False):
             cmd_args.extend(["-v", path])
 
         cmd_args.append(args.image)
-        Dodo.runcmd(cmd_args)
+        Dodo.run(cmd_args)
 
     config = ConfigIO().load(load_layers=False)
     config['DOCKER'].setdefault('containers',

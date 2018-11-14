@@ -37,7 +37,7 @@ if Dodo.is_main(__name__):
 
     container = containers[choice]
 
-    Dodo.runcmd([
+    Dodo.run([
         'docker',
         'commit',
         container['cid'],

@@ -4,7 +4,7 @@
 Decorators
 **********
 
-A Decorator is a class that alters the workings of a Dodo Command script. It can extend or modify the arguments that are passed to ``Dodo.runcmd``. For this purpose, the arguments for ``Dodo.runcmd`` are constructed as a tree. Initially, this tree only has a root node that holds all arguments. Each decorator may restructure the argument tree by adding new tree nodes and changing existing nodes. The final list of arguments is obtained by flattening the tree in a pre-order fashion. This allows each decorator to prepend or append arguments, or completely rewrite the tree.
+A Decorator is a class that alters the workings of a Dodo Command script. It can extend or modify the arguments that are passed to ``Dodo.run``. For this purpose, the arguments for ``Dodo.run`` are constructed as a tree. Initially, this tree only has a root node that holds all arguments. Each decorator may restructure the argument tree by adding new tree nodes and changing existing nodes. The final list of arguments is obtained by flattening the tree in a pre-order fashion. This allows each decorator to prepend or append arguments, or completely rewrite the tree.
 
 
 Prepending an argument

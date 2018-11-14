@@ -15,9 +15,8 @@ if Dodo.is_main(__name__, safe=True):
     args = _args()
 
     if not os.path.exists(os.path.join(Paths().res_dir(), '.git')):
-        Dodo.runcmd(['git', 'init'], cwd=Paths().res_dir())
+        Dodo.run(['git', 'init'], cwd=Paths().res_dir())
 
-    Dodo.runcmd(['git', 'add', '-A'], cwd=Paths().res_dir())
-    Dodo.runcmd(
-        ['git', 'commit', '-m', args.message or 'Update configuration'],
-        cwd=Paths().res_dir())
+    Dodo.run(['git', 'add', '-A'], cwd=Paths().res_dir())
+    Dodo.run(['git', 'commit', '-m', args.message or 'Update configuration'],
+             cwd=Paths().res_dir())

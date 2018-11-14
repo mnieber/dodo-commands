@@ -27,15 +27,15 @@ The get_config function
 Calling ``Dodo.get_config('/ROOT/my/key', 'default-value')`` will retrieve a value from the project's :ref:`configuration`. Use ``Dodo.config`` to get direct access to the configuration dictionary.
 
 
-The runcmd function
+The run function
 ===================
 
-The ``Dodo.runcmd`` function takes a list of arguments (and a current working directory) and runs them on the command line. It also adds all variables in ``${/ENVIRONMENT/variable_map}`` to the system environment for the duration of running the command.
+The ``Dodo.run`` function takes a list of arguments (and a current working directory) and runs them on the command line. It also adds all variables in ``${/ENVIRONMENT/variable_map}`` to the system environment for the duration of running the command.
 
 .. code-block:: python
 
     if Dodo.is_main(__name__):
-        # Note that you must call Dodo.parse_args before calling Dodo.runcmd,
+        # Note that you must call Dodo.parse_args before calling Dodo.run,
         # or an exception will be raised
         parser = ArgumentParser()
         parser.add_argument(
@@ -46,17 +46,17 @@ The ``Dodo.runcmd`` function takes a list of arguments (and a current working di
 
         # say hello
         if args.verbose:
-            Dodo.runcmd(['echo', 'hello'], cwd='/tmp')
+            Dodo.run(['echo', 'hello'], cwd='/tmp')
 
 
 The --confirm and --echo flags
 ==============================
 
-The ``Dodo.parse_args(parser)`` function adds an ``--echo`` and ``--confirm`` flag the to command line arguments of your script. These flags control what happens in the ``Dodo.runcmd`` function:
+The ``Dodo.parse_args(parser)`` function adds an ``--echo`` and ``--confirm`` flag the to command line arguments of your script. These flags control what happens in the ``Dodo.run`` function:
 
-#. the :code:`--echo` flag changes the behaviour of :code:`runcmd` so that it only prints a command line instead of executing the command.
+#. the :code:`--echo` flag changes the behaviour of :code:`run` so that it only prints a command line instead of executing the command.
 
-#. the :code:`--confirm` flag changes the behaviour of :code:`runcmd` so that it prints a command line and asks for confirmation before executing the command.
+#. the :code:`--confirm` flag changes the behaviour of :code:`run` so that it prints a command line and asks for confirmation before executing the command.
 
 
 Marking a script as unsafe
@@ -77,8 +77,8 @@ Since command scripts are written in Python, the script can in principle perform
         # you that unpleasant surprises can be expected if you continue.
         os.unlink('/tmp/foo.text')
 
-        # Delete the /tmp directory. Since this time we are using Dodo.runcmd,
+        # Delete the /tmp directory. Since this time we are using Dodo.run,
         # the user can use the --confirm flag to inspect and cancel it.
         # This makes this call *relatively* safe, but if you blindly run this script (without
         # using ``--confirm``) you may still be unpleasantly surprised.
-        Dodo.runcmd(['rm', '-rf', '/tmp'])
+        Dodo.run(['rm', '-rf', '/tmp'])

@@ -57,7 +57,7 @@ def _remove_commands(path):
 
     if not os.path.exists(dest_dir):
         raise CommandError("Directory does not exist: %s" % dest_dir)
-    Dodo.runcmd(['rm', '-rf', dest_dir])
+    Dodo.run(['rm', '-rf', dest_dir])
 
 
 def _install_commands(path):
@@ -80,7 +80,7 @@ def _install_commands(path):
         if os.name == 'nt' and not args.confirm:
             symlink(os.path.abspath(path), dest_dir)
         else:
-            Dodo.runcmd(['ln', '-s', os.path.abspath(path), dest_dir])
+            Dodo.run(['ln', '-s', os.path.abspath(path), dest_dir])
     except:
         _report_error("Error: could not create a symlink in %s." % dest_dir)
         return False
@@ -94,7 +94,7 @@ def _remove_package(package):
 
     if not os.path.exists(dest_dir):
         raise CommandError("Directory does not exist: %s" % dest_dir)
-    Dodo.runcmd(['rm', '-rf', dest_dir])
+    Dodo.run(['rm', '-rf', dest_dir])
 
 
 def _install_package(package):
@@ -108,7 +108,7 @@ def _install_package(package):
                 "Expected to find a pip executable at location %s or %s." %
                 (pip, alt_pip))
 
-    Dodo.runcmd([
+    Dodo.run([
         pip, 'install', '--upgrade', '--target',
         Paths().default_commands_dir(), package
     ])

@@ -33,6 +33,6 @@ if Dodo.is_main(__name__):
     selected_containers, span = filter_choices(containers, raw_choice)
     if span == [0, len(raw_choice)]:
         for container in selected_containers:
-            Dodo.runcmd(['docker', 'kill', container['cid']], )
+            Dodo.run(['docker', 'kill', container['cid']], )
     else:
         raise CommandError("Syntax error")

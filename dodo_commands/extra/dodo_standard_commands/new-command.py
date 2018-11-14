@@ -28,7 +28,7 @@ def _args():
 
 if Dodo.is_main(__name__, safe=True):
     args = _args()
-    Dodo.runcmd([], cwd='.')
+    Dodo.run([], cwd='.')
 """
 
 if Dodo.is_main(__name__, safe=False):

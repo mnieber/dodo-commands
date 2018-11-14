@@ -14,7 +14,8 @@ def _args():
         'src_dir', help="The src directory for the bootstrapped project")
     parser.add_argument(
         'shared_config_dir',
-        help="Location relative to src_dir where the shared project config is stored",
+        help=
+        "Location relative to src_dir where the shared project config is stored",
     )
     parser.add_argument('--force', dest="use_force", action="store_true")
 
@@ -22,13 +23,16 @@ def _args():
     group.add_argument(
         '--git-url',
         dest='git_url',
-        help="Clone this repository to the src_dir location", )
+        help="Clone this repository to the src_dir location",
+    )
     group.add_argument(
         '--link-dir',
-        help="Make the src directory a symlink to this directory", )
+        help="Make the src directory a symlink to this directory",
+    )
     group.add_argument(
         '--cookiecutter-url',
-        help="Use cookiecutter to create the src_dir location", )
+        help="Use cookiecutter to create the src_dir location",
+    )
 
     parser.add_argument(
         '--depth', type=int, default=0, help="Depth for cloning repositories")
@@ -36,7 +40,8 @@ def _args():
 
     parser.add_argument(
         '--src-subdir',
-        help="Specify a subdirectory of src_dir to clone into", )
+        help="Specify a subdirectory of src_dir to clone into",
+    )
 
     args = Dodo.parse_args(parser)
     args.project_dir = Dodo.get_config('/ROOT/project_dir')
@@ -53,46 +58,47 @@ def _copy_defaults(args, shared_config_dir):
         dest_path = os.path.join(res_dir, os.path.basename(filename))
         if os.path.exists(dest_path):
             if args.confirm:
-                print("Warning, destination path already exists: %s" %
-                      dest_path)
+                print(
+                    "Warning, destination path already exists: %s" % dest_path)
             elif args.use_force:
                 print("Overwriting existing path: %s" % dest_path)
             else:
                 raise CommandError(
                     "Destination path %s already exists. " % dest_path +
                     "Use the --confirm or --force flag to overwrite it.")
-        Dodo.runcmd(["cp", "-rf", filename, dest_path])
+        Dodo.run(["cp", "-rf", filename, dest_path])
 
 
 def _clone(args, src_dir):
     if os.path.exists(src_dir):
-        raise CommandError("Cannot clone into %s, path already exists" %
-                           src_dir)
+        raise CommandError(
+            "Cannot clone into %s, path already exists" % src_dir)
 
-    Dodo.runcmd(
-        ["git", "clone", args.git_url, os.path.basename(src_dir)] +
+    Dodo.run(
+        ["git", "clone", args.git_url,
+         os.path.basename(src_dir)] +
         (["--depth", args.depth] if args.depth else []),
         cwd=os.path.dirname(src_dir))
     if args.branch:
-        Dodo.runcmd(["git", "checkout", args.branch], cwd=src_dir)
+        Dodo.run(["git", "checkout", args.branch], cwd=src_dir)
 
 
 def _cookiecutter(src_dir, cookiecutter_url):
     if os.path.exists(src_dir):
-        raise CommandError("Cannot clone into %s, path already exists" %
-                           src_dir)
+        raise CommandError(
+            "Cannot clone into %s, path already exists" % src_dir)
 
-    Dodo.runcmd(["cookiecutter", cookiecutter_url, "-o", src_dir])
+    Dodo.run(["cookiecutter", cookiecutter_url, "-o", src_dir])
 
 
 def _link_dir(link_target, link_name):
     if os.path.exists(link_name):
-        raise CommandError("Cannot create a link because %s already exists" %
-                           link_name)
+        raise CommandError(
+            "Cannot create a link because %s already exists" % link_name)
     if os.name == 'nt' and not args.confirm:
         symlink(link_target, link_name)
     else:
-        Dodo.runcmd(["ln", "-s", link_target, link_name])
+        Dodo.run(["ln", "-s", link_target, link_name])
 
 
 def _update_config(src_dir, relative_shared_config_dir):
@@ -105,15 +111,15 @@ def _update_config(src_dir, relative_shared_config_dir):
 
 def _get_full_src_dir(src_dir, src_subdir):
     postfix = (os.path.join(src_dir, src_subdir) if src_subdir else src_dir)
-    return (postfix if os.path.isabs(src_dir) else
-            os.path.join(args.project_dir, postfix))
+    return (postfix if os.path.isabs(src_dir) else os.path.join(
+        args.project_dir, postfix))
 
 
 if Dodo.is_main(__name__, safe=False):
     args = _args()
 
     full_src_dir = _get_full_src_dir(args.src_dir, args.src_subdir)
-    Dodo.runcmd(['mkdir', '-p', os.path.dirname(full_src_dir)])
+    Dodo.run(['mkdir', '-p', os.path.dirname(full_src_dir)])
 
     if args.git_url:
         _clone(args, full_src_dir)
@@ -124,11 +130,11 @@ if Dodo.is_main(__name__, safe=False):
 
     shared_config_dir = os.path.join(full_src_dir, args.shared_config_dir)
     if not os.path.exists(shared_config_dir):
-        raise CommandError("Shared config directory %s not found." %
-                           shared_config_dir)
+        raise CommandError(
+            "Shared config directory %s not found." % shared_config_dir)
 
     _copy_defaults(args, shared_config_dir)
     _update_config(
-        args.src_dir if os.path.isabs(args.src_dir) else
-        os.path.join("${/ROOT/project_dir}", args.src_dir),
+        args.src_dir if os.path.isabs(args.src_dir) else os.path.join(
+            "${/ROOT/project_dir}", args.src_dir),
         os.path.join(args.src_subdir or '', args.shared_config_dir))

@@ -7,8 +7,8 @@ from dodo_commands.framework.paths import Paths
 
 def _args():
     parser = ArgumentParser(
-        description="Show diff for a file in the Dodo Commands system directory."
-    )
+        description=
+        "Show diff for a file in the Dodo Commands system directory.")
     parser.add_argument('file', nargs='?', help='Show diff for this file')
     parser.add_argument(
         '--project-name', help='Compare to files from an alternative project')
@@ -39,4 +39,4 @@ if Dodo.is_main(__name__):
         original_file = os.path.realpath(os.path.join(shared_config_dir, file))
         copied_file = os.path.join(Paths().res_dir(), file)
 
-    Dodo.runcmd([_diff_tool(), original_file, copied_file])
+    Dodo.run([_diff_tool(), original_file, copied_file])

@@ -30,7 +30,7 @@ if Dodo.is_main(__name__):
 
         args.name = containers[choice]
 
-    Dodo.runcmd([
+    Dodo.run([
         'docker',
         'exec',
         '-i',

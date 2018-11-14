@@ -96,14 +96,12 @@ class Dodo:
             decorator_name, []))
         command_name = cls.command_name
         approved = [
-            pattern for pattern in patterns
-            if not pattern.startswith("!") and fnmatch.filter([command_name],
-                                                              pattern)
+            pattern for pattern in patterns if not pattern.startswith("!")
+            and fnmatch.filter([command_name], pattern)
         ]
         rejected = [
-            pattern for pattern in patterns
-            if pattern.startswith("!") and fnmatch.filter([command_name],
-                                                          pattern[1:])
+            pattern for pattern in patterns if pattern.startswith("!")
+            and fnmatch.filter([command_name], pattern[1:])
         ]
         return len(approved) and not len(rejected)
 
@@ -174,9 +172,9 @@ class Dodo:
         return cls.args
 
     @classmethod
-    def runcmd(cls, args, cwd=None, quiet=False, capture=False):
+    def run(cls, args, cwd=None, quiet=False, capture=False):
         if not hasattr(cls.args, 'echo'):
-            raise CommandError('Dodo.runcmd was called without first calling '
+            raise CommandError('Dodo.run was called without first calling '
                                'Dodo.parse_args.')
         root_node = ArgsTreeNode('original_args', args=args)
         for decorator in cls._get_decorators():
@@ -202,9 +200,13 @@ class Dodo:
                 except ProcessExecutionError:
                     if not quiet:
                         print(
-                            "\nDodo Commands error while running this command:")
+                            "\nDodo Commands error while running this command:"
+                        )
                         print("\n\n%s" % func)
                     return False
+
+    # add alias for the legacy 'runcmd' method
+    runcmd = run
 
     @classmethod
     def decorator(cls, decorator_name):
