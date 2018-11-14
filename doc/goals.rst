@@ -39,8 +39,3 @@ Install dependencies automatically
 ==================================
 
 By specifying the dependencies of a command script in a :code:`<script-name>.meta` file, missing Python packages can be automatically installed into the virtualenv of the current Dodo Commands project.
-
-Auto-completion
-===============
-
-When using bash, Dodo Commands provides auto-completion of the command names and their arguments (all argument parsing is done with the argparse package).
