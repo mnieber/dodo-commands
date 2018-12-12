@@ -55,8 +55,8 @@ def _config_filename():
 
 
 def check_dodo_commands_version():  # noqa
-    required_version = _get_root_config_field(_config_filename(),
-                                              'required_dodo_commands_version')
+    required_version = _get_root_config_field(
+        _config_filename(), 'required_dodo_commands_version')
     if required_version:
         actual_version = get_version()
         if Version(actual_version) < Version(required_version):
@@ -65,26 +65,30 @@ def check_dodo_commands_version():  # noqa
                     'The dodo_commands package needs to be upgraded (%s < %s). Tip: use "dodo upgrade"'
                     % (
                         actual_version,
-                        required_version, ), ))
+                        required_version,
+                    ), ))
             sys.stdout.write('\n')
 
 
 def check_config_version():  # noqa
+    if not _shared_config_dir():
+        return
+
     original_file = os.path.join(_shared_config_dir(), "config.yaml")
     if not os.path.exists(original_file):
         return
 
     original_version = _get_root_config_field(original_file, 'version')
     if not original_version:
-        sys.stderr.write("No version found in original file %s\n" %
-                         original_file)
+        sys.stderr.write(
+            "No version found in original file %s\n" % original_file)
         return
 
     copied_file = os.path.join(Paths().res_dir(), "config.yaml")
     copied_version = _get_root_config_field(copied_file, 'version')
     if not copied_version:
-        sys.stderr.write("No version found in user managed file %s\n" %
-                         copied_file)
+        sys.stderr.write(
+            "No version found in user managed file %s\n" % copied_file)
         return
 
     if (_partial_sem_version(copied_version) <
@@ -94,7 +98,8 @@ def check_config_version():  # noqa
                 'Configuration needs update (%s < %s). Tip: use "dodo diff ."\n'
                 % (
                     copied_version,
-                    original_version, )))
+                    original_version,
+                )))
         sys.stdout.write('\n')
 
 
