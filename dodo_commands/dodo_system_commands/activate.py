@@ -17,7 +17,8 @@ def _make_executable(script_filename):
     os.chmod(script_filename, st.st_mode | 0o111)
 
 
-dodo_template = """
+def dodo_template(python_path):
+    return """#!{python_path}
 import os
 from os.path import abspath, realpath, dirname
 import sys
@@ -34,7 +35,17 @@ if __name__ == "__main__":
         dirname(dirname(exe_dir)))
     execute_from_command_line(sys.argv)
 """.format(
-    bin='Scripts' if is_windows() else 'bin', sep=os.sep)
+        python_path=python_path,
+        bin='Scripts' if is_windows() else 'bin',
+        sep=os.sep)
+
+
+def dodo_template_bat(python_path, dodo_path):
+    return """
+@ECHO OFF
+{python_path} {dodo_path} %*
+""".format(
+        python_path=python_path, dodo_path=dodo_path)
 
 
 class Activator:
@@ -45,8 +56,9 @@ class Activator:
 
     def _create_virtual_env(self):
         """Install a virtual env."""
-        local["virtualenv"]("-p", self.config.get(
-            "settings", "python_interpreter"), self.paths.virtual_env_dir())
+        local["virtualenv"]("-p",
+                            self.config.get("settings", "python_interpreter"),
+                            self.paths.virtual_env_dir())
 
         # update activate script so that it shows the name of the
         # current project in the prompt
@@ -65,7 +77,8 @@ class Activator:
             "plumbum",
             "ruamel.yaml",
             "semantic_version",
-            "six", )
+            "six",
+        )
 
         symlink(
             os.path.dirname(dodo_commands.__file__),
@@ -80,10 +93,15 @@ class Activator:
     def _create_dodo_script(self):
         """Install the dodo entry point script."""
         dodo_file = self._virtual_env_filename('dodo')
+        python_path = os.path.join(self.paths.virtual_env_bin_dir(), 'python')
         with open(dodo_file, "w") as of:
-            of.write('#!%s/python\n' % self.paths.virtual_env_bin_dir())
-            of.write(dodo_template)
+            of.write(dodo_template(python_path))
         _make_executable(dodo_file)
+
+        if is_windows():
+            dd_file = self._virtual_env_filename('dd.bat')
+            with open(dd_file, "w") as of:
+                of.write(dodo_template_bat(python_path, dodo_file))
 
     def _create_res_dir(self):
         """Install the dir with dodo_commands resources."""
@@ -94,15 +112,16 @@ class Activator:
             'ROOT': {
                 'command_path':
                 [os.path.join(self.paths.default_commands_dir(), '*')],
-                'version': '1.0.0'
+                'version':
+                '1.0.0'
             }
         }
         with open(config_filename, "w") as f:
             f.write(ruamel.yaml.round_trip_dump(default_config))
 
     def _create_project(self):
-        self._report("Creating project at location %s ..." %
-                     self.paths.project_dir())
+        self._report(
+            "Creating project at location %s ..." % self.paths.project_dir())
         self._create_res_dir()
         self._create_virtual_env()
         if not is_windows():
@@ -145,15 +164,17 @@ class Activator:
                 self._report("There is no latest project\n")
                 return
 
-        self.paths = Paths(project_dir=os.path.expanduser(
-            os.path.join(
-                self.config.get("settings", "projects_dir"), self.project)))
+        self.paths = Paths(
+            project_dir=os.path.expanduser(
+                os.path.join(
+                    self.config.get("settings", "projects_dir"),
+                    self.project)))
 
         if create:
             if os.path.exists(
                     os.path.join(self.paths.project_dir(), "dodo_commands")):
-                self._report("Project already exists: %s\n" %
-                             self.paths.project_dir())
+                self._report(
+                    "Project already exists: %s\n" % self.paths.project_dir())
                 return
             if not self._create_project():
                 return
@@ -168,8 +189,8 @@ class Activator:
             self.config.set("recent", "latest_project", self.project)
             write_global_config_parser(self.config)
 
-        sys.stdout.write("source %s\n" %
-                         self._virtual_env_filename("activate"))
+        sys.stdout.write(
+            "source %s\n" % self._virtual_env_filename("activate"))
 
 
 def _args():
