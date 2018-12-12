@@ -55,10 +55,14 @@ def remove_trailing_dashes(args):
 def bordered(text):
     lines = text.splitlines()
     width = max(len(s) for s in lines)
-    res = ['┌' + '─' * width + '┐']
+    if is_windows():
+        tl, tr, bl, br, v, h = '+', '+', '+', '+', '|', '-'
+    else:
+        tl, tr, bl, br, v, h = '┌', '┐', '└', '┘', '│', '─'
+    res = [tl + h * width + tr]
     for s in lines:
-        res.append('│' + (s + ' ' * width)[:width] + '│')
-    res.append('└' + '─' * width + '┘')
+        res.append(v + (s + ' ' * width)[:width] + v)
+    res.append(bl + h * width + br)
     return '\n'.join(res)
 
 
