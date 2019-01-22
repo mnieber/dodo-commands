@@ -1,9 +1,8 @@
 """Script for activating/creating a project in the projects dir."""
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo, CommandError
-from dodo_commands.framework.paths import Paths
 from dodo_commands.framework.config import (load_global_config_parser,
-                                            write_global_config_parser)
+                                            write_global_config_parser, Paths)
 from dodo_commands.framework.util import is_windows, symlink
 import os
 import sys

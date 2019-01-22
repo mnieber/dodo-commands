@@ -1,8 +1,6 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo
-from dodo_commands.framework.paths import Paths
-from dodo_commands.framework.config import (CommandPath,
-                                            load_global_config_parser)
+from dodo_commands.framework.config import CommandPath, Paths, projects_dir
 import os
 import sys
 
@@ -13,7 +11,8 @@ def _args():  # noqa
                      '"dodo which src" prints the value of /ROOT/src_dir.'))
     parser.add_argument(
         'what',
-        nargs='?', )
+        nargs='?',
+    )
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -28,7 +27,8 @@ def _args():  # noqa
     group.add_argument(
         '--dir',
         dest='directory',
-        help='Finds the X_dir value in the configuration, where X is the given option value'
+        help=
+        'Finds the X_dir value in the configuration, where X is the given option value'
     )
     group.add_argument(
         '--decorators',
@@ -59,11 +59,6 @@ def _which_dir(directory):
     return Dodo.get_config("/ROOT/%s_dir" % directory, None)
 
 
-def _projects_dir():
-    return os.path.expanduser(load_global_config_parser().get("settings",
-                                                              "projects_dir"))
-
-
 if Dodo.is_main(__name__):
     args = _args()
 
@@ -82,9 +77,8 @@ if Dodo.is_main(__name__):
                          '\n')
     elif args.projects:
         projects = [
-            x for x in os.listdir(_projects_dir())
-            if os.path.isdir(
-                os.path.join(_projects_dir(), x, "dodo_commands", "res"))
+            x for x in os.listdir(projects_dir()) if os.path.isdir(
+                os.path.join(projects_dir(), x, "dodo_commands", "res"))
         ]
         sys.stdout.write('\n'.join(sorted(projects)) + '\n')
     elif args.what:

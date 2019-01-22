@@ -1,13 +1,14 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo
-from dodo_commands.framework.paths import Paths
+from dodo_commands.framework.config import Paths
 import os
 
 
 def _args():
-    parser = ArgumentParser(description=(
-        "Writes (or removes) a small script that activates the latest " +
-        "Dodo Commands project"))
+    parser = ArgumentParser(
+        description=(
+            "Writes (or removes) a small script that activates the latest " +
+            "Dodo Commands project"))
     parser.add_argument('status', choices=['on', 'off'])
     return Dodo.parse_args(parser)
 

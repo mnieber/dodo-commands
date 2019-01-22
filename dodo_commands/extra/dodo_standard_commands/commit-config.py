@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo
-from dodo_commands.framework.paths import Paths
+from dodo_commands.framework.config import Paths
 import os
 
 
@@ -18,5 +18,6 @@ if Dodo.is_main(__name__, safe=True):
         Dodo.run(['git', 'init'], cwd=Paths().res_dir())
 
     Dodo.run(['git', 'add', '-A'], cwd=Paths().res_dir())
-    Dodo.run(['git', 'commit', '-m', args.message or 'Update configuration'],
-             cwd=Paths().res_dir())
+    Dodo.run(
+        ['git', 'commit', '-m', args.message or 'Update configuration'],
+        cwd=Paths().res_dir())

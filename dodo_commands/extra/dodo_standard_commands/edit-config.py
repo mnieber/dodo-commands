@@ -1,8 +1,7 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo, CommandError
-from dodo_commands.framework.paths import Paths
 from dodo_commands.framework.config import (load_global_config_parser,
-                                            ConfigIO)
+                                            ConfigIO, Paths)
 from six.moves import configparser
 import os
 

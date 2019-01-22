@@ -10,8 +10,7 @@ import traceback
 from importlib import import_module
 from dodo_commands.framework.util import query_yes_no
 from dodo_commands.framework.config import (CommandPath, ConfigLoader,
-                                            load_global_config_parser)
-from dodo_commands.framework.paths import Paths
+                                            load_global_config_parser, Paths)
 from dodo_commands.framework.singleton import Dodo
 from dodo_commands.framework.command_error import CommandError  # noqa
 
@@ -36,8 +35,8 @@ def execute_script(package_path, command_name):
             if query_yes_no("Install (yes), or abort (no)?"):
                 print("\n--- Installing from %s ---" % meta_data_filename)
                 pip = Paths().pip()
-                subprocess.check_call([pip, "install"] + meta_data[
-                    'requirements'])
+                subprocess.check_call([pip, "install"] +
+                                      meta_data['requirements'])
                 print("--- Done ---\n\n")
             else:
                 sys.exit(1)
@@ -115,8 +114,8 @@ class ManagementUtility(object):
         return '\n'.join(usage)
 
     def _handle_exception(self, e):
-        if (getattr(Dodo.args, 'traceback', False) or
-                not isinstance(e, CommandError)):
+        if (getattr(Dodo.args, 'traceback', False)
+                or not isinstance(e, CommandError)):
             raise
         sys.stderr.write('%s: %s\n' % (e.__class__.__name__, e))
         sys.exit(1)
