@@ -1,5 +1,15 @@
 # Version history
 
+## 0.18.0
+
+- Fix check_config_version
+- Fix bordered() for windows
+- Change signature of find-text command
+- Ignore empty name option in docker decorator
+- Add argument --create-scd to bootstrap
+- Move Paths into config.py
+- Add dodo rename command
+
 ## 0.17.1
 
 - Rename runcmd to run
