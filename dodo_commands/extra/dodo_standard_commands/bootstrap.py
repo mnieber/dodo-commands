@@ -18,6 +18,11 @@ def _args():
         "Location relative to src_dir where the shared project config is stored",
     )
     parser.add_argument('--force', dest="use_force", action="store_true")
+    parser.add_argument(
+        '--create-scd',
+        action='store_true',
+        help="Create shared_config_dir if it does not exist",
+    )
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -76,8 +81,8 @@ def _clone(args, src_dir):
 
     Dodo.run(
         ["git", "clone", args.git_url,
-         os.path.basename(src_dir)] +
-        (["--depth", args.depth] if args.depth else []),
+         os.path.basename(src_dir)] + (["--depth", args.depth]
+                                       if args.depth else []),
         cwd=os.path.dirname(src_dir))
     if args.branch:
         Dodo.run(["git", "checkout", args.branch], cwd=src_dir)
@@ -130,8 +135,12 @@ if Dodo.is_main(__name__, safe=False):
 
     shared_config_dir = os.path.join(full_src_dir, args.shared_config_dir)
     if not os.path.exists(shared_config_dir):
-        raise CommandError(
-            "Shared config directory %s not found." % shared_config_dir)
+        if args.create_scd:
+            os.makedirs(shared_config_dir)
+        else:
+            raise CommandError(
+                "Shared configuration directory %s does not exist. Hint: use --create-scd."
+                % shared_config_dir)
 
     _copy_defaults(args, shared_config_dir)
     _update_config(
