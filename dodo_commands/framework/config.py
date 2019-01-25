@@ -44,8 +44,8 @@ class Paths:
         return os.path.join(self.project_dir(), 'dodo_commands', 'env')
 
     def virtual_env_bin_dir(self):
-        return os.path.join(self.virtual_env_dir(), 'Scripts'
-                            if _is_windows() else 'bin')
+        return os.path.join(self.virtual_env_dir(),
+                            'Scripts' if _is_windows() else 'bin')
 
     def pip(self):
         return os.path.join(self.virtual_env_bin_dir(), 'pip' + _ext())
@@ -164,8 +164,9 @@ class ConfigIO:
 
         Arg config_base_dir defaults to Paths().res_dir().
         """
-        self.config_base_dir = (Paths().res_dir() if config_base_dir is None
-                                else config_base_dir)  # noqa
+        self.config_base_dir = (
+            Paths().res_dir() if config_base_dir is None else config_base_dir
+        )  # noqa
 
     def _path_to(self, post_fix_paths):
         """Return path composed of config_base_dir and post_fix_paths list."""
@@ -246,6 +247,9 @@ class ConfigLoader:
         """Add the system commands to the command path"""
         self._add_to_config(config, "ROOT", "command_path", [])
         config['ROOT']['command_path'].append(self._system_commands_dir())
+        if not Paths().project_dir():
+            config['ROOT']['command_path'].append(
+                os.path.join(Paths().default_commands_dir(), '*'))
 
     def _report(self, x):
         sys.stderr.write(x)
@@ -254,7 +258,8 @@ class ConfigLoader:
     def load(self, config_base_dir=None):
         fallback_config = dict(ROOT={})
         try:
-            config = ConfigIO(config_base_dir).load() or fallback_config
+            config = (ConfigIO(config_base_dir).load()
+                      if Paths().project_dir() else None) or fallback_config
         except ruamel.yaml.scanner.ScannerError:
             config = fallback_config
             self._report(
@@ -322,22 +327,13 @@ class CommandPath:
             sys.path.append(search_path_dir)
 
 
-def look_up_key(config, key, default_value="__not_set_234234__"):
-    xpath = [k for k in key.split("/") if k]
-    try:
-        return Key(config, xpath).get()
-    except KeyNotFound:
-        if default_value == "__not_set_234234__":
-            raise
-    return default_value
-
-
 def expand_keys(config, text):
     result = ""
     val_terms = re.split('\$\{([^\}]+)\}', text)
     for idx, term in enumerate(val_terms):
         if idx % 2:
-            str_rep = json.dumps(look_up_key(config, term))
+            xpath = [k for k in term.split("/") if k]
+            str_rep = json.dumps(Key(config, xpath).get())
             if str_rep.startswith('"') and str_rep.endswith('"'):
                 str_rep = str_rep[1:-1]
             result += str_rep

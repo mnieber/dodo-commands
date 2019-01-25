@@ -11,7 +11,7 @@ from importlib import import_module
 from dodo_commands.framework.util import query_yes_no
 from dodo_commands.framework.config import (CommandPath, ConfigLoader,
                                             load_global_config_parser, Paths)
-from dodo_commands.framework.singleton import Dodo
+from dodo_commands.framework.singleton import Dodo, DecoratorScope, ConfigArg  # noqa
 from dodo_commands.framework.command_error import CommandError  # noqa
 
 
@@ -46,6 +46,8 @@ def execute_script(package_path, command_name):
         import_path = command_name
 
     try:
+        Dodo.package_path = package_path
+        Dodo.command_name = command_name
         import_module(import_path)
     except ImportError as e:
         try:
@@ -120,6 +122,30 @@ class ManagementUtility(object):
         sys.stderr.write('%s: %s\n' % (e.__class__.__name__, e))
         sys.exit(1)
 
+    def _handle_arg_complete(self, command_map):
+        words = os.environ['COMP_LINE'].split()
+        command_name = words[1]
+
+        if command_name not in command_map:
+            parser = ArgumentParser()
+            parser.add_argument(
+                'command', choices=[x for x in command_map.keys()])
+            argcomplete.autocomplete(parser)
+
+        os.environ['COMP_LINE'] = ' '.join(words[:1] + words[2:])
+        os.environ['COMP_POINT'] = str(
+            int(os.environ['COMP_POINT']) - (len(command_name) + 1))
+
+        return command_name
+
+    def _find_alias(self, command_name):
+        global_config = load_global_config_parser()
+        if global_config.has_section('alias'):
+            for key, val in global_config.items('alias'):
+                if key == command_name:
+                    return val
+        return None
+
     def execute(self):
         """
         Execute command.
@@ -133,29 +159,12 @@ class ManagementUtility(object):
             self._handle_exception(e)
 
         if "_ARGCOMPLETE" in os.environ:
-            words = os.environ['COMP_LINE'].split()
-            command_name = words[1]
-
-            if command_name not in command_map:
-                parser = ArgumentParser()
-                parser.add_argument(
-                    'command', choices=[x for x in command_map.keys()])
-                argcomplete.autocomplete(parser)
-
-            os.environ['COMP_LINE'] = ' '.join(words[:1] + words[2:])
-            os.environ['COMP_POINT'] = str(
-                int(os.environ['COMP_POINT']) - (len(command_name) + 1))
+            command_name = self._handle_arg_complete(command_map)
         else:
             try:
                 command_name = self.argv[1]
             except IndexError:
                 command_name = 'help'  # Display help if no arguments were given.
-
-        global_config = load_global_config_parser()
-        if global_config.has_section('alias'):
-            for key, val in global_config.items('alias'):
-                if key == command_name:
-                    command_name = val
 
         if command_name == '--version':
             sys.stdout.write(get_version() + '\n')
@@ -168,15 +177,15 @@ class ManagementUtility(object):
                 sys.stdout.write(self.main_help_text() + '\n')
         else:
             if command_name not in command_map:
-                print("Unknown dodo command: %s" % command_name)
-                sys.exit(1)
-
-            package_path = command_map[command_name]
-            Dodo.command_name = command_name
-            Dodo.package_path = package_path
+                alias = self._find_alias(command_name)
+                if alias and alias in command_map:
+                    command_name = alias
+                else:
+                    print("Unknown dodo command: %s" % (alias or command_name))
+                    sys.exit(1)
 
             try:
-                execute_script(package_path, command_name)
+                execute_script(command_map[command_name], command_name)
             except KeyboardInterrupt:
                 print('\n')
                 sys.exit(1)

@@ -1,4 +1,5 @@
 from dodo_commands.framework import Dodo, CommandError
+from dodo_commands.framework.singleton import create_get_config
 from dodo_commands.framework.util import remove_trailing_dashes
 import argparse
 import os
@@ -19,7 +20,7 @@ def _dodo_args():
 
 def _convert_dodo_args():
     dodo_args = _dodo_args()
-    gc = Dodo.create_get_config(dodo_args.__dict__)
+    gc = create_get_config(dodo_args.__dict__)
     args = argparse.Namespace()
     args.build_dir = gc(key='/DOCKER/images/{name}/build_dir', default='.')
     args.docker_file = gc(
