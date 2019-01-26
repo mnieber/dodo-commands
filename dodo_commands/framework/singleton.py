@@ -12,7 +12,7 @@ from dodo_commands.framework.command_error import CommandError
 from plumbum import FG, ProcessExecutionError, local
 
 
-def _ask_to_continue(args, cwd, is_echo, is_confirm):
+def _ask_confirmation(args, cwd, is_echo, is_confirm):
     """Ask the user whether to continue with executing func."""
 
     def to_str():
@@ -24,7 +24,7 @@ def _ask_to_continue(args, cwd, is_echo, is_confirm):
 
     if is_confirm:
         print("(%s) %s" % (cwd, to_str()))
-        if not query_yes_no("continue?"):
+        if not query_yes_no("confirm?"):
             return False
         else:
             print("")
@@ -180,8 +180,8 @@ class Dodo:
         for decorator in cls._get_decorators():
             root_node, cwd = decorator.modify_args(root_node, cwd)
 
-        if not _ask_to_continue(root_node, cwd or local.cwd, cls.args.echo,
-                                cls.args.confirm):
+        if not _ask_confirmation(root_node, cwd or local.cwd, cls.args.echo,
+                                 cls.args.confirm):
             return False
 
         if cwd and not os.path.exists(cwd):

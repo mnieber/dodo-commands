@@ -119,7 +119,7 @@ The following steps install a pre-existing Dodo Commands project that offers a `
     ```bash
     (/root/projects/dodo_tutorial/build/release) cmake -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX=/root/projects/dodo_tutorial/install /root/projects/dodo_tutorial/src
 
-    continue? [Y/n]
+    confirm? [Y/n]
     ```
 
 5. Show the command line for running cmake in docker:
@@ -143,7 +143,7 @@ The following steps install a pre-existing Dodo Commands project that offers a `
       dodo_tutorial:1604
       cmake -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX=/root/projects/dodo_tutorial/install /root/projects/dodo_tutorial/src
 
-    continue? [Y/n]
+    confirm? [Y/n]
     ```
 
     Note that this command line only works if the dodo_tutorial:1604 image exists. You can build it by running `dodo dockerbuild`.
