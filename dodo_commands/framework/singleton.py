@@ -198,7 +198,3 @@ class Dodo:
 
     # add alias for the legacy 'runcmd' method
     runcmd = run
-
-    @classmethod
-    def decorator(cls, decorator_name):
-        return DecoratorScope(decorator_name)
