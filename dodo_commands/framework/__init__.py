@@ -11,7 +11,7 @@ from importlib import import_module
 from dodo_commands.framework.util import query_yes_no
 from dodo_commands.framework.config import (CommandPath, ConfigLoader,
                                             load_global_config_parser, Paths)
-from dodo_commands.framework.singleton import Dodo
+from dodo_commands.framework.singleton import Dodo, DecoratorScope, ConfigArg  # noqa
 from dodo_commands.framework.command_error import CommandError  # noqa
 
 

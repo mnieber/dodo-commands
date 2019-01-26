@@ -5,8 +5,8 @@ import argparse
 import fnmatch
 import os
 import sys
-from dodo_commands.framework.config import (ConfigLoader, look_up_key,
-                                            CommandPath)
+from dodo_commands.framework.config import (ConfigLoader, CommandPath, Paths)
+from dodo_commands.framework.config_expander import Key, KeyNotFound
 from dodo_commands.framework.args_tree import ArgsTreeNode
 from dodo_commands.framework.command_error import CommandError
 from plumbum import FG, ProcessExecutionError, local
@@ -44,7 +44,23 @@ class DecoratorScope:
         self.decorators.remove(Dodo.command_name)
 
 
+class ConfigArg:
+    def __init__(self, config_key, *args, **kwargs):
+        self.config_key = config_key
+        self.args = args
+        self.kwargs = kwargs
+
+    @property
+    def arg_name(self):
+        return self.args[0].strip('-').replace('-', '_')
+
+    @property
+    def xpath(self):
+        return [x for x in self.config_key.split('/') if x]
+
+
 class Dodo:
+    package_path = None
     command_name = None
     safe = True
     args = argparse.Namespace()
@@ -71,13 +87,16 @@ class Dodo:
     def is_main(cls, name, safe=None):
         if safe is not None:
             cls.safe = safe
-        return name in ('__main__', cls.package_path + '.' + cls.command_name)
+        if name == '__main__':
+            return True
+        return (cls.command_name and cls.package_path
+                and name == cls.package_path + '.' + cls.command_name)
 
     @classmethod
     def _get_decorators(cls):
         return [
             cls._load_decorator(name, directory)
-            for name, directory in cls.all_decorators().items()
+            for name, directory in cls._all_decorators().items()
             if cls._uses_decorator(name)
         ]
 
@@ -102,7 +121,7 @@ class Dodo:
         return import_module(directory + "." + name).Decorator()
 
     @classmethod
-    def all_decorators(cls):
+    def _all_decorators(cls):
         """Returns a mapping from decorator name to its directory."""
         command_path = CommandPath(cls.config)
         command_path.extend_sys_path()
@@ -120,10 +139,24 @@ class Dodo:
         return result
 
     @classmethod
-    def parse_args(cls, parser):
-        if not cls.command_name:
-            argcomplete.autocomplete(parser)
-            return parser.parse_args(sys.argv)
+    def _add_config_args(cls, parser, config_args=None):
+        has_project_dir = Paths().project_dir()
+        for config_arg in (config_args or []):
+            key = Key(cls.config, config_arg.xpath)
+            if not key.exists():
+                kwargs = dict(config_arg.kwargs)
+                if not has_project_dir:
+                    help_text = kwargs.get('help')
+                    sep = '. ' if help_text else ''
+                    extra_help = (
+                        'Configuration key is %s' % config_arg.config_key)
+                    kwargs['help'] = help_text + sep + extra_help
+
+                parser.add_argument(*config_arg.args, **kwargs)
+
+    @classmethod
+    def parse_args(cls, parser, config_args=None):
+        has_dodo_entry_point = os.path.basename(sys.argv[0]) == 'dodo'
 
         parser.add_argument(
             '--traceback', action='store_true', help=argparse.SUPPRESS)
@@ -141,9 +174,22 @@ class Dodo:
         for decorator in cls._get_decorators():
             decorator.add_arguments(parser)
 
+        cls._add_config_args(parser, config_args)
         argcomplete.autocomplete(parser)
-        parser.prog = "%s %s" % (os.path.basename(sys.argv[0]), sys.argv[1])
-        cls.args = parser.parse_args(sys.argv[2:])
+        if has_dodo_entry_point:
+            first_arg_index = 2
+            parser.prog = "%s %s" % (os.path.basename(sys.argv[0]),
+                                     sys.argv[1])
+        else:
+            parser.prog = sys.argv[0]
+            first_arg_index = 1
+        cls.args = parser.parse_args(sys.argv[first_arg_index:])
+
+        if config_args:
+            for config_arg in config_args:
+                key = Key(cls.config, config_arg.xpath)
+                if key.exists():
+                    setattr(cls.args, config_arg.arg_name, key.get())
 
         if cls.args.echo and not cls.safe:
             raise CommandError(

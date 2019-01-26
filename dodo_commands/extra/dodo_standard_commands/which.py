@@ -73,7 +73,7 @@ if Dodo.is_main(__name__):
     elif args.directory:
         sys.stdout.write(_which_dir(args.directory) + '\n')
     elif args.decorators:
-        sys.stdout.write(", ".join(sorted(Dodo.all_decorators().keys())) +
+        sys.stdout.write(", ".join(sorted(Dodo._all_decorators().keys())) +
                          '\n')
     elif args.projects:
         projects = [
@@ -86,4 +86,5 @@ if Dodo.is_main(__name__):
         if x:
             sys.stdout.write(x + '\n')
     else:
-        sys.stdout.write(Dodo.get_config("/ROOT/project_name") + '\n')
+        if Paths().project_dir():
+            sys.stdout.write(Dodo.get_config("/ROOT/project_name") + '\n')
