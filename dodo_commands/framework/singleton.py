@@ -34,8 +34,8 @@ def _ask_to_continue(args, cwd, is_echo, is_confirm):
 
 class DecoratorScope:
     def __init__(self, decorator_name):
-        self.decorators = Dodo.config['ROOT']['decorators'].setdefault(
-            decorator_name, [])
+        self.decorators = Dodo.config['ROOT'].setdefault(
+            'decorators', {}).setdefault(decorator_name, [])
 
     def __enter__(self):  # noqa
         self.decorators.append(Dodo.command_name)
