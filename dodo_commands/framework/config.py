@@ -247,6 +247,9 @@ class ConfigLoader:
         """Add the system commands to the command path"""
         self._add_to_config(config, "ROOT", "command_path", [])
         config['ROOT']['command_path'].append(self._system_commands_dir())
+        if not Paths().project_dir():
+            config['ROOT']['command_path'].append(
+                os.path.join(Paths().default_commands_dir(), '*'))
 
     def _report(self, x):
         sys.stderr.write(x)
@@ -255,7 +258,8 @@ class ConfigLoader:
     def load(self, config_base_dir=None):
         fallback_config = dict(ROOT={})
         try:
-            config = ConfigIO(config_base_dir).load() or fallback_config
+            config = (ConfigIO(config_base_dir).load()
+                      if Paths().project_dir() else None) or fallback_config
         except ruamel.yaml.scanner.ScannerError:
             config = fallback_config
             self._report(
