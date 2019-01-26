@@ -58,21 +58,6 @@ class Dodo:
         return cls._config
 
     @classmethod
-    def create_get_config(cls, local_vars):
-        """
-        Returns a get_config function that interpolates local_vars.
-        For example:
-
-        gc = Dodo.create_get_config(dict(user='sam'))
-        tmp_dir = gc('/USERS/{user}/tmp_dir', default='/tmp')
-        """
-
-        def get_config(key, default=None):
-            return cls.get_config(key.format(**local_vars), default)
-
-        return get_config
-
-    @classmethod
     def get_config(cls, key, default_value="__not_set_234234__"):  # noqa
         return look_up_key(cls.config, key, default_value)
 

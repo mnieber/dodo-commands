@@ -4,6 +4,21 @@ import argparse
 import os
 
 
+def _create_get_config(local_vars):
+    """
+    Returns a get_config function that interpolates local_vars.
+    For example:
+
+    gc = Dodo._create_get_config(dict(user='sam'))
+    tmp_dir = gc('/USERS/{user}/tmp_dir', default='/tmp')
+    """
+
+    def get_config(key, default=None):
+        return Dodo.get_config(key.format(**local_vars), default)
+
+    return get_config
+
+
 def _dodo_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -19,7 +34,7 @@ def _dodo_args():
 
 def _convert_dodo_args():
     dodo_args = _dodo_args()
-    gc = Dodo.create_get_config(dodo_args.__dict__)
+    gc = _create_get_config(dodo_args.__dict__)
     args = argparse.Namespace()
     args.build_dir = gc(key='/DOCKER/images/{name}/build_dir', default='.')
     args.docker_file = gc(
