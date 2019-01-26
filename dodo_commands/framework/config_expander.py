@@ -42,10 +42,10 @@ class DictVal:
         self.dict[self.key] = new_value
 
     def must_eval(self):
-        return (isinstance(self.xpath[-1], str) and
-                self.xpath[-1].endswith('_EVAL') or
-                (len(self.xpath) >= 2 and isinstance(self.xpath[-2], str) and
-                 self.xpath[-2].endswith('_EVAL')))
+        return (isinstance(self.xpath[-1], str)
+                and self.xpath[-1].endswith('_EVAL')
+                or (len(self.xpath) >= 2 and isinstance(self.xpath[-2], str)
+                    and self.xpath[-2].endswith('_EVAL')))
 
     def warning_msg_not_expanded(self):
         return "Unexpanded value {val} at location /{xpath}".format(
@@ -68,8 +68,8 @@ class ListVal:
         self.list[self.idx] = new_value
 
     def must_eval(self):
-        return (len(self.xpath) >= 2 and isinstance(self.xpath[-2], str) and
-                self.xpath[-2].endswith('_EVAL'))
+        return (len(self.xpath) >= 2 and isinstance(self.xpath[-2], str)
+                and self.xpath[-2].endswith('_EVAL'))
 
     def warning_msg_not_expanded(self):
         return "Unexpanded value {val} at location /{xpath}".format(
@@ -159,8 +159,8 @@ class ConfigExpander:
                 key = Key(self.config, xpath)
                 if key.exists():
                     expanded_str = (
-                        expanded_str[:key_expression.start()] + str(key.get())
-                        + expanded_str[key_expression.end():])
+                        expanded_str[:key_expression.start()] + str(
+                            key.get()) + expanded_str[key_expression.end():])
 
                     if expanded_str not in known_strs:
                         known_strs.append(expanded_str)
@@ -237,8 +237,8 @@ class ConfigExpander:
                         else:
                             changed = True
                             node.replace_value(
-                                self._eval(expanded_value, node.xpath)
-                                if node.must_eval() else expanded_value)
+                                self._eval(expanded_value, node.xpath) if node.
+                                must_eval() else expanded_value)
                 else:
                     raise CommandError("Should not reach here")
             nodes = new_nodes
