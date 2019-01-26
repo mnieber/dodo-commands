@@ -2,7 +2,6 @@ import ruamel.yaml
 import re
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo
-from dodo_commands.framework.config import look_up_key
 
 
 def _args():
@@ -17,7 +16,7 @@ def _args():
 if Dodo.is_main(__name__):
     args = _args()
     if args.key:
-        contents = look_up_key(Dodo.config, args.key, '')
+        contents = Dodo.get_config(args.key)
         if isinstance(contents, str):
             print(contents)
         else:

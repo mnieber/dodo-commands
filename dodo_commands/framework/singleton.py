@@ -59,7 +59,13 @@ class Dodo:
 
     @classmethod
     def get_config(cls, key, default_value="__not_set_234234__"):  # noqa
-        return look_up_key(cls.config, key, default_value)
+        try:
+            xpath = [k for k in key.split("/") if k]
+            return Key(cls.config, xpath).get()
+        except KeyNotFound:
+            if default_value == "__not_set_234234__":
+                raise
+            return default_value
 
     @classmethod
     def is_main(cls, name, safe=None):

@@ -322,22 +322,13 @@ class CommandPath:
             sys.path.append(search_path_dir)
 
 
-def look_up_key(config, key, default_value="__not_set_234234__"):
-    xpath = [k for k in key.split("/") if k]
-    try:
-        return Key(config, xpath).get()
-    except KeyNotFound:
-        if default_value == "__not_set_234234__":
-            raise
-    return default_value
-
-
 def expand_keys(config, text):
     result = ""
     val_terms = re.split('\$\{([^\}]+)\}', text)
     for idx, term in enumerate(val_terms):
         if idx % 2:
-            str_rep = json.dumps(look_up_key(config, term))
+            xpath = [k for k in term.split("/") if k]
+            str_rep = json.dumps(Key(config, xpath).get())
             if str_rep.startswith('"') and str_rep.endswith('"'):
                 str_rep = str_rep[1:-1]
             result += str_rep
