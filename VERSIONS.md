@@ -1,5 +1,13 @@
 # Version history
 
+## 0.19.0
+
+- Add config_args to Dodo.parse_args
+- Several refactorings
+- Add default commands to config if there is no current project
+- Rename 'continue?' to 'confirm?'
+- Fix case of missing 'decorators'
+
 ## 0.18.0
 
 - Fix check_config_version
