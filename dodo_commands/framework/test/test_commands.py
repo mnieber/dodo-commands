@@ -50,9 +50,8 @@ class TestConfigIO:  # noqa
                  '--git-url',
                  'https://github.com/mnieber/dodo_commands_tutorial.git')
 
-        config_filename = os.path.join(dodo_test_dir, 'dodo_commands', 'res',
-                                       'config.yaml')
         res_dir = os.path.join(dodo_test_dir, 'dodo_commands', 'res')
+        config_filename = os.path.join(res_dir, 'config.yaml')
 
         # dodo which
         assert "dodo_test" == dodo('which')[:-1]
@@ -119,14 +118,27 @@ class TestConfigIO:  # noqa
         ]
 
         # dodo new-command
-        expected_new_command_file = os.path.join(
-            dodo_test_dir, "src/extra/dodo_commands/dodo_tutorial_commands",
-            "foo.py")
+        tutorial_commands_dir = os.path.join(
+            dodo_test_dir, "src/extra/dodo_commands/dodo_tutorial_commands")
+        expected_new_command_file = os.path.join(tutorial_commands_dir,
+                                                 "foo.py")
         if os.path.exists(expected_new_command_file):
             os.unlink(expected_new_command_file)
         dodo('new-command', 'foo', '--next-to', 'cmake')
         assert os.path.exists(expected_new_command_file)
+        assert expected_new_command_file == dodo('which', 'foo')[:-1]
 
         # dodo print-config
         assert "CMAKE_INSTALL_PREFIX: %s/install" % dodo_test_dir in dodo(
             "print-config")
+
+        # dodo drop-in
+        drop_in_dir = os.path.join(tutorial_commands_dir, "drop-in")
+        os.mkdir(drop_in_dir)
+        with open(os.path.join(drop_in_dir, "bar.txt"), "w") as ofs:
+            ofs.write("bar")
+        target_bar_path = os.path.join(res_dir, 'drops',
+                                       'dodo_tutorial_commands', 'bar.txt')
+        assert not os.path.exists(target_bar_path)
+        dodo('drop-in', 'dodo_tutorial_commands')
+        assert os.path.exists(target_bar_path)

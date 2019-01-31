@@ -43,7 +43,7 @@ At this point, your colleague has the same directory structure as you:
     ~/projects/FooBar/src/extra/dodo_commands/res    # default Dodo Commands configuration files
     ~/projects/FooBar/dodo_commands/res              # local copies of the default Dodo Commands configuration files
 
-- the ``${/ROOT/shared_config_dir}`` directory is used by the ``dodo diff`` command to show the differences between your local configuration files and the shared files. If you are using the recommended diff tool (meld) then you will now be able to copy parts of your location configuration to the shared one. When you push these changes to version control, your colleages will later be able to incorporate your changes when they run ``dodo diff``.
+- the ``${/ROOT/shared_config_dir}`` directory is used by the ``dodo diff`` command to show the differences between your local configuration files and the shared files. If you are using the recommended diff tool (meld) then you will now be able to copy parts of your local configuration to the shared one. When you push these changes to version control, your colleages will later be able to incorporate your changes (also by copying parts) when they run ``dodo diff``.
 
 - As mentioned, we recommend to set :code:`meld` as the ``diff_tool`` in :code:`~/.dodo_commands/config`:
 
@@ -51,7 +51,9 @@ At this point, your colleague has the same directory structure as you:
 
     dodo global-config settings.diff_tool meld
 
-- To synchronize only config.yaml, call ``dodo diff config.yaml``. It's a good practice to use the value ``${/ROOT/version}`` to track whether the copied configuration is up-to-date or not (see :ref:`check_config`).
+- To synchronize only config.yaml, call ``dodo diff config.yaml``.
+
+- It's a good practice to use the value ``${/ROOT/version}`` to track whether the copied configuration is up-to-date or not (see :ref:`check_config`).
 
 
 .. _check_config:
