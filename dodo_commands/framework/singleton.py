@@ -63,8 +63,8 @@ class Dodo:
     package_path = None
     command_name = None
     safe = True
-    args = argparse.Namespace()
 
+    _args = argparse.Namespace()
     _config = None
 
     @classmethod
@@ -180,22 +180,22 @@ class Dodo:
         else:
             parser.prog = sys.argv[0]
             first_arg_index = 1
-        cls.args = parser.parse_args(sys.argv[first_arg_index:])
+        cls._args = parser.parse_args(sys.argv[first_arg_index:])
 
         if config_args:
             for config_arg in config_args:
                 key = Key(cls.get_config(), config_arg.xpath)
                 if key.exists():
-                    setattr(cls.args, config_arg.arg_name, key.get())
+                    setattr(cls._args, config_arg.arg_name, key.get())
 
-        if cls.args.echo and not cls.safe:
+        if cls._args.echo and not cls.safe:
             raise CommandError(
                 "The --echo option is not supported for unsafe commands.\n" +
                 "Since this command is marked as unsafe, some operations will "
                 + "be performed directly, instead of echoed to the console. " +
                 "Use --confirm if you wish to execute with visual feedback. ")
 
-        if cls.args.confirm and not cls.safe:
+        if cls._args.confirm and not cls.safe:
             if not query_yes_no(
                     "Since this command is marked as unsafe, some operations will "
                     +
@@ -203,19 +203,17 @@ class Dodo:
                     default="no"):
                 return
 
-        return cls.args
+        return cls._args
 
     @classmethod
     def run(cls, args, cwd=None, quiet=False, capture=False):
-        if not hasattr(cls.args, 'echo'):
-            raise CommandError('Dodo.run was called without first calling '
-                               'Dodo.parse_args.')
         root_node = ArgsTreeNode('original_args', args=args)
         for decorator in cls._get_decorators():
-            root_node, cwd = decorator.modify_args(root_node, cwd)
+            root_node, cwd = decorator.modify_args(cls._args, root_node, cwd)
 
-        if not _ask_confirmation(root_node, cwd or local.cwd, cls.args.echo,
-                                 cls.args.confirm):
+        if not _ask_confirmation(root_node, cwd or local.cwd,
+                                 getattr(cls._args, 'echo', False),
+                                 getattr(cls._args, 'confirm', False)):
             return False
 
         if cwd and not os.path.exists(cwd):

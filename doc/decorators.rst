@@ -25,8 +25,8 @@ The following example shows a decorator that prepends the arguments with the pat
                 help="Run the command through the debugger"
             )
 
-        def modify_args(self, root_node, cwd):  # noqa
-            if not Dodo.args.use_debugger:
+        def modify_args(self, dodo_args, root_node, cwd):  # noqa
+            if not getattr(dodo_args, 'use_debugger', False):
                 return root_node, cwd
 
             # Create a new root node with just the path to the debugger
@@ -54,7 +54,7 @@ This is similar to prepending, except that we do not need to create a new node
     # file: my_commands/decorators/foo.py
 
     class Decorator:  # noqa
-        def modify_args(self, root_node, cwd):  # noqa
+        def modify_args(self, dodo_args, root_node, cwd):  # noqa
             root_node.args.append('--foo')
             return root_node, cwd
 

@@ -143,11 +143,11 @@ class Decorator:  # noqa
         if len(exited_containers):
             docker("rm", name)
 
-    def modify_args(self, root_node, cwd):  # noqa
+    def modify_args(self, dodo_args, root_node, cwd):  # noqa
         docker_node, _, docker_name = self.docker_node(Dodo.get_config,
                                                        Dodo.command_name, cwd)
 
-        if getattr(Dodo.args, 'kill_existing', False):
+        if getattr(dodo_args, 'kill_existing', False):
             self._kill_existing_container(docker_name)
 
         docker_node.add_child(root_node)

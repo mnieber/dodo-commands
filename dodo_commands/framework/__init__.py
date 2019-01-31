@@ -116,8 +116,7 @@ class ManagementUtility(object):
         return '\n'.join(usage)
 
     def _handle_exception(self, e):
-        if (getattr(Dodo.args, 'traceback', False)
-                or not isinstance(e, CommandError)):
+        if '--traceback' in sys.argv or not isinstance(e, CommandError):
             raise
         sys.stderr.write('%s: %s\n' % (e.__class__.__name__, e))
         sys.exit(1)

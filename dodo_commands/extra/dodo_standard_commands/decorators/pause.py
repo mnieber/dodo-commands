@@ -1,6 +1,5 @@
 """Pauses the execution."""
 import time
-from dodo_commands.framework import Dodo
 
 
 class Decorator:  # noqa
@@ -10,7 +9,7 @@ class Decorator:  # noqa
             type=int,
             help="Pause in milliseconds before continuing")
 
-    def modify_args(self, root_node, cwd):  # noqa
-        if Dodo.args.pause_ms:
-            time.sleep(Dodo.args.pause_ms / 1000)
+    def modify_args(self, dodo_args, root_node, cwd):  # noqa
+        if getattr(dodo_args, 'pause_ms', 0):
+            time.sleep(dodo_args.pause_ms / 1000)
         return root_node, cwd

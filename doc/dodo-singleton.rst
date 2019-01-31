@@ -27,6 +27,12 @@ The get_config function
 Calling ``Dodo.get_config('/ROOT/my/key', 'default-value')`` will retrieve a value from the project's :ref:`configuration`. Use ``Dodo.get_config()`` to get direct access to the entire configuration dictionary.
 
 
+The parse_args function
+=======================
+
+The ``Dodo.parse_args(parser)`` function uses ``parser`` to parse the arguments in ``sys.argv``.
+
+
 The run function
 ===================
 
@@ -35,18 +41,7 @@ The ``Dodo.run`` function takes a list of arguments (and a current working direc
 .. code-block:: python
 
     if Dodo.is_main(__name__):
-        # Note that you must call Dodo.parse_args before calling Dodo.run,
-        # or an exception will be raised
-        parser = ArgumentParser()
-        parser.add_argument(
-            '--verbose',
-            action="store_true",
-        )
-        args = Dodo.parse_args(parser)
-
-        # say hello
-        if args.verbose:
-            Dodo.run(['echo', 'hello'], cwd='/tmp')
+        Dodo.run(['echo', 'hello'], cwd='/tmp')
 
 
 The --confirm and --echo flags
@@ -67,9 +62,6 @@ Since command scripts are written in Python, the script can in principle perform
 .. code-block:: python
 
     if Dodo.is_main(__name__, safe=False): # NOTE: setting the _safe flag here
-        parser = ArgumentParser()
-        args = Dodo.parse_args(parser)
-
         # Do destructive things without asking permission. Having this call
         # is the reason we used safe=False to mark the script as unsafe.
         # Running the script with ``--echo`` is not possible, because that would
