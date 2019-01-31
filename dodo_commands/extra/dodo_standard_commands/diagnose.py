@@ -67,7 +67,11 @@ def _create_jinja_environment(args):
     # import more filters and tests
     for syspath, basename in args.filters:
         sys.path.append(syspath)
-        import_module(basename)
+        try:
+            import_module(basename)
+        except ImportError as e:
+            raise CommandError("Could not import filters from %s. Details: %s"
+                               % (os.path.join(syspath, basename), e))
         sys.path.pop()
 
     env.tests.update(_tests())

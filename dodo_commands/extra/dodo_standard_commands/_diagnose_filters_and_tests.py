@@ -73,8 +73,7 @@ def _dodo_expand(key_str,
             result += "%s:\n" % quoted_key_str
         result += ("\n\n.. code-block:: yaml\n\n" + indent(
             "# %s\n" % key_str, 4) + indent(
-                ruamel.yaml.round_trip_dump(
-                    val, indent=4).strip(), amount=4))
+                ruamel.yaml.round_trip_dump(val, indent=4).strip(), amount=4))
     else:
         if key:
             result += "%s = " % quoted_key_str
@@ -99,19 +98,19 @@ def _image(key_or_name):
     image = Dodo.get_config(key_or_name, None)
     if not image:
         _, image, _ = DockerDecorator.docker_node(Dodo.get_config, key_or_name,
-                                                  "", False)
+                                                  "")
     return image
 
 
 @register_diagnose_test('existing_docker_image')
 def _is_existing_docker_image(key):
-    image = _image(Dodo.get_config, key)
+    image = _image(key)
     return _docker()("images", "-q", image)
 
 
 @register_diagnose_test('existing_container')
 def _is_existing_container(key):
-    image = _image(Dodo.get_config, key)
+    image = _image(key)
     return image in _docker()("ps", "-a", "--filter=name=%s" % image)
 
 
