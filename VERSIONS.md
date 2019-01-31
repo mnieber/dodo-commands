@@ -2,10 +2,10 @@
 
 ## 0.19.1
 
-Remove Dodo.args and Dodo.config from public API
-Fix calls for printing traceback
-Fix: use unicode in bordered()
-Fix: dodo diagnose
+- Remove Dodo.args and Dodo.config from public API
+- Fix calls for printing traceback
+- Fix: use unicode in bordered()
+- Fix: dodo diagnose
 
 ## 0.19.0
 
