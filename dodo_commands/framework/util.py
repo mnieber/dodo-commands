@@ -56,9 +56,9 @@ def bordered(text):
     lines = text.splitlines()
     width = max(len(s) for s in lines)
     if is_windows():
-        tl, tr, bl, br, v, h = '+', '+', '+', '+', '|', '-'
+        tl, tr, bl, br, v, h = u'+', u'+', u'+', u'+', u'|', u'-'
     else:
-        tl, tr, bl, br, v, h = '┌', '┐', '└', '┘', '│', '─'
+        tl, tr, bl, br, v, h = u'┌', u'┐', u'└', u'┘', u'│', u'─'
     res = [tl + h * width + tr]
     for s in lines:
         res.append(v + (s + ' ' * width)[:width] + v)
