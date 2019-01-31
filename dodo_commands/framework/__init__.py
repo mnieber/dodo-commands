@@ -16,7 +16,7 @@ from dodo_commands.framework.command_error import CommandError  # noqa
 
 
 def get_version():  # noqa
-    return "0.19.0"
+    return "0.19.1"
 
 
 def execute_script(package_path, command_name):
