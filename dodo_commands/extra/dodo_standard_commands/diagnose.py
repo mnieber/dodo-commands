@@ -1,23 +1,25 @@
 from argparse import ArgumentParser
-from dodo_commands.framework import Dodo
+from dodo_commands.framework import Dodo, ConfigArg, CommandError
 from dodo_commands.framework.util import bordered
+from importlib import import_module
 from jinja2 import Environment, FileSystemLoader
 import glob
 import os
 import sphinx  # noqa
 import sys
-from importlib import import_module
 
 
 def _args():
     parser = ArgumentParser(
         description='Create documentation based on the dodo config')
-    args = Dodo.parse_args(parser)
-    args.src_dir = Dodo.get_config('/DIAGNOSE/src_dir')
-    args.output_dir = Dodo.get_config('/DIAGNOSE/output_dir')
-    args.project_name = Dodo.get_config('/ROOT/project_name')
-    args.filters = Dodo.get_config('/DIAGNOSE/filters', [])
-    return args
+    return Dodo.parse_args(
+        parser,
+        config_args=[
+            ConfigArg('/DIAGNOSE/src_dir', 'src_dir'),
+            ConfigArg('/DIAGNOSE/output_dir', 'output_dir'),
+            ConfigArg('/ROOT/project_name', 'project_name'),
+            ConfigArg('/DIAGNOSE/filters', '--filters', nargs='+', default=[])
+        ])
 
 
 def _template_files(args):
@@ -34,9 +36,10 @@ def _create_sphinx_conf(args):
     if os.path.exists(src_conf_file):
         Dodo.run(['cp', src_conf_file, target_conf_file])
     elif not os.path.exists(target_conf_file):
-        Dodo.run(['sphinx-quickstart',
-                  '--project=%s' % args.project_name],
-                 cwd=args.output_dir)
+        Dodo.run(
+            ['sphinx-quickstart',
+             '--project=%s' % args.project_name],
+            cwd=args.output_dir)
 
 
 def _sphinx_build(args):
