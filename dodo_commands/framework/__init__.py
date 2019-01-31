@@ -58,10 +58,10 @@ def execute_script(package_path, command_name):
                 install_packages(meta_data_filename)
                 import_module(import_path)
             else:
-                print(traceback.print_exc(e))
+                traceback.print_exc(e)
                 sys.exit(1)
         except ImportError as e:
-            print(traceback.print_exc(e))
+            traceback.print_exc(e)
             sys.exit(1)
 
 
