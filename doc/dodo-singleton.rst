@@ -27,10 +27,70 @@ The get_config function
 Calling ``Dodo.get_config('/ROOT/my/key', 'default-value')`` will retrieve a value from the project's :ref:`configuration`. Use ``Dodo.get_config()`` to get direct access to the entire configuration dictionary.
 
 
-The parse_args function
-=======================
+The parse_args function (--confirm and --echo)
+==============================================
 
-The ``Dodo.parse_args(parser)`` function uses ``parser`` to parse the arguments in ``sys.argv``.
+The ``Dodo.parse_args(parser)`` function uses ``parser`` to parse the arguments in ``sys.argv``. It adds an ``--echo`` and ``--confirm`` flag to the command line arguments of your script:
+
+#. the :code:`--echo` flag changes the behaviour of :code:`run` so that it only prints a command line instead of executing the command.
+
+#. the :code:`--confirm` flag changes the behaviour of :code:`run` so that it prints a command line and asks for confirmation before executing the command.
+
+Note that although the ``--echo`` and ``--confirm`` flags are included in the return value of ``Dodo.parse_args``, there is no need to pass them to ``Dodo.run``. This is because the ``Dodo`` singleton also stores them internally.
+
+If you call ``Dodo.parse_args`` then you should do so before any calls to ``Dodo.run`` so that ``--echo`` and ``--confirm`` can take effect:
+
+.. code-block:: python
+
+    from dodo_commands.framework import Dodo
+    from argparse import ArgumentParser
+
+    def _args():
+        parser = ArgumentParser()
+        parser.add_argument('--verbose')
+        return Dodo.parse_args(parser)
+
+    if Dodo.is_main(__name__):
+        args = _args()
+
+        if args.verbose:
+            Dodo.run(
+                ['echo', 'hello world'],
+                cwd=Dodo.get_config('/ROOT/src_dir')
+            )
+
+
+Config arguments
+================
+
+Although it's possible to use ``Dodo.get_config`` directly inside the ``Dodo.run`` invocation, doing this work in the ``_args()`` helper function yields a better separation of concerns:
+
+.. code-block:: python
+
+    def _args():
+        parser = ArgumentParser()
+        parser.add_argument('--verbose')
+        args = Dodo.parse_args(parser)
+        args.src_dir = Dodo.get_config('/ROOT/src_dir')
+        return args
+
+    if Dodo.is_main(__name__):
+        args = _args()
+        # You can now use args.src_dir
+
+This approach opens up an interesting possibility: if the requested configuration key is absent then we could still ask the user for a value on the command line. This can be achieved through the ``ConfigArg`` helper class:
+
+    from dodo_commands.framework import Dodo, ConfigArg
+    from argparse import ArgumentParser
+
+    def _args():
+        parser = ArgumentParser()
+        parser.add_argument('--verbose')
+        return Dodo.parse_args(parser, config_args=[
+            '/ROOT/src_dir', 'src_dir', help="Location of the source files"
+        ])
+
+The ``ConfigArg`` is constructed with the configuration key, followed by any (keyword) arguments that ``parser.add_argument`` accepts. If the key is found in the configuration, then the corresponding value will be inserted into the return value of ``Dodo.parse_args``. Otherwise, an extra *argument* will be added to the command line syntax. This ensures that the value is either read from the configuration or from the command line.
 
 
 The run function
@@ -42,16 +102,6 @@ The ``Dodo.run`` function takes a list of arguments (and a current working direc
 
     if Dodo.is_main(__name__):
         Dodo.run(['echo', 'hello'], cwd='/tmp')
-
-
-The --confirm and --echo flags
-==============================
-
-The ``Dodo.parse_args(parser)`` function adds an ``--echo`` and ``--confirm`` flag the to command line arguments of your script. These flags control what happens in the ``Dodo.run`` function:
-
-#. the :code:`--echo` flag changes the behaviour of :code:`run` so that it only prints a command line instead of executing the command.
-
-#. the :code:`--confirm` flag changes the behaviour of :code:`run` so that it prints a command line and asks for confirmation before executing the command.
 
 
 Marking a script as unsafe

@@ -20,6 +20,11 @@ Give access to the configuration of the current project
 
 Dodo Commands try to replace long command line calls with short aliases that fetch their arguments from the current project's configuration file. Configuration files can be layered, and switched on or off, giving you a lot of flexibility. Just like excel sheets, configuration files may contain cross-references. The power of Dodo Commands is mostly in the configuration file.
 
+Flexibly switch between configuration and command line arguments
+================================================================
+
+When values are missing from the configuration file, the system can be told to automatically insert additional command line arguments that let the user provide the missing data.
+
 Show what each command script does
 ==================================
 
