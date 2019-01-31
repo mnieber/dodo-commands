@@ -1,4 +1,4 @@
-from dodo_commands.framework.util import classproperty, query_yes_no
+from dodo_commands.framework.util import query_yes_no
 from importlib import import_module
 import argcomplete
 import argparse
@@ -34,7 +34,7 @@ def _ask_confirmation(args, cwd, is_echo, is_confirm):
 
 class DecoratorScope:
     def __init__(self, decorator_name):
-        self.decorators = Dodo.config['ROOT'].setdefault(
+        self.decorators = Dodo.get_config('/ROOT').setdefault(
             'decorators', {}).setdefault(decorator_name, [])
 
     def __enter__(self):  # noqa
@@ -67,17 +67,14 @@ class Dodo:
 
     _config = None
 
-    @classproperty
-    def config(cls):  # noqa
+    @classmethod
+    def get_config(cls, key='', default_value="__not_set_234234__"):  # noqa
         if cls._config is None:
             cls._config = ConfigLoader().load()
-        return cls._config
 
-    @classmethod
-    def get_config(cls, key, default_value="__not_set_234234__"):  # noqa
         try:
             xpath = [k for k in key.split("/") if k]
-            return Key(cls.config, xpath).get()
+            return Key(cls._config, xpath).get()
         except KeyNotFound:
             if default_value == "__not_set_234234__":
                 raise
@@ -102,7 +99,7 @@ class Dodo:
 
     @classmethod
     def _uses_decorator(cls, decorator_name):
-        patterns = (cls.config.get('ROOT', {}).get('decorators', {}).get(
+        patterns = (cls.get_config().get('ROOT', {}).get('decorators', {}).get(
             decorator_name, []))
         command_name = cls.command_name
         approved = [
@@ -123,7 +120,7 @@ class Dodo:
     @classmethod
     def _all_decorators(cls):
         """Returns a mapping from decorator name to its directory."""
-        command_path = CommandPath(cls.config)
+        command_path = CommandPath(cls.get_config())
         command_path.extend_sys_path()
         result = {}
         for item in command_path.items:
@@ -142,7 +139,7 @@ class Dodo:
     def _add_config_args(cls, parser, config_args=None):
         has_project_dir = Paths().project_dir()
         for config_arg in (config_args or []):
-            key = Key(cls.config, config_arg.xpath)
+            key = Key(cls.get_config(), config_arg.xpath)
             if not key.exists():
                 kwargs = dict(config_arg.kwargs)
                 if not has_project_dir:
@@ -187,7 +184,7 @@ class Dodo:
 
         if config_args:
             for config_arg in config_args:
-                key = Key(cls.config, config_arg.xpath)
+                key = Key(cls.get_config(), config_arg.xpath)
                 if key.exists():
                     setattr(cls.args, config_arg.arg_name, key.get())
 

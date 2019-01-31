@@ -22,7 +22,7 @@ if Dodo.is_main(__name__, safe=True):
             error=str(e), filename=Paths().global_config_filename()))
 
     yaml_filenames = ([os.path.join(args.res_dir, 'config.yaml')] +
-                      ConfigIO().get_layers(Dodo.config))
+                      ConfigIO().get_layers(Dodo.get_config()))
 
     yaml_filenames.append(Paths().global_config_filename())
     Dodo.run([args.editor] + yaml_filenames, cwd='.')

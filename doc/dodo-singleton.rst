@@ -24,7 +24,7 @@ Using ``if Dodo.is_main(__name__)`` instead of the usual ``if __name__ == '__mai
 The get_config function
 =======================
 
-Calling ``Dodo.get_config('/ROOT/my/key', 'default-value')`` will retrieve a value from the project's :ref:`configuration`. Use ``Dodo.config`` to get direct access to the configuration dictionary.
+Calling ``Dodo.get_config('/ROOT/my/key', 'default-value')`` will retrieve a value from the project's :ref:`configuration`. Use ``Dodo.get_config()`` to get direct access to the entire configuration dictionary.
 
 
 The run function

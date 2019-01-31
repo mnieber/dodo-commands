@@ -34,7 +34,7 @@ if Dodo.is_main(__name__, safe=True):
 if Dodo.is_main(__name__, safe=False):
     args = _args()
     dest_path = None
-    command_path = CommandPath(Dodo.config)
+    command_path = CommandPath(Dodo.get_config())
     for item in command_path.items:
         script_path = os.path.join(item, args.next_to + ".py")
         if os.path.exists(script_path):

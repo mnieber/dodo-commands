@@ -47,7 +47,7 @@ def _drop_src_dir(item):
 
 def _package_to_drop_src_dir():
     package_to_drop_src_dir = {}
-    command_path = CommandPath(Dodo.config)
+    command_path = CommandPath(Dodo.get_config())
     for item in command_path.items:
         dot_drop_path = _dot_drop_path(item)
         drop_src_dir = _drop_src_dir(item)

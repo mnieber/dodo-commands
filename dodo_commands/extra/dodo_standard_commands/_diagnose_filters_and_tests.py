@@ -56,7 +56,7 @@ def _dodo_expand(key_str,
         val = Dodo.get_config(key_str)
         key_str = '${' + key_str + '}'
     else:
-        val = expand_keys(Dodo.config, key_str)
+        val = expand_keys(Dodo.get_config(), key_str)
 
     quoted_key_str = _quote_key(key_str)
     val_str = _quote_val(str(val))

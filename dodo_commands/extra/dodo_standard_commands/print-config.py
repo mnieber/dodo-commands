@@ -25,6 +25,6 @@ if Dodo.is_main(__name__):
         content = re.sub(
             r'^([0-9_A-Z]+\:)$',
             r'\n\1',
-            ruamel.yaml.round_trip_dump(Dodo.config),
+            ruamel.yaml.round_trip_dump(Dodo.get_config()),
             flags=re.MULTILINE)
         print(re.sub(r'^\n\n', r'\n', content, flags=re.MULTILINE))
