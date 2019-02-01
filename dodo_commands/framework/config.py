@@ -44,8 +44,8 @@ class Paths:
         return os.path.join(self.project_dir(), 'dodo_commands', 'env')
 
     def virtual_env_bin_dir(self):
-        return os.path.join(self.virtual_env_dir(),
-                            'Scripts' if _is_windows() else 'bin')
+        return os.path.join(self.virtual_env_dir(), 'Scripts'
+                            if _is_windows() else 'bin')
 
     def pip(self):
         return os.path.join(self.virtual_env_bin_dir(), 'pip' + _ext())
@@ -164,9 +164,8 @@ class ConfigIO:
 
         Arg config_base_dir defaults to Paths().res_dir().
         """
-        self.config_base_dir = (
-            Paths().res_dir() if config_base_dir is None else config_base_dir
-        )  # noqa
+        self.config_base_dir = (Paths().res_dir() if config_base_dir is None
+                                else config_base_dir)
 
     def _path_to(self, post_fix_paths):
         """Return path composed of config_base_dir and post_fix_paths list."""
@@ -321,7 +320,7 @@ class CommandPath:
 
         return search_path_dir
 
-    def extend_sys_path(self):  # noqa
+    def extend_sys_path(self):
         search_path_dir = self._create_search_path_dir()
         if search_path_dir not in sys.path:
             sys.path.append(search_path_dir)
