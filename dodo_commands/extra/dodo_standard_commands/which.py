@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo
-from dodo_commands.framework.config import CommandPath, Paths, projects_dir
+from dodo_commands.framework.config import (CommandPath, Paths, projects_dir,
+                                            ConfigIO)
 import os
 import sys
 
@@ -38,6 +39,8 @@ def _args():  # noqa
         '--projects',
         action="store_true",
         help='Prints which projects are available')
+    group.add_argument(
+        '--layers', action="store_true", help='Prints which layers are active')
     group.add_argument(
         '--default-commands',
         action="store_true",
@@ -81,6 +84,9 @@ if Dodo.is_main(__name__):
                 os.path.join(projects_dir(), x, "dodo_commands", "res"))
         ]
         sys.stdout.write('\n'.join(sorted(projects)) + '\n')
+    elif args.layers:
+        for layer_filename in ConfigIO().get_layers(Dodo.get_config()):
+            sys.stdout.write(layer_filename + '\n')
     elif args.what:
         x = _which_script(args.what) or _which_dir(args.what)
         if x:

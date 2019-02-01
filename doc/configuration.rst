@@ -63,7 +63,7 @@ Layers can be switched on and off with the ``dodo layer`` command (except for th
 How to use layers
 =================
 
-The layering mechanism is simple but powerful. A common use-case for layering is to place the settings for different web servers in ``server.develop.yaml``, ``server.staging.yaml`` and ``server.production.yaml``, and select a server (staging, for example) with ``dodo layer server staging`` (note that this makes a small change to the ``${/ROOT/layers}`` node in your configuration file). Another common use-case is switching between debug and release builds. If you want to keep your layers in a separate directory, use the ``${ROOT/layer_dir}`` setting.
+The layering mechanism is simple but powerful. A common use-case for layering is to place the settings for different web servers in ``server.develop.yaml``, ``server.staging.yaml`` and ``server.production.yaml``, and select a server (staging, for example) with ``dodo layer server staging`` (note that this makes a small change to the ``${/ROOT/layers}`` node in your configuration file). Another common use-case is switching between debug and release builds. If you want to keep your layers in a separate directory, use the ``${ROOT/layer_dir}`` setting. To list all active layers, use ``dodo which --layers``.
 
 
 Including bits of configuration from packages
