@@ -53,20 +53,33 @@ def _layer_value(layers, layer):
     return None
 
 
+def _layers(config=None, filter_abs_paths=False):
+    config = config or ConfigIO().load(load_layers=False)
+    layers = config.get('ROOT', {}).get('layers', [])
+
+    if filter_abs_paths:
+        layers = [
+            x for x in layers
+            if not os.path.exists(os.path.expanduser(os.path.dirname(x)))
+        ]
+    return layers
+
+
 if Dodo.is_main(__name__, safe=False):
     args = _args()
     config = ConfigIO().load(load_layers=False)
-    layers = config.get('ROOT', {}).get('layers', [])
 
     if args.layer == False:  # noqa
-        for layer in layers:
+        filtered_layers = _layers(config, filter_abs_paths=True)
+        for layer in filtered_layers:
             name = _layer_name(layer)
             if name:
-                value = _layer_value(layers, name)
+                value = _layer_value(filtered_layers, name)
                 if value:
-                    print(name + ': ' + _layer_value(layers, name))
+                    print(name + ': ' + _layer_value(filtered_layers, name))
         sys.exit(0)
 
+    layers = _layers(config)
     if args.value == False:  # noqa
         print(_layer_value(layers, args.layer))
         sys.exit(0)
