@@ -165,11 +165,13 @@ class Dodo:
             '--traceback', action='store_true', help=argparse.SUPPRESS)
 
         parser.add_argument(
+            '-c',
             '--confirm',
             action='store_true',
             help="Confirm each performed action before its execution")
 
         parser.add_argument(
+            '-e',
             '--echo',
             action='store_true',
             help="Print all commands instead of running them")
