@@ -68,8 +68,32 @@ Running the ``django-manage`` command will produce something like this:
 #. the ``-i`` and ``-t`` flags are added unless the ``$(/DOCKER/options/<pattern>/is_interactive}`` flag is set to ``False``.
 
 
-The docker-build command
+Matching multiple names
 =======================
+
+It's possible to match multiple names using a list:
+
+.. code-block:: yaml
+
+    DOCKER:
+      options:
+        ['django-manage', 'django-runserver']:
+          extra_options:
+          - '--publish=127.0.0.1:27017:27017'
+
+Patterns starting with '!' indicate names that should be excluded:
+
+.. code-block:: yaml
+
+    DOCKER:
+      options:
+        # match django-manage but not django-runserver
+        ['django-*', '!django-runserver']:
+          extra_options:
+          - '--publish=127.0.0.1:27017:27017'
+
+The docker-build command
+========================
 
 When referring to a docker image in ``$(/DOCKER/options/<pattern>/image}``, you may also need to ensure this image is built. The details for building an image are specified in ``$(/DOCKER/images}``:
 

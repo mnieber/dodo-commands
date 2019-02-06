@@ -68,9 +68,16 @@ class Decorator:  # noqa
         merged = {}
         for patterns, docker_config in get_config('/DOCKER/options',
                                                   {}).items():
+            should_merge = False
             for pattern in (patterns if _is_tuple(patterns) else [patterns]):
-                if fnmatch(command_name, pattern):
-                    merge_into_config(merged, docker_config)
+                if pattern.startswith('!'):
+                    should_merge = should_merge and not fnmatch(
+                        command_name, pattern[1:])
+                else:
+                    should_merge = should_merge or fnmatch(
+                        command_name, pattern)
+            if should_merge:
+                merge_into_config(merged, docker_config)
         return merged
 
     @classmethod
