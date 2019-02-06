@@ -5,7 +5,7 @@ import argparse
 import fnmatch
 import os
 import sys
-from dodo_commands.framework.config import (ConfigLoader, CommandPath, Paths)
+from dodo_commands.framework.config import (ConfigLoader, CommandPath)
 from dodo_commands.framework.config_expander import Key, KeyNotFound
 from dodo_commands.framework.args_tree import ArgsTreeNode
 from dodo_commands.framework.command_error import CommandError
@@ -161,8 +161,6 @@ class Dodo:
 
     @classmethod
     def parse_args(cls, parser, config_args=None):
-        has_dodo_entry_point = os.path.basename(sys.argv[0]) == 'dodo'
-
         parser.add_argument(
             '--traceback', action='store_true', help=argparse.SUPPRESS)
 
@@ -181,13 +179,13 @@ class Dodo:
 
         cls._add_config_args(parser, config_args)
         argcomplete.autocomplete(parser)
-        if has_dodo_entry_point:
+        if os.path.splitext(sys.argv[0])[1].lower() == '.py':
+            parser.prog = sys.argv[0]
+            first_arg_index = 1
+        else:
             first_arg_index = 2
             parser.prog = "%s %s" % (os.path.basename(sys.argv[0]),
                                      sys.argv[1])
-        else:
-            parser.prog = sys.argv[0]
-            first_arg_index = 1
         cls._args = parser.parse_args(sys.argv[first_arg_index:])
 
         if config_args:
