@@ -137,18 +137,26 @@ class Dodo:
 
     @classmethod
     def _add_config_args(cls, parser, config_args=None):
-        has_project_dir = Paths().project_dir()
+        show_help = '--help' in sys.argv
+
         for config_arg in (config_args or []):
             key = Key(cls.get_config(), config_arg.xpath)
-            if not key.exists():
+            key_exists = key.exists()
+
+            if show_help or not key_exists:
                 kwargs = dict(config_arg.kwargs)
-                if not has_project_dir:
-                    help_text = kwargs.get('help')
-                    sep = '. ' if help_text else ''
+                help_text = kwargs.get('help') or ''
+                sep = '. ' if help_text else ''
+                if key_exists:
+                    value = str(key.get())
+                    formatted_value = value[:50] + (value[50:] and '...')
+                    extra_help = ('Read from config: %s = %s.' %
+                                  (config_arg.config_key, formatted_value))
+                else:
                     extra_help = (
                         'Configuration key is %s' % config_arg.config_key)
-                    kwargs['help'] = help_text + sep + extra_help
 
+                kwargs['help'] = help_text + sep + extra_help
                 parser.add_argument(*config_arg.args, **kwargs)
 
     @classmethod
