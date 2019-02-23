@@ -1,5 +1,19 @@
 # Version history
 
+## 0.20.0
+
+- Use dodo register-autocomplete instead of patching env/bin/activate
+- Use --prompt when creating virtualenv in dodo activate
+- Check first if virtualenv exists in dodo activate
+- Add short version of --echo and --confirm flags
+- Also print values of config args when --help is used
+- Skip absolute layer paths in `dodo layer`
+- Match multiple names when merging docker options
+- Fix: return nothing in 'dodo which --config' if no project selected
+- Fix: fail earlier in dodo autostart
+- Fix: remove created project_dir if dodo activate fails
+- Fix: bug when dodo script is called with "python"
+
 ## 0.19.1
 
 - Remove Dodo.args and Dodo.config from public API
