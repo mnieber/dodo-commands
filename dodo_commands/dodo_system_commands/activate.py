@@ -56,6 +56,11 @@ class Activator:
 
     def _create_virtual_env(self):
         """Install a virtual env."""
+        try:
+            local["virtualenv"]('--version')
+        except:
+            raise CommandError("Could not find virtualenv, please install it first.")
+
         local["virtualenv"]("-p",
                             self.config.get("settings", "python_interpreter"),
                             self.paths.virtual_env_dir())
