@@ -81,8 +81,8 @@ def _clone(args, src_dir):
 
     Dodo.run(
         ["git", "clone", args.git_url,
-         os.path.basename(src_dir)] + (["--depth", args.depth]
-                                       if args.depth else []),
+         os.path.basename(src_dir)] +
+        (["--depth", args.depth] if args.depth else []),
         cwd=os.path.dirname(src_dir))
     if args.branch:
         Dodo.run(["git", "checkout", args.branch], cwd=src_dir)
