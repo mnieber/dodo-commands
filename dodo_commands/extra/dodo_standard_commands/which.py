@@ -66,7 +66,8 @@ if Dodo.is_main(__name__):
     args = _args()
 
     if args.config:
-        print(os.path.join(Paths().res_dir(), "config.yaml"))
+        if os.path.exists(Paths().project_dir()):
+            print(os.path.join(Paths().res_dir(), "config.yaml"))
     elif args.global_config:
         sys.stdout.write(Paths().global_config_filename() + '\n')
     elif args.default_commands:
