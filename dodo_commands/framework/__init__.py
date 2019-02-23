@@ -19,6 +19,11 @@ def get_version():  # noqa
     return "0.19.1"
 
 
+def _log(string):
+    with open('/tmp/.dodo.log', 'w') as ofs:
+        ofs.write(string + '\n')
+
+
 def execute_script(package_path, command_name):
     """
     Executes the script associated with command_name by importing its package.
