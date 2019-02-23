@@ -5,6 +5,7 @@ from dodo_commands.framework.config import (load_global_config_parser,
                                             write_global_config_parser, Paths)
 from dodo_commands.framework.util import is_windows, symlink
 import os
+import shutil
 import sys
 import ruamel.yaml
 from plumbum import local
@@ -118,16 +119,27 @@ class Activator:
         with open(config_filename, "w") as f:
             f.write(ruamel.yaml.round_trip_dump(default_config))
 
+    def _dodo_commands_sub_dir(self):
+        return os.path.join(self.paths.project_dir(), "dodo_commands")
+
     def _create_project(self):
-        self._report(
-            "Creating project at location %s ..." % self.paths.project_dir())
-        self._create_res_dir()
-        self._create_virtual_env()
-        if not is_windows():
-            self._register_autocomplete()
-        self._create_dodo_script()
-        self._report(" done\n")
-        return True
+        project_dir = self.paths.project_dir()
+        remove_project_dir_on_failure = not os.path.exists(project_dir)
+
+        try:
+            self._create_res_dir()
+            self._create_virtual_env()
+            if not is_windows():
+                self._register_autocomplete()
+            self._create_dodo_script()
+        except:
+            if remove_project_dir_on_failure:
+                if os.path.exists(project_dir):
+                    shutil.rmtree(project_dir)
+            elif os.path.exists(self._dodo_commands_sub_dir()):
+                shutil.rmtree(self._dodo_commands_sub_dir())
+            self._report('\n')
+            raise
 
     def _report(self, x):
         sys.stderr.write(x)
@@ -170,13 +182,17 @@ class Activator:
                     self.project)))
 
         if create:
-            if os.path.exists(
-                    os.path.join(self.paths.project_dir(), "dodo_commands")):
+            project_dir = self.paths.project_dir()
+
+            if os.path.exists(self._dodo_commands_sub_dir()):
                 self._report(
-                    "Project already exists: %s\n" % self.paths.project_dir())
-                return
-            if not self._create_project():
-                return
+                    "Project already exists: %s\n" % project_dir)
+                return False
+
+            self._report(
+                "Creating project at location %s ..." % project_dir)
+            self._create_project()
+            self._report(" done\n")
         elif not os.path.exists(self.paths.project_dir()):
             self._report(
                 'Project not found: %s. Use the --create flag to create it\n' %
