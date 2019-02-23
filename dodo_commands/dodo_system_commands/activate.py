@@ -194,10 +194,9 @@ class Activator:
             self._create_project()
             self._report(" done\n")
         elif not os.path.exists(self.paths.project_dir()):
-            self._report(
+            raise CommandError(
                 'Project not found: %s. Use the --create flag to create it\n' %
                 self.paths.project_dir())
-            return
 
         if self.project != latest_project:
             self.config.set("recent", "previous_project", latest_project)
