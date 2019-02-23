@@ -63,16 +63,7 @@ class Activator:
 
         local["virtualenv"]("-p",
                             self.config.get("settings", "python_interpreter"),
-                            self.paths.virtual_env_dir())
-
-        # update activate script so that it shows the name of the
-        # current project in the prompt
-        with open(self._virtual_env_filename("activate")) as f:
-            lines = f.read()
-        with open(self._virtual_env_filename("activate"), "w") as f:
-            f.write(
-                lines.replace(r'PS1="(`basename \"$VIRTUAL_ENV\"`) $PS1"',
-                              r'PS1="(%s) $PS1"' % self.project))
+                            self.paths.virtual_env_dir(), "--prompt", self.project)
 
         local[self.paths.pip()](
             "install",
