@@ -80,12 +80,6 @@ class Activator:
             os.path.dirname(dodo_commands.__file__),
             os.path.join(self.paths.site_packages_dir(), "dodo_commands"))
 
-    def _register_autocomplete(self):
-        """Install a virtual env."""
-        register = local[self._virtual_env_filename(
-            'register-python-argcomplete')]
-        (register >> self._virtual_env_filename("activate"))("dodo")
-
     def _create_dodo_script(self):
         """Install the dodo entry point script."""
         dodo_file = self._virtual_env_filename('dodo')
@@ -125,8 +119,6 @@ class Activator:
         try:
             self._create_res_dir()
             self._create_virtual_env()
-            if not is_windows():
-                self._register_autocomplete()
             self._create_dodo_script()
         except:
             if remove_project_dir_on_failure:

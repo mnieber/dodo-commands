@@ -4,6 +4,7 @@
 Installation
 ************
 
+
 Step 1: Install software
 ========================
 
@@ -21,6 +22,7 @@ Dodo Commands depends on the python-virtualenv package. In addition, some of the
 
    On Mac you may need to create a file ``~/.distutils.cfg`` that `sets an empty prefix <http://stackoverflow.com/a/24357384/301034>`_ to prevent errors stating "must supply either home or prefix/exec-prefix -- not both".
 
+
 Step 2: (Optional) Extend the path
 ==================================
 
@@ -33,6 +35,7 @@ To make sure that the :code:`dodo` command is always found, call :code:`which do
 
     export PATH=$PATH:/home/maarten/projects/dodo_commands_env/bin
 
+
 Step 3: (Optional) Activate the latest project automatically
 ============================================================
 
@@ -43,6 +46,7 @@ To automatically activate the last used Dodo Commands project, add this line to 
     $(dodo activate --latest)
 
 If you wish to be able to toggle the automatic activation on and off, read about :ref:`autostart`.
+
 
 Step 4: (Optional) Tweak global configuration
 =============================================
@@ -59,6 +63,7 @@ The first time you call :code:`dodo`, a global :code:`~/.dodo_commands/config` f
 
     dodo global-config settings.diff_tool meld
 
+
 Step 5: (Optional) Install extra default commands
 =================================================
 
@@ -67,6 +72,18 @@ The :code:`dodo_standard_commands` directory is added by default to the ``~/.dod
 .. code-block:: bash
 
     dodo install-default-commands --pip dodo_webdev_commands --pip dodo_git_commands
+
+
+Step 6: (Optional) Enable autocompletion
+========================================
+
+The :code:`dodo register-autocomplete` command prints a line that - when executed - installs an autocompletion script in ``/etc/bash_completion.d``. You can paste this line into a bash-console, or run it directly with :code:`$(dodo register-autocomplete)`.
+
+.. code-block:: bash
+
+    # returns: sudo register-python-argcomplete dodo > /etc/bash_completion.d/dodo_autocomplete.sh
+    dodo register-autocomplete
+
 
 Upgrading
 =========
