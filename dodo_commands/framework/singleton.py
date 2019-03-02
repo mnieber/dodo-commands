@@ -209,7 +209,7 @@ class Dodo:
                     +
                     "be performed without asking for confirmation. Continue?",
                     default="no"):
-                return
+                sys.exit(1)
 
         return cls._args
 
