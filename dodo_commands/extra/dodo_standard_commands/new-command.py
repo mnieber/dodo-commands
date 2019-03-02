@@ -36,20 +36,40 @@ def _args():
     return args
 
 
-script = """
+script = """import os
 from argparse import ArgumentParser
-from dodo_commands.framework import Dodo
+from dodo_commands.framework import Dodo, ConfigArg, CommandError
 
 
 def _args():
-    parser = ArgumentParser()
-    args = Dodo.parse_args(parser)
+    parser = ArgumentParser(
+        description='A new command that runs in the project\\\'s "res" directory'
+    )
+
+    # Add arguments to the parser here
+    parser.add_argument('name')
+
+    # Parse the arguments.
+    # Optionally, use `config_args` to include additional arguments whose values
+    # come either from the configuration file or from the command line (see docs).
+    args = Dodo.parse_args(parser, config_args=[
+        ConfigArg('/ROOT/res_dir', '--cwd')
+    ])
+
+    # Insert additional arguments after parsing
+    args.project_name = Dodo.get_config('/ROOT/project_name')
+
+    # Raise an error if something is not right
+    if not os.path.exists(args.cwd):
+        raise CommandError('Not found: %s' % args.cwd)
+
     return args
 
 
+# Use safe=False if the script makes changes other than through Dodo.run
 if Dodo.is_main(__name__, safe=True):
     args = _args()
-    Dodo.run([], cwd='.')
+    Dodo.run(['echo', args.name, args.project_name], cwd=args.cwd)
 """
 
 if Dodo.is_main(__name__, safe='--create-commands-dir' not in sys.argv):
