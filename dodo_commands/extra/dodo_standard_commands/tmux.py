@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo, CommandError
 import os
+import sys
 from six.moves import input as raw_input
 from dodo_commands.framework.util import filter_choices
 from plumbum.cmd import tmux
@@ -11,8 +12,10 @@ session_id = os.path.expandvars('$USER')
 def _args():
     parser = ArgumentParser()
     parser.add_argument('--kill-session', action='store_true')
+    parser.add_argument('--list', action='store_true')
+    parser.add_argument('--run', type=int)
     args = Dodo.parse_args(parser)
-    args.commands = Dodo.get_config('/TMUX/commands', [])
+    args.command_map = Dodo.get_config('/TMUX/commands', [])
     return args
 
 
@@ -24,11 +27,38 @@ def _create_tmux_window():
     Dodo.run(['tmux', 'new-window', '-t', '%s:1' % session_id, '-n', 'Logs'], )
 
 
+def _get_commands_and_labels(command_map):
+    label_size = 0
+    for label in command_map:
+        label_size = max(label_size, len(label))
+    label_prefix = "%0" + str(label_size) + "s"
+
+    commands, labels = [], []
+    for label in command_map:
+        for command in command_map[label]:
+            commands.append(command)
+            format_string = "%02s [" + label_prefix + "] - %s"
+            labels.append(format_string % (str(len(commands)), label, command))
+
+    return commands, labels
+
 if Dodo.is_main(__name__):
     args = _args()
     check_exists = Dodo.get_config('/TMUX/check_exists', '/')
     if not os.path.exists(check_exists):
         raise CommandError("Path %s does not exist" % check_exists)
+
+    commands, labels = _get_commands_and_labels(args.command_map)
+
+    if args.list:
+        print()
+        for label in labels:
+            print(label)
+        sys.exit(0)
+
+    if args.run:
+        Dodo.run(['bash', '-c', commands[args.run - 1]])
+        sys.exit(0)
 
     has_session = False
     try:
@@ -48,18 +78,9 @@ if Dodo.is_main(__name__):
         Dodo.run(['tmux', '-2', 'attach-session', '-t', session_id], )
     else:
         while True:
-            commands = []
-            label_size = 0
-            for label in args.commands:
-                label_size = max(label_size, len(label))
-            label_prefix = "%0" + str(label_size) + "s"
-
             print()
-            for label in args.commands:
-                for command in args.commands[label]:
-                    commands.append(command)
-                    format_string = "%02s [" + label_prefix + "] - %s"
-                    print(format_string % (str(len(commands)), label, command))
+            for label in labels:
+                print(label)
 
             raw_choice = raw_input(
                 '\nSelect one or more commands (e.g. 1,3-4), or type a command: '
