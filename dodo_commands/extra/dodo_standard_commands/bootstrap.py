@@ -115,9 +115,9 @@ def _update_config(src_dir, relative_shared_config_dir):
 
 
 def _get_full_src_dir(src_dir, src_subdir):
-    postfix = (os.path.join(src_dir, src_subdir) if src_subdir else src_dir)
-    return (postfix if os.path.isabs(src_dir) else os.path.join(
-        args.project_dir, postfix))
+    postfix = os.path.join(src_dir, src_subdir) if src_subdir else src_dir
+    return (postfix if os.path.isabs(src_dir) else os.path.abspath(os.path.join(
+        args.project_dir, postfix)))
 
 
 if Dodo.is_main(__name__, safe=False):
@@ -136,7 +136,7 @@ if Dodo.is_main(__name__, safe=False):
     shared_config_dir = os.path.join(full_src_dir, args.shared_config_dir)
     if not os.path.exists(shared_config_dir):
         if args.create_scd:
-            os.makedirs(shared_config_dir)
+            Dodo.run(['mkdir', '-p', shared_config_dir])
         else:
             raise CommandError(
                 "Shared configuration directory %s does not exist. Hint: use --create-scd."
