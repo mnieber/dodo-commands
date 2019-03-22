@@ -31,7 +31,7 @@ The example we will use is the following script, which parses some command line 
 
 The lines that require special attention are numbered with a comment:
 
-1. We use ``Dodo.parse_args(parser)`` instead of ``parser.parse_args()`` to give Dodo Commands the chance to add some extra arguments to your script, such as the ``--confirm`` flag. This flag has the effect that the ``Dodo.run`` call at the bottom of the script (see `# 4`) will first ask your confirmation before proceeding to execute the echo command line call.
+1. We use ``Dodo.parse_args(parser)`` instead of ``parser.parse_args()`` to give Dodo Commands the chance to add some extra arguments to your script, such as the ``--confirm`` flag (which is explained below).
 
 2. Through the ``Dodo`` singleton, every command has access to the configuration values of the current project. By default, the project name is made available in this configuration.
 
