@@ -6,7 +6,7 @@
 Dodo Commands
 =============
 
-By Maarten Nieber. Source code: https://github.com/mnieber/dodo_commands.
+Source code: https://github.com/mnieber/dodo_commands.
 
 Contents:
 
