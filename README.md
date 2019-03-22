@@ -1,7 +1,5 @@
 # Dodo Commands
 
-By Maarten Nieber, with contributions from Georg Rollinger.
-
 ## Introduction
 
 Dodo Commands is a small framework for creating separated development environments for your projects. Each development environment contains:
