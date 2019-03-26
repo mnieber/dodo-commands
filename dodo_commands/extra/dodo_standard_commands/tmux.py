@@ -13,7 +13,7 @@ def _args():
     parser = ArgumentParser()
     parser.add_argument('--kill-session', action='store_true')
     parser.add_argument('--list', action='store_true')
-    parser.add_argument('--run', type=int)
+    parser.add_argument('--run', type=int, nargs='?', const=-1)
     args = Dodo.parse_args(parser)
     args.command_map = Dodo.get_config('/TMUX/commands', [])
     return args
@@ -42,6 +42,21 @@ def _get_commands_and_labels(command_map):
 
     return commands, labels
 
+
+def _get_selected_commands(commands, labels):
+    print()
+    for label in labels:
+        print(label)
+
+    raw_choice = raw_input(
+        '\nSelect one or more commands (e.g. 1,3-4), or type a command: '
+    )
+    selected_commands, span = filter_choices(commands, raw_choice)
+    if span != [0, len(raw_choice)]:
+        selected_commands = [raw_choice]
+    return selected_commands
+
+
 if Dodo.is_main(__name__):
     args = _args()
     check_exists = Dodo.get_config('/TMUX/check_exists', '/')
@@ -57,7 +72,13 @@ if Dodo.is_main(__name__):
         sys.exit(0)
 
     if args.run:
-        Dodo.run(['bash', '-c', commands[args.run - 1]])
+        selected_commands = (
+            _get_selected_commands(commands, labels)
+            if args.run == -1 else
+            [commands[args.run - 1]]
+        )
+        for command in selected_commands:
+            Dodo.run(['bash', '-c', command])
         sys.exit(0)
 
     has_session = False
@@ -78,18 +99,8 @@ if Dodo.is_main(__name__):
         Dodo.run(['tmux', '-2', 'attach-session', '-t', session_id], )
     else:
         while True:
-            print()
-            for label in labels:
-                print(label)
-
-            raw_choice = raw_input(
-                '\nSelect one or more commands (e.g. 1,3-4), or type a command: '
-            )
-            selected_commands, span = filter_choices(commands, raw_choice)
-            if span != [0, len(raw_choice)]:
-                selected_commands = [raw_choice]
-
-            for idx, command in enumerate(selected_commands):
+            selected_commands = _get_selected_commands(commands, labels)
+            for command in selected_commands:
                 Dodo.run(['tmux', 'split-window', '-v'], )
                 Dodo.run(['tmux', 'send-keys', command, 'C-m'], )
 
