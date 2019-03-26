@@ -1,5 +1,14 @@
 # Version history
 
+## 0.21.0
+
+- Allow multiple args in dodo --run
+- Add dodo tmux --run and --list
+- Small fixes to dodo bootstrap
+- Add helpful comments to script created with new-command
+- Add option --create-commands-dir to dodo new-command
+- Fix: sys.exit if not continuing with unsafe command
+
 ## 0.20.0
 
 - Use dodo register-autocomplete instead of patching env/bin/activate

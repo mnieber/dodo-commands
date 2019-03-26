@@ -16,7 +16,7 @@ from dodo_commands.framework.command_error import CommandError  # noqa
 
 
 def get_version():  # noqa
-    return "0.20.0"
+    return "0.21.0"
 
 
 def _log(string):
