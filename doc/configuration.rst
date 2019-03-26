@@ -60,6 +60,12 @@ Layers can be switched on and off with the ``dodo layer`` command (except for th
 5. the following magic values are automatically added: ``${/ROOT/project_name}``, ``${/ROOT/project_dir}``, ``${/ROOT/res_dir}``. Finally the dodo_system_commands directory is automatically added to ``${/ROOT/command_path}``.
 
 
+Using configuration values in scripts
+=====================================
+
+To use a configuration value in your script, call ``Dodo.get_config('/SOME/path/to/the/value')``. By convention, items in the root of the configuration are capitalized. Though you will rarely need to, you can access array elements by index, e.g. ``Dodo.get_config('/SOME/array/3/name')``.
+
+
 How to use layers
 =================
 

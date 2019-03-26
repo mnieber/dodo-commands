@@ -50,7 +50,7 @@ Use ``${/ROOT/command_path_exclude}`` to exclude certain paths from the command 
 Importing symbols from another module
 =====================================
 
-In your Dodo command script, you can import a symbol from another module in the command path using (for example) ``import foo from dodo_my_commands.bar``. Note that the names of the modules in the command path must be unique. Also, it is now required that ``dodo_my_commands`` exists in the active project's command path, otherwise the import will fail.
+In your Dodo command script, you can import a symbol from another module in the command path using (for example) ``import foo from dodo_my_commands.bar``. Note that the names of the modules in the command path must be unique. Also, it is required that ``dodo_my_commands`` exists in the active project's command path, otherwise the import will fail.
 
 
 Specifying command dependencies in the .meta file

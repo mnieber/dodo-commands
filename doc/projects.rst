@@ -4,13 +4,7 @@
 Creating and using projects
 ***************************
 
-The :ref:`installation` steps have created a ``dodo`` executable that you can use to create new projects in the projects directory (which is ``~/projects`` by default). To see where the ``dodo`` script is located type:
-
-.. code-block:: bash
-
-    which dodo
-
-Each dodo project has it's own copy of the dodo executable through which you can operate on the project. We'll explain how this works the long and clunky way, and then how the same can be done much faster.
+The :ref:`installation` steps have created a ``dodo`` executable that you can use to create new projects in the projects directory (which is ``~/projects`` by default). As we'll see below, each dodo project has it's own copy of the dodo executable through which you can operate on the project.
 
 
 Creating a project
@@ -46,13 +40,7 @@ The ``~/projects/FooBar/dodo_commands/env/bin/dodo`` script is part of a virtual
 
     source ~/projects/FooBar/dodo_commands/env/bin/activate
 
-Running ``dodo`` will now find the project-specific dodo script, rather than the "system" one. You can run commands against the activated project with:
-
-.. code-block:: bash
-
-    dodo foo --bar
-
-The short-cut to activating the python environment is using:
+Running ``dodo foo --bar`` will now use the project-specific dodo script, rather than the "system" one. The short-cut to activating the python environment is:
 
 .. code-block:: bash
 
@@ -64,7 +52,7 @@ Note that if you omit the ``$()`` part then ``dodo activate`` prints the line ``
 
     $(dodo activate FooBar --create)
 
-If you activated a project and you want to go back to the previously active project, run ``$(dodo activate -)``.
+Finally, if you activated a project and you want to go back to the previously active project, run ``$(dodo activate -)``.
 
 .. _autostart:
 

@@ -2,33 +2,32 @@
 Goals of the Dodo Commands system
 *********************************
 
-The Dodo Commands system supports various goals, the main one being: associate a set of short commands with each project to automate frequent tasks. The following list skips some of the details, but gives a general overview. We also encourage you to try the tutorial on this `page <https://github.com/mnieber/dodo_commands>`_.
+The main goal is to associate a set of short commands with each project to automate frequent tasks. The following list gives a general overview of how this achieved. We also encourage you to try the tutorial on this `page <https://github.com/mnieber/dodo_commands>`_.
 
 Provide a per-project environment
 =================================
 
-Dodo Commands run in the context of a project. When you switch to a project, you will have a specific set of commands and configuration values available to you. At the same time, it's possible to install default commands that will be available in any project.
+Each Dodo Commands project contains a specific set of commands and configuration values. It's possible to install default commands that will be available in any project.
 
 Single entry point to run a variety of command scripts
 ======================================================
 
-If you have a large number of command scripts, it becomes tedious to remember where
-they are stored. Running :code:`dodo foo --bar` let's Dodo Commands find the foo.py script for you in the current project's search path. This works from any current working directory. When you run :code:`dodo help` you will see the list of available commands.
+Since Dodo Commands can find command scripts for you in the project's search path, there is no need to remember where they are located. This means that commands work from any current working directory. Running :code:`dodo help` shows the list of available commands.
 
 Give access to the configuration of the current project
 =======================================================
 
-Dodo Commands try to replace long command line calls with short aliases that fetch their arguments from the current project's configuration file. Configuration files can be layered, and switched on or off, giving you a lot of flexibility. Just like excel sheets, configuration files may contain cross-references. The power of Dodo Commands is mostly in the configuration file.
+Dodo Commands are usually short because arguments are fetched from the current project's configuration file. Configuration files can be layered, and layers can be switched on or off, giving you a lot of flexibility. Just like excel sheets, configuration files may contain cross-references. The power of Dodo Commands is mostly in the configuration file.
 
 Flexibly switch between configuration and command line arguments
 ================================================================
 
-When values are missing from the configuration file, the system can be told to automatically insert additional command line arguments that let the user provide the missing data.
+Dodo Commands supports a model where arguments not found in the configuration file are obtained from the command line.
 
 Show what each command script does
 ==================================
 
-In some cases you don't want to run a script blindly. Running :code:`dodo foo --bar --confirm` makes the foo.py script print each command line call that it executes, and ask for confirmation. This allows you to see exactly what the script does. By copy-and-pasting the printed command, you will be able to run it manually.
+In some cases you don't want to run a script blindly. Running :code:`dodo foo --bar --confirm` makes the foo.py script print each command line call that it executes, and ask for confirmation. This allows you to see exactly what the script does.
 
 Share commands easily, while allowing customization
 ===================================================
@@ -38,7 +37,7 @@ Share commands easily, while allowing customization
 Run commands in a docker container
 ==================================
 
-You can make certain commands execute inside a chosen docker container. Dodo Commands will read the project configuration to find out which volume mappings and environment variables it must create inside the container before running your command.
+You can tell Dodo Commands to prefix particular commands with a docker invocation. Dodo Commands will read the project configuration to find out which volume mappings and environment variables it must create inside the container before running your command.
 
 Install dependencies automatically
 ==================================

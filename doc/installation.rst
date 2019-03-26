@@ -71,7 +71,7 @@ The :code:`dodo_standard_commands` directory is added by default to the ``~/.dod
 
 .. code-block:: bash
 
-    dodo install-default-commands --pip dodo_webdev_commands --pip dodo_git_commands
+    dodo install-default-commands --pip dodo_webdev_commands --pip dodo_git_commands --pip dodo_deploy_commands
 
 
 Step 6: (Optional) Enable autocompletion
