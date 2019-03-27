@@ -112,7 +112,15 @@ Note that you can run `dodo print-config` to show the entire configuration.
         )
     ```
 
-5. (Advanced) Show the command line for running cmake in docker:
+5. To create a new command, just use
+
+    ```bash
+    # this call will return the filename of the create command script
+    > dodo new-command foo --next-to cmake
+    ```
+
+
+6. (Advanced) Show the command line for running cmake in docker:
 
     ```bash
     # enable the docker.on.yaml configuration layer that adds some docker specific
