@@ -7,22 +7,22 @@ The main goal is to associate a set of short commands with each project to autom
 Provide a per-project environment
 =================================
 
-Each Dodo Commands project contains a specific set of commands and configuration values. It's possible to install default commands that will be available in any project.
+Each Dodo Commands project contains a specific set of commands and configuration values. It's also possible to install default commands that will be available in any project.
 
 Single entry point to run a variety of command scripts
 ======================================================
 
-Since Dodo Commands can find command scripts for you in the project's search path, there is no need to remember where they are located. This means that commands work from any current working directory. Running :code:`dodo help` shows the list of available commands.
+Dodo Commands finds command scripts for you in the project's search path, so there is no need to remember where they are located. This means that commands work from any current working directory. Running :code:`dodo help` shows the list of available commands.
 
 Give access to the configuration of the current project
 =======================================================
 
-Dodo Commands are usually short because arguments are fetched from the current project's configuration file. Configuration files can be layered, and layers can be switched on or off, giving you a lot of flexibility. Just like excel sheets, configuration files may contain cross-references. The power of Dodo Commands is mostly in the configuration file.
+Dodo Commands fetches arguments from the current project's configuration file. However, arguments not found in the configuration file can still be obtained from the command line.
 
-Flexibly switch between configuration and command line arguments
-================================================================
+Flexible configurations
+=======================
 
-Dodo Commands supports a model where arguments not found in the configuration file are obtained from the command line.
+Configuration files can be layered, and layers can be switched on or off, giving you a lot of flexibility. Just like excel sheets, configuration files may contain cross-references. The power of Dodo Commands is mostly in the configuration file.
 
 Show what each command script does
 ==================================
@@ -32,12 +32,12 @@ In some cases you don't want to run a script blindly. Running :code:`dodo foo --
 Share commands easily, while allowing customization
 ===================================================
 
-*You* control your local project configuration, but it's easy to synchronize with a shared configuration by cherry-picking the parts you need. New colleagues can initialize their project by boot-strapping from the shared configuration.
+You can synchronize your local project configuration with a shared one. This works by cherry-picking the parts you need. New colleagues can initialize their project by boot-strapping from the shared configuration.
 
 Run commands in a docker container
 ==================================
 
-You can tell Dodo Commands to prefix particular commands with a docker invocation. Dodo Commands will read the project configuration to find out which volume mappings and environment variables it must create inside the container before running your command.
+You can tell Dodo Commands to prefix particular commands with a Docker invocation. The appropriate volume mappings, environment variables, etc come from the configuration file.
 
 Install dependencies automatically
 ==================================

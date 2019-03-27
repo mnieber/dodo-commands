@@ -34,6 +34,9 @@ or
     # ``my_commands`` package
     dodo install-default-commands --pip my_commands
 
+.. tip::
+
+    Don't use ``dodo install-default-commands`` for project specific command scripts. Instead, store them inside the project's source tree, and reference them directly in the ``/ROOT/command_path`` node of the configuration file.
 
 Excluding directories from the command path
 ===========================================

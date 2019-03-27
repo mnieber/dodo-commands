@@ -4,7 +4,7 @@
 Creating and using projects
 ***************************
 
-The :ref:`installation` steps have created a ``dodo`` executable that you can use to create new projects in the projects directory (which is ``~/projects`` by default). As we'll see below, each dodo project has it's own copy of the dodo executable through which you can operate on the project.
+We've seen previously that the ``dodo`` executable can be used to execute any default command. However, the power of this framework comes from using project specific configuration files. This requires creating a project, as explained below.
 
 
 Creating a project
@@ -14,7 +14,8 @@ Projects are created with the ``dodo activate`` command:
 
     dodo activate FooBar --create
 
-Running this command creates a new ``~/projects/FooBar`` directory with various files. The most important one is ``~/projects/FooBar/dodo_commands/env/bin/dodo``. This copy of the ``dodo`` script is specific to the created project. Calling it implies that you are operating on the ``FooBar`` project.
+Running this command creates a new ``~/projects/FooBar`` directory with various files, such as the configuration file. The most important file however is ``~/projects/FooBar/dodo_commands/env/bin/dodo``. This copy of the ``dodo`` script is specific to the created project. Calling it implies that you are operating on the ``FooBar`` project.
+
 
 Running a command
 =================
@@ -27,7 +28,7 @@ You run a command on a project by calling its ``dodo`` script with the name of t
 
 This will execute the following steps:
 
-#. the ``dodo`` script will read the ``command_path`` (a list of directories with command scripts) from the project's configuration file (``~/projects/FooBar/dodo_commands/res/config.yaml``).
+#. the ``dodo`` script will read the ``command_path`` from the project's configuration file (``~/projects/FooBar/dodo_commands/res/config.yaml``). The command path is a list of directories with command scripts. To inspect your project's command path, run ``dodo print-config /ROOT/command_path``.
 
 #. the foo.py script is found on the ``command_path`` and run with the --bar option
 

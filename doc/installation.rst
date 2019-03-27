@@ -26,8 +26,9 @@ Dodo Commands depends on the python-virtualenv package. In addition, some of the
 Step 2: (Optional) Extend the path
 ==================================
 
-NOTE: this step is only necessary if you installed :code:`dodo_commands`
-into a virtual environment.
+.. note::
+
+    This step is only necessary if you installed :code:`dodo_commands` into a virtual environment.
 
 To make sure that the :code:`dodo` command is always found, call :code:`which dodo` and add the resulting path (the directory part) to the PATH in in your :code:`~/.bashrc`. The result should look something like this:
 
@@ -36,19 +37,7 @@ To make sure that the :code:`dodo` command is always found, call :code:`which do
     export PATH=$PATH:/home/maarten/projects/dodo_commands_env/bin
 
 
-Step 3: (Optional) Activate the latest project automatically
-============================================================
-
-To automatically activate the last used Dodo Commands project, add this line to your :code:`~/.bashrc` file:
-
-.. code-block:: bash
-
-    $(dodo activate --latest)
-
-If you wish to be able to toggle the automatic activation on and off, read about :ref:`autostart`.
-
-
-Step 4: (Optional) Tweak global configuration
+Step 3: (Optional) Tweak global configuration
 =============================================
 
 The first time you call :code:`dodo`, a global :code:`~/.dodo_commands/config` file is created (unless it already exists) with the following settings:
@@ -64,7 +53,7 @@ The first time you call :code:`dodo`, a global :code:`~/.dodo_commands/config` f
     dodo global-config settings.diff_tool meld
 
 
-Step 5: (Optional) Install extra default commands
+Step 4: (Optional) Install extra default commands
 =================================================
 
 The :code:`dodo_standard_commands` directory is added by default to the ``~/.dodo_commands/default_commands`` directory where default commands are installed. To install additional commands into this directory, you can run
@@ -74,7 +63,7 @@ The :code:`dodo_standard_commands` directory is added by default to the ``~/.dod
     dodo install-default-commands --pip dodo_webdev_commands --pip dodo_git_commands --pip dodo_deploy_commands
 
 
-Step 6: (Optional) Enable autocompletion
+Step 5: (Optional) Enable autocompletion
 ========================================
 
 The :code:`dodo register-autocomplete` command prints a line that - when executed - installs an autocompletion script in ``/etc/bash_completion.d``. You can paste this line into a bash-console, or run it directly with :code:`$(dodo register-autocomplete)`.
@@ -83,6 +72,18 @@ The :code:`dodo register-autocomplete` command prints a line that - when execute
 
     # returns: sudo register-python-argcomplete dodo > /etc/bash_completion.d/dodo_autocomplete.sh
     dodo register-autocomplete
+
+
+Step 6: (Optional) Activate the latest project automatically
+============================================================
+
+To automatically activate the last used Dodo Commands project, add this line to your :code:`~/.bashrc` file:
+
+.. code-block:: bash
+
+    $(dodo activate --latest)
+
+If you wish to be able to toggle the automatic activation on and off, read about :ref:`autostart`.
 
 
 Upgrading

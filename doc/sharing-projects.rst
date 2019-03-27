@@ -7,7 +7,7 @@ Sharing projects
 Objectives
 ==========
 
-If someone joins your project, then it makes sense to share your working environment with them. At the same time, you want working environments to be independent, so that each project member can arrange it to their preferences. This is achieved by having a shared configuration from which you cherry-pick the parts you need (this is somewhat comparable to how remote repositories work in git)
+If someone joins your project, then it makes sense to share your working environment with them. At the same time, you want working environments to be independent, so that each project member can arrange it to their preferences. This is achieved by having a shared configuration from which you cherry-pick the parts you need (this is somewhat comparable to how remote repositories work in git).
 
 In the explanation below, we'll assume that you have the following project directory layout:
 
@@ -20,9 +20,9 @@ In the explanation below, we'll assume that you have the following project direc
 Bootstrapping
 =============
 
-To share an existing project with new team members, follow these steps:
+Let's assume that you wish to share your project with new team members. Follow these steps:
 
-- copy your Dodo Commands configuration files to the location ``~/projects/FooBar/src/extra/dodo_commands/res`` and commit this to your git repository. These copies are the project's shared Dodo configuration.
+- copy your Dodo Commands configuration files to the location ``~/projects/FooBar/src/extra/dodo_commands/res`` and commit this to your git repository. These copies are the project's shared Dodo configuration. All team members (including you) will synchronize their local configuration file with this shared file.
 
 - ask your colleague to create an empty Dodo Commands project using ``dodo activate FooBar --create``.
 
