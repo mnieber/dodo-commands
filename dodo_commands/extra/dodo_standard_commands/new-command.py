@@ -5,16 +5,14 @@ import os
 import sys
 
 
-def _default_commands_basename():
-    return 'dodo_%s_commands' % Dodo.get_config('/ROOT/project_name')
+def _new_commands_dir():
+    def _new_commands_basename():
+        return 'dodo_%s_commands' % Dodo.get_config('/ROOT/project_name')
 
-
-def _default_commands_dir():
-    return os.path.normpath(os.path.join(
-        Dodo.get_config('/ROOT/shared_config_dir'),
-        '..',
-        _default_commands_basename()
-    ))
+    return os.path.normpath(
+        os.path.join(
+            Dodo.get_config('/ROOT/shared_config_dir'), '..',
+            _new_commands_basename()))
 
 
 def _args():
@@ -22,7 +20,8 @@ def _args():
     parser.add_argument('name')
     parser.add_argument(
         '--create-commands-dir',
-        action='store_true',
+        nargs='?',
+        const=True,
         help="Create a directory for storing commands in the shared_config_dir",
     )
     parser.add_argument(
@@ -31,7 +30,8 @@ def _args():
     args = Dodo.parse_args(parser)
 
     if not args.create_commands_dir and not args.next_to:
-        raise CommandError('Either --create_commands_dir or --next-to is required')
+        raise CommandError(
+            'Either --create-commands-dir or --next-to is required')
 
     return args
 
@@ -76,25 +76,26 @@ if Dodo.is_main(__name__, safe='--create-commands-dir' not in sys.argv):
     args = _args()
 
     if args.create_commands_dir:
-        dest_path = os.path.join(_default_commands_dir(), args.name + ".py")
+        project_dir = Dodo.get_config('/ROOT/project_dir')
+        new_commands_dir = (_new_commands_dir() if
+                            args.create_commands_dir is True else os.path.join(
+                                project_dir, args.create_commands_dir))
+        dest_path = os.path.join(new_commands_dir, args.name + ".py")
         command_path = CommandPath(Dodo.get_config())
 
-        if not os.path.exists(_default_commands_dir()):
-            Dodo.run(['mkdir', '-p', _default_commands_dir()])
+        if not os.path.exists(new_commands_dir):
+            Dodo.run(['mkdir', '-p', new_commands_dir])
 
-        init_py = os.path.join(_default_commands_dir(), '__init__.py')
+        init_py = os.path.join(new_commands_dir, '__init__.py')
         if not os.path.exists(init_py):
             Dodo.run(['touch', init_py])
 
         if not [
-            x for x in command_path.items
-            if os.path.normpath(x) == _default_commands_dir()
+                x for x in command_path.items
+                if os.path.normpath(x) == new_commands_dir
         ]:
             config = ConfigIO().load(load_layers=False)
-            scd = config['ROOT']['shared_config_dir']
-            config['ROOT']['command_path'].append(
-                os.path.join(scd[:scd.rfind('/')], _default_commands_basename())
-            )
+            config['ROOT']['command_path'].append(new_commands_dir)
             ConfigIO().save(config)
 
     if args.next_to:
