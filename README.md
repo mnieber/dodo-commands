@@ -48,37 +48,43 @@ The following steps install a pre-existing Dodo Commands project that offers a `
     > dodo bootstrap src extra/dodo_commands/res --force --git-url https://github.com/mnieber/dodo_commands_tutorial.git
     ```
 
-2. Inspect the configuration file:
+2. Do a trial run of the cmake command, without actually running it:
 
     ```bash
-    > cat $(dodo which --config)
+    > dodo cmake --confirm
+    ```
+
+    which returns
+
+    ```bash
+    (/root/projects/dodo_tutorial/build/release) cmake -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX=/root/projects/dodo_tutorial/install /root/projects/dodo_tutorial/src
+
+    confirm? [Y/n]
+    ```
+
+3. The command line arguments in the cmake invocation come from the configuration file. This can be inspected by using `dodo print-config` to print the settings in the `/CMAKE` configuration node:
+
+    ```bash
+    > dodo print-config /CMAKE
     ```
 
     which returns
 
     ```yaml
-    CMAKE:
-      variables:
+    variables:
         CMAKE_BUILD_TYPE: release
         CMAKE_INSTALL_PREFIX: ${/ROOT/project_dir}/install
-
-    ROOT:
-      build_dir: ${/ROOT/project_dir}/build/${/CMAKE/variables/CMAKE_BUILD_TYPE}
-      src_dir: ${/ROOT/project_dir}/src
-      command_path:
-      - - ~/.dodo_commands/default_commands/*
-      - - ${/ROOT/src_dir}/extra/dodo_commands/tutorial_commands
-      version: 1.0.0
-      shared_config_dir: ${/ROOT/src_dir}/extra/dodo_commands/res
     ```
 
-3. If you inspect the code of the 'cmake' command script with:
+Note that you can run `dodo print-config` to show the entire configuration.
+
+4. To understand how Dodo Commands created the cmake invocation, you can inspect the code of the 'cmake' command script with:
 
     ```bash
-    > cat $(dodo which --script cmake)
+    > cat $(dodo which cmake)
     ```
 
-    you will see that it refers to configuration file values such as `/ROOT/build_dir`:
+    which returns
 
     ```python
     from argparse import ArgumentParser
@@ -106,28 +112,17 @@ The following steps install a pre-existing Dodo Commands project that offers a `
         )
     ```
 
-4. Do a trial run of the cmake command, without actually running it:
-
-    ```bash
-    > dodo cmake --confirm
-    ```
-
-    which returns
-
-    ```bash
-    (/root/projects/dodo_tutorial/build/release) cmake -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX=/root/projects/dodo_tutorial/install /root/projects/dodo_tutorial/src
-
-    confirm? [Y/n]
-    ```
-
-5. Show the command line for running cmake in docker:
+5. (Advanced) Show the command line for running cmake in docker:
 
     ```bash
     # enable the docker.on.yaml configuration layer that adds some docker specific
     # values (such as the image name) to the configuration file
     > dodo layer docker on
 
-    # the same command now runs in docker!
+    # Inspect the changes to the configuration introduced by the new layer
+    > dodo print-config /DOCKER
+
+    # The same command now runs in docker!
     > dodo cmake --confirm
     ```
 
@@ -144,7 +139,10 @@ The following steps install a pre-existing Dodo Commands project that offers a `
     confirm? [Y/n]
     ```
 
-    Note that this command line only works if the dodo_tutorial:1604 image exists. You can build it by running `dodo dockerbuild`.
+    ```bash
 
+    # build the dodo_tutorial:1604 image so that the docker command will succeed
+    > dodo dockerbuild base
+    ```
 
 This simple scenario shows how a complicated command line can be compressed into a short command that's easy to remember. We've seen that by offering the `--confirm` flag Dodo Commands is transparent about what it actually executes. It's also easy to get new colleagues started on a project by sharing your command scripts and configuration file with them (see [the documentation](http://dodo-commands.readthedocs.io/en/latest/sharing-projects.html) for details).
