@@ -64,7 +64,7 @@ def _copy_defaults(args, shared_config_dir):
         if os.path.exists(dest_path):
             if args.confirm:
                 print(
-                    "Warning, destination path already exists: %s" % dest_path)
+                    "Warning, destination path already exists: %s. Overwrite it?" % dest_path)
             elif args.use_force:
                 print("Overwriting existing path: %s" % dest_path)
             else:
