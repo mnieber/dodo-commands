@@ -1,8 +1,8 @@
 """Pull the latest version of the Dodo Commands system."""
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo, CommandError
-from dodo_commands.framework.config import ConfigIO
-from dodo_commands.framework.util import symlink
+from dodo_commands.framework.config import ConfigIO, Paths
+from dodo_commands.framework.util import symlink, query_yes_no
 import glob
 import os
 import sys
@@ -64,7 +64,8 @@ def _copy_defaults(args, shared_config_dir):
         if os.path.exists(dest_path):
             if args.confirm:
                 print(
-                    "Warning, destination path already exists: %s. Overwrite it?" % dest_path)
+                    "Warning, destination path already exists: %s. Overwrite it?"
+                    % dest_path)
             elif args.use_force:
                 print("Overwriting existing path: %s" % dest_path)
             else:
@@ -81,8 +82,8 @@ def _clone(args, src_dir):
 
     Dodo.run(
         ["git", "clone", args.git_url,
-         os.path.basename(src_dir)] +
-        (["--depth", args.depth] if args.depth else []),
+         os.path.basename(src_dir)] + (["--depth", args.depth]
+                                       if args.depth else []),
         cwd=os.path.dirname(src_dir))
     if args.branch:
         Dodo.run(["git", "checkout", args.branch], cwd=src_dir)
@@ -107,20 +108,36 @@ def _link_dir(link_target, link_name):
 
 
 def _update_config(src_dir, relative_shared_config_dir):
-    config = ConfigIO().load(load_layers=False)
-    config['ROOT']['src_dir'] = src_dir
-    config['ROOT'][
-        'shared_config_dir'] = '${/ROOT/src_dir}/%s' % relative_shared_config_dir
-    ConfigIO().save(config)
+    config_file = os.path.join(Paths().res_dir(), "config.yaml")
+
+    if args.confirm:
+        print("Update the key /ROOT/src_dir in your configuration file (%s)" %
+              config_file)
+
+    if not args.confirm or query_yes_no("confirm?"):
+        config = ConfigIO().load(load_layers=False)
+        config['ROOT']['src_dir'] = src_dir
+        ConfigIO().save(config)
+
+    if args.confirm:
+        print(
+            "Update the key /ROOT/shared_config_dir in your configuration file (%s)"
+            % config_file)
+
+    if not args.confirm or query_yes_no("confirm?"):
+        config = ConfigIO().load(load_layers=False)
+        config['ROOT'][
+            'shared_config_dir'] = '${/ROOT/src_dir}/%s' % relative_shared_config_dir
+        ConfigIO().save(config)
 
 
 def _get_full_src_dir(src_dir, src_subdir):
     postfix = os.path.join(src_dir, src_subdir) if src_subdir else src_dir
-    return (postfix if os.path.isabs(src_dir) else os.path.abspath(os.path.join(
-        args.project_dir, postfix)))
+    return (postfix if os.path.isabs(src_dir) else os.path.abspath(
+        os.path.join(args.project_dir, postfix)))
 
 
-if Dodo.is_main(__name__, safe=False):
+if Dodo.is_main(__name__, safe=True):
     args = _args()
 
     full_src_dir = _get_full_src_dir(args.src_dir, args.src_subdir)
