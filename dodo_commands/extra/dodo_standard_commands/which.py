@@ -40,6 +40,10 @@ def _args():  # noqa
         action="store_true",
         help='Prints which projects are available')
     group.add_argument(
+        '--project',
+        action="store_true",
+        help='Prints name of the active project')
+    group.add_argument(
         '--layers', action="store_true", help='Prints which layers are active')
     group.add_argument(
         '--default-commands',
@@ -85,6 +89,9 @@ if Dodo.is_main(__name__):
                 os.path.join(projects_dir(), x, "dodo_commands", "res"))
         ]
         sys.stdout.write('\n'.join(sorted(projects)) + '\n')
+    elif args.project:
+        if Dodo.get_config("/ROOT/project_name", None):
+            sys.stdout.write(Dodo.get_config("/ROOT/project_name") + '\n')
     elif args.layers:
         for layer_filename in ConfigIO().get_layers(Dodo.get_config()):
             sys.stdout.write(layer_filename + '\n')
@@ -93,5 +100,5 @@ if Dodo.is_main(__name__):
         if x:
             sys.stdout.write(x + '\n')
     else:
-        if Paths().project_dir():
+        if Dodo.get_config("/ROOT/project_name", None):
             sys.stdout.write(Dodo.get_config("/ROOT/project_name") + '\n')
