@@ -19,20 +19,10 @@ def _make_executable(script_filename):
 
 def dodo_template(python_path):
     return """#!{python_path}
-import os
-from os.path import abspath, realpath, dirname
 import sys
 from dodo_commands.framework import execute_from_command_line
 
 if __name__ == "__main__":
-    exe_dir = dirname(realpath(abspath(__file__)))
-    if not exe_dir.endswith("env{sep}{bin}"):
-        sys.stderr.write(
-            'Error: this script must be run from the env{sep}{bin} directory')
-        sys.exit(1)
-
-    os.environ["DODO_COMMANDS_PROJECT_DIR"] = dirname(
-        dirname(dirname(exe_dir)))
     execute_from_command_line(sys.argv)
 """.format(
         python_path=python_path,
@@ -59,11 +49,13 @@ class Activator:
         try:
             local["virtualenv"]('--version')
         except:
-            raise CommandError("Could not find virtualenv, please install it first.")
+            raise CommandError(
+                "Could not find virtualenv, please install it first.")
 
         local["virtualenv"]("-p",
                             self.config.get("settings", "python_interpreter"),
-                            self.paths.virtual_env_dir(), "--prompt", self.project)
+                            self.paths.virtual_env_dir(), "--prompt",
+                            self.project)
 
         local[self.paths.pip()](
             "install",
@@ -87,6 +79,10 @@ class Activator:
         with open(dodo_file, "w") as of:
             of.write(dodo_template(python_path))
         _make_executable(dodo_file)
+
+        marker_file = self._virtual_env_filename('.dodo_project_dir_marker')
+        with open(marker_file, "w") as of:
+            pass
 
         if is_windows():
             dd_file = self._virtual_env_filename('dd.bat')
@@ -173,12 +169,10 @@ class Activator:
             project_dir = self.paths.project_dir()
 
             if os.path.exists(self._dodo_commands_sub_dir()):
-                self._report(
-                    "Project already exists: %s\n" % project_dir)
+                self._report("Project already exists: %s\n" % project_dir)
                 return False
 
-            self._report(
-                "Creating project at location %s ..." % project_dir)
+            self._report("Creating project at location %s ..." % project_dir)
             self._create_project()
             self._report(" done\n")
         elif not os.path.exists(self.paths.project_dir()):

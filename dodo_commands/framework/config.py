@@ -10,6 +10,7 @@ import glob
 import hashlib
 import json
 import os
+from os.path import dirname
 import re
 import ruamel.yaml
 import sys
@@ -24,9 +25,17 @@ def _ext():
 
 
 class Paths:
+    # Cached result of finding the current project dir
+    _project_dir = None
+
     def __init__(self, project_dir=None):
-        self._project_dir = project_dir or os.environ.get(
-            'DODO_COMMANDS_PROJECT_DIR')
+        self._project_dir = project_dir or Paths._project_dir
+        if not self._project_dir:
+            bin_dir = os.path.realpath(dirname(sys.executable))
+            marker_file = os.path.join(bin_dir, '.dodo_project_dir_marker')
+            Paths._project_dir = (dirname(dirname(dirname(bin_dir)))
+                                  if os.path.exists(marker_file) else "")
+            self._project_dir = Paths._project_dir
 
     def home_dir(self):
         return os.path.expanduser('~')

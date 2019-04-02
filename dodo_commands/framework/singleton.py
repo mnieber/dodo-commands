@@ -84,8 +84,12 @@ class Dodo:
     def is_main(cls, name, safe=None):
         if safe is not None:
             cls.safe = safe
+
         if name == '__main__':
+            import __main__ as main
+            cls.command_name = os.path.basename(main.__file__)
             return True
+
         return (cls.command_name and cls.package_path
                 and name == cls.package_path + '.' + cls.command_name)
 
