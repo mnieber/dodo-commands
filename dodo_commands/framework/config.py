@@ -37,17 +37,18 @@ class Paths:
                                   if os.path.exists(marker_file) else "")
             self._project_dir = Paths._project_dir
 
-    def home_dir(self):
-        return os.path.expanduser('~')
+    def home_dir(self, expanduser=True):
+        return os.path.expanduser('~') if expanduser else '~'
 
-    def global_config_dir(self):
-        return os.path.join(self.home_dir(), '.dodo_commands')
+    def global_config_dir(self, expanduser=True):
+        return os.path.join(self.home_dir(expanduser), '.dodo_commands')
 
     def global_config_filename(self):
         return os.path.join(self.global_config_dir(), 'config')
 
-    def default_commands_dir(self):
-        return os.path.join(self.global_config_dir(), 'default_commands')
+    def default_commands_dir(self, expanduser=True):
+        return os.path.join(
+            self.global_config_dir(expanduser), 'default_commands')
 
     def virtual_env_dir(self):
         return os.path.join(self.project_dir(), 'dodo_commands', 'env')

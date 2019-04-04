@@ -96,8 +96,10 @@ class Activator:
         config_filename = os.path.join(res_dir, "config.yaml")
         default_config = {
             'ROOT': {
-                'command_path':
-                [os.path.join(self.paths.default_commands_dir(), '*')],
+                'command_path': [
+                    os.path.join(
+                        self.paths.default_commands_dir(expanduser=False), '*')
+                ],
                 'version':
                 '1.0.0'
             }
