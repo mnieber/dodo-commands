@@ -1,5 +1,12 @@
 # Version history
 
+## 0.22.0
+
+- Remove usage of os.environ["DODO_COMMANDS_PROJECT_DIR"]
+- Use safe=True in dodo bootstrap
+- Add --project option to dodo which
+- Allow to set a value in dodo new-command --create-command-dir
+
 ## 0.21.0
 
 - Allow multiple args in dodo --run
