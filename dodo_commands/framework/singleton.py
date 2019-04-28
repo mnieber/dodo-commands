@@ -5,7 +5,7 @@ import argparse
 import fnmatch
 import os
 import sys
-from dodo_commands.framework.config import (ConfigLoader, CommandPath)
+from dodo_commands.framework.config import (ConfigLoader, get_command_path)
 from dodo_commands.framework.config_expander import Key, KeyNotFound
 from dodo_commands.framework.args_tree import ArgsTreeNode
 from dodo_commands.framework.command_error import CommandError
@@ -125,7 +125,7 @@ class Dodo:
     @classmethod
     def _all_decorators(cls):
         """Returns a mapping from decorator name to its directory."""
-        command_path = CommandPath(cls.get_config())
+        command_path = get_command_path(cls.get_config())
         command_path.extend_sys_path()
         result = {}
         for item in command_path.items:

@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo
-from dodo_commands.framework.config import (CommandPath, Paths, projects_dir,
-                                            ConfigIO)
+from dodo_commands.framework.config import (get_command_path, Paths,
+                                            projects_dir, ConfigIO)
 import os
 import sys
 
@@ -16,12 +16,12 @@ def _args():  # noqa
     )
 
     group = parser.add_mutually_exclusive_group()
-    group.add_argument(
-        '--config', action="store_true", help='Print where the config file is')
-    group.add_argument(
-        '--global-config',
-        action="store_true",
-        help='Print where the global config file is')
+    group.add_argument('--config',
+                       action="store_true",
+                       help='Print where the config file is')
+    group.add_argument('--global-config',
+                       action="store_true",
+                       help='Print where the global config file is')
     group.add_argument(
         '--script',
         help='Print where the dodo command script with given name is')
@@ -31,20 +31,18 @@ def _args():  # noqa
         help=
         'Finds the X_dir value in the configuration, where X is the given option value'
     )
-    group.add_argument(
-        '--decorators',
-        action="store_true",
-        help='Prints which command decorators are available')
-    group.add_argument(
-        '--projects',
-        action="store_true",
-        help='Prints which projects are available')
-    group.add_argument(
-        '--project',
-        action="store_true",
-        help='Prints name of the active project')
-    group.add_argument(
-        '--layers', action="store_true", help='Prints which layers are active')
+    group.add_argument('--decorators',
+                       action="store_true",
+                       help='Prints which command decorators are available')
+    group.add_argument('--projects',
+                       action="store_true",
+                       help='Prints which projects are available')
+    group.add_argument('--project',
+                       action="store_true",
+                       help='Prints name of the active project')
+    group.add_argument('--layers',
+                       action="store_true",
+                       help='Prints which layers are active')
     group.add_argument(
         '--default-commands',
         action="store_true",
@@ -54,7 +52,7 @@ def _args():  # noqa
 
 
 def _which_script(script):
-    command_path = CommandPath(Dodo.get_config())
+    command_path = get_command_path(Dodo.get_config())
     for item in command_path.items:
         script_path = os.path.join(item, script + ".py")
         if os.path.exists(script_path):

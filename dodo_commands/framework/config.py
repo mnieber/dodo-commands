@@ -47,15 +47,15 @@ class Paths:
         return os.path.join(self.global_config_dir(), 'config')
 
     def default_commands_dir(self, expanduser=True):
-        return os.path.join(
-            self.global_config_dir(expanduser), 'default_commands')
+        return os.path.join(self.global_config_dir(expanduser),
+                            'default_commands')
 
     def virtual_env_dir(self):
         return os.path.join(self.project_dir(), 'dodo_commands', 'env')
 
     def virtual_env_bin_dir(self):
-        return os.path.join(self.virtual_env_dir(), 'Scripts'
-                            if _is_windows() else 'bin')
+        return os.path.join(self.virtual_env_dir(),
+                            'Scripts' if _is_windows() else 'bin')
 
     def pip(self):
         return os.path.join(self.virtual_env_bin_dir(), 'pip' + _ext())
@@ -145,8 +145,8 @@ def merge_into_config(config, layer, xpath=None):
         return isinstance(x, type(dict()))
 
     def _raise(xpath):
-        raise CommandError(
-            "Cannot merge configurations. Check key /%s" % '/'.join(new_xpath))
+        raise CommandError("Cannot merge configurations. Check key /%s" %
+                           '/'.join(new_xpath))
 
     xpath = xpath or []
     for key, val in (layer or {}).items():
@@ -285,11 +285,9 @@ class ConfigLoader:
 class CommandPath:
     """Read search paths for command scripts from the configuration."""
 
-    def __init__(self, config):
-        exclude_patterns = self._exclude_patterns(config)
+    def __init__(self, include_patterns, exclude_patterns):
         excluded_command_dirs = self._create_items(exclude_patterns)
 
-        include_patterns = self._include_patterns(config)
         self.items = sorted([
             x for x in self._create_items(include_patterns)
             if x not in excluded_command_dirs
@@ -298,14 +296,8 @@ class CommandPath:
         basenames = [os.path.basename(x) for x in self.items]
         for basename in basenames:
             if basenames.count(basename) > 1:
-                raise CommandError(
-                    "More than 1 command path with name %s" % basename)
-
-    def _include_patterns(self, config):
-        return config.get('ROOT', {}).get('command_path', [])
-
-    def _exclude_patterns(self, config):
-        return config.get('ROOT', {}).get('command_path_exclude', [])
+                raise CommandError("More than 1 command path with name %s" %
+                                   basename)
 
     def _create_items(self, patterns):
         result = []
@@ -349,3 +341,12 @@ def expand_keys(config, text):
         else:
             result += term
     return result
+
+
+def get_command_path(config=None):
+    config = config or ConfigLoader().load()
+    root_config = config.get('ROOT', {})
+    command_path = root_config.get('command_path', [])
+    command_path_exclude = root_config.get('command_path_exclude', [])
+    return CommandPath(include_patterns=command_path,
+                       exclude_patterns=command_path_exclude)

@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo, CommandError
-from dodo_commands.framework.config import CommandPath, ConfigIO
+from dodo_commands.framework.config import get_command_path, ConfigIO
 import os
 import sys
 
@@ -10,9 +10,8 @@ def _new_commands_dir():
         return 'dodo_%s_commands' % Dodo.get_config('/ROOT/project_name')
 
     return os.path.normpath(
-        os.path.join(
-            Dodo.get_config('/ROOT/shared_config_dir'), '..',
-            _new_commands_basename()))
+        os.path.join(Dodo.get_config('/ROOT/shared_config_dir'), '..',
+                     _new_commands_basename()))
 
 
 def _args():
@@ -81,7 +80,7 @@ if Dodo.is_main(__name__, safe='--create-commands-dir' not in sys.argv):
                             args.create_commands_dir is True else os.path.join(
                                 project_dir, args.create_commands_dir))
         dest_path = os.path.join(new_commands_dir, args.name + ".py")
-        command_path = CommandPath(Dodo.get_config())
+        command_path = get_command_path(Dodo.get_config())
 
         if not os.path.exists(new_commands_dir):
             Dodo.run(['mkdir', '-p', new_commands_dir])
@@ -100,7 +99,7 @@ if Dodo.is_main(__name__, safe='--create-commands-dir' not in sys.argv):
 
     if args.next_to:
         dest_path = None
-        command_path = CommandPath(Dodo.get_config())
+        command_path = get_command_path(Dodo.get_config())
         for item in command_path.items:
             script_path = os.path.join(item, args.next_to + ".py")
             if os.path.exists(script_path):

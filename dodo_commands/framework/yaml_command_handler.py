@@ -3,7 +3,6 @@ import glob
 import ruamel.yaml
 import shlex
 from argparse import ArgumentParser
-from dodo_commands.framework.config import CommandPath
 from dodo_commands.framework.util import chop
 from dodo_commands.framework.command_map import CommandMapItem
 from dodo_commands.framework.config import expand_keys, Key
@@ -17,8 +16,7 @@ class YamlCommandMapItem(CommandMapItem):
 
 
 class YamlCommandHandler:
-    def add_commands_to_map(self, config, command_map):
-        command_path = CommandPath(config)
+    def add_commands_to_map(self, command_path, command_map):
         for item in command_path.items:
             for yaml_command_file in glob.glob(
                     os.path.join(item, '*.commands.yaml')):

@@ -3,51 +3,14 @@ from argparse import ArgumentParser
 from collections import defaultdict
 import os
 import sys
-from dodo_commands.framework.python_command_handler import PythonCommandHandler
-from dodo_commands.framework.yaml_command_handler import YamlCommandHandler
-from dodo_commands.framework.config import (ConfigLoader,
-                                            load_global_config_parser)
+from dodo_commands.framework.config import load_global_config_parser, get_command_path
 from dodo_commands.framework.singleton import Dodo, DecoratorScope, ConfigArg  # noqa
 from dodo_commands.framework.command_error import CommandError  # noqa
+from dodo_commands.framework.command_map import get_command_map, execute_script
 
 
 def get_version():  # noqa
     return "0.22.0"
-
-
-def _log(string):
-    with open('/tmp/.dodo.log', 'w') as ofs:
-        ofs.write(string + '\n')
-
-
-def execute_script(command_map_item, command_name):
-    """
-    Executes the script associated with command_name by importing its package.
-    The script is assumed to have an entry point that is executed if
-    Dodo.is_main(__name__) is True.
-    """
-    Dodo.command_name = command_name
-
-    if command_map_item.extension == 'py':
-        Dodo.package_path = command_map_item.package_path
-        PythonCommandHandler().execute(command_map_item, command_name)
-    elif command_map_item.extension == 'yaml':
-        YamlCommandHandler().execute(command_map_item, command_name)
-    else:
-        raise Exception("Logical error")
-
-
-def get_command_map():
-    """
-    Return a dictionary mapping command names to their Python module directory.
-    The dictionary is in the format {command_name: module_name}.
-    """
-    config = ConfigLoader().load()
-    command_map = {}
-
-    PythonCommandHandler().add_commands_to_map(config, command_map)
-    YamlCommandHandler().add_commands_to_map(config, command_map)
-    return command_map
 
 
 class ManagementUtility(object):
@@ -60,7 +23,7 @@ class ManagementUtility(object):
     def main_help_text(self, commands_only=False, command_map=None):
         """Return the script's main help text, as a string."""
         if command_map is None:
-            command_map = get_command_map()
+            command_map = get_command_map(get_command_path())
 
         if commands_only:
             usage = sorted(command_map.keys())
@@ -120,7 +83,7 @@ class ManagementUtility(object):
         being run, creates a parser appropriate to that command, and runs it.
         """
         try:
-            command_map = get_command_map()
+            command_map = get_command_map(get_command_path())
         except Exception as e:
             self._handle_exception(e)
 
@@ -151,7 +114,7 @@ class ManagementUtility(object):
                     sys.exit(1)
 
             try:
-                execute_script(command_map[command_name], command_name)
+                execute_script(command_map, command_name)
             except KeyboardInterrupt:
                 print('\n')
                 sys.exit(1)

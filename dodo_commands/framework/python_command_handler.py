@@ -5,7 +5,7 @@ import ruamel.yaml
 import subprocess
 import traceback
 from importlib import import_module
-from dodo_commands.framework.config import CommandPath, Paths
+from dodo_commands.framework.config import Paths
 from dodo_commands.framework.command_map import CommandMapItem
 from dodo_commands.framework.util import query_yes_no
 
@@ -17,8 +17,7 @@ class PythonCommandMapItem(CommandMapItem):
 
 
 class PythonCommandHandler:
-    def add_commands_to_map(self, config, command_map):
-        command_path = CommandPath(config)
+    def add_commands_to_map(self, command_path, command_map):
         command_path.extend_sys_path()
         for item in command_path.items:
             commands = [

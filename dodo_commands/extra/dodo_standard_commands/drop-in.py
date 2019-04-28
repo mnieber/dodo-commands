@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo, CommandError
-from dodo_commands.framework.config import CommandPath, load_global_config_parser
+from dodo_commands.framework.config import get_command_path, load_global_config_parser
 from dodo_commands.framework.util import chop
 import os
 
@@ -46,7 +46,7 @@ def _drop_src_dir(item):
 
 def _drop_dir_by_package_name():
     drop_dir_by_package_name = {}
-    command_path = CommandPath(Dodo.get_config())
+    command_path = get_command_path(Dodo.get_config())
     for item in command_path.items:
         dot_drop_path = _dot_drop_path(item)
         default_drop_src_dir = _drop_src_dir(item)
@@ -75,8 +75,8 @@ if Dodo.is_main(__name__, safe=True):
         raise CommandError("No drop-in found for package %s" % args.package)
 
     if not os.path.isdir(drop_src_dir):
-        raise CommandError(
-            "The drop-in directory does not exist: %s" % drop_src_dir)
+        raise CommandError("The drop-in directory does not exist: %s" %
+                           drop_src_dir)
 
     res_dir = Dodo.get_config('/ROOT/res_dir')
     drops_target_dir = os.path.join(res_dir, 'drops')
