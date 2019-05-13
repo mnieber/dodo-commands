@@ -2,7 +2,9 @@ from argparse import ArgumentParser
 from dodo_commands.framework import Dodo
 from dodo_commands.framework.config import (get_command_path, Paths,
                                             projects_dir, ConfigIO)
+import glob
 import os
+import ruamel.yaml
 import sys
 
 
@@ -57,6 +59,13 @@ def _which_script(script):
         script_path = os.path.join(item, script + ".py")
         if os.path.exists(script_path):
             return script_path
+
+    for item in command_path.items:
+        for yml in glob.glob(os.path.join(item, "*.commands.yaml")):
+            with open(yml) as ifs:
+                if script in ruamel.yaml.round_trip_load(ifs.read()).keys():
+                    return yml
+
     return None
 
 
