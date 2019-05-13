@@ -35,14 +35,21 @@ def _copy_extra_dirs(local_dir, extra_dirs):
         if not os.path.exists(extra_dir_path):
             raise CommandError("Cannot copy from non-existing path: " +
                                extra_dir_path)
+
         Dodo.run(['cp', '-rf', extra_dir_path, local_path])
+        if (os.path.abspath(local_dir).startswith(
+                os.path.abspath(extra_dir_path))):
+            rp = os.path.relpath(local_dir, extra_dir_path)
+            dead_path = os.path.join(local_path, rp)
+            if os.path.exists(dead_path):
+                Dodo.run(['rm', '-rf', dead_path])
 
 
 def _remove_extra_dirs(local_dir, extra_dirs):
     for extra_dir in (extra_dirs or []):
         extra_dir_name, extra_dir_path = extra_dir.split('=')
         local_path = os.path.join(local_dir, extra_dir_name)
-        Dodo.run(['rm', "rm", "-rf", local_path])
+        Dodo.run(['rm', "-rf", local_path])
 
 
 args = _args()
