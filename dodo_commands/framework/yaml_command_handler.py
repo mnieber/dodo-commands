@@ -62,7 +62,7 @@ class YamlCommandHandler:
                 if isinstance(args, str):
                     args = shlex.split(args)
 
-                cwd = cmd.get('cwd')
+                cwd = self._expand(cmd.get('cwd'))
                 store_xpath = [x for x in cmd.get('store', '').split('/') if x]
             except:
                 args = list(cmd)
