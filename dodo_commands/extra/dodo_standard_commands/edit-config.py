@@ -42,6 +42,7 @@ if Dodo.is_main(__name__, safe=('--key' not in sys.argv)):
         key = Key(config, xpath)
         key.set(args.val)
         ConfigIO().save(config)
+        sys.exit(0)
 
     yaml_filenames = ([os.path.join(args.res_dir, 'config.yaml')] +
                       ConfigIO().get_layers(Dodo.get_config()))
