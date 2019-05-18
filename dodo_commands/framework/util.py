@@ -134,3 +134,7 @@ def chop(path):
 def _log(string):
     with open('/tmp/.dodo.log', 'w') as ofs:
         ofs.write(string + '\n')
+
+
+def bash_cmd(cmd):
+    return ['/bin/bash', '-c', cmd]
