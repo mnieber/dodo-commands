@@ -1,4 +1,3 @@
-import pkgutil
 import os
 import sys
 import ruamel.yaml
@@ -11,22 +10,20 @@ from dodo_commands.framework.util import query_yes_no
 
 
 class PythonCommandMapItem(CommandMapItem):
-    def __init__(self, group):
-        super().__init__(group, 'py')
+    def __init__(self, group, filename):
+        super().__init__(group, filename, 'py')
         self.package_path = group
 
 
 class PythonCommandHandler:
-    def add_commands_to_map(self, command_path, command_map):
+    def add_commands_to_map(self, command_path, file_map, command_map):
         command_path.extend_sys_path()
-        for item in command_path.items:
-            commands = [
-                name for _, name, is_pkg in pkgutil.iter_modules([item])
-                if not is_pkg and not name.startswith('_')
-            ]
-            for command_name in commands:
-                command_map[command_name] = PythonCommandMapItem(
-                    group=os.path.basename(item))
+        for command_dir, files in file_map.items():
+            for file in files:
+                command_name, ext = os.path.splitext(os.path.basename(file))
+                if ext == '.py' and not command_name.startswith('_'):
+                    command_map[command_name] = PythonCommandMapItem(
+                        group=os.path.basename(command_dir), filename=file)
 
     def execute(self, command_map_item, command_name):
         def install_packages(meta_data_filename):

@@ -1,5 +1,4 @@
 import os
-import glob
 import ruamel.yaml
 import shlex
 from argparse import ArgumentParser
@@ -11,21 +10,23 @@ from dodo_commands.framework.singleton import Dodo
 
 class YamlCommandMapItem(CommandMapItem):
     def __init__(self, group, filename):
-        super().__init__(group, 'yaml')
-        self.filename = filename
+        super().__init__(group, filename, 'yaml')
 
 
 class YamlCommandHandler:
-    def add_commands_to_map(self, command_path, command_map):
-        for item in command_path.items:
-            for yaml_command_file in glob.glob(
-                    os.path.join(item, '*.commands.yaml')):
-                with open(yaml_command_file) as ifs:
-                    data = ruamel.yaml.round_trip_load(ifs.read())
-                    for command_name in data.keys():
-                        command_map[command_name] = YamlCommandMapItem(
-                            group=os.path.basename(item),
-                            filename=yaml_command_file)
+    def add_commands_to_map(self, command_path, file_map, command_map):
+        for command_dir, files in file_map.items():
+            for file in files:
+                command_name, ext = os.path.splitext(os.path.basename(file))
+                prefix = 'dodo.'
+                if ext == '.yaml' and command_name.startswith(prefix):
+                    command_name = command_name[len(prefix):]
+                    with open(file) as ifs:
+                        data = ruamel.yaml.round_trip_load(ifs.read())
+                        for command_name in data.keys():
+                            command_map[command_name] = YamlCommandMapItem(
+                                group=os.path.basename(command_dir),
+                                filename=file)
 
     def _expand(self, x):
         return os.path.expanduser(
@@ -48,7 +49,9 @@ class YamlCommandHandler:
                     default_val = None
                     if arg.startswith('--') and '=' in arg:
                         arg, default_val = arg.split('=')
-                    parser.add_argument(arg, default=self._expand(default_val))
+                    parser.add_argument(arg,
+                                        default=None if default_val is None
+                                        else self._expand(default_val))
 
         args = Dodo.parse_args(parser)
         Dodo.get_config()['_ARGS'] = args.__dict__
@@ -57,15 +60,14 @@ class YamlCommandHandler:
             if name.startswith('_'):
                 continue
 
-            try:
-                args = cmd['args']
-                if isinstance(args, str):
-                    args = shlex.split(args)
+            args = cmd['args']
+            if isinstance(args, str):
+                args = shlex.split(args)
 
+            try:
                 cwd = self._expand(cmd.get('cwd'))
                 store_xpath = [x for x in cmd.get('store', '').split('/') if x]
             except:
-                args = list(cmd)
                 cwd = None
                 store_xpath = None
 

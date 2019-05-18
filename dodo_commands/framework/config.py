@@ -303,7 +303,8 @@ class CommandPath:
         result = []
         for pattern in patterns:
             for x in glob.glob(os.path.expanduser(pattern)):
-                if os.path.isdir(x):
+                if os.path.isdir(
+                        x) and not os.path.basename(x).startswith('_'):
                     result.append(x)
         return result
 

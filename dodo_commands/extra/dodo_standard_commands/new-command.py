@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo, CommandError
 from dodo_commands.framework.config import get_command_path, ConfigIO
+from dodo_commands.framework.command_map import get_command_map
 import os
 import sys
 
@@ -98,14 +99,14 @@ if Dodo.is_main(__name__, safe='--create-commands-dir' not in sys.argv):
             ConfigIO().save(config)
 
     if args.next_to:
-        dest_path = None
-        command_path = get_command_path(Dodo.get_config())
-        for item in command_path.items:
-            script_path = os.path.join(item, args.next_to + ".py")
-            if os.path.exists(script_path):
-                dest_path = os.path.join(item, args.name + ".py")
-        if not dest_path:
+        command_map = get_command_map()
+        item = command_map.get(args.next_to)
+
+        if not item:
             raise CommandError("Script not found: %s" % args.next_to)
+
+        dest_path = os.path.join(os.path.dirname(item.filename),
+                                 args.name + ".py")
 
     if os.path.exists(dest_path):
         raise CommandError("Destination already exists: %s" % dest_path)

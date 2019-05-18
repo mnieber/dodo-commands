@@ -22,6 +22,7 @@ Contents:
    dodo-singleton
    decorators
    sharing-projects
+   yaml-and-shell-commands
    diagnose
 
 Indices and tables
