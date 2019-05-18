@@ -9,6 +9,9 @@ def _args():
                         choices=Dodo.get_config('/DOCKER/container_types',
                                                 {}).keys())
     parser.add_argument('name')
+    parser.add_argument('--replace',
+                        action='store_true',
+                        help='Replace existing container')
     args = Dodo.parse_args(parser)
     args.dirs = Dodo.get_config("/DOCKER/container_types/%s/dirs" %
                                 args.container_type)
@@ -19,8 +22,13 @@ def _args():
 
 if Dodo.is_main(__name__, safe=True):
     args = _args()
+
     existing = docker("ps", "-a", "--quiet", "--filter", "name=" + args.name)
-    if not existing:
+
+    if existing and args.replace:
+        Dodo.run(['docker', 'rm', args.name])
+
+    if not existing or args.replace:
         cmd_args = [
             "docker",
             "create",
