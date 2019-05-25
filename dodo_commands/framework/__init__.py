@@ -33,15 +33,33 @@ class ManagementUtility(object):
                 "Version %s (%s --version)." % (get_version(), self.prog_name),
                 "Type '%s help <command>' for help on "
                 "a specific command." % self.prog_name,
-                "Available commands (dodo help --commands):",
+                "Available commands (dodo help --commands):\n",
             ]
+
+            max_name_size = -1
             command_groups = defaultdict(lambda: [])
             for command_name, command_map_item in command_map.items():
+                max_name_size = max(max_name_size, len(command_name))
                 command_groups[command_map_item.group].append(command_name)
-            for package_path in sorted(command_groups.keys()):
-                usage.append("")
-                for command_name in sorted(command_groups[package_path]):
-                    usage.append("    %s" % command_name)
+
+            groups = sorted(list(command_groups.values()),
+                            key=lambda x: len(x),
+                            reverse=True)
+            for group in groups:
+                group.append("")
+
+            col_width = max_name_size + 10
+            rows, cols = os.popen('stty size', 'r').read().split()
+            nr_cols = max(1, int(int(cols) / col_width))
+
+            head, tail = groups[:nr_cols], groups[nr_cols:]
+            while any([x is not None for x in head]):
+                names = []
+                for group_idx, group in enumerate(head):
+                    names.append('' if group is None else group.pop(0))
+                    if group is not None and len(group) == 0:
+                        head[group_idx] = (tail.pop(0) if tail else None)
+                usage.append("".join(name.ljust(col_width) for name in names))
 
         return '\n'.join(usage)
 
