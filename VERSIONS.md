@@ -1,5 +1,17 @@
 # Version history
 
+## 0.23.0
+
+- Load dot env files when expanding the config
+- Add option --browse to cd.py
+- Add argument --replace to docker-create
+- Add flag is_daemon to docker decorator 
+- Add command dodo exec
+- Support commands written as YAML files and shell scripts
+- Simplify docker-build
+- Several small fixes
+- Make docker-create a safe command
+
 ## 0.22.0
 
 - Remove usage of os.environ["DODO_COMMANDS_PROJECT_DIR"]
