@@ -45,12 +45,6 @@ class DictVal:
     def replace_value(self, new_value):
         self.dict[self.key] = new_value
 
-    def must_eval(self):
-        return (isinstance(self.xpath[-1], str)
-                and self.xpath[-1].endswith('_EVAL')
-                or (len(self.xpath) >= 2 and isinstance(self.xpath[-2], str)
-                    and self.xpath[-2].endswith('_EVAL')))
-
     def warning_msg_not_expanded(self):
         return "Unexpanded value {val} at location /{xpath}".format(
             val=self.get_value(), xpath='/'.join([str(x) for x in self.xpath]))
@@ -70,10 +64,6 @@ class ListVal:
 
     def replace_value(self, new_value):
         self.list[self.idx] = new_value
-
-    def must_eval(self):
-        return (len(self.xpath) >= 2 and isinstance(self.xpath[-2], str)
-                and self.xpath[-2].endswith('_EVAL'))
 
     def warning_msg_not_expanded(self):
         return "Unexpanded value {val} at location /{xpath}".format(
@@ -205,14 +195,6 @@ class ConfigExpander:
                 todo.append(ListVal(obj, idx, xpath + [idx]))
             return True
 
-    def _eval(self, value, xpath):
-        try:
-            return eval(value)
-        except:
-            raise CommandError(
-                "Cannot evaluate {value} at location {xpath}".format(
-                    value=value, xpath=xpath))
-
     def run(self, config, callbacks=None):  # noqa
         nodes = []
         self.config = config
@@ -241,12 +223,8 @@ class ConfigExpander:
                         else:
                             changed = True
 
-                            if node.must_eval():
-                                expanded_value = self._eval(
-                                    expanded_value, node.xpath)
                             node.replace_value(expanded_value)
                             if _xpath_string(node) in (callbacks or {}):
-
                                 callbacks[_xpath_string(node)](expanded_value)
                 else:
                     raise CommandError("Should not reach here")

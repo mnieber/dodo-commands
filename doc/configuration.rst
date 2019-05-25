@@ -49,19 +49,6 @@ Layers can be switched on and off with the ``dodo layer`` command (except for th
 
 5. All files in ``{/ROOT/dotenv_files}`` are loaded with ``python-dotenv`` and used in the expansion of environment variables in the Dodo configuration. Note that these values are not added to the environment during the execution of a command script.
 
-6. if a configuration key ends in _EVAL, then its associated value is evaluated in Python and stored as a string. If the associated value is a list or dictionary, then every value in that list or dictionary is evaluated (but not recursively). Use with caution! For example:
-
-.. code-block:: yaml
-
-    BUILD:
-        nr_of_threads_EVAL: (2 + 4)  # evaluates to the string "6"
-    FOO:
-        bar_EVAL:
-        - (1 + 2)  # evaluates to "3"
-        - (3 + 4)  # evaluates to "7"
-        foobar: ${/BUILD/nr_of_threads_EVAL}  # value will be "6"
-
-
 Using configuration values in scripts
 =====================================
 

@@ -1,5 +1,9 @@
 # Version history
 
+## 0.24.0
+
+- Drop support for the EVAL postfix in the configuration
+
 ## 0.23.0
 
 - Load dot env files when expanding the config
