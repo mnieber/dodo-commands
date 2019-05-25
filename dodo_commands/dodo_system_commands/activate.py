@@ -63,6 +63,7 @@ class Activator:
             "argcomplete",
             "parsimonious",
             "plumbum",
+            "python-dotenv",
             "ruamel.yaml",
             "semantic_version",
             "six",

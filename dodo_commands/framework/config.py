@@ -15,6 +15,15 @@ import re
 import ruamel.yaml
 import sys
 
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    # Stub
+    def load_dotenv(x):
+        raise CommandError(
+            "Package python-dotenv not installed. Please run: pip install python-dotenv."
+        )
+
 
 def _is_windows():
     return os.name == 'nt'
@@ -278,7 +287,13 @@ class ConfigLoader:
 
         self._extend_command_path(config)
         self._extend_config(config)
-        ConfigExpander().run(config)
+
+        # Call load_dotenv for every item of /ENV/dotenv
+        callbacks = {}
+        for idx, _ in enumerate(config['ROOT'].get('dotenv_files', [])):
+            callbacks['/ROOT/dotenv_files/%d' % idx] = load_dotenv
+
+        ConfigExpander().run(config, callbacks=callbacks)
         return config
 
 
