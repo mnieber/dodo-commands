@@ -5,6 +5,7 @@ from dodo_commands.framework.config_expander import ConfigExpander
 from dodo_commands.framework.config_expander import Key, KeyNotFound  # noqa
 from dodo_commands.framework.util import symlink
 from plumbum import local
+from dotenv import load_dotenv
 from six.moves import configparser
 import glob
 import hashlib
@@ -278,7 +279,13 @@ class ConfigLoader:
 
         self._extend_command_path(config)
         self._extend_config(config)
-        ConfigExpander().run(config)
+
+        # Call load_dotenv for every item of /ENV/dotenv
+        callbacks = {}
+        for idx, _ in enumerate(config['ROOT'].get('dotenv_files', [])):
+            callbacks['/ROOT/dotenv_files/%d' % idx] = load_dotenv
+
+        ConfigExpander().run(config, callbacks=callbacks)
         return config
 
 

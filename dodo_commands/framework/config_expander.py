@@ -9,6 +9,10 @@ class KeyNotFound(CommandError):
     pass
 
 
+def _xpath_string(node):
+    return '/' + '/'.join([str(x) for x in node.xpath])
+
+
 class DictKey:
     def __init__(self, the_dict, the_key, xpath):
         self.dict = the_dict
@@ -158,9 +162,9 @@ class ConfigExpander:
 
                 key = Key(self.config, xpath)
                 if key.exists():
-                    expanded_str = (
-                        expanded_str[:key_expression.start()] + str(
-                            key.get()) + expanded_str[key_expression.end():])
+                    expanded_str = (expanded_str[:key_expression.start()] +
+                                    str(key.get()) +
+                                    expanded_str[key_expression.end():])
 
                     if expanded_str not in known_strs:
                         known_strs.append(expanded_str)
@@ -209,7 +213,7 @@ class ConfigExpander:
                 "Cannot evaluate {value} at location {xpath}".format(
                     value=value, xpath=xpath))
 
-    def run(self, config):  # noqa
+    def run(self, config, callbacks=None):  # noqa
         nodes = []
         self.config = config
         self._schedule_children(config, nodes, [])
@@ -236,11 +240,17 @@ class ConfigExpander:
                             new_nodes.append(node)
                         else:
                             changed = True
-                            node.replace_value(
-                                self._eval(expanded_value, node.xpath) if node.
-                                must_eval() else expanded_value)
+
+                            if node.must_eval():
+                                expanded_value = self._eval(
+                                    expanded_value, node.xpath)
+                            node.replace_value(expanded_value)
+                            if _xpath_string(node) in (callbacks or {}):
+
+                                callbacks[_xpath_string(node)](expanded_value)
                 else:
                     raise CommandError("Should not reach here")
+
             nodes = new_nodes
 
         for node in nodes:
