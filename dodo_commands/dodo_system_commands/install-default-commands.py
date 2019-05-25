@@ -8,15 +8,14 @@ import os
 
 def _args():
     parser = ArgumentParser(
-        description=("Install default command directories supplied by the " +
-                     "paths argument: dodo install-default-commands " +
-                     "/path/to/my/commands. " + _packages_in_extra_dir()))
-    parser.add_argument(
-        "paths",
-        nargs='*',
-        help='Create symlinks to these command directories')
-    parser.add_argument(
-        "--pip", nargs='*', help='Pip install the commands in these packages')
+        description=("Install command packages into the default " +
+                     "commands directory. " + _packages_in_extra_dir()))
+    parser.add_argument("paths",
+                        nargs='*',
+                        help='Create symlinks to these command directories')
+    parser.add_argument("--pip",
+                        nargs='*',
+                        help='Pip install the commands in these packages')
     parser.add_argument(
         "--remove",
         action='store_true',
@@ -115,6 +114,8 @@ def _install_package(package):
 
 
 if Dodo.is_main(__name__):
+    __import__('pudb').set_trace()
+
     args = _args()
     if args.pip and not is_using_system_dodo():
         raise CommandError(
