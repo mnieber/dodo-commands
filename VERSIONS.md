@@ -1,5 +1,12 @@
 # Version history
 
+## 0.25.0
+
+- Also read aliases from /ROOT/aliases
+- Support the --layer option when calling a command
+- Add option --git to install-commands
+- Add --name argument to register-autocomplete
+
 ## 0.24.0
 
 - Drop support for the EVAL postfix in the configuration
