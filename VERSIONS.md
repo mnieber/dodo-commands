@@ -3,6 +3,11 @@
 ## 0.24.0
 
 - Drop support for the EVAL postfix in the configuration
+- Add --make-default and --remove-default to install-commands
+- Rename install-default-commands to install-commands
+- Use global commands dir next to default commands dir
+- Allow additional arguments in alias
+- Print lists of commands in columns
 
 ## 0.23.0
 
