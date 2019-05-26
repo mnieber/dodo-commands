@@ -16,9 +16,8 @@ def get_version():  # noqa
 class ManagementUtility(object):
     """Internal helper class for executing commands."""
 
-    def __init__(self, argv):  # noqa
-        self.argv = argv
-        self.prog_name = os.path.basename(self.argv[0])
+    def __init__(self):  # noqa
+        self.prog_name = os.path.basename(sys.argv[0])
 
     def main_help_text(self, commands_only=False, command_map=None):
         """Return the script's main help text, as a string."""
@@ -69,14 +68,23 @@ class ManagementUtility(object):
         sys.stderr.write('%s: %s\n' % (e.__class__.__name__, e))
         sys.exit(1)
 
+    def _aliases(self):
+        global_config = load_global_config_parser()
+        if global_config.has_section('alias'):
+            return global_config.items('alias')
+        return []
+
     def _handle_arg_complete(self, command_map):
         words = os.environ['COMP_LINE'].split()
         command_name = words[1]
 
-        if command_name not in command_map:
+        choices = [x for x in command_map.keys()]
+        for key, val in self._aliases():
+            choices.append(key)
+
+        if command_name not in choices:
             parser = ArgumentParser()
-            parser.add_argument('command',
-                                choices=[x for x in command_map.keys()])
+            parser.add_argument('command', choices=choices)
             argcomplete.autocomplete(parser)
 
         os.environ['COMP_LINE'] = ' '.join(words[:1] + words[2:])
@@ -86,11 +94,9 @@ class ManagementUtility(object):
         return command_name
 
     def _find_alias(self, command_name):
-        global_config = load_global_config_parser()
-        if global_config.has_section('alias'):
-            for key, val in global_config.items('alias'):
-                if key == command_name:
-                    return val
+        for key, val in self._aliases():
+            if key == command_name:
+                return val.split()
         return None
 
     def execute(self):
@@ -109,7 +115,7 @@ class ManagementUtility(object):
             command_name = self._handle_arg_complete(command_map)
         else:
             try:
-                command_name = self.argv[1]
+                command_name = sys.argv[1]
             except IndexError:
                 command_name = 'help'  # Display help if no arguments were given.
 
@@ -125,8 +131,9 @@ class ManagementUtility(object):
         else:
             if command_name not in command_map:
                 alias = self._find_alias(command_name)
-                if alias and alias in command_map:
-                    command_name = alias
+                if alias and alias[0] in command_map:
+                    command_name = alias[0]
+                    # sys.argv = sys.argv[:1] + alias + sys.argv[2:]
                 else:
                     print("Unknown dodo command: %s" % (alias or command_name))
                     sys.exit(1)
@@ -142,5 +149,5 @@ class ManagementUtility(object):
 
 def execute_from_command_line(argv):
     """A simple method that runs a ManagementUtility."""
-    utility = ManagementUtility(argv)
+    utility = ManagementUtility()
     utility.execute()
