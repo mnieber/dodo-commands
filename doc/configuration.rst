@@ -70,11 +70,11 @@ If you want to keep your layers in a separate directory, use the ``${ROOT/layer_
 Including bits of configuration from packages
 =============================================
 
-When you install a package with ``dodo install-default-commands`` it may contain more than just command scripts. Some packages contain a so-called "drop-in" directory with configuration files and other resources such as Dockerfiles. Since the Dodo Commands philosophy is that you own your local configuration, the way to use these files is through copying them:
+When you install a package with ``dodo install-commands`` it may contain more than just command scripts. Some packages contain a so-called "drop-in" directory with configuration files and other resources such as Dockerfiles. Since the Dodo Commands philosophy is that you own your local configuration, the way to use these files is through copying them:
 
 .. code-block:: bash
 
-    dodo install-default-commands --pip dodo_deploy_commands
+    dodo install-commands --pip dodo_deploy_commands
     # copy drop-in directory to ${/ROOT/res_dir}/drops/dodo_deploy_commands
     dodo drop-in dodo_deploy_commands
 

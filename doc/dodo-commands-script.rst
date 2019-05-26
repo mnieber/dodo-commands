@@ -4,13 +4,13 @@
 The basics of a dodo commands script
 ************************************
 
-In this section we'll explain how to run default commands, and discuss the basic outline of a Dodo Commands script. This should give you an idea of how to automate any task. Later we will expand on this information, and show how to organize your commands into different projects.
+In this section we'll explain how to run global commands, and discuss the basic outline of a Dodo Commands script. This should give you an idea of how to automate any task. Later we will expand on this information, and show how to organize your commands into different projects.
 
 
-Default commands and the command path
-=====================================
+Global commands and the command path
+====================================
 
-The recommended way of using Dodo Commands is to create a Dodo Commands project and write a configuration file. However, it's possible to run commands without having any project. In this case, Dodo Commands will provide a fallback configuration that gives access to all commands in the default commands directory. If you inspect this fallback configuration by running ``dodo print-config``, you will see that it tells Dodo Commands which commands are available via the ``/ROOT/command_path`` setting. To list all available commands, simply run ``dodo``.
+The recommended way of using Dodo Commands is to create a Dodo Commands project and write a configuration file. However, it's possible to run commands without having any project. In this case, Dodo Commands will provide a fallback configuration that gives access to all commands in the global commands directory. If you inspect this fallback configuration by running ``dodo print-config``, you will see that it tells Dodo Commands which commands are available via the ``/ROOT/command_path`` setting. To list all available commands, simply run ``dodo``.
 
 
 The hello-world command script
