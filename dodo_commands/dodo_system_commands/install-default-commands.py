@@ -8,7 +8,7 @@ import os
 
 def _args():
     parser = ArgumentParser(
-        description=("Install command packages into the default " +
+        description=("Install command packages into the global " +
                      "commands directory. " + _packages_in_extra_dir()))
     parser.add_argument("paths",
                         nargs='*',
@@ -16,10 +16,12 @@ def _args():
     parser.add_argument("--pip",
                         nargs='*',
                         help='Pip install the commands in these packages')
-    parser.add_argument(
-        "--remove",
-        action='store_true',
-        help='Remove commands from the default commands directory')
+    parser.add_argument("--remove",
+                        action='store_true',
+                        help='Remove commands from the commands directory')
+    parser.add_argument("--defaults",
+                        action='store_true',
+                        help='Install into the default commands directory')
     args = Dodo.parse_args(parser)
     return args
 
@@ -49,19 +51,42 @@ def _report_error(msg):
     sys.stderr.write(msg + os.linesep)
 
 
-def _remove_commands(path):
+def _remove_package(package):
     """Install the dir with the default commands."""
-    dest_dir = os.path.join(Paths().default_commands_dir(),
-                            os.path.basename(path))
-
+    dest_dir = os.path.join(Paths().global_commands_dir(), package)
     if not os.path.exists(dest_dir):
-        raise CommandError("Directory does not exist: %s" % dest_dir)
+        raise CommandError("Not installed: %s" % dest_dir)
     Dodo.run(['rm', '-rf', dest_dir])
 
+    defaults_dest_dir = os.path.join(Paths().default_commands_dir(), package)
+    if os.path.exists(defaults_dest_dir):
+        Dodo.run(['rm', '-rf', defaults_dest_dir])
 
-def _install_commands(path):
-    """Install the dir with the default commands."""
-    dest_dir = os.path.join(Paths().default_commands_dir(),
+
+def _install_package(package, install_commands_function, add_to_defaults):
+    """Install the dir with the global commands."""
+    dest_dir = os.path.join(Paths().global_commands_dir(), package)
+    defaults_dest_dir = os.path.join(Paths().default_commands_dir(), package)
+
+    if add_to_defaults and os.path.exists(defaults_dest_dir):
+        _report_error("Error: already installed: %s" % defaults_dest_dir)
+        return False
+
+    if not install_commands_function():
+        return False
+
+    if add_to_defaults:
+        if os.name == 'nt' and not args.confirm:
+            symlink(dest_dir, defaults_dest_dir)
+        else:
+            Dodo.run(['ln', '-s', dest_dir, defaults_dest_dir])
+
+    return True
+
+
+def _install_commands_from_path(path):
+    """Install the dir with the global commands."""
+    dest_dir = os.path.join(Paths().global_commands_dir(),
                             os.path.basename(path))
 
     if not os.path.exists(path):
@@ -73,6 +98,7 @@ def _install_commands(path):
             return False
 
     if os.path.exists(dest_dir):
+        _report_error("Error: already installed: %s" % dest_dir)
         return False
 
     try:
@@ -82,21 +108,11 @@ def _install_commands(path):
             Dodo.run(['ln', '-s', os.path.abspath(path), dest_dir])
     except:
         _report_error("Error: could not create a symlink in %s." % dest_dir)
-        return False
 
     return True
 
 
-def _remove_package(package):
-    """Install the dir with the default commands."""
-    dest_dir = os.path.join(Paths().default_commands_dir(), package)
-
-    if not os.path.exists(dest_dir):
-        raise CommandError("Directory does not exist: %s" % dest_dir)
-    Dodo.run(['rm', '-rf', dest_dir])
-
-
-def _install_package(package):
+def _install_commands_from_package(package):
     pip = Paths().pip()
     if pip.startswith('/usr/') and not os.path.exists(pip):
         alt_pip = pip.replace("/usr/", "/usr/local/")
@@ -109,13 +125,13 @@ def _install_package(package):
 
     Dodo.run([
         pip, 'install', '--upgrade', '--target',
-        Paths().default_commands_dir(), package
+        Paths().global_commands_dir(), package
     ])
+
+    return True
 
 
 if Dodo.is_main(__name__):
-    __import__('pudb').set_trace()
-
     args = _args()
     if args.pip and not is_using_system_dodo():
         raise CommandError(
@@ -124,14 +140,19 @@ if Dodo.is_main(__name__):
 
     if args.paths:
         for path in args.paths:
+            package = os.path.basename(path)
             if args.remove:
-                _remove_commands(path)
+                _remove_package(package)
             else:
-                _install_commands(path)
+                _install_package(
+                    package, lambda: _install_commands_from_path(path),
+                    args.defaults)
 
     if args.pip:
         for package in args.pip:
             if args.remove:
                 _remove_package(package)
             else:
-                _install_package(package)
+                _install_package(
+                    package, lambda: _install_commands_from_package(package),
+                    args.defaults)

@@ -59,6 +59,9 @@ class Paths:
         return os.path.join(self.global_config_dir(expanduser),
                             'default_commands')
 
+    def global_commands_dir(self, expanduser=True):
+        return os.path.join(self.global_config_dir(expanduser), 'commands')
+
     def virtual_env_dir(self):
         return os.path.join(self.project_dir(), 'dodo_commands', 'env')
 
@@ -121,6 +124,13 @@ diff_tool=diff
 """
 
 
+def _touch_init_py(dir_name):
+    init_py = os.path.join(dir_name, "__init__.py")
+    if not os.path.exists(init_py):
+        with open(init_py, 'w'):
+            pass
+
+
 def create_global_config():
     """Create config file and default_commands dir."""
     base_dir = Paths().global_config_dir()
@@ -135,15 +145,16 @@ def create_global_config():
     default_commands_dir = Paths().default_commands_dir()
     if not os.path.exists(default_commands_dir):
         os.mkdir(default_commands_dir)
+        _touch_init_py(default_commands_dir)
         symlink(
             os.path.join(Paths().extra_dir(), "dodo_standard_commands"),
             os.path.join(Paths().default_commands_dir(),
                          "dodo_standard_commands"))
 
-    init_py = os.path.join(default_commands_dir, "__init__.py")
-    if not os.path.exists(init_py):
-        with open(init_py, 'w') as f:
-            pass
+    global_commands_dir = Paths().global_commands_dir()
+    if not os.path.exists(global_commands_dir):
+        os.mkdir(global_commands_dir)
+        _touch_init_py(global_commands_dir)
 
 
 def merge_into_config(config, layer, xpath=None):

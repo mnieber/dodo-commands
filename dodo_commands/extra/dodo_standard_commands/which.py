@@ -49,6 +49,10 @@ def _args():  # noqa
         '--default-commands',
         action="store_true",
         help='Prints the directory where default commands are stored')
+    group.add_argument(
+        '--global-commands',
+        action="store_true",
+        help='Prints the directory where global commands are stored')
 
     return Dodo.parse_args(parser)
 
@@ -81,6 +85,8 @@ if Dodo.is_main(__name__):
             print(os.path.join(Paths().res_dir(), "config.yaml"))
     elif args.global_config:
         sys.stdout.write(Paths().global_config_filename() + '\n')
+    elif args.global_commands:
+        sys.stdout.write(Paths().global_commands_dir() + '\n')
     elif args.default_commands:
         sys.stdout.write(Paths().default_commands_dir() + '\n')
     elif args.script:
