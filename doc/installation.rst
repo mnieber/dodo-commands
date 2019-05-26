@@ -86,6 +86,19 @@ To automatically activate the last used Dodo Commands project, add this line to 
 If you wish to be able to toggle the automatic activation on and off, read about :ref:`autostart`.
 
 
+Step 7: (Optional) Install a short-cut for sourcing the output of a command
+===========================================================================
+
+In steps 5 and 6 above you saw examples where the output of a Dodo command is sourced using the ``$`` symbol. This means that the output of the Dodo command is executed as a command line. For example, ``dodo cd`` only prints something like ``cd ~/projects/foo`` to the screen, and ``$(dodo cd)`` actually executes that command. In Bash, there is a small trick to make the syntax friendlier. First, add this function to your ``.bashrc``
+
+.. code-block:: bash
+
+    sdodo() {
+       $(dodo $@)
+    }
+
+Now, when you open a new Bash terminal and run ``sdodo cd`` it will have the same effect as running ``$(dodo cd)``. Finally, you can register autocompletion for this command using ``dodo register-autocomplete --name sdodo``.
+
 Upgrading
 =========
 
