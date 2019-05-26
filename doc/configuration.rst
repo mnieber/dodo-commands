@@ -46,7 +46,7 @@ Layers can be switched on and off with the ``dodo layer`` command (except for th
 
     dodo layer buildtype release
 
-5. All files in ``{/ROOT/dotenv_files}`` are loaded with ``python-dotenv`` and used in the expansion of environment variables in the Dodo configuration. Note that these values are not added to the environment during the execution of a command script.
+5. All files in ``{/ROOT/dotenv_files}`` are loaded with ``python-dotenv`` and used in the expansion of environment variables in the Dodo configuration. Note that these values are also added to the environment during the execution of a command script.
 
 Using configuration values in scripts
 =====================================
