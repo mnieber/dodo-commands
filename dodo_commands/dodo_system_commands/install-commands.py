@@ -22,6 +22,19 @@ def _args():
     parser.add_argument("--defaults",
                         action='store_true',
                         help='Install into the default commands directory')
+
+    group = parser.add_argument_group()
+
+    group.add_argument(
+        "--make-default",
+        help=
+        'Create a symlink to a global commands package in the default commands directory'
+    )
+    group.add_argument(
+        "--remove-default",
+        help=
+        'Remove a symlink to a global commands package from the default commands directory'
+    )
     args = Dodo.parse_args(parser)
     return args
 
@@ -51,16 +64,17 @@ def _report_error(msg):
     sys.stderr.write(msg + os.linesep)
 
 
-def _remove_package(package):
+def _remove_package(package, only_from_defaults=False):
     """Install the dir with the default commands."""
-    dest_dir = os.path.join(Paths().global_commands_dir(), package)
-    if not os.path.exists(dest_dir):
-        raise CommandError("Not installed: %s" % dest_dir)
-    Dodo.run(['rm', '-rf', dest_dir])
+    if not only_from_defaults:
+        dest_dir = os.path.join(Paths().global_commands_dir(), package)
+        if not os.path.exists(dest_dir):
+            raise CommandError("Not installed: %s" % dest_dir)
+        Dodo.run(['rm', '-rf', dest_dir])
 
     defaults_dest_dir = os.path.join(Paths().default_commands_dir(), package)
     if os.path.exists(defaults_dest_dir):
-        Dodo.run(['rm', '-rf', defaults_dest_dir])
+        Dodo.run(['rm', defaults_dest_dir])
 
 
 def _install_package(package, install_commands_function, add_to_defaults):
@@ -76,6 +90,10 @@ def _install_package(package, install_commands_function, add_to_defaults):
         return False
 
     if add_to_defaults:
+        if not os.path.exists(dest_dir):
+            _report_error("Error: not found: %s" % dest_dir)
+            return False
+
         if os.name == 'nt' and not args.confirm:
             symlink(dest_dir, defaults_dest_dir)
         else:
@@ -137,6 +155,14 @@ if Dodo.is_main(__name__):
         raise CommandError(
             "Please deactivate your dodo project first by running 'deactivate'."
         )
+
+    if args.make_default:
+        _install_package(args.make_default, lambda: True, True)
+        sys.exit(0)
+
+    if args.remove_default:
+        _remove_package(args.remove_default, only_from_defaults=True)
+        sys.exit(0)
 
     if args.paths:
         for path in args.paths:

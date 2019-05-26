@@ -7,36 +7,43 @@ Commands
 Command path
 ============
 
-The search path for commands is determined by the ``${/ROOT/command_path}`` setting in the project's ``config.yaml``. The ``dodo_system_commands`` module is added to the command path by default. In the example below, all subdirectories of the default commands directory are used (via the ``*`` wildcard), as well as the :code:`special_commands` directory:
+The search path for commands is determined by the ``${/ROOT/command_path}`` setting in the project's ``config.yaml``. The ``dodo_system_commands`` module is added to the command path by default. Typically the command path will include:
+
+- one or more packages stored in the ``global commands`` directory. These packages have previously been installed using ``dodo install-commands``.
+- all packages stored in the ``default commands`` directory (note the ``*`` wildcard in the example below). By convention, packages in the ``default commands`` directory are symlinks to packages in the ``global commands`` directory.
+- packages that are local to the project (note the :code:`special_commands` directory in the example below):
 
 .. code-block:: yaml
 
     ROOT:
         command_path:
+        - ~/.dodo_commands/global_commands/dodo_git_commands
         - ~/.dodo_commands/default_commands/*
         - ${/ROOT/src_dir}/special_commands
 
-Default commands
-================
+Installing global command packages
+==================================
 
-The default Dodo Commands scripts are stored in :code:`~/.dodo_commands/default_commands`. As we saw above, the default commands are made available by adding ``~/.dodo_commands/default_commands/*`` to the command path. You can install additional default commands using:
+The global Dodo Commands scripts are stored in :code:`~/.dodo_commands/global_commands`. You can install additional global commands using:
 
 .. code-block:: bash
 
-    # creates a symlink to ``my_commands`` in ``~/.dodo_commands/default_commands/my_commands``
-    dodo install-default-commands /path/to/my_commands
+    # creates a symlink to ``my_commands`` in ``~/.dodo_commands/global_commands/my_commands``
+    dodo install-commands /path/to/my_commands
 
 or
 
 .. code-block:: bash
 
-    # adds ``~/.dodo_commands/default_commands/mycommands`` by installing the
+    # adds ``~/.dodo_commands/global_commands/mycommands`` by installing the
     # ``my_commands`` package
-    dodo install-default-commands --pip my_commands
+    dodo install-global-commands --pip my_commands
+
+By using the ``--defaults`` flag, a symlink to the command package is automatically added to the :code:`~/.dodo_commands/default_commands` directory. You can also create this symlink later using ``dodo install-commands --make-default <package>``, and remove the symlink using ``dodo install-commands --remove-default <package>``.
 
 .. tip::
 
-    Don't use ``dodo install-default-commands`` for project specific command scripts. Instead, store them inside the project's source tree, and reference them directly in the ``/ROOT/command_path`` node of the configuration file.
+    Don't use ``dodo install-commands`` for project specific command scripts. Instead, store them inside the project's source tree, and reference them directly in the ``/ROOT/command_path`` node of the configuration file.
 
 Excluding directories from the command path
 ===========================================
@@ -78,4 +85,5 @@ You can added aliases for any dodo command in the ``aliases`` section of :ref:`g
 
     [alias]
     wh = which
+    whpp = which --projects
     pc = print-config
