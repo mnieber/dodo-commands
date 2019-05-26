@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo, CommandError
 from dodo_commands.framework.config import (load_global_config_parser,
-                                            ConfigIO, Paths)
+                                            ConfigIO, Paths, ConfigLoader)
 from dodo_commands.framework.config_expander import Key
 from six.moves import configparser
 import os
@@ -37,7 +37,7 @@ if Dodo.is_main(__name__, safe=('--key' not in sys.argv)):
             error=str(e), filename=Paths().global_config_filename()))
 
     if args.key and args.val:
-        config = ConfigIO().load(load_layers=False)
+        config = ConfigIO().load()
         xpath = [x for x in args.key.split('/') if x]
         key = Key(config, xpath)
         key.set(args.val)
@@ -45,7 +45,7 @@ if Dodo.is_main(__name__, safe=('--key' not in sys.argv)):
         sys.exit(0)
 
     yaml_filenames = ([os.path.join(args.res_dir, 'config.yaml')] +
-                      ConfigIO().get_layers(Dodo.get_config()))
+                      ConfigLoader().get_layers(Dodo.get_config()))
 
     yaml_filenames.append(Paths().global_config_filename())
     Dodo.run([args.editor] + yaml_filenames, cwd='.')

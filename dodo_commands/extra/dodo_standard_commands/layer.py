@@ -54,7 +54,7 @@ def _layer_value(layers, layer):
 
 
 def _layers(config=None, filter_abs_paths=False):
-    config = config or ConfigIO().load(load_layers=False)
+    config = config or ConfigIO().load()
     layers = config.get('ROOT', {}).get('layers', [])
 
     if filter_abs_paths:
@@ -67,7 +67,7 @@ def _layers(config=None, filter_abs_paths=False):
 
 if Dodo.is_main(__name__, safe=False):
     args = _args()
-    config = ConfigIO().load(load_layers=False)
+    config = ConfigIO().load()
 
     if args.layer == False:  # noqa
         filtered_layers = _layers(config, filter_abs_paths=True)
@@ -84,9 +84,8 @@ if Dodo.is_main(__name__, safe=False):
         print(_layer_value(layers, args.layer))
         sys.exit(0)
 
-    layer_file = os.path.join(
-        Dodo.get_config("/ROOT/res_dir"),
-        "%s.%s.yaml" % (args.layer, args.value))
+    layer_file = os.path.join(Dodo.get_config("/ROOT/res_dir"),
+                              "%s.%s.yaml" % (args.layer, args.value))
 
     if not args.force and not os.path.exists(layer_file):
         raise CommandError("Layer file %s does not exist" % layer_file)

@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo
 from dodo_commands.framework.config import (get_command_path, Paths,
-                                            projects_dir, ConfigIO)
+                                            projects_dir, ConfigLoader)
 import glob
 import os
 import ruamel.yaml
@@ -106,7 +106,7 @@ if Dodo.is_main(__name__):
         if Dodo.get_config("/ROOT/project_name", None):
             sys.stdout.write(Dodo.get_config("/ROOT/project_name") + '\n')
     elif args.layers:
-        for layer_filename in ConfigIO().get_layers(Dodo.get_config()):
+        for layer_filename in ConfigLoader().get_layers(Dodo.get_config()):
             sys.stdout.write(layer_filename + '\n')
     elif args.what:
         x = _which_script(args.what) or _which_dir(args.what)

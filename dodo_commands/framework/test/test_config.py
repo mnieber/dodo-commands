@@ -3,7 +3,7 @@
 import os
 import pytest
 import ruamel.yaml
-from ..config import ConfigIO
+from ..config import ConfigIO, ConfigLoader
 
 
 class TestConfigIO:  # noqa
@@ -27,7 +27,9 @@ class TestConfigIO:  # noqa
         foo_dir = os.path.join(str(tmpdir), 'foo')
         return {
             'ROOT': {
-                'command_path': [os.path.join(foo_dir, 'foobar'), ],
+                'command_path': [
+                    os.path.join(foo_dir, 'foobar'),
+                ],
                 'foo': {
                     'bar': 'barfoo',
                     'three': 4
@@ -39,8 +41,8 @@ class TestConfigIO:  # noqa
     @pytest.fixture
     def create_config(self, tmpdir, simple_config):
         """Create a config file in the tmpdir."""
-        configIO = ConfigIO(str(tmpdir))  # noqa
-        configIO.save(simple_config)
+        config_io = ConfigIO(str(tmpdir))  # noqa
+        config_io.save(simple_config)
 
     @pytest.fixture
     def create_layer(self, tmpdir, layer):
@@ -50,16 +52,17 @@ class TestConfigIO:  # noqa
             f.write(ruamel.yaml.round_trip_dump(layer))
 
     def test_save(self, tmpdir, simple_config):  # noqa
-        configIO = ConfigIO(str(tmpdir))  # noqa
-        configIO.save(simple_config)
-        config = configIO.load(load_layers=False)
+        config_io = ConfigIO(str(tmpdir))  # noqa
+        config_io.save(simple_config)
+        config = config_io.load()
         assert simple_config == config
 
     @pytest.mark.usefixtures("create_config", "create_layer")
     def test_layers(self, tmpdir):  # noqa
         foo_dir = os.path.join(str(tmpdir), 'foo')
-        configIO = ConfigIO(str(tmpdir))  # noqa
-        full_config = configIO.load()
+        config_io = ConfigIO(str(tmpdir))  # noqa
+        config_loader = ConfigLoader(config_io)
+        full_config = config_loader.load(extend=False)
 
         assert full_config['ROOT']['command_path'] == [
             os.path.join(foo_dir, 'bar'),

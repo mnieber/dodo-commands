@@ -94,7 +94,7 @@ if Dodo.is_main(__name__, safe='--create-commands-dir' not in sys.argv):
                 x for x in command_path.items
                 if os.path.normpath(x) == new_commands_dir
         ]:
-            config = ConfigIO().load(load_layers=False)
+            config = ConfigIO().load()
             config['ROOT']['command_path'].append(new_commands_dir)
             ConfigIO().save(config)
 

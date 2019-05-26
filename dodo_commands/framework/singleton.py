@@ -181,6 +181,11 @@ class Dodo:
                             action='store_true',
                             help="Print all commands instead of running them")
 
+        # The --layer option is handled by the argument parser in ConfigLoader.
+        # We need to add it to this parser as well, otherwise it will complain.
+        # Yes, quite hacky...
+        parser.add_argument('--layer', action='append', help=argparse.SUPPRESS)
+
         for decorator in cls._get_decorators():
             decorator.add_arguments(parser)
 

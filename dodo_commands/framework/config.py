@@ -10,6 +10,7 @@ import glob
 import hashlib
 import json
 import os
+import argparse
 from os.path import dirname
 import re
 import ruamel.yaml
@@ -201,16 +202,15 @@ class ConfigIO:
         """Return path composed of config_base_dir and post_fix_paths list."""
         return os.path.join(self.config_base_dir, *post_fix_paths)
 
-    def get_layers(self, config):
-        """Returns list of layer filenames"""
+    def glob(self, patterns):
+        """Returns list of filenames"""
 
         def add_prefix(filename):
             return (filename
                     if filename.startswith('/') else self._path_to([filename]))
 
         patterns = [
-            add_prefix(os.path.expanduser(pattern))
-            for pattern in config.get('ROOT', {}).get('layers', [])
+            add_prefix(os.path.expanduser(pattern)) for pattern in patterns
         ]
 
         result = []
@@ -218,21 +218,7 @@ class ConfigIO:
             result.extend([x for x in glob.glob(pattern)])
         return result
 
-    def _load_layers(self, config):
-        def layer_exists(layer_filename):
-            if not os.path.exists(layer_filename):
-                print("Warning: layer not found: %s" % layer_filename)
-                return False
-            return True
-
-        layer_filenames = [
-            x for x in self.get_layers(config) if layer_exists(x)
-        ]
-        layers = [self.load(x, load_layers=False) for x in layer_filenames]
-        for layer in layers:
-            merge_into_config(config, layer)
-
-    def load(self, config_filename='config.yaml', load_layers=True):
+    def load(self, config_filename='config.yaml'):
         """Get configuration."""
         full_config_filename = self._path_to([config_filename])
         if not os.path.exists(full_config_filename):
@@ -240,8 +226,6 @@ class ConfigIO:
 
         with open(full_config_filename) as f:
             config = ruamel.yaml.round_trip_load(f.read())
-        if load_layers:
-            self._load_layers(config)
         return config
 
     def save(self, config, config_filename='config.yaml'):
@@ -252,6 +236,9 @@ class ConfigIO:
 
 class ConfigLoader:
     """Load the project's dodo config and expand it."""
+
+    def __init__(self, config_io=None):
+        self.config_io = config_io or ConfigIO()
 
     def _add_to_config(self, config, section, key, value):
         if section in config:
@@ -284,11 +271,33 @@ class ConfigLoader:
         sys.stderr.write(x)
         sys.stderr.flush()
 
-    def load(self, config_base_dir=None):
+    def get_layers(self, config):
+        layer_filenames = []
+        for pattern in config.get('ROOT', {}).get('layers', []):
+            filenames = self.config_io.glob([pattern])
+            if not filenames:
+                print("Warning, no layers found for pattern: %s" % pattern)
+            layer_filenames.extend(filenames)
+
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--layer', action='append')
+        args, _ = parser.parse_known_args(sys.argv)
+        extra_layers = args.layer or []
+
+        for extra_layer_filename in self.config_io.glob(extra_layers):
+            if extra_layer_filename not in layer_filenames:
+                layer_filenames.append(extra_layer_filename)
+
+        return layer_filenames
+
+    def load(self, extend=True):
         fallback_config = dict(ROOT={})
         try:
-            config = (ConfigIO(config_base_dir).load()
-                      if Paths().project_dir() else None) or fallback_config
+            config = self.config_io.load() or fallback_config
+            layers = [self.config_io.load(x) for x in self.get_layers(config)]
+            for layer in layers:
+                merge_into_config(config, layer)
+
         except ruamel.yaml.scanner.ScannerError:
             config = fallback_config
             self._report(
@@ -296,8 +305,9 @@ class ConfigLoader:
                 "Run 'dodo diff' to compare your configuration to the "
                 "default one.\n")
 
-        self._extend_command_path(config)
-        self._extend_config(config)
+        if extend:
+            self._extend_command_path(config)
+            self._extend_config(config)
 
         # Call load_dotenv for every item of /ENV/dotenv
         callbacks = {}

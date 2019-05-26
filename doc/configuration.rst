@@ -27,12 +27,11 @@ A new configuration file is created automatically when the project is first crea
 
 3. the following magic values are automatically added: ``${/ROOT/project_name}``, ``${/ROOT/project_dir}``, ``${/ROOT/res_dir}``. Finally the dodo_system_commands directory is automatically added to ``${/ROOT/command_path}``.
 
-4. ``${/ROOT/layers}`` lists additional yaml files that are layered on top of the root configuration file. If a key exists both in the root configuration and in the layer, then values replace values, lists are concatenated, and dictionaries are merged. The ``${/ROOT/layer_dir}`` value can be used to specify the sub-directory where layer configuration files are searched. However, layers may also be prefixed with an absolute path. Finally, wildcards are allowed.
+4. ``${/ROOT/layers}`` lists additional yaml files that are layered on top of the root configuration file. If a key exists both in the root configuration and in the layer, then values replace values, lists are concatenated, and dictionaries are merged. Layers are found relative to the resources directory that holds all configuration files. However, layers may also be prefixed with an absolute path. Moreover, wildcards are allowed. To list all active layers, use ``dodo which --layers``.
 
 .. code-block:: yaml
 
     ROOT:
-        layer_dir: layers
         layers:
             # contents of this file are layered on top of this configuration
             - buildtype.debug.yaml
@@ -64,7 +63,7 @@ The layering mechanism is simple but powerful. As an example, consider placing t
 
     Calling ``dodo layer foo bar`` makes a small change in your configuration file by adding ``foo.bar.yaml`` to the ``${/ROOT/layers}`` node. Make sure that you do not have any unsaved configuration changes before calling this command.
 
-If you want to keep your layers in a separate directory, use the ``${ROOT/layer_dir}`` setting. To list all active layers, use ``dodo which --layers``.
+An alternative way to select a layer is using the ``--layer`` option (which you can use more than once per call). For example, ``dodo print-config --layer foo.yaml ROOT`` loads the ``foo.yaml`` layer and then prints the contents of the ``ROOT`` configuration key.
 
 
 Including bits of configuration from packages
