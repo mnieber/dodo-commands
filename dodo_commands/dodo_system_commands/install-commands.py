@@ -4,6 +4,7 @@ from dodo_commands.framework.config import Paths
 from dodo_commands.framework.util import is_using_system_dodo, symlink
 import sys
 import os
+import tempfile
 
 
 def _args():
@@ -16,6 +17,9 @@ def _args():
     parser.add_argument("--pip",
                         nargs='*',
                         help='Pip install the commands in these packages')
+    parser.add_argument("--git",
+                        nargs='*',
+                        help='Clone a git repo into the commands directory')
     parser.add_argument("--remove",
                         action='store_true',
                         help='Remove commands from the commands directory')
@@ -102,7 +106,7 @@ def _install_package(package, install_commands_function, add_to_defaults):
     return True
 
 
-def _install_commands_from_path(path):
+def _install_commands_from_path(path, mv=False):
     """Install the dir with the global commands."""
     dest_dir = os.path.join(Paths().global_commands_dir(),
                             os.path.basename(path))
@@ -119,13 +123,17 @@ def _install_commands_from_path(path):
         _report_error("Error: already installed: %s" % dest_dir)
         return False
 
-    try:
-        if os.name == 'nt' and not args.confirm:
-            symlink(os.path.abspath(path), dest_dir)
-        else:
-            Dodo.run(['ln', '-s', os.path.abspath(path), dest_dir])
-    except:
-        _report_error("Error: could not create a symlink in %s." % dest_dir)
+    if mv:
+        Dodo.run(['mv', path, dest_dir])
+    else:
+        try:
+            if os.name == 'nt' and not args.confirm:
+                symlink(os.path.abspath(path), dest_dir)
+            else:
+                Dodo.run(['ln', '-s', os.path.abspath(path), dest_dir])
+        except:
+            _report_error("Error: could not create a symlink in %s." %
+                          dest_dir)
 
     return True
 
@@ -147,6 +155,13 @@ def _install_commands_from_package(package):
     ])
 
     return True
+
+
+def _clone_git_repo(repo_path):
+    tmp_dir = tempfile.mkdtemp()
+    Dodo.run(['git', 'clone', repo_path], cwd=tmp_dir)
+    package = os.listdir(tmp_dir)[0]
+    return tmp_dir, package
 
 
 if Dodo.is_main(__name__):
@@ -182,3 +197,16 @@ if Dodo.is_main(__name__):
                 _install_package(
                     package, lambda: _install_commands_from_package(package),
                     args.defaults)
+
+    if args.git:
+        for repo_path in args.git:
+            if args.remove:
+                raise CommandError(
+                    "The --git option is not supported when removing a package."
+                    + " Please use dodo install-commands --remove <package>.")
+
+            tmp_dir, package = _clone_git_repo(repo_path)
+            _install_package(
+                package, lambda: _install_commands_from_path(
+                    os.path.join(tmp_dir, package), mv=True), args.defaults)
+            Dodo.run(['rm', '-rf', tmp_dir])
