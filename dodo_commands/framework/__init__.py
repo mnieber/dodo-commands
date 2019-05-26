@@ -3,7 +3,8 @@ from argparse import ArgumentParser
 from collections import defaultdict
 import os
 import sys
-from dodo_commands.framework.config import load_global_config_parser, get_command_path
+from dodo_commands.framework.config import (load_global_config_parser,
+                                            get_command_path, ConfigLoader)
 from dodo_commands.framework.singleton import Dodo, DecoratorScope, ConfigArg  # noqa
 from dodo_commands.framework.command_error import CommandError  # noqa
 from dodo_commands.framework.command_map import get_command_map, execute_script
@@ -19,7 +20,7 @@ class ManagementUtility(object):
     def __init__(self):  # noqa
         self.prog_name = os.path.basename(sys.argv[0])
 
-    def main_help_text(self, commands_only=False, command_map=None):
+    def main_help_text(self, command_map, commands_only=False):
         """Return the script's main help text, as a string."""
         if command_map is None:
             command_map = get_command_map(get_command_path())
@@ -68,18 +69,19 @@ class ManagementUtility(object):
         sys.stderr.write('%s: %s\n' % (e.__class__.__name__, e))
         sys.exit(1)
 
-    def _aliases(self):
+    def _aliases(self, config):
+        result = list(config['ROOT'].get('aliases', {}).items())
         global_config = load_global_config_parser()
         if global_config.has_section('alias'):
-            return global_config.items('alias')
-        return []
+            result.extend(global_config.items('alias'))
+        return result
 
-    def _handle_arg_complete(self, command_map):
+    def _handle_arg_complete(self, config, command_map):
         words = os.environ['COMP_LINE'].split()
         command_name = words[1]
 
         choices = [x for x in command_map.keys()]
-        for key, val in self._aliases():
+        for key, val in self._aliases(config):
             choices.append(key)
 
         if command_name not in choices:
@@ -93,8 +95,8 @@ class ManagementUtility(object):
 
         return command_name
 
-    def _find_alias(self, command_name):
-        for key, val in self._aliases():
+    def _find_alias(self, config, command_name):
+        for key, val in self._aliases(config):
             if key == command_name:
                 return val.split()
         return None
@@ -107,12 +109,13 @@ class ManagementUtility(object):
         being run, creates a parser appropriate to that command, and runs it.
         """
         try:
-            command_map = get_command_map(get_command_path())
+            config = ConfigLoader().load()
+            command_map = get_command_map(get_command_path(config))
         except Exception as e:
             self._handle_exception(e)
 
         if "_ARGCOMPLETE" in os.environ:
-            command_name = self._handle_arg_complete(command_map)
+            command_name = self._handle_arg_complete(config, command_map)
         else:
             try:
                 command_name = sys.argv[1]
@@ -122,18 +125,16 @@ class ManagementUtility(object):
         if command_name == '--version':
             sys.stdout.write(get_version() + '\n')
         elif command_name == 'help':
-            if '--commands' in sys.argv:
-                sys.stdout.write(
-                    self.main_help_text(commands_only=True,
-                                        command_map=command_map) + '\n')
-            else:
-                sys.stdout.write(self.main_help_text() + '\n')
+            sys.stdout.write(
+                self.main_help_text(command_map,
+                                    commands_only=('--commands' in sys.argv)) +
+                '\n')
         else:
             if command_name not in command_map:
-                alias = self._find_alias(command_name)
+                alias = self._find_alias(config, command_name)
                 if alias and alias[0] in command_map:
                     command_name = alias[0]
-                    # sys.argv = sys.argv[:1] + alias + sys.argv[2:]
+                    sys.argv = sys.argv[:1] + alias + sys.argv[2:]
                 else:
                     print("Unknown dodo command: %s" % (alias or command_name))
                     sys.exit(1)

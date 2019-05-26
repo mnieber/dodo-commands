@@ -79,11 +79,18 @@ In this example, calling the ``foo`` command will ask the user for confirmation 
 Aliases
 =======
 
-You can added aliases for any dodo command in the ``aliases`` section of :ref:`global_config`, e.g.
+You can add aliases for any dodo command in the ``aliases`` section of :ref:`global_config`, e.g.
 
 .. code-block:: ini
 
     [alias]
     wh = which
     whpp = which --projects
-    pc = print-config
+
+You can also add aliases in ``${/ROOT/aliases}``.
+
+.. code-block:: yaml
+
+    ROOT:
+        aliases:
+            pc-foo: print-config --layer foo.bar.yaml
