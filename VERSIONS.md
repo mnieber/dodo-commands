@@ -1,5 +1,9 @@
 # Version history
 
+## 0.25.1
+
+- Fix: only use dotenv values in ConfigExpander
+
 ## 0.25.0
 
 - Also read aliases from /ROOT/aliases
