@@ -65,7 +65,7 @@ def _which_script(script):
             return script_path
 
     for item in command_path.items:
-        for yml in glob.glob(os.path.join(item, "*.commands.yaml")):
+        for yml in glob.glob(os.path.join(item, "dodo.*.yaml")):
             with open(yml) as ifs:
                 if script in ruamel.yaml.round_trip_load(ifs.read()).keys():
                     return yml
