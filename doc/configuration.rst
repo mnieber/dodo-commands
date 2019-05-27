@@ -63,7 +63,9 @@ The layering mechanism is simple but powerful. As an example, consider placing t
 
     Calling ``dodo layer foo bar`` makes a small change in your configuration file by adding ``foo.bar.yaml`` to the ``${/ROOT/layers}`` node. Make sure that you do not have any unsaved configuration changes before calling this command.
 
-An alternative way to select a layer is using the ``--layer`` option (which you can use more than once per call). For example, ``dodo print-config --layer foo.yaml ROOT`` loads the ``foo.yaml`` layer and then prints the contents of the ``ROOT`` configuration key.
+An alternative way to select a layer is using the ``--layer`` option (which you can use more than once per call). For example, ``dodo print-config --layer foo.baz.yaml ROOT`` loads the ``foo.baz.yaml`` layer and then prints the contents of the ``ROOT`` configuration key. 
+
+Note that the layers ``foo.bar.yaml`` and ``foo.baz.yaml`` are considered to be mutually exclusive variations of the ``foo`` layer. Therefore, the use of ``--layer foo.baz.yaml`` will nullify any layer such as ``foo.bar.yaml`` in ``${/ROOT/layers}``.
 
 
 Including bits of configuration from packages

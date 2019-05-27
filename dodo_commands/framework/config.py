@@ -7,6 +7,7 @@ from dodo_commands.framework.util import symlink
 from plumbum import local
 from six.moves import configparser
 import glob
+from fnmatch import fnmatch
 import hashlib
 import json
 import os
@@ -285,6 +286,16 @@ class ConfigLoader:
         extra_layers = args.layer or []
 
         for extra_layer_filename in self.config_io.glob(extra_layers):
+            # Remove layers in the same group, because by definition
+            # we should not use both foo.bar.yaml and foo.baz.yaml.
+            parts = os.path.basename(extra_layer_filename).split('.')
+            if len(parts) == 3:
+                pattern = os.path.join(os.path.dirname(extra_layer_filename),
+                                       parts[0] + '.*.*')
+                layer_filenames = [
+                    x for x in layer_filenames if not fnmatch(x, pattern)
+                ]
+
             if extra_layer_filename not in layer_filenames:
                 layer_filenames.append(extra_layer_filename)
 
@@ -294,8 +305,8 @@ class ConfigLoader:
         fallback_config = dict(ROOT={})
         try:
             config = self.config_io.load() or fallback_config
-            layers = [self.config_io.load(x) for x in self.get_layers(config)]
-            for layer in layers:
+            for layer_filename in self.get_layers(config):
+                layer = self.config_io.load(layer_filename)
                 merge_into_config(config, layer)
 
         except ruamel.yaml.scanner.ScannerError:
