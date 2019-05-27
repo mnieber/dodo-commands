@@ -17,10 +17,10 @@ import ruamel.yaml
 import sys
 
 try:
-    from dotenv import load_dotenv
+    from dotenv import dotenv_values
 except ImportError:
     # Stub
-    def load_dotenv(x):
+    def dotenv_values(x):
         raise CommandError(
             "Package python-dotenv not installed. Please run: pip install python-dotenv."
         )
@@ -309,12 +309,15 @@ class ConfigLoader:
             self._extend_command_path(config)
             self._extend_config(config)
 
-        # Call load_dotenv for every item of /ENV/dotenv
+        extra_vars = dict()
+
+        # Call dotenv_values for every item of /ENV/dotenv
         callbacks = {}
         for idx, _ in enumerate(config['ROOT'].get('dotenv_files', [])):
-            callbacks['/ROOT/dotenv_files/%d' % idx] = load_dotenv
+            callbacks['/ROOT/dotenv_files/%d' %
+                      idx] = lambda x: extra_vars.update(dotenv_values(x))
 
-        ConfigExpander().run(config, callbacks=callbacks)
+        ConfigExpander(extra_vars).run(config, callbacks=callbacks)
         return config
 
 

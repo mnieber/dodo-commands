@@ -13,7 +13,7 @@ Configuration files
 
 A new configuration file is created automatically when the project is first created (e.g. :code:`~/projects/FooBar/dodo_commands/res/config.yaml`). You can print the configuration file with ``dodo print-config``. The configuration file uses the yaml format, with a few extra rules:
 
-1. environment variables (such as ``$PATH``) in values are expanded automatically.
+1. environment variables (such as ``$PATH``) in values are expanded automatically. Note that unresolved variables of the shape ``$FOO`` are ignored, whereas variables of the shape ``${FOO}`` will result in an error if they are not resolved.
 
 2. values may reference other values in the configuration file:
 
@@ -46,7 +46,7 @@ Layers can be switched on and off with the ``dodo layer`` command (except for th
 
     dodo layer buildtype release
 
-5. All files in ``{/ROOT/dotenv_files}`` are loaded with ``python-dotenv`` and used in the expansion of environment variables in the Dodo configuration. Note that these values are also added to the environment during the execution of a command script.
+5. All files in ``{/ROOT/dotenv_files}`` are loaded with ``python-dotenv`` and used in the expansion of environment variables in the Dodo configuration. Note that these values are not added to the environment during the execution of a command script.
 
 Using configuration values in scripts
 =====================================

@@ -138,3 +138,17 @@ def _log(string):
 
 def bash_cmd(cmd):
     return ['/bin/bash', '-c', cmd]
+
+
+class EnvironMemo:
+    def __init__(self, extra_vars):
+        self.extra_vars = extra_vars
+        self.memo = {}
+
+    def __enter__(self):  # noqa
+        self.memo = os.environ.copy()
+        os.environ.update(self.extra_vars)
+
+    def __exit__(self, type, value, traceback):  # noqa
+        os.environ.clear()
+        os.environ.update(self.memo)

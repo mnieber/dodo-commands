@@ -1,4 +1,5 @@
 from dodo_commands.framework.command_error import CommandError
+from dodo_commands.framework.util import EnvironMemo
 import os
 import re
 import sys
@@ -133,6 +134,9 @@ class ConfigExpander:
 
     _key_regexp = r"\$\{(/[^\}]*)\}"
 
+    def __init__(self, extra_vars):
+        self.extra_vars = extra_vars
+
     @classmethod
     def _get_xpath_from_string(cls, xpath_string):
         return tuple([ix for ix in xpath_string.split("/") if ix])
@@ -168,7 +172,14 @@ class ConfigExpander:
                 x for x in re.finditer(self._key_regexp, current_str)
             ]
 
-        return os.path.expandvars(expanded_str)
+        with EnvironMemo(self.extra_vars):
+            expanded_str = os.path.expandvars(expanded_str)
+
+        env_key_regexp = r"\$\{([^\}]*)\}"
+        env_key_expressions = [
+            x for x in re.finditer(env_key_regexp, expanded_str)
+        ]
+        return expanded_str if not env_key_expressions else None
 
     def _expand(self, raw_obj):
         if isinstance(raw_obj, str):
