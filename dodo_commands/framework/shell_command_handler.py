@@ -5,7 +5,7 @@ from dodo_commands.framework.command_map import CommandMapItem
 
 class ShellCommandMapItem(CommandMapItem):
     def __init__(self, group, filename):
-        super().__init__(group, filename, 'sh')
+        super(ShellCommandMapItem, self).__init__(group, filename, 'sh')
 
 
 class ShellCommandHandler:

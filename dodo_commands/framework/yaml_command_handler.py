@@ -10,7 +10,7 @@ from dodo_commands.framework.singleton import Dodo
 
 class YamlCommandMapItem(CommandMapItem):
     def __init__(self, group, filename):
-        super().__init__(group, filename, 'yaml')
+        super(YamlCommandMapItem, self).__init__(group, filename, 'yaml')
 
 
 class YamlCommandHandler:

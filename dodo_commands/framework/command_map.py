@@ -4,7 +4,7 @@ import glob
 import os
 
 
-class CommandMapItem:
+class CommandMapItem(object):
     def __init__(self, group, filename, extension):
         self.group = group
         self.filename = filename

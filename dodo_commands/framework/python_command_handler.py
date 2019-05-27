@@ -11,7 +11,7 @@ from dodo_commands.framework.util import query_yes_no
 
 class PythonCommandMapItem(CommandMapItem):
     def __init__(self, group, filename):
-        super().__init__(group, filename, 'py')
+        super(PythonCommandMapItem, self).__init__(group, filename, 'py')
         self.package_path = group
 
 
