@@ -311,11 +311,15 @@ class ConfigLoader:
 
         extra_vars = dict()
 
+        def _load_env(dotenv_file):
+            if not os.path.exists(dotenv_file):
+                raise CommandError("Dotenv file not found: %s" % dotenv_file)
+            extra_vars.update(dotenv_values(dotenv_file))
+
         # Call dotenv_values for every item of /ENV/dotenv
         callbacks = {}
         for idx, _ in enumerate(config['ROOT'].get('dotenv_files', [])):
-            callbacks['/ROOT/dotenv_files/%d' %
-                      idx] = lambda x: extra_vars.update(dotenv_values(x))
+            callbacks['/ROOT/dotenv_files/%d' % idx] = _load_env
 
         ConfigExpander(extra_vars).run(config, callbacks=callbacks)
         return config
