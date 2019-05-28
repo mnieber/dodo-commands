@@ -282,7 +282,8 @@ class ConfigLoader:
 
         parser = argparse.ArgumentParser()
         parser.add_argument('--layer', action='append', help=argparse.SUPPRESS)
-        args, _ = parser.parse_known_args(sys.argv)
+        args, _ = parser.parse_known_args(
+            [x for x in sys.argv if x not in ('--help', '-h')])
         extra_layers = args.layer or []
 
         for extra_layer_filename in self.config_io.glob(extra_layers):
