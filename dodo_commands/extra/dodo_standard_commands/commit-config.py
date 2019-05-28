@@ -6,7 +6,8 @@ import os
 
 def _args():
     parser = ArgumentParser()
-    parser.add_argument('-m', dest='message')
+    parser.add_argument(
+        '--message', '-m', dest='message', help='The commit message')
     args = Dodo.parse_args(parser)
     return args
 
@@ -18,6 +19,5 @@ if Dodo.is_main(__name__, safe=True):
         Dodo.run(['git', 'init'], cwd=Paths().res_dir())
 
     Dodo.run(['git', 'add', '-A'], cwd=Paths().res_dir())
-    Dodo.run(
-        ['git', 'commit', '-m', args.message or 'Update configuration'],
-        cwd=Paths().res_dir())
+    Dodo.run(['git', 'commit', '-m', args.message or 'Update configuration'],
+             cwd=Paths().res_dir())
