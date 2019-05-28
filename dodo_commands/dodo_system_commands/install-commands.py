@@ -26,7 +26,7 @@ def _args():
         action='store_true',
         help='Remove commands from the commands directory')
     parser.add_argument(
-        "--defaults",
+        "--to-defaults",
         action='store_true',
         help='Install into the default commands directory')
 
@@ -190,7 +190,7 @@ if Dodo.is_main(__name__):
             else:
                 _install_package(package,
                                  lambda: _install_commands_from_path(path),
-                                 args.defaults)
+                                 args.to_defaults)
 
     if args.pip:
         for package in args.pip:
@@ -199,7 +199,7 @@ if Dodo.is_main(__name__):
             else:
                 _install_package(
                     package, lambda: _install_commands_from_package(package),
-                    args.defaults)
+                    args.to_defaults)
 
     if args.git:
         for repo_path in args.git:
@@ -211,5 +211,5 @@ if Dodo.is_main(__name__):
             tmp_dir, package = _clone_git_repo(repo_path)
             _install_package(
                 package, lambda: _install_commands_from_path(
-                    os.path.join(tmp_dir, package), mv=True), args.defaults)
+                    os.path.join(tmp_dir, package), mv=True), args.to_defaults)
             Dodo.run(['rm', '-rf', tmp_dir])
