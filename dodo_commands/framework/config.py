@@ -325,7 +325,7 @@ class ConfigLoader:
 
         def _load_env(dotenv_file):
             if not os.path.exists(dotenv_file):
-                raise CommandError("Dotenv file not found: %s" % dotenv_file)
+                self._report("Dotenv file not found: %s\n" % dotenv_file)
             extra_vars.update(dotenv_values(dotenv_file))
 
         # Call dotenv_values for every item of /ENV/dotenv
