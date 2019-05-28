@@ -58,8 +58,8 @@ class Paths:
         return os.path.join(self.global_config_dir(), 'config')
 
     def default_commands_dir(self, expanduser=True):
-        return os.path.join(self.global_config_dir(expanduser),
-                            'default_commands')
+        return os.path.join(
+            self.global_config_dir(expanduser), 'default_commands')
 
     def global_commands_dir(self, expanduser=True):
         return os.path.join(self.global_config_dir(expanduser), 'commands')
@@ -167,8 +167,8 @@ def merge_into_config(config, layer, xpath=None):
         return isinstance(x, type(dict()))
 
     def _raise(xpath):
-        raise CommandError("Cannot merge configurations. Check key /%s" %
-                           '/'.join(new_xpath))
+        raise CommandError(
+            "Cannot merge configurations. Check key /%s" % '/'.join(new_xpath))
 
     xpath = xpath or []
     for key, val in (layer or {}).items():
@@ -281,7 +281,7 @@ class ConfigLoader:
             layer_filenames.extend(filenames)
 
         parser = argparse.ArgumentParser()
-        parser.add_argument('--layer', action='append')
+        parser.add_argument('--layer', action='append', help=argparse.SUPPRESS)
         args, _ = parser.parse_known_args(sys.argv)
         extra_layers = args.layer or []
 
@@ -290,8 +290,8 @@ class ConfigLoader:
             # we should not use both foo.bar.yaml and foo.baz.yaml.
             parts = os.path.basename(extra_layer_filename).split('.')
             if len(parts) == 3:
-                pattern = os.path.join(os.path.dirname(extra_layer_filename),
-                                       parts[0] + '.*.*')
+                pattern = os.path.join(
+                    os.path.dirname(extra_layer_filename), parts[0] + '.*.*')
                 layer_filenames = [
                     x for x in layer_filenames if not fnmatch(x, pattern)
                 ]
@@ -350,8 +350,8 @@ class CommandPath:
         basenames = [os.path.basename(x) for x in self.items]
         for basename in basenames:
             if basenames.count(basename) > 1:
-                raise CommandError("More than 1 command path with name %s" %
-                                   basename)
+                raise CommandError(
+                    "More than 1 command path with name %s" % basename)
 
     def _create_items(self, patterns):
         result = []
@@ -403,5 +403,5 @@ def get_command_path(config=None):
     root_config = config.get('ROOT', {})
     command_path = root_config.get('command_path', [])
     command_path_exclude = root_config.get('command_path_exclude', [])
-    return CommandPath(include_patterns=command_path,
-                       exclude_patterns=command_path_exclude)
+    return CommandPath(
+        include_patterns=command_path, exclude_patterns=command_path_exclude)
