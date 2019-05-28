@@ -19,6 +19,8 @@ if Dodo.is_main(__name__, safe=False):
     script = os.path.join(Paths().home_dir(), '.dodo_commands_autostart')
     if args.status == "on" and not os.path.exists(script):
         with open(script, "w") as f:
-            f.write("$(dodo activate --latest) && dodo check-version --dodo --config\n")
+            f.write(
+                "$(dodo activate --latest) && dodo check-version --dodo --config\n"
+            )
     if args.status == "off" and os.path.exists(script):
         os.unlink(script)

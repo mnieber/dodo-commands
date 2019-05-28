@@ -6,12 +6,14 @@ import os
 
 def _args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('name',
-                        choices=Dodo.get_config('/DOCKER/images').keys(),
-                        help='Key to look up in /DOCKER/images')
-    parser.add_argument('build_args',
-                        nargs=argparse.REMAINDER,
-                        help='Extra args to pass to docker build')
+    parser.add_argument(
+        'name',
+        choices=Dodo.get_config('/DOCKER/images').keys(),
+        help='Key to look up in /DOCKER/images')
+    parser.add_argument(
+        'build_args',
+        nargs=argparse.REMAINDER,
+        help='Extra args to pass to docker build')
     args = Dodo.parse_args(parser)
     args.build_dir = Dodo.get_config(
         '/DOCKER/images/{name}/build_dir'.format(name=args.name), '.')
@@ -57,16 +59,17 @@ if Dodo.is_main(__name__, safe=len(args.extra_dirs) == 0):
     _copy_extra_dirs(args.build_dir, args.extra_dirs)
 
     try:
-        Dodo.run([
-            "docker",
-            "build",
-            "-t",
-            args.docker_image,
-            "-f",
-            args.docker_file,
-        ] + remove_trailing_dashes(args.build_args) + [
-            ".",
-        ],
-                 cwd=args.build_dir)  # noqa
+        Dodo.run(
+            [
+                "docker",
+                "build",
+                "-t",
+                args.docker_image,
+                "-f",
+                args.docker_file,
+            ] + remove_trailing_dashes(args.build_args) + [
+                ".",
+            ],
+            cwd=args.build_dir)  # noqa
     finally:
         _remove_extra_dirs(args.build_dir, args.extra_dirs)

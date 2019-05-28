@@ -42,9 +42,10 @@ class ManagementUtility(object):
                 max_name_size = max(max_name_size, len(command_name))
                 command_groups[command_map_item.group].append(command_name)
 
-            groups = sorted(list(command_groups.values()),
-                            key=lambda x: len(x),
-                            reverse=True)
+            groups = sorted(
+                list(command_groups.values()),
+                key=lambda x: len(x),
+                reverse=True)
             for group in groups:
                 group.append("")
 
@@ -126,8 +127,8 @@ class ManagementUtility(object):
             sys.stdout.write(get_version() + '\n')
         elif command_name == 'help':
             sys.stdout.write(
-                self.main_help_text(command_map,
-                                    commands_only=('--commands' in sys.argv)) +
+                self.main_help_text(
+                    command_map, commands_only=('--commands' in sys.argv)) +
                 '\n')
         else:
             if command_name not in command_map:

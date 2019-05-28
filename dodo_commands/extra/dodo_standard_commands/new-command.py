@@ -11,8 +11,9 @@ def _new_commands_dir():
         return 'dodo_%s_commands' % Dodo.get_config('/ROOT/project_name')
 
     return os.path.normpath(
-        os.path.join(Dodo.get_config('/ROOT/shared_config_dir'), '..',
-                     _new_commands_basename()))
+        os.path.join(
+            Dodo.get_config('/ROOT/shared_config_dir'), '..',
+            _new_commands_basename()))
 
 
 def _args():
@@ -105,8 +106,8 @@ if Dodo.is_main(__name__, safe='--create-commands-dir' not in sys.argv):
         if not item:
             raise CommandError("Script not found: %s" % args.next_to)
 
-        dest_path = os.path.join(os.path.dirname(item.filename),
-                                 args.name + ".py")
+        dest_path = os.path.join(
+            os.path.dirname(item.filename), args.name + ".py")
 
     if os.path.exists(dest_path):
         raise CommandError("Destination already exists: %s" % dest_path)

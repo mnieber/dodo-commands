@@ -156,9 +156,9 @@ class ConfigExpander:
 
                 key = Key(self.config, xpath)
                 if key.exists():
-                    expanded_str = (expanded_str[:key_expression.start()] +
-                                    str(key.get()) +
-                                    expanded_str[key_expression.end():])
+                    expanded_str = (
+                        expanded_str[:key_expression.start()] + str(
+                            key.get()) + expanded_str[key_expression.end():])
 
                     if expanded_str not in known_strs:
                         known_strs.append(expanded_str)

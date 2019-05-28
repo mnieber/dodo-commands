@@ -103,9 +103,8 @@ class Dodo:
 
     @classmethod
     def _uses_decorator(cls, decorator_name):
-        patterns = (cls.get_config().get('ROOT',
-                                         {}).get('decorators',
-                                                 {}).get(decorator_name, []))
+        patterns = (cls.get_config().get('ROOT', {}).get('decorators', {}).get(
+            decorator_name, []))
         command_name = cls.command_name
         approved = [
             pattern for pattern in patterns if not pattern.startswith("!")
@@ -158,17 +157,16 @@ class Dodo:
                     extra_help = ('Read from config: %s = %s.' %
                                   (config_arg.config_key, formatted_value))
                 else:
-                    extra_help = ('Configuration key is %s' %
-                                  config_arg.config_key)
+                    extra_help = (
+                        'Configuration key is %s' % config_arg.config_key)
 
                 kwargs['help'] = help_text + sep + extra_help
                 parser.add_argument(*config_arg.args, **kwargs)
 
     @classmethod
     def parse_args(cls, parser, config_args=None):
-        parser.add_argument('--traceback',
-                            action='store_true',
-                            help=argparse.SUPPRESS)
+        parser.add_argument(
+            '--traceback', action='store_true', help=argparse.SUPPRESS)
 
         parser.add_argument(
             '-c',
@@ -176,10 +174,11 @@ class Dodo:
             action='store_true',
             help="Confirm each performed action before its execution")
 
-        parser.add_argument('-e',
-                            '--echo',
-                            action='store_true',
-                            help="Print all commands instead of running them")
+        parser.add_argument(
+            '-e',
+            '--echo',
+            action='store_true',
+            help="Print all commands instead of running them")
 
         # The --layer option is handled by the argument parser in ConfigLoader.
         # We need to add it to this parser as well, otherwise it will complain.
@@ -196,8 +195,8 @@ class Dodo:
             first_arg_index = 1
         else:
             first_arg_index = 2
-            parser.prog = "%s %s" % (os.path.basename(
-                sys.argv[0]), sys.argv[1])
+            parser.prog = "%s %s" % (os.path.basename(sys.argv[0]),
+                                     sys.argv[1])
         cls._args = parser.parse_args(sys.argv[first_arg_index:])
 
         if config_args:

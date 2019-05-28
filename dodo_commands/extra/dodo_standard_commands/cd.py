@@ -8,9 +8,8 @@ import sys
 def _args():
     parser = ArgumentParser(description='Print the command line to cd to'
                             ' a folder inside the project folder.')
-    parser.add_argument('--browse',
-                        action='store_true',
-                        help='Open file browser')
+    parser.add_argument(
+        '--browse', action='store_true', help='Open file browser')
 
     parser.add_argument(
         'to',

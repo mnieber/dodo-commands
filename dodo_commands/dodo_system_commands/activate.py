@@ -133,8 +133,8 @@ class Activator:
         sys.stderr.flush()
 
     def _config_get(self, section, key, default=""):
-        return (self.config.get(section, key)
-                if self.config.has_option(section, key) else default)
+        return (self.config.get(section, key) if self.config.has_option(
+            section, key) else default)
 
     def run(self, project, latest, create):
         """Activate or create a project in the projects dir."""
@@ -165,8 +165,8 @@ class Activator:
         self.paths = Paths(
             project_dir=os.path.expanduser(
                 os.path.join(
-                    self.config.get("settings", "projects_dir"),
-                    self.project)))
+                    self.config.get("settings", "projects_dir"), self.
+                    project)))
 
         if create:
             project_dir = self.paths.project_dir()

@@ -11,21 +11,24 @@ def _args():
     parser = ArgumentParser(
         description=("Install command packages into the global " +
                      "commands directory. " + _packages_in_extra_dir()))
-    parser.add_argument("paths",
-                        nargs='*',
-                        help='Create symlinks to these command directories')
-    parser.add_argument("--pip",
-                        nargs='*',
-                        help='Pip install the commands in these packages')
-    parser.add_argument("--git",
-                        nargs='*',
-                        help='Clone a git repo into the commands directory')
-    parser.add_argument("--remove",
-                        action='store_true',
-                        help='Remove commands from the commands directory')
-    parser.add_argument("--defaults",
-                        action='store_true',
-                        help='Install into the default commands directory')
+    parser.add_argument(
+        "paths",
+        nargs='*',
+        help='Create symlinks to these command directories')
+    parser.add_argument(
+        "--pip", nargs='*', help='Pip install the commands in these packages')
+    parser.add_argument(
+        "--git",
+        nargs='*',
+        help='Clone a git repo into the commands directory')
+    parser.add_argument(
+        "--remove",
+        action='store_true',
+        help='Remove commands from the commands directory')
+    parser.add_argument(
+        "--defaults",
+        action='store_true',
+        help='Install into the default commands directory')
 
     group = parser.add_argument_group()
 
@@ -132,8 +135,8 @@ def _install_commands_from_path(path, mv=False):
             else:
                 Dodo.run(['ln', '-s', os.path.abspath(path), dest_dir])
         except:
-            _report_error("Error: could not create a symlink in %s." %
-                          dest_dir)
+            _report_error(
+                "Error: could not create a symlink in %s." % dest_dir)
 
     return True
 
@@ -185,9 +188,9 @@ if Dodo.is_main(__name__):
             if args.remove:
                 _remove_package(package)
             else:
-                _install_package(
-                    package, lambda: _install_commands_from_path(path),
-                    args.defaults)
+                _install_package(package,
+                                 lambda: _install_commands_from_path(path),
+                                 args.defaults)
 
     if args.pip:
         for package in args.pip:

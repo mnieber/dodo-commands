@@ -36,10 +36,9 @@ def _create_sphinx_conf(args):
     if os.path.exists(src_conf_file):
         Dodo.run(['cp', src_conf_file, target_conf_file])
     elif not os.path.exists(target_conf_file):
-        Dodo.run(
-            ['sphinx-quickstart',
-             '--project=%s' % args.project_name],
-            cwd=args.output_dir)
+        Dodo.run(['sphinx-quickstart',
+                  '--project=%s' % args.project_name],
+                 cwd=args.output_dir)
 
 
 def _sphinx_build(args):

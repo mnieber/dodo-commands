@@ -16,8 +16,8 @@ if Dodo.is_main(__name__, safe=True):
 
     tmp_filename = '/tmp/%s_autocomplete.sh' % args.name
     Dodo.run(
-        bash_cmd('register-python-argcomplete %s > %s' %
-                 (args.name, tmp_filename)))
+        bash_cmd(
+            'register-python-argcomplete %s > %s' % (args.name, tmp_filename)))
     Dodo.run([
         'sudo', 'mv', tmp_filename,
         '/etc/bash_completion.d/%s_autocomplete.sh' % args.name

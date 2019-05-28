@@ -84,8 +84,9 @@ if Dodo.is_main(__name__, safe=False):
         print(_layer_value(layers, args.layer))
         sys.exit(0)
 
-    layer_file = os.path.join(Dodo.get_config("/ROOT/res_dir"),
-                              "%s.%s.yaml" % (args.layer, args.value))
+    layer_file = os.path.join(
+        Dodo.get_config("/ROOT/res_dir"),
+        "%s.%s.yaml" % (args.layer, args.value))
 
     if not args.force and not os.path.exists(layer_file):
         raise CommandError("Layer file %s does not exist" % layer_file)

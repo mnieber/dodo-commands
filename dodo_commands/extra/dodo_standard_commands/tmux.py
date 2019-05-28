@@ -49,8 +49,7 @@ def _get_selected_commands(commands, labels):
         print(label)
 
     raw_choice = raw_input(
-        '\nSelect one or more commands (e.g. 1,3-4), or type a command: '
-    )
+        '\nSelect one or more commands (e.g. 1,3-4), or type a command: ')
     selected_commands, span = filter_choices(commands, raw_choice)
     if span != [0, len(raw_choice)]:
         selected_commands = [raw_choice]
@@ -72,11 +71,8 @@ if Dodo.is_main(__name__):
         sys.exit(0)
 
     if args.run:
-        selected_commands = (
-            _get_selected_commands(commands, labels)
-            if args.run == -1 else
-            [commands[args.run - 1]]
-        )
+        selected_commands = (_get_selected_commands(commands, labels)
+                             if args.run == -1 else [commands[args.run - 1]])
         for command in selected_commands:
             Dodo.run(['bash', '-c', command])
         sys.exit(0)

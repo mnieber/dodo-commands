@@ -10,8 +10,8 @@ import sys
 
 def _args():
     parser = ArgumentParser()
-    parser.add_argument('src_dir',
-                        help="The src directory for the bootstrapped project")
+    parser.add_argument(
+        'src_dir', help="The src directory for the bootstrapped project")
     parser.add_argument(
         'shared_config_dir',
         help=
@@ -39,10 +39,8 @@ def _args():
         help="Use cookiecutter to create the src_dir location",
     )
 
-    parser.add_argument('--depth',
-                        type=int,
-                        default=0,
-                        help="Depth for cloning repositories")
+    parser.add_argument(
+        '--depth', type=int, default=0, help="Depth for cloning repositories")
     parser.add_argument('--branch', help="Branch to checkout after cloning")
 
     parser.add_argument(
@@ -79,29 +77,30 @@ def _copy_defaults(args, shared_config_dir):
 
 def _clone(args, src_dir):
     if os.path.exists(src_dir):
-        raise CommandError("Cannot clone into %s, path already exists" %
-                           src_dir)
+        raise CommandError(
+            "Cannot clone into %s, path already exists" % src_dir)
 
-    Dodo.run(["git", "clone", args.git_url,
-              os.path.basename(src_dir)] +
-             (["--depth", args.depth] if args.depth else []),
-             cwd=os.path.dirname(src_dir))
+    Dodo.run(
+        ["git", "clone", args.git_url,
+         os.path.basename(src_dir)] +
+        (["--depth", args.depth] if args.depth else []),
+        cwd=os.path.dirname(src_dir))
     if args.branch:
         Dodo.run(["git", "checkout", args.branch], cwd=src_dir)
 
 
 def _cookiecutter(src_dir, cookiecutter_url):
     if os.path.exists(src_dir):
-        raise CommandError("Cannot clone into %s, path already exists" %
-                           src_dir)
+        raise CommandError(
+            "Cannot clone into %s, path already exists" % src_dir)
 
     Dodo.run(["cookiecutter", cookiecutter_url, "-o", src_dir])
 
 
 def _link_dir(link_target, link_name):
     if os.path.exists(link_name):
-        raise CommandError("Cannot create a link because %s already exists" %
-                           link_name)
+        raise CommandError(
+            "Cannot create a link because %s already exists" % link_name)
     if os.name == 'nt' and not args.confirm:
         symlink(link_target, link_name)
     else:

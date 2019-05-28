@@ -25,8 +25,8 @@ def _args():
         '--image',
         choices=Dodo.get_config('/DOCKER/images', {}).keys(),
         help=("Use the docker image stored under this key in /DOCKER/images"))
-    parser.add_argument('--image-name',
-                        help=("Use the docker image with this name"))
+    parser.add_argument(
+        '--image-name', help=("Use the docker image with this name"))
     parser.add_argument(
         '--name', help=("Override the name of the started docker container"))
     parser.add_argument('--command')
@@ -52,5 +52,6 @@ if Dodo.is_main(__name__):
         docker_options['name'] = args.service
 
     Dodo.get_config('/DOCKER')['options'] = {Dodo.command_name: docker_options}
-    Dodo.run(["/bin/bash"] + (["-c", args.command] if args.command else []),
-             cwd=docker_options.get("cwd", "/"))
+    Dodo.run(
+        ["/bin/bash"] + (["-c", args.command] if args.command else []),
+        cwd=docker_options.get("cwd", "/"))
