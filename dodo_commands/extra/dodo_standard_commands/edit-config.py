@@ -48,4 +48,4 @@ if Dodo.is_main(__name__, safe=('--key' not in sys.argv)):
                       ConfigLoader().get_layers(Dodo.get_config()))
 
     yaml_filenames.append(Paths().global_config_filename())
-    Dodo.run([args.editor] + yaml_filenames, cwd='.')
+    Dodo.run(args.editor.split() + yaml_filenames, cwd='.')
