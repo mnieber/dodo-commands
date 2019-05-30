@@ -42,10 +42,9 @@ class ManagementUtility(object):
                 max_name_size = max(max_name_size, len(command_name))
                 command_groups[command_map_item.group].append(command_name)
 
-            groups = sorted(
-                list(command_groups.values()),
-                key=lambda x: len(x),
-                reverse=True)
+            groups = sorted(list(command_groups.values()),
+                            key=lambda x: len(x),
+                            reverse=True)
             for group in groups:
                 group.append("")
 
@@ -127,18 +126,18 @@ class ManagementUtility(object):
             sys.stdout.write(get_version() + '\n')
         elif command_name == 'help':
             sys.stdout.write(
-                self.main_help_text(
-                    command_map, commands_only=('--commands' in sys.argv)) +
+                self.main_help_text(command_map,
+                                    commands_only=('--commands' in sys.argv)) +
                 '\n')
         else:
+            alias = self._find_alias(config, command_name)
+            if alias and alias[0] in command_map:
+                command_name = alias[0]
+                sys.argv = sys.argv[:1] + alias + sys.argv[2:]
+
             if command_name not in command_map:
-                alias = self._find_alias(config, command_name)
-                if alias and alias[0] in command_map:
-                    command_name = alias[0]
-                    sys.argv = sys.argv[:1] + alias + sys.argv[2:]
-                else:
-                    print("Unknown dodo command: %s" % (alias or command_name))
-                    sys.exit(1)
+                print("Unknown dodo command: %s" % command_name)
+                sys.exit(1)
 
             try:
                 execute_script(command_map, command_name)
