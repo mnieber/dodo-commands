@@ -18,12 +18,12 @@ def _args():  # noqa
     )
 
     group = parser.add_mutually_exclusive_group()
-    group.add_argument(
-        '--config', action="store_true", help='Print where the config file is')
-    group.add_argument(
-        '--global-config',
-        action="store_true",
-        help='Print where the global config file is')
+    group.add_argument('--config',
+                       action="store_true",
+                       help='Print where the config file is')
+    group.add_argument('--global-config',
+                       action="store_true",
+                       help='Print where the global config file is')
     group.add_argument(
         '--script',
         help='Print where the dodo command script with given name is')
@@ -33,20 +33,18 @@ def _args():  # noqa
         help=
         'Finds the X_dir value in the configuration, where X is the given option value'
     )
-    group.add_argument(
-        '--decorators',
-        action="store_true",
-        help='Prints which command decorators are available')
-    group.add_argument(
-        '--projects',
-        action="store_true",
-        help='Prints which projects are available')
-    group.add_argument(
-        '--project',
-        action="store_true",
-        help='Prints name of the active project')
-    group.add_argument(
-        '--layers', action="store_true", help='Prints which layers are active')
+    group.add_argument('--decorators',
+                       action="store_true",
+                       help='Prints which command decorators are available')
+    group.add_argument('--projects',
+                       action="store_true",
+                       help='Prints which projects are available')
+    group.add_argument('--project',
+                       action="store_true",
+                       help='Prints name of the active project')
+    group.add_argument('--layers',
+                       action="store_true",
+                       help='Prints which layers are active')
     group.add_argument(
         '--default-commands',
         action="store_true",
@@ -64,13 +62,13 @@ def _which_script(script):
     for item in command_path.items:
         script_path = os.path.join(item, script + ".py")
         if os.path.exists(script_path):
-            return script_path
+            return os.path.realpath(script_path)
 
     for item in command_path.items:
         for yml in glob.glob(os.path.join(item, "dodo.*.yaml")):
             with open(yml) as ifs:
                 if script in ruamel.yaml.round_trip_load(ifs.read()).keys():
-                    return yml
+                    return os.path.realpath(yml)
 
     return None
 
