@@ -2,6 +2,7 @@ from argparse import ArgumentParser
 from dodo_commands.framework import Dodo, CommandError
 from dodo_commands.framework.config import Paths
 from dodo_commands.framework.util import is_using_system_dodo, symlink
+from dodo_commands.framework.config import load_global_config_parser
 import sys
 import os
 import tempfile
@@ -139,16 +140,12 @@ def _install_commands_from_path(path, mv=False):
 
 
 def _install_commands_from_package(package):
-    pip = Paths().pip()
-    if pip.startswith('/usr/') and not os.path.exists(pip):
-        alt_pip = pip.replace("/usr/", "/usr/local/")
-        if os.path.exists(alt_pip):
-            pip = alt_pip
-        else:
-            raise CommandError(
-                "Expected to find a pip executable at location %s or %s." %
-                (pip, alt_pip))
-
+    config = load_global_config_parser()
+    python_path_parts = os.path.split(
+        config.get("settings", "python_interpreter"))
+    pip_path_parts = python_path_parts[:-1] + python_path_parts[-1].replace(
+        'python', 'pip')
+    pip = os.path.join(*pip_path_parts)
     Dodo.run([
         pip, 'install', '--upgrade', '--target',
         Paths().global_commands_dir(), package
