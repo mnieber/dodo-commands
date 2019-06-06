@@ -1,5 +1,15 @@
 # Version history
 
+## 0.25.2
+
+- Fix path to pip in install.py
+- Add option --interactive to docker-create
+- Allow alias to shadow the original command
+- The value of settings.editor can now have flags
+- Rename option --defaults to --to-defaults
+- Let --layer nullify any competing layer in /ROOT/layers
+- Fix lookup of a YAML based command
+
 ## 0.25.1
 
 - Fix: only use dotenv values in ConfigExpander
