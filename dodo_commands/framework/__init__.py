@@ -11,7 +11,7 @@ from dodo_commands.framework.command_map import get_command_map, execute_script
 
 
 def get_version():  # noqa
-    return "0.25.2"
+    return "0.25.3"
 
 
 class ManagementUtility(object):
