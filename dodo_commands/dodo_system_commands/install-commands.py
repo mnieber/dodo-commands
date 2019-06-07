@@ -143,8 +143,9 @@ def _install_commands_from_package(package):
     config = load_global_config_parser()
     python_path_parts = os.path.split(
         config.get("settings", "python_interpreter"))
-    pip_path_parts = python_path_parts[:-1] + python_path_parts[-1].replace(
-        'python', 'pip')
+    pip_path_parts = list(python_path_parts[:-1]) + [
+        python_path_parts[-1].replace('python', 'pip')
+    ]
     pip = os.path.join(*pip_path_parts)
     Dodo.run([
         pip, 'install', '--upgrade', '--target',
