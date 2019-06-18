@@ -20,8 +20,8 @@ class Decorator:  # noqa
         volume_map_strict = docker_config.get('volume_map_strict', {})
         for key, val in volume_map_strict.items():
             if not os.path.exists(key):
-                raise CommandError(
-                    "Path in volume_map_strict not found: %s" % key)
+                raise CommandError("Path in volume_map_strict not found: %s" %
+                                   key)
             volume_map[key] = val
 
         options = (
@@ -52,8 +52,8 @@ class Decorator:  # noqa
         variable_list = docker_config.get('variable_list', [])
         variable_map = docker_config.get('variable_map', {})
         options = (
-            ['--env=%s' % x for x in variable_list
-             ] + ['--env=%s=%s' % key_val for key_val in variable_map.items()])
+            ['--env=%s' % x for x in variable_list] +
+            ['--env=%s=%s' % key_val for key_val in variable_map.items()])
         for x in options:
             root_node['env'].append(x)
 
@@ -124,6 +124,8 @@ class Decorator:  # noqa
 
         if cwd:
             docker_node['workdir'].append('--workdir=' + cwd)
+        elif merged.get('workdir', ''):
+            docker_node['workdir'].append('--workdir=' + merged.get('workdir'))
 
         image = merged.get('image')
         if not image:
