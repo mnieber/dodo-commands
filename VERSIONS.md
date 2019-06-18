@@ -1,5 +1,12 @@
 # Version history
 
+## 0.25.4
+
+- Use --confirm twice to force confirmation for nested calls to dodo.
+- Replace dodo tmux with dodo menu
+- Support option workdir in /DOCKER/options
+- Fix path to pip
+
 ## 0.25.2
 
 - Fix path to pip in install.py
