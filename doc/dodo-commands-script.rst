@@ -56,7 +56,11 @@ The lines that require special attention are numbered with a comment:
 
 3. This line is a variation on the usual ``if __name__ == '__main__'``. It allows you to execute the script when invoking it with ``dodo hello-world``.
 
-4. The purpose of ``Dodo.run`` is to execute a command while giving Dodo Commands a chance to intercept the call and do something different. Important use cases are the ``--confirm`` flag (which will ask for confirmation before proceeding) and the ``--echo`` flag (which will print the command without doing anything). Note that it's encouraged to make your Dodo Commands script act like a shell alias. When users see the script as a way to avoid typing, rather than as a magical invocation, they are more likely to use it.
+4. The purpose of ``Dodo.run`` is to execute a command while giving Dodo Commands a chance to intercept the call and do something different. Important use cases are the ``--confirm`` flag (which will ask for confirmation before proceeding) and the ``--echo`` flag (which will print the command without doing anything). Note:
+
+- if you use the ``--confirm`` flag twice then also nested ``dodo`` calls (i.e. any calls to ``dodo`` that are executed inside the Dodo Command script) will ask for confirmation.
+
+- it's encouraged to make your Dodo Commands script act like a shell alias. When users see the script as a way to avoid typing, rather than as a magical invocation, they are more likely to use it.
 
 
 Using pipes and redirection

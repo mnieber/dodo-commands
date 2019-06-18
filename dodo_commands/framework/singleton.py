@@ -165,6 +165,11 @@ class Dodo:
                 parser.add_argument(*config_arg.args, **kwargs)
 
     @classmethod
+    def _is_confirm(cls):
+        return cls._args.confirm or os.environ.get(
+            '__DODO_UNIVERSAL_CONFIRM__', None) == '1'
+
+    @classmethod
     def parse_args(cls, parser, config_args=None):
         parser.add_argument('--traceback',
                             action='store_true',
@@ -173,8 +178,10 @@ class Dodo:
         parser.add_argument(
             '-c',
             '--confirm',
-            action='store_true',
-            help="Confirm each performed action before its execution")
+            action='count',
+            help="Confirm each performed action before its execution." +
+            " Use twice (e.g. dodo foo -cc) to indicate that also nested calls must be confirmed."
+        )
 
         parser.add_argument('-e',
                             '--echo',
@@ -200,6 +207,9 @@ class Dodo:
                 sys.argv[0]), sys.argv[1])
         cls._args = parser.parse_args(sys.argv[first_arg_index:])
 
+        if cls._args.confirm and cls._args.confirm > 1:
+            os.environ['__DODO_UNIVERSAL_CONFIRM__'] = '1'
+
         if config_args:
             for config_arg in config_args:
                 key = Key(cls.get_config(), config_arg.xpath)
@@ -213,7 +223,7 @@ class Dodo:
                 + "be performed directly, instead of echoed to the console. " +
                 "Use --confirm if you wish to execute with visual feedback. ")
 
-        if cls._args.confirm and not cls.safe:
+        if cls._is_confirm() and not cls.safe:
             if not query_yes_no(
                     "Since this command is marked as unsafe, some operations will "
                     +
