@@ -100,7 +100,7 @@ if Dodo.is_main(__name__):
         projects = [
             x for x in os.listdir(projects_dir()) if os.path.isdir(
                 os.path.join(projects_dir(), x, "dodo_commands", "res"))
-        ]
+        ] if os.path.exists(projects_dir()) else []
         sys.stdout.write('\n'.join(sorted(projects)) + '\n')
     elif args.project:
         if Dodo.get_config("/ROOT/project_name", None):
