@@ -1,8 +1,10 @@
 from argparse import ArgumentParser
 from dodo_commands.framework import Dodo, CommandError
 import os
+import sys
 from six.moves import input as raw_input
-from dodo_commands.framework.util import filter_choices
+from dodo_commands.framework.util import (filter_choices, exe_exists,
+                                          InvalidIndex)
 from plumbum.cmd import tmux
 
 
@@ -15,7 +17,7 @@ def _normalize(category):
 
 
 def _args():
-    command_map = Dodo.get_config('/MENU/commands', [])
+    command_map = Dodo.get_config('/MENU/commands', {})
 
     parser = ArgumentParser()
     parser.add_argument('category',
@@ -74,8 +76,8 @@ def _get_selected_commands(commands, labels, allow_free_text=False):
 
     while True:
         raw_choice = raw_input(
-            '\nSelect one or more commands (e.g. 1,3-4)%s: ' %
-            (', or type a command' if allow_free_text else ''))
+            '\nSelect one or more commands (e.g. 1,3-4)%s or type 0 to exit: '
+            % (', or type a command,' if allow_free_text else ''))
         selected_commands, span = filter_choices(commands, raw_choice)
         if span == [0, len(raw_choice)]:
             return selected_commands
@@ -94,11 +96,18 @@ if Dodo.is_main(__name__):
     commands, labels = _get_commands_and_labels(args.command_map,
                                                 args.category)
 
+    if not commands:
+        raise CommandError(
+            "No commands were found in the /MENU configuration key")
+
     if args.list:
         print()
         for label in labels:
             print(label)
     elif args.tmux:
+        if not exe_exists('tmux'):
+            raise CommandError('Tmux is not installed on this sytem.')
+
         session_id = _session_id(args.category)
         has_session = False
         try:
@@ -119,8 +128,13 @@ if Dodo.is_main(__name__):
             Dodo.run(['tmux', '-2', 'attach-session', '-t', session_id], )
         else:
             while True:
-                selected_commands = _get_selected_commands(
-                    commands, labels, allow_free_text=True)
+                try:
+                    selected_commands = _get_selected_commands(
+                        commands, labels, allow_free_text=True)
+                except InvalidIndex as e:
+                    if e.index == -1:
+                        sys.exit(0)
+                    raise
                 for command in selected_commands:
                     Dodo.run(['tmux', 'split-window', '-v'], )
                     Dodo.run(['tmux', 'send-keys', command, 'C-m'], )
@@ -129,7 +143,12 @@ if Dodo.is_main(__name__):
                 tmux('select-pane', '-t', '0')
                 tmux('select-layout', 'tile')
     else:
-        selected_commands = (_get_selected_commands(commands, labels)
-                             if args.run == -1 else [commands[args.run - 1]])
+        try:
+            selected_commands = (_get_selected_commands(commands, labels) if
+                                 args.run == -1 else [commands[args.run - 1]])
+        except InvalidIndex as e:
+            if e.index == -1:
+                sys.exit(0)
+            raise
         for command in selected_commands:
             Dodo.run(['bash', '-c', command])

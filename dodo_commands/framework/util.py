@@ -4,6 +4,7 @@ from six.moves import input as raw_input
 import os
 import sys
 import re
+from plumbum import local
 
 
 def query_yes_no(question, default="yes"):
@@ -86,6 +87,12 @@ else:
         return textwrap.indent(text, amount * ch)
 
 
+class InvalidIndex(Exception):
+    def __init__(self, index):
+        super(InvalidIndex, self).__init__('Invalid index')
+        self.index = index
+
+
 def filter_choices(all_choices, raw_choice):
     regexp = r"(\d)+(\-(\d)+)?,?"
     result = []
@@ -97,10 +104,10 @@ def filter_choices(all_choices, raw_choice):
             span[1] = choice.span()[1]
         from_index = int(choice.group(1)) - 1
         if from_index < 0:
-            raise Exception("Invalid index")
+            raise InvalidIndex(from_index)
         to_index = int(choice.group(3)) - 1 if choice.group(3) else from_index
         if to_index >= len(all_choices):
-            raise Exception("Invalid index")
+            raise InvalidIndex(to_index)
         for idx in range(from_index, to_index + 1):
             result.append(all_choices[idx])
     return result, span
@@ -152,3 +159,11 @@ class EnvironMemo:
     def __exit__(self, type, value, traceback):  # noqa
         os.environ.clear()
         os.environ.update(self.memo)
+
+
+def exe_exists(exe):
+    try:
+        local[exe]
+        return True
+    except:
+        return False
