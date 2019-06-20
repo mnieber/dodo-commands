@@ -166,8 +166,12 @@ class Dodo:
 
     @classmethod
     def _is_confirm(cls):
-        return cls._args.confirm or os.environ.get(
+        return getattr(cls._args, 'confirm', False) or os.environ.get(
             '__DODO_UNIVERSAL_CONFIRM__', None) == '1'
+
+    @classmethod
+    def _is_echo(cls):
+        return getattr(cls._args, 'echo', False)
 
     @classmethod
     def parse_args(cls, parser, config_args=None):
@@ -239,9 +243,8 @@ class Dodo:
         for decorator in cls._get_decorators():
             root_node, cwd = decorator.modify_args(cls._args, root_node, cwd)
 
-        if not _ask_confirmation(root_node, cwd or local.cwd,
-                                 getattr(cls._args, 'echo', False),
-                                 getattr(cls._args, 'confirm', False)):
+        if not _ask_confirmation(root_node, cwd or local.cwd, cls._is_echo(),
+                                 cls._is_confirm()):
             return False
 
         if cwd and not os.path.exists(cwd):
