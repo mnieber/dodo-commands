@@ -147,6 +147,8 @@ def _install_commands_from_package(package):
         python_path_parts[-1].replace('python', 'pip')
     ]
     pip = os.path.join(*pip_path_parts)
+    if not os.path.exists(pip):
+        pip = os.path.splitext(pip)[0]
     Dodo.run([
         pip, 'install', '--upgrade', '--target',
         Paths().global_commands_dir(), package
