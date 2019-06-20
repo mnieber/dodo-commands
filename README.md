@@ -19,7 +19,7 @@ MIT License (see the enclosed license file).
 
 ## Rationale
 
-1. Each project has a separate Python environment, which separates it from other projects.
+1. Each project has a Python virtual environment, which separates it from other projects.
 
 Call `$(dodo activate fooProject)` to activate its Python virtual environment.
 
@@ -150,7 +150,7 @@ Note that you can run `dodo print-config` to show the entire configuration.
     ```bash
 
     # build the dodo_tutorial:1604 image so that the docker command will succeed
-    > dodo dockerbuild base
+    > dodo docker-build --confirm base
     ```
 
 This simple scenario shows how a complicated command line can be compressed into a short command that's easy to remember. We've seen that by offering the `--confirm` flag Dodo Commands is transparent about what it actually executes. It's also easy to get new colleagues started on a project by sharing your command scripts and configuration file with them (see [the documentation](http://dodo-commands.readthedocs.io/en/latest/sharing-projects.html) for details).
