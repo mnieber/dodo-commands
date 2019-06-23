@@ -154,3 +154,48 @@ Note that you can run `dodo print-config` to show the entire configuration.
     ```
 
 This simple scenario shows how a complicated command line can be compressed into a short command that's easy to remember. We've seen that by offering the `--confirm` flag Dodo Commands is transparent about what it actually executes. It's also easy to get new colleagues started on a project by sharing your command scripts and configuration file with them (see [the documentation](http://dodo-commands.readthedocs.io/en/latest/sharing-projects.html) for details).
+
+## Example as a Dockerfile
+
+Below, we show the same steps in a Dockerfile. It's added for convenience: you can build it, run it, and play around. When you run this image and a bash shell is created, call ``$(dodo activate dodo_tutorial)`` to active the virtual environment of the ``dodo_tutorial`` project.
+
+    ```bash
+    # This Dockerfile has *only one* purpose: to show the steps of the tutorial
+    # in https://github.com/mnieber/dodo_commands/blob/master/README.md.
+    # 
+    # Please, don't get confused. This docker image is not used for installing
+    # and running Dodo Commands. For normal usage, you should install 
+    # Dodo Commands on the host computer, not inside a container.
+
+    FROM python:3.7-slim-stretch
+
+    RUN apt-get update && apt-get install -y cmake python-virtualenv git
+    RUN pip3 install dodo_commands
+
+    # Normally, you would run $(dodo activate dodo_tutorial --create)
+    # to activate the newly created virtual environment. Here, we instead
+    # set the virtualenv's env/bin directory as the working directory.
+
+    RUN dodo activate dodo_tutorial --create
+    WORKDIR /root/projects/dodo_tutorial/dodo_commands/env/bin
+
+    RUN ./dodo bootstrap src extra/dodo_commands/res \
+        --force \
+        --git-url https://github.com/mnieber/dodo_commands_tutorial.git
+
+    RUN ./dodo cmake --echo
+
+    RUN ./dodo print-config CMAKE
+
+    RUN cat $(./dodo which cmake)
+
+    RUN ./dodo new-command foo --next-to cmake
+
+    RUN ./dodo layer docker on
+    RUN ./dodo print-config DOCKER
+    RUN ./dodo cmake --echo
+
+    RUN ./dodo docker-build --echo base
+
+    CMD /bin/bash
+    ```
