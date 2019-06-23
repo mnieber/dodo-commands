@@ -9,6 +9,9 @@ import shutil
 from six.moves import input as raw_input
 # import tempfile
 
+# Since we'd like the user to install meld, we require it here
+from plumbum.cmd import meld  # noqa
+
 
 def _args():
     parser = ArgumentParser(
