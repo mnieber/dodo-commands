@@ -1,0 +1,8 @@
+packages:
+  brew:
+    meld: 
+      # brew tap homebrew/cask
+      - brew install meld
+  apt:
+    meld: 
+      - sudo apt-get install meld

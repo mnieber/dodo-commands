@@ -9,7 +9,8 @@ import shutil
 from six.moves import input as raw_input
 # import tempfile
 
-# Since we'd like the user to install meld, we require it here
+# Since we'd like the user to install meld, we require it here. If it's not found
+# then it will be installed via the meta file (setup.meta).
 from plumbum.cmd import meld  # noqa
 
 
@@ -104,18 +105,6 @@ if Dodo.is_main(__name__, safe=True):
 
     is_darwin = platform.system() == 'Darwin'
     is_linux = platform.system() == 'Linux'
-
-    if not exe_exists('meld'):
-        print(
-            "Meld is not installed. It's strongly recommended to install " +
-            "it because it helps you to synchronize your local configuration "
-            + "with the shared one using 'dodo diff'.")
-        if query_yes_no('Install it?'):
-            if is_darwin:
-                Dodo.run(['brew', 'tap', 'homebrew/cask'])
-                Dodo.run(['brew', 'cask', 'install', 'meld'])
-            elif is_linux:
-                Dodo.run(['sudo', 'apt-get', 'install', 'meld'])
 
     if exe_exists('meld'):
         Dodo.run(['dodo', 'global-config', 'settings.diff_tool', 'meld'])
