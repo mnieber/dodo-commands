@@ -212,7 +212,7 @@ class Dodo:
         cls._args = parser.parse_args(sys.argv[first_arg_index:])
 
         if cls._args.confirm and cls._args.confirm > 1:
-            os.environ['__DODO_UNIVERSAL_CONFIRM__'] = '1'
+            local.env['__DODO_UNIVERSAL_CONFIRM__'] = '1'
 
         if config_args:
             for config_arg in config_args:
