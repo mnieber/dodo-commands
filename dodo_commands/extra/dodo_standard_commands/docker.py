@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from dodo_commands.framework import Dodo
+from dodo_commands.framework import Dodo, DecoratorScope
 from dodo_standard_commands.decorators.docker import (Decorator as
                                                       DockerDecorator)
 
@@ -52,6 +52,8 @@ if Dodo.is_main(__name__):
         docker_options['name'] = args.service
 
     Dodo.get_config('/DOCKER')['options'] = {Dodo.command_name: docker_options}
-    Dodo.run(
-        ["/bin/bash"] + (["-c", args.command] if args.command else []),
-        cwd=docker_options.get("cwd", "/"))
+
+    with DecoratorScope('docker'):
+        Dodo.run(
+            ["/bin/bash"] + (["-c", args.command] if args.command else []),
+            cwd=docker_options.get("cwd", "/"))
