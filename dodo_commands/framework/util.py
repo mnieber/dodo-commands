@@ -2,6 +2,7 @@
 """Utilities."""
 from six.moves import input as raw_input
 import os
+import time
 import sys
 import re
 from plumbum import local
@@ -167,3 +168,12 @@ def exe_exists(exe):
         return True
     except:
         return False
+
+
+def poll_docker_container_status(image_name, dodo_run, condition):
+    while True:
+        status = dodo_run(bash_cmd('docker ps | grep -i %s' % image_name),
+                          capture=True)
+        if '(healthy)' in status:
+            break
+        time.sleep(1)
