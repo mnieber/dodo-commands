@@ -1,5 +1,18 @@
 # Version history
 
+## 0.26.0
+
+- Add command docker-compose
+- Fix tests
+- Add argument '--by-container-name' to docker-commit
+- Support argument 'container' in /DOCKER/options
+- Use the --confirm flag twice for confirming nested calls
+- Add dodo setup command
+- Support install system packages via the .meta file
+- Add Dockerfile to README.md
+- Fix case where pip3.7 is not found but pip3 is found
+- Fix: crash in dodo which --projects if this dir does not exist
+
 ## 0.25.4
 
 - Use --confirm twice to force confirmation for nested calls to dodo.
