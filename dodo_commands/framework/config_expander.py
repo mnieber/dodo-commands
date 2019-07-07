@@ -134,8 +134,8 @@ class ConfigExpander:
 
     _key_regexp = r"\$\{(/[^\}]*)\}"
 
-    def __init__(self, extra_vars):
-        self.extra_vars = extra_vars
+    def __init__(self, extra_vars=None):
+        self.extra_vars = extra_vars or {}
 
     @classmethod
     def _get_xpath_from_string(cls, xpath_string):
