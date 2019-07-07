@@ -97,8 +97,8 @@ def _docker():
 def _image(key_or_name):
     image = Dodo.get_config(key_or_name, None)
     if not image:
-        _, image, _ = DockerDecorator.docker_node(Dodo.get_config, key_or_name,
-                                                  "")
+        _, image = DockerDecorator.docker_node(Dodo.get_config, key_or_name,
+                                               "")
     return image
 
 
