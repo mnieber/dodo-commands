@@ -87,7 +87,7 @@ class TestConfigIO:  # noqa
         dodo('layer', 'docker', 'on')
         result = dodo('docker', '*', '--name', 'foo', '--echo').replace(
             '\n', '').replace('  \\', '').replace('  ', ' ')
-        assert "docker run --name=foo --rm --interactive --tty --volume=%s/log:/var/log --workdir=/ dodo_tutorial:1604 /bin/bash" % dodo_test_dir == result
+        assert "docker run --name=foo --interactive --tty --rm --volume=%s/log:/var/log --workdir=/ dodo_tutorial:1604 /bin/bash" % dodo_test_dir == result
 
         # dodo docker-build
         result = dodo('docker-build', '--echo',
