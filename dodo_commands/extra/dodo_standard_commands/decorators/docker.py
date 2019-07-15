@@ -79,6 +79,11 @@ class Decorator:  # noqa
                                           docker_config.get('workdir'))
 
     @classmethod
+    def _add_user(cls, docker_config, docker_node):
+        if docker_config.get('user', False):
+            docker_node['basic'].extend(['--user', docker_config['user']])
+
+    @classmethod
     def merged_options(cls, get_config, command_name):
         merged = {}
         for patterns, docker_config in get_config('/DOCKER/options',
@@ -121,6 +126,7 @@ class Decorator:  # noqa
             cls._add_docker_variable_list(merged, docker_node)
             cls._add_workdir(merged, docker_node, cwd)
             cls._add_interactive(merged, docker_node)
+            cls._add_user(merged, docker_node)
 
             if merged.get('rm', True):
                 docker_node['basic'].append('--rm')
@@ -148,6 +154,7 @@ class Decorator:  # noqa
 
             cls._add_interactive(merged, docker_node)
             cls._add_workdir(merged, docker_node, cwd)
+            cls._add_user(merged, docker_node)
             docker_node['container'].append(container)
         else:
             raise CommandError(
