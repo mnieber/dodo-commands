@@ -7,6 +7,7 @@ import sys
 
 def _args():
     parser = ArgumentParser()
+    parser.add_argument('--user')
     parser.add_argument('name', nargs='?')
     args = Dodo.parse_args(parser)
     return args
@@ -35,6 +36,7 @@ if Dodo.is_main(__name__):
         'exec',
         '-i',
         '-t',
+    ] + (['--user', args.user] if args.user else []) + [
         args.name,
         '/bin/bash',
     ], )
