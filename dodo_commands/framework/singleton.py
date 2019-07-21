@@ -76,7 +76,7 @@ class Dodo:
     command_name = None
     safe = True
 
-    _args = argparse.Namespace()
+    _command_line_args = argparse.Namespace()
     _config = None
 
     @classmethod
@@ -178,13 +178,13 @@ class Dodo:
 
     @classmethod
     def _is_confirm(cls):
-        return (getattr(cls._args, 'confirm', False)
+        return (getattr(cls._command_line_args, 'confirm', False)
                 or _count_confirm_in_argv()
                 or os.environ.get('__DODO_UNIVERSAL_CONFIRM__', None) == '1')
 
     @classmethod
     def _is_echo(cls):
-        return getattr(cls._args, 'echo', False)
+        return getattr(cls._command_line_args, 'echo', False)
 
     @classmethod
     def parse_args(cls, parser, config_args=None):
@@ -222,7 +222,7 @@ class Dodo:
             first_arg_index = 2
             parser.prog = "%s %s" % (os.path.basename(
                 sys.argv[0]), sys.argv[1])
-        cls._args = parser.parse_args(sys.argv[first_arg_index:])
+        cls._command_line_args = parser.parse_args(sys.argv[first_arg_index:])
 
         if _count_confirm_in_argv() > 1:
             local.env['__DODO_UNIVERSAL_CONFIRM__'] = '1'
@@ -231,9 +231,10 @@ class Dodo:
             for config_arg in config_args:
                 key = Key(cls.get_config(), config_arg.xpath)
                 if key.exists():
-                    setattr(cls._args, config_arg.arg_name, key.get())
+                    setattr(cls._command_line_args, config_arg.arg_name,
+                            key.get())
 
-        if cls._args.echo and not cls.safe:
+        if cls._command_line_args.echo and not cls.safe:
             raise CommandError(
                 "The --echo option is not supported for unsafe commands.\n" +
                 "Since this command is marked as unsafe, some operations will "
@@ -248,13 +249,14 @@ class Dodo:
                     default="no"):
                 sys.exit(1)
 
-        return cls._args
+        return cls._command_line_args
 
     @classmethod
     def run(cls, args, cwd=None, quiet=False, capture=False):
         root_node = ArgsTreeNode('original_args', args=args)
         for decorator in cls._get_decorators():
-            root_node, cwd = decorator.modify_args(cls._args, root_node, cwd)
+            root_node, cwd = decorator.modify_args(cls._command_line_args,
+                                                   root_node, cwd)
 
         if not _ask_confirmation(root_node, cwd or local.cwd, cls._is_echo(),
                                  cls._is_confirm()):

@@ -173,7 +173,7 @@ class Decorator:  # noqa
     def add_arguments(self, parser):  # noqa
         pass
 
-    def modify_args(self, dodo_args, root_node, cwd):  # noqa
+    def modify_args(self, command_line_args, root_node, cwd):  # override
         docker_node, _ = self.docker_node(Dodo.get_config, Dodo.command_name,
                                           cwd)
 
