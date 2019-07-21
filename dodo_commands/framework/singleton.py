@@ -12,6 +12,18 @@ from dodo_commands.framework.command_error import CommandError
 from plumbum import FG, ProcessExecutionError, local
 
 
+def _count_confirm_in_argv():
+    result = 0
+    for arg in sys.argv:
+        if arg == '--confirm':
+            result += 1
+        if arg.startswith('-') and not arg.startswith('--'):
+            result += arg.count('c')
+        if arg == '--':
+            break
+    return result
+
+
 def _ask_confirmation(args, cwd, is_echo, is_confirm):
     """Ask the user whether to continue with executing func."""
 
@@ -166,8 +178,9 @@ class Dodo:
 
     @classmethod
     def _is_confirm(cls):
-        return getattr(cls._args, 'confirm', False) or os.environ.get(
-            '__DODO_UNIVERSAL_CONFIRM__', None) == '1'
+        return (getattr(cls._args, 'confirm', False)
+                or _count_confirm_in_argv()
+                or os.environ.get('__DODO_UNIVERSAL_CONFIRM__', None) == '1')
 
     @classmethod
     def _is_echo(cls):
@@ -211,7 +224,7 @@ class Dodo:
                 sys.argv[0]), sys.argv[1])
         cls._args = parser.parse_args(sys.argv[first_arg_index:])
 
-        if cls._args.confirm and cls._args.confirm > 1:
+        if _count_confirm_in_argv() > 1:
             local.env['__DODO_UNIVERSAL_CONFIRM__'] = '1'
 
         if config_args:
