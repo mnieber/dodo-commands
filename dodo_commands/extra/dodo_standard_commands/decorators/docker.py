@@ -84,6 +84,13 @@ class Decorator:  # noqa
             docker_node['basic'].extend(['--user', docker_config['user']])
 
     @classmethod
+    def _add_environment_vars(cls, get_config, docker_config, docker_node):
+        for key_val in get_config('/ENVIRONMENT/variable_map', {}).items():
+            docker_node['env'].append("--env=%s=%s" % key_val)
+        for key_val in docker_config.get('variable_map', {}).items():
+            docker_node['env'].append("--env=%s=%s" % key_val)
+
+    @classmethod
     def merged_options(cls, get_config, command_name):
         merged = {}
         for patterns, docker_config in get_config('/DOCKER/options',
@@ -127,6 +134,7 @@ class Decorator:  # noqa
             cls._add_workdir(merged, docker_node, cwd)
             cls._add_interactive(merged, docker_node)
             cls._add_user(merged, docker_node)
+            cls._add_environment_vars(get_config, merged, docker_node)
 
             if merged.get('rm', True):
                 docker_node['basic'].append('--rm')
@@ -138,9 +146,6 @@ class Decorator:  # noqa
             if name:
                 docker_node["name"].append("--name=%s" % name)
 
-            for key_val in get_config('/ENVIRONMENT/variable_map', {}).items():
-                docker_node['env'].append("--env=%s=%s" % key_val)
-
             for x in merged.get('extra_options', []):
                 docker_node['other'].append(x)
 
@@ -148,6 +153,7 @@ class Decorator:  # noqa
         elif container:
             docker_node = ArgsTreeNode("docker", args=['docker', 'exec'])
             docker_node.add_child(ArgsTreeNode("basic"))
+            docker_node.add_child(ArgsTreeNode("env", is_horizontal=False))
             docker_node.add_child(ArgsTreeNode("other"))
             docker_node.add_child(ArgsTreeNode("workdir"))
             docker_node.add_child(ArgsTreeNode("container"))
@@ -155,6 +161,7 @@ class Decorator:  # noqa
             cls._add_interactive(merged, docker_node)
             cls._add_workdir(merged, docker_node, cwd)
             cls._add_user(merged, docker_node)
+            cls._add_environment_vars(get_config, merged, docker_node)
             docker_node['container'].append(container)
         else:
             raise CommandError(
