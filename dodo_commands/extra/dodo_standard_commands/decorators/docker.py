@@ -11,6 +11,9 @@ def _is_tuple(x):
     return hasattr(x, "__len__") and not isinstance(x, type(str()))
 
 
+# Resp: reads docker related settings from the docker_config and uses
+# them to modify the current args_tree_root_node.
+
 class Decorator:  # noqa
     @classmethod
     def _add_docker_volume_list(cls, docker_config, root_node):
@@ -173,9 +176,9 @@ class Decorator:  # noqa
     def add_arguments(self, parser):  # noqa
         pass
 
-    def modify_args(self, command_line_args, root_node, cwd):  # override
+    def modify_args(self, command_line_args, args_tree_root_node, cwd):  # override
         docker_node, _ = self.docker_node(Dodo.get_config, Dodo.command_name,
                                           cwd)
 
-        docker_node.add_child(root_node)
+        docker_node.add_child(args_tree_root_node)
         return docker_node, local.cwd

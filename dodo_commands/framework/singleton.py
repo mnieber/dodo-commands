@@ -44,6 +44,8 @@ def _ask_confirmation(args, cwd, is_echo, is_confirm):
     return True
 
 
+# Resp: add the current command_name
+# to the list of commands decorated by decorator_name.
 class DecoratorScope:
     def __init__(self, decorator_name):
         self.decorators = Dodo.get_config('/ROOT').setdefault(
@@ -253,20 +255,20 @@ class Dodo:
 
     @classmethod
     def run(cls, args, cwd=None, quiet=False, capture=False):
-        root_node = ArgsTreeNode('original_args', args=args)
+        args_tree_root_node = ArgsTreeNode('original_args', args=args)
         for decorator in cls._get_decorators():
-            root_node, cwd = decorator.modify_args(cls._command_line_args,
-                                                   root_node, cwd)
+            args_tree_root_node, cwd = decorator.modify_args(
+                cls._command_line_args, args_tree_root_node, cwd)
 
-        if not _ask_confirmation(root_node, cwd or local.cwd, cls._is_echo(),
-                                 cls._is_confirm()):
+        if not _ask_confirmation(args_tree_root_node, cwd or local.cwd,
+                                 cls._is_echo(), cls._is_confirm()):
             return False
 
         if cwd and not os.path.exists(cwd):
             raise CommandError("Directory not found: %s" % cwd)
 
         with local.cwd(cwd or local.cwd):
-            flat_args = root_node.flatten()
+            flat_args = args_tree_root_node.flatten()
             func = local[flat_args[0]][flat_args[1:]]
             variable_map = cls.get_config('/ENVIRONMENT/variable_map', {})
             with local.env(**variable_map):
