@@ -24,18 +24,16 @@ from dodo_commands.framework import execute_from_command_line
 
 if __name__ == "__main__":
     execute_from_command_line(sys.argv)
-""".format(
-        python_path=python_path,
-        bin='Scripts' if is_windows() else 'bin',
-        sep=os.sep)
+""".format(python_path=python_path,
+           bin='Scripts' if is_windows() else 'bin',
+           sep=os.sep)
 
 
 def dodo_template_bat(python_path, dodo_path):
     return """
 @ECHO OFF
 {python_path} {dodo_path} %*
-""".format(
-        python_path=python_path, dodo_path=dodo_path)
+""".format(python_path=python_path, dodo_path=dodo_path)
 
 
 class Activator:
@@ -162,11 +160,9 @@ class Activator:
                 self._report("There is no latest project\n")
                 return
 
-        self.paths = Paths(
-            project_dir=os.path.expanduser(
-                os.path.join(
-                    self.config.get("settings", "projects_dir"), self.
-                    project)))
+        self.paths = Paths(project_dir=os.path.expanduser(
+            os.path.join(self.config.get("settings", "projects_dir"),
+                         self.project)))
 
         if create:
             project_dir = self.paths.project_dir()
@@ -188,8 +184,8 @@ class Activator:
             self.config.set("recent", "latest_project", self.project)
             write_global_config_parser(self.config)
 
-        sys.stdout.write(
-            "source %s\n" % self._virtual_env_filename("activate"))
+        sys.stdout.write("source %s\n" %
+                         self._virtual_env_filename("activate"))
 
 
 def _args():
