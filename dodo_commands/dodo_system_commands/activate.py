@@ -67,9 +67,8 @@ class Activator:
             "six",
         )
 
-        symlink(
-            os.path.dirname(dodo_commands.__file__),
-            os.path.join(self.paths.site_packages_dir(), "dodo_commands"))
+        symlink(os.path.realpath(os.path.dirname(dodo_commands.__file__)),
+                os.path.join(self.paths.site_packages_dir(), "dodo_commands"))
 
     def _create_dodo_script(self):
         """Install the dodo entry point script."""
