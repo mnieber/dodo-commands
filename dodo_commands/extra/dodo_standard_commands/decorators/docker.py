@@ -94,6 +94,11 @@ class Decorator:  # noqa
             docker_node['env'].append("--env=%s=%s" % key_val)
 
     @classmethod
+    def _add_extra_options(cls, docker_config, docker_node):
+        for x in docker_config.get('extra_options', []):
+            docker_node['other'].append(x)
+
+    @classmethod
     def merged_options(cls, get_config, command_name):
         merged = {}
         for patterns, docker_config in get_config('/DOCKER/options',
@@ -138,6 +143,7 @@ class Decorator:  # noqa
             cls._add_interactive(merged, docker_node)
             cls._add_user(merged, docker_node)
             cls._add_environment_vars(get_config, merged, docker_node)
+            cls._add_extra_options(merged, docker_node)
 
             if merged.get('rm', True):
                 docker_node['basic'].append('--rm')
@@ -148,9 +154,6 @@ class Decorator:  # noqa
             name = merged.get('name', command_name)
             if name:
                 docker_node["name"].append("--name=%s" % name)
-
-            for x in merged.get('extra_options', []):
-                docker_node['other'].append(x)
 
             docker_node['image'].append(image)
         elif container:
@@ -165,6 +168,7 @@ class Decorator:  # noqa
             cls._add_workdir(merged, docker_node, cwd)
             cls._add_user(merged, docker_node)
             cls._add_environment_vars(get_config, merged, docker_node)
+            cls._add_extra_options(merged, docker_node)
             docker_node['container'].append(container)
         else:
             raise CommandError(
