@@ -2,6 +2,7 @@
 from dodo_commands.framework.args_tree import ArgsTreeNode
 from dodo_commands.framework.config import merge_into_config
 from dodo_commands.framework import Dodo, CommandError
+from dodo_commands.framework.decorator_utils import uses_decorator
 from fnmatch import fnmatch
 from plumbum import local
 import os
@@ -15,6 +16,9 @@ def _is_tuple(x):
 # them to modify the current args_tree_root_node.
 
 class Decorator:  # noqa
+    def is_used(self, config, command_name, decorator_name):
+        return uses_decorator(config, command_name, decorator_name)
+
     @classmethod
     def _add_docker_volume_list(cls, docker_config, root_node):
         volume_list = docker_config.get('volume_list', [])

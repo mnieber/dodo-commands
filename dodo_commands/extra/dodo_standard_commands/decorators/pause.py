@@ -1,8 +1,12 @@
 """Pauses the execution."""
 import time
+from dodo_commands.framework.decorator_utils import uses_decorator
 
 
 class Decorator:
+    def is_used(self, config, command_name, decorator_name):
+        return uses_decorator(config, command_name, decorator_name)
+
     def add_arguments(self, parser):  # override
         parser.add_argument(
             '--pause-ms',
