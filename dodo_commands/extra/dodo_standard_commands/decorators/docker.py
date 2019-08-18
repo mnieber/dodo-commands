@@ -1,11 +1,12 @@
 """Decorates command lines with docker arguments."""
-from dodo_commands.framework.args_tree import ArgsTreeNode
-from dodo_commands.framework.config import merge_into_config
-from dodo_commands.framework import Dodo, CommandError
-from dodo_commands.framework.decorator_utils import uses_decorator
 from fnmatch import fnmatch
 from plumbum import local
 import os
+
+from dodo_commands import Dodo, CommandError
+from dodo_commands.framework.args_tree import ArgsTreeNode
+from dodo_commands.framework.config import merge_into_config
+from dodo_commands.framework.decorator_utils import uses_decorator
 
 
 def _is_tuple(x):

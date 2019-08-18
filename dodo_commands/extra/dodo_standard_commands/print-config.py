@@ -1,7 +1,9 @@
-import ruamel.yaml
 import re
 from argparse import ArgumentParser
-from dodo_commands.framework import Dodo
+
+import ruamel.yaml
+
+from dodo_commands.framework.singleton import Dodo
 
 
 def _args():

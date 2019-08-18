@@ -1,8 +1,10 @@
 from argparse import ArgumentParser
-from dodo_commands.framework import Dodo, CommandError
-from dodo_commands.framework.config import get_command_path, load_global_config_parser
-from dodo_commands.framework.util import chop
 import os
+
+from dodo_commands import Dodo, CommandError
+from dodo_commands.framework.command_path import get_command_path
+from dodo_commands.framework.global_config import load_global_config_parser
+from dodo_commands.framework.util import chop
 
 
 def _args():

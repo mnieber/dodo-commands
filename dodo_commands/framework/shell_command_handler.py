@@ -1,5 +1,6 @@
 import os
 import sys
+
 from dodo_commands.framework.command_map import CommandMapItem
 
 

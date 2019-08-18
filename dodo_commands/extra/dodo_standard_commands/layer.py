@@ -1,9 +1,9 @@
 from argparse import ArgumentParser
-from dodo_commands.framework import Dodo
-from dodo_commands.framework.config import ConfigIO
-from dodo_commands.framework import CommandError
 import os
 import sys
+
+from dodo_commands import Dodo, CommandError
+from dodo_commands.framework.config_io import ConfigIO
 
 
 def _args():

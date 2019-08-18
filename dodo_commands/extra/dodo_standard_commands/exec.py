@@ -2,9 +2,10 @@ import argparse
 import os
 import sys
 from argparse import ArgumentParser
-from dodo_commands.framework import Dodo
+
+from dodo_commands import Dodo
 from dodo_commands.framework.command_map import get_command_map, execute_script
-from dodo_commands.framework.config import CommandPath
+from dodo_commands.framework.command_path import CommandPath
 
 
 def _args():

@@ -1,9 +1,11 @@
 from argparse import ArgumentParser
-from dodo_commands.framework import Dodo, CommandError
-from dodo_commands.framework.config import get_command_path, ConfigIO
-from dodo_commands.framework.command_map import get_command_map
 import os
 import sys
+
+from dodo_commands import Dodo, CommandError
+from dodo_commands.framework.config_io import ConfigIO
+from dodo_commands.framework.command_map import get_command_map
+from dodo_commands.framework.command_path import get_command_path
 
 
 def _new_commands_dir():
@@ -39,7 +41,8 @@ def _args():
 
 script = """import os
 from argparse import ArgumentParser
-from dodo_commands.framework import Dodo, ConfigArg, CommandError
+
+from dodo_commands import Dodo, ConfigArg, CommandError
 
 
 def _args():
@@ -75,6 +78,7 @@ if Dodo.is_main(__name__, safe=True):
 
 if Dodo.is_main(__name__, safe='--create-commands-dir' not in sys.argv):
     args = _args()
+    command_path = get_command_path(Dodo.get_config())
 
     if args.create_commands_dir:
         project_dir = Dodo.get_config('/ROOT/project_dir')
@@ -82,7 +86,6 @@ if Dodo.is_main(__name__, safe='--create-commands-dir' not in sys.argv):
                             args.create_commands_dir is True else os.path.join(
                                 project_dir, args.create_commands_dir))
         dest_path = os.path.join(new_commands_dir, args.name + ".py")
-        command_path = get_command_path(Dodo.get_config())
 
         if not os.path.exists(new_commands_dir):
             Dodo.run(['mkdir', '-p', new_commands_dir])
@@ -100,7 +103,7 @@ if Dodo.is_main(__name__, safe='--create-commands-dir' not in sys.argv):
             ConfigIO().save(config)
 
     if args.next_to:
-        command_map = get_command_map()
+        command_map = get_command_map(command_path)
         item = command_map.get(args.next_to)
 
         if not item:

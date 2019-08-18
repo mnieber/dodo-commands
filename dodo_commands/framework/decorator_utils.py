@@ -1,7 +1,8 @@
 from importlib import import_module
 import fnmatch
 import os
-from dodo_commands.framework.config import get_command_path
+
+from dodo_commands.framework.command_path import get_command_path
 
 
 def uses_decorator(config, command_name, decorator_name):

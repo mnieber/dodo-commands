@@ -1,7 +1,9 @@
 from argparse import ArgumentParser
-from dodo_commands.framework import Dodo, CommandError
 import os
-from dodo_commands.framework.config import load_global_config_parser, Paths
+
+from dodo_commands import Dodo, CommandError
+from dodo_commands.framework.paths import Paths
+from dodo_commands.framework.global_config import load_global_config_parser
 
 
 def _args():

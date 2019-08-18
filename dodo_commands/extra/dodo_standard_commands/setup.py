@@ -1,17 +1,18 @@
 from argparse import ArgumentParser
-from dodo_commands.framework import Dodo
-from dodo_commands.framework.util import (symlink, query_yes_no,
-                                          is_using_system_dodo, exe_exists)
-from dodo_commands.framework.config import Paths, CommandError
 import platform
 import os
 import shutil
-from six.moves import input as raw_input
 # import tempfile
 
+from six.moves import input as raw_input
 # Since we'd like the user to install meld, we require it here. If it's not found
 # then it will be installed via the meta file (setup.meta).
 from plumbum.cmd import meld  # noqa
+
+from dodo_commands.framework.singleton import Dodo
+from dodo_commands.framework.util import (symlink, query_yes_no,
+                                          is_using_system_dodo, exe_exists)
+from dodo_commands.framework.config import Paths, CommandError
 
 
 def _args():

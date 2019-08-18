@@ -1,7 +1,8 @@
 from argparse import ArgumentParser
-from dodo_commands.framework import Dodo
-from dodo_commands.framework.config import Paths
 import os
+
+from dodo_commands import Dodo
+from dodo_commands.framework.config import Paths
 
 
 def _args():

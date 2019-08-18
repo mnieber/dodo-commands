@@ -3,8 +3,10 @@ import os
 import platform
 import ruamel.yaml
 import subprocess
-from plumbum.commands.processes import CommandNotFound
 from importlib import import_module
+
+from plumbum.commands.processes import CommandNotFound
+
 from dodo_commands.framework.config import Paths
 from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.command_map import CommandMapItem
@@ -97,7 +99,9 @@ class PythonCommandHandler:
 
         # Try the import again, but first run install
         try:
-            install(meta_data(), dependency)
+            md = meta_data()
+            if md:
+                install(md, dependency)
             import_module(import_path)
         except exception_type:
             fail_msg = ('Could not find executable: %s' % dependency if

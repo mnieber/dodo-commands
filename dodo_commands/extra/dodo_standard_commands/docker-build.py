@@ -1,7 +1,7 @@
-from dodo_commands.framework import Dodo, CommandError
-from dodo_commands.framework.util import remove_trailing_dashes
 import argparse
 import os
+
+from dodo_commands import Dodo, CommandError, remove_trailing_dashes
 
 
 def _args():
@@ -54,8 +54,10 @@ def _remove_extra_dirs(local_dir, extra_dirs):
         Dodo.run(['rm', "-rf", local_path])
 
 
-args = _args()
-if Dodo.is_main(__name__, safe=len(args.extra_dirs) == 0):
+if Dodo.is_main(__name__):
+    args = _args()
+    Dodo.safe = len(args.extra_dirs) == 0
+
     _copy_extra_dirs(args.build_dir, args.extra_dirs)
 
     try:

@@ -1,8 +1,10 @@
 from argparse import ArgumentParser
-from dodo_commands.framework import Dodo
+import sys
+
 from plumbum.cmd import docker
 from six.moves import input as raw_input
-import sys
+
+from dodo_commands import Dodo
 
 
 def _args():

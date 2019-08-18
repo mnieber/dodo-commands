@@ -1,5 +1,6 @@
 """Pauses the execution."""
 import time
+
 from dodo_commands.framework.decorator_utils import uses_decorator
 
 

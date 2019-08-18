@@ -1,11 +1,13 @@
 import os
-import ruamel.yaml
 import shlex
 from argparse import ArgumentParser
+
+import ruamel.yaml
+
+from dodo_commands.framework.singleton import Dodo
 from dodo_commands.framework.util import chop
 from dodo_commands.framework.command_map import CommandMapItem
 from dodo_commands.framework.config import expand_keys, Key
-from dodo_commands.framework.singleton import Dodo
 
 
 class YamlCommandMapItem(CommandMapItem):

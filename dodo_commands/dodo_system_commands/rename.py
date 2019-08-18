@@ -1,8 +1,10 @@
 from argparse import ArgumentParser
-from dodo_commands.framework import Dodo, CommandError
-from dodo_commands.framework.config import projects_dir, Paths
-from dodo_commands.framework.util import is_using_system_dodo
 import os
+
+from dodo_commands import Dodo, CommandError
+from dodo_commands.framework.paths import Paths
+from dodo_commands.framework.global_config import projects_dir
+from dodo_commands.framework.util import is_using_system_dodo
 
 
 def _args():

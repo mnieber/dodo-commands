@@ -1,13 +1,15 @@
 from argparse import ArgumentParser
-from dodo_commands.framework import Dodo
+import os
+import sys
+
+from semantic_version import Version
+from plumbum import local
+import ruamel.yaml
+
+from dodo_commands import Dodo
 from dodo_commands.framework import get_version
 from dodo_commands.framework.config import Paths
 from dodo_commands.framework.util import bordered
-from semantic_version import Version
-from plumbum import local
-import os
-import ruamel.yaml
-import sys
 
 
 def _args():

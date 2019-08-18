@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
-from dodo_commands.framework import Dodo
+
+from dodo_commands import Dodo
 
 
 def _args():  # noqa

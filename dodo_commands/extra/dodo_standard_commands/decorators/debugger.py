@@ -1,5 +1,5 @@
+from dodo_commands import Dodo
 from dodo_commands.framework.args_tree import ArgsTreeNode
-from dodo_commands.framework import Dodo
 from dodo_commands.framework.decorator_utils import uses_decorator
 
 

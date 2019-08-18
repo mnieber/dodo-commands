@@ -1,11 +1,13 @@
 from argparse import ArgumentParser
-from dodo_commands.framework import Dodo, CommandError
 import os
 import sys
+
 from six.moves import input as raw_input
+from plumbum.cmd import tmux
+
+from dodo_commands import Dodo, CommandError
 from dodo_commands.framework.util import (filter_choices, exe_exists,
                                           InvalidIndex)
-from plumbum.cmd import tmux
 
 
 def _session_id(category):

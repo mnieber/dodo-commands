@@ -1,12 +1,14 @@
 from argparse import ArgumentParser
-from dodo_commands.framework import Dodo, ConfigArg, CommandError
-from dodo_commands.framework.util import bordered
-from importlib import import_module
-from jinja2 import Environment, FileSystemLoader
 import glob
 import os
-import sphinx  # noqa
 import sys
+from importlib import import_module
+
+from jinja2 import Environment, FileSystemLoader
+import sphinx  # noqa
+
+from dodo_commands import Dodo, ConfigArg, CommandError
+from dodo_commands.framework.util import bordered
 
 
 def _args():

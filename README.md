@@ -88,7 +88,7 @@ Note that you can run `dodo print-config` to show the entire configuration.
 
     ```python
     from argparse import ArgumentParser
-    from dodo_commands.framework import Dodo
+    from dodo_commands import Dodo
 
 
     def _args():  # noqa

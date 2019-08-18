@@ -2,7 +2,9 @@
 
 import pytest
 import os
-from ..config import ConfigIO, get_command_path
+
+from ..command_path import get_command_path
+from ..config_io import ConfigIO
 
 
 class TestCommandPaths:  # noqa

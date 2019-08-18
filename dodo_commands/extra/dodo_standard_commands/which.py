@@ -1,11 +1,15 @@
 from argparse import ArgumentParser
-from dodo_commands.framework import Dodo
-from dodo_commands.framework.config import (get_command_path, Paths,
-                                            projects_dir, ConfigLoader)
 import glob
 import os
 import ruamel.yaml
 import sys
+
+from dodo_commands import Dodo
+from dodo_commands.framework.config_layers import get_layers
+from dodo_commands.framework.decorator_utils import _all_decorators
+from dodo_commands.framework.paths import Paths
+from dodo_commands.framework.command_path import get_command_path
+from dodo_commands.framework.global_config import projects_dir
 
 
 def _args():  # noqa
@@ -94,7 +98,7 @@ if Dodo.is_main(__name__):
     elif args.directory:
         sys.stdout.write(_which_dir(args.directory) + '\n')
     elif args.decorators:
-        sys.stdout.write(", ".join(sorted(Dodo._all_decorators().keys())) +
+        sys.stdout.write(", ".join(sorted(_all_decorators(Dodo.get_config()).keys())) +
                          '\n')
     elif args.projects:
         projects = [
@@ -106,7 +110,7 @@ if Dodo.is_main(__name__):
         if Dodo.get_config("/ROOT/project_name", None):
             sys.stdout.write(Dodo.get_config("/ROOT/project_name") + '\n')
     elif args.layers:
-        for layer_filename in ConfigLoader().get_layers(Dodo.get_config()):
+        for layer_filename in get_layers():
             sys.stdout.write(layer_filename + '\n')
     elif args.what:
         x = _which_script(args.what) or _which_dir(args.what)

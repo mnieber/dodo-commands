@@ -2,45 +2,21 @@ import argcomplete
 import argparse
 import os
 import sys
+
+from plumbum import FG, ProcessExecutionError, local
+
 from dodo_commands.framework.config import ConfigLoader
+from dodo_commands.framework.config_layers import get_layers
+from dodo_commands.framework.config_io import ConfigIO
+from dodo_commands.framework.config_arg import add_config_args
 from dodo_commands.framework.decorator_utils import get_decorators
 from dodo_commands.framework.config_expander import Key, KeyNotFound
 from dodo_commands.framework.args_tree import ArgsTreeNode
 from dodo_commands.framework.command_error import CommandError
-from plumbum import FG, ProcessExecutionError, local
-
-
-class ConfigArg:
-    def __init__(self, config_key, *args, **kwargs):
-        self.config_key = config_key
-        self.args = args
-        self.kwargs = kwargs
-
-    @property
-    def arg_name(self):
-        return self.args[0].strip('-').replace('-', '_')
-
-    @property
-    def xpath(self):
-        return [x for x in self.config_key.split('/') if x]
-
-
-# Resp: add the current command_name
-# to the list of commands decorated by decorator_name.
-class DecoratorScope:
-    def __init__(self, decorator_name):
-        self.decorators = Dodo.get_config('/ROOT').setdefault(
-            'decorators', {}).setdefault(decorator_name, [])
-
-    def __enter__(self):  # noqa
-        self.decorators.append(Dodo.command_name)
-
-    def __exit__(self, type, value, traceback):  # noqa
-        self.decorators.remove(Dodo.command_name)
 
 
 class Dodo:
-    package_path = None
+    script_path = None
     command_name = None
     safe = True
 
@@ -48,9 +24,19 @@ class Dodo:
     _config = None
 
     @classmethod
+    def _extra_layers(cls):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--layer', action='append', help=argparse.SUPPRESS)
+        args, _ = parser.parse_known_args(
+            [x for x in sys.argv if x not in ('--help', '-h')])
+        return args.layer or []
+
+    @classmethod
     def get_config(cls, key='', default_value="__not_set_234234__"):  # noqa
         if cls._config is None:
-            cls._config = ConfigLoader().load()
+            base_config = ConfigIO().load()
+            layer_filenames = get_layers(base_config, extra_layers=cls._extra_layers())
+            cls._config = ConfigLoader().load(layer_filenames, base_config=base_config)
 
         try:
             xpath = [k for k in key.split("/") if k]
@@ -65,37 +51,12 @@ class Dodo:
         if safe is not None:
             cls.safe = safe
 
-        if name == '__main__':
-            import __main__ as main
-            cls.command_name = os.path.basename(main.__file__)
-            return True
+        if name not in ('__main__', cls.script_path):
+            return False
 
-        return (cls.command_name and cls.package_path
-                and name == cls.package_path + '.' + cls.command_name)
-
-    @classmethod
-    def _add_config_args(cls, parser, config_args=None):
-        show_help = '--help' in sys.argv
-
-        for config_arg in (config_args or []):
-            key = Key(cls.get_config(), config_arg.xpath)
-            key_exists = key.exists()
-
-            if show_help or not key_exists:
-                kwargs = dict(config_arg.kwargs)
-                help_text = kwargs.get('help') or ''
-                sep = '. ' if help_text else ''
-                if key_exists:
-                    value = str(key.get())
-                    formatted_value = value[:50] + (value[50:] and '...')
-                    extra_help = ('Read from config: %s = %s.' %
-                                  (config_arg.config_key, formatted_value))
-                else:
-                    extra_help = ('Configuration key is %s' %
-                                  config_arg.config_key)
-
-                kwargs['help'] = help_text + sep + extra_help
-                parser.add_argument(*config_arg.args, **kwargs)
+        main_file_basename = os.path.basename(sys.modules[name].__file__)
+        cls.command_name = os.path.splitext(main_file_basename)[0]
+        return True
 
     @classmethod
     def parse_args(cls, parser, config_args=None):
@@ -103,31 +64,29 @@ class Dodo:
                             action='store_true',
                             help=argparse.SUPPRESS)
 
-        # The --layer option is handled by the argument parser in ConfigLoader.
+        # The --layer option is handled by the argument parser in cls._extra_layers.
         # We need to add it to this parser as well, otherwise it will complain.
-        # Yes, quite hacky...
         parser.add_argument('--layer', action='append', help=argparse.SUPPRESS)
 
         for decorator in get_decorators(cls.command_name, cls.get_config()):
             decorator.add_arguments(parser)
 
-        cls._add_config_args(parser, config_args)
+        add_config_args(parser, cls.get_config(), config_args)
         argcomplete.autocomplete(parser)
-        if os.path.splitext(sys.argv[0])[1].lower() == '.py':
+        if os.path.splitext(sys.argv[0])[1].lower() == '.py' or len(sys.argv) == 1:
             parser.prog = sys.argv[0]
             first_arg_index = 1
         else:
             first_arg_index = 2
-            parser.prog = "%s %s" % (os.path.basename(
-                sys.argv[0]), sys.argv[1])
+            parser.prog = "%s %s" % (os.path.basename(sys.argv[0]), sys.argv[1])
+
         cls._command_line_args = parser.parse_args(sys.argv[first_arg_index:])
 
         if config_args:
             for config_arg in config_args:
                 key = Key(cls.get_config(), config_arg.xpath)
                 if key.exists():
-                    setattr(cls._command_line_args, config_arg.arg_name,
-                            key.get())
+                    setattr(cls._command_line_args, config_arg.arg_name, key.get())
 
         return cls._command_line_args
 

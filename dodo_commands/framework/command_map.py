@@ -1,7 +1,7 @@
-from dodo_commands.framework.singleton import Dodo
-from dodo_commands.framework.config import get_command_path
 import glob
 import os
+
+from dodo_commands.framework.singleton import Dodo
 
 
 class CommandMapItem(object):
@@ -11,7 +11,7 @@ class CommandMapItem(object):
         self.extension = extension
 
 
-def get_command_map(command_path=None):
+def get_command_map(command_path):
     """
     Return a dictionary mapping command names to their Python module directory.
     The dictionary is in the format {command_name: module_name}.
@@ -20,7 +20,6 @@ def get_command_map(command_path=None):
     from dodo_commands.framework.yaml_command_handler import YamlCommandHandler
     from dodo_commands.framework.shell_command_handler import ShellCommandHandler
 
-    command_path = command_path or get_command_path()
     command_map = {}
 
     file_map = {}
@@ -46,10 +45,9 @@ def execute_script(command_map, command_name):
     from dodo_commands.framework.shell_command_handler import ShellCommandHandler
 
     command_map_item = command_map[command_name]
-    Dodo.command_name = command_name
 
     if command_map_item.extension == 'py':
-        Dodo.package_path = command_map_item.package_path
+        Dodo.script_path = command_map_item.package_path + '.' + command_name
         PythonCommandHandler().execute(command_map_item, command_name)
     elif command_map_item.extension == 'yaml':
         YamlCommandHandler().execute(command_map_item, command_name)

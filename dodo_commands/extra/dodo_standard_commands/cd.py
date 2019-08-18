@@ -1,8 +1,9 @@
 from argparse import ArgumentParser
-from configparser import NoOptionError
-from dodo_commands.framework import Dodo, CommandError
-from dodo_commands.framework.config import load_global_config_parser
 import sys
+from configparser import NoOptionError
+
+from dodo_commands import Dodo, CommandError
+from dodo_commands.framework.global_config import load_global_config_parser
 
 
 def _args():

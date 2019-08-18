@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """Utilities."""
-from six.moves import input as raw_input
 import os
 import time
 import sys
 import re
+
+from six.moves import input as raw_input
 from plumbum import local
 
 

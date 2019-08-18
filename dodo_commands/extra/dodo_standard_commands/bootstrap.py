@@ -1,11 +1,13 @@
 """Pull the latest version of the Dodo Commands system."""
 from argparse import ArgumentParser
-from dodo_commands.framework import Dodo, CommandError
-from dodo_commands.framework.config import ConfigIO, Paths
-from dodo_commands.framework.util import symlink, query_yes_no
 import glob
 import os
 import sys
+
+from dodo_commands import Dodo, CommandError
+from dodo_commands.framework.paths import Paths
+from dodo_commands.framework.config_io import ConfigIO
+from dodo_commands.framework.util import symlink, query_yes_no
 
 
 def _args():

@@ -59,7 +59,7 @@ class TestConfigIO:  # noqa
         assert os.path.join(dodo_test_dir, 'src') == dodo('which', 'src')[:-1]
         assert res_dir == dodo('which', 'res')[:-1]
         assert config_filename == dodo('which', '--config')[:-1]
-        assert 'debugger, docker, pause' == dodo('which', '--decorators')[:-1]
+        assert 'confirm, debugger, docker, pause' == dodo('which', '--decorators')[:-1]
 
         # dodo cd
         assert "cd " + dodo_test_dir == dodo('cd')[:-1]

@@ -1,8 +1,9 @@
-from dodo_commands.framework.command_error import CommandError
-from dodo_commands.framework.util import EnvironMemo
 import os
 import re
 import sys
+
+from dodo_commands.framework.command_error import CommandError
+from dodo_commands.framework.util import EnvironMemo
 
 
 class KeyNotFound(CommandError):
