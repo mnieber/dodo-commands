@@ -189,7 +189,7 @@ def merge_into_config(config, layer, xpath=None):
 
 
 class ConfigIO:
-    """Read and write the dodo configuration."""
+    """Read and writes dodo configuration (yaml) files."""
 
     def __init__(self, config_base_dir=None):
         """Arg config_base_dir is where config files are searched.
