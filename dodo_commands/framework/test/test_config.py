@@ -5,7 +5,7 @@ import pytest
 
 import ruamel.yaml
 
-from ..config import ConfigLoader
+from ..config import load_config
 from ..config_io import ConfigIO
 
 
@@ -64,8 +64,9 @@ class TestConfigIO:  # noqa
     def test_layers(self, tmpdir):  # noqa
         foo_dir = os.path.join(str(tmpdir), 'foo')
         config_io = ConfigIO(str(tmpdir))  # noqa
-        config_loader = ConfigLoader(config_io)
-        full_config = config_loader.load(['mylayer.yml'], extend=False)
+        full_config = load_config(['config.yaml', 'mylayer.yml'],
+                                  config_io=config_io,
+                                  extend=False)
 
         assert full_config['ROOT']['command_path'] == [
             os.path.join(foo_dir, 'bar'),

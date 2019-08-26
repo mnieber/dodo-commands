@@ -1,12 +1,11 @@
 from argparse import ArgumentParser
-import os
 import sys
 
 from six.moves import configparser
 
 from dodo_commands import Dodo, CommandError
 from dodo_commands.framework.paths import Paths
-from dodo_commands.framework.config_layers import get_layers
+from dodo_commands.framework.config_layers import layer_filename_superset
 from dodo_commands.framework.config_io import ConfigIO
 from dodo_commands.framework.global_config import load_global_config_parser
 from dodo_commands.framework.config_expander import Key
@@ -40,16 +39,16 @@ if Dodo.is_main(__name__, safe=('--key' not in sys.argv)):
         raise CommandError("{error}. Please check {filename}".format(
             error=str(e), filename=Paths().global_config_filename()))
 
+    config = ConfigIO().load()
+
     if args.key and args.val:
-        config = ConfigIO().load()
         xpath = [x for x in args.key.split('/') if x]
         key = Key(config, xpath)
         key.set(args.val)
         ConfigIO().save(config)
         sys.exit(0)
 
-    yaml_filenames = ([os.path.join(args.res_dir, 'config.yaml')] +
-                      get_layers())
+    yaml_filenames = layer_filename_superset()
 
     yaml_filenames.append(Paths().global_config_filename())
     Dodo.run(args.editor.split() + yaml_filenames, cwd='.')

@@ -5,14 +5,13 @@ import sys
 
 from plumbum import FG, ProcessExecutionError, local
 
-from dodo_commands.framework.config import ConfigLoader
-from dodo_commands.framework.config_layers import get_layers
-from dodo_commands.framework.config_io import ConfigIO
+from dodo_commands.framework.config import load_config, extend_command_path
 from dodo_commands.framework.config_arg import add_config_args
 from dodo_commands.framework.decorator_utils import get_decorators
 from dodo_commands.framework.config_expander import Key, KeyNotFound
 from dodo_commands.framework.args_tree import ArgsTreeNode
 from dodo_commands.framework.command_error import CommandError
+from dodo_commands.framework.config_layers import layer_filename_superset
 
 
 class Dodo:
@@ -22,21 +21,33 @@ class Dodo:
 
     _command_line_args = argparse.Namespace()
     _config = None
+    _filenames_and_layers = []
 
     @classmethod
     def _extra_layers(cls):
         parser = argparse.ArgumentParser()
-        parser.add_argument('--layer', action='append', help=argparse.SUPPRESS)
-        args, _ = parser.parse_known_args(
+        parser.add_argument('-L',
+                            '--layer',
+                            action='append',
+                            help=argparse.SUPPRESS)
+        args, sys.argv = parser.parse_known_args(
             [x for x in sys.argv if x not in ('--help', '-h')])
-        return args.layer or []
+
+        def parse(x):
+            if '=' in x:
+                parts = x.split('=')
+                return '.'.join(parts + ['yaml'])
+            return x
+
+        return [parse(x) for x in args.layer or []]
 
     @classmethod
     def get_config(cls, key='', default_value="__not_set_234234__"):  # noqa
         if cls._config is None:
-            base_config = ConfigIO().load()
-            layer_filenames = get_layers(base_config, extra_layers=cls._extra_layers())
-            cls._config = ConfigLoader().load(layer_filenames, base_config=base_config)
+            cls._config = load_config(
+                layer_filename_superset(['config.yaml'] + cls._extra_layers()),
+                filenames_and_layers=cls._filenames_and_layers)
+            extend_command_path(cls._config)
 
         try:
             xpath = [k for k in key.split("/") if k]
@@ -45,6 +56,10 @@ class Dodo:
             if default_value == "__not_set_234234__":
                 raise
             return default_value
+
+    @classmethod
+    def get_layers(cls):
+        return cls._layers
 
     @classmethod
     def is_main(cls, name, safe=None):
@@ -66,19 +81,24 @@ class Dodo:
 
         # The --layer option is handled by the argument parser in cls._extra_layers.
         # We need to add it to this parser as well, otherwise it will complain.
-        parser.add_argument('--layer', action='append', help=argparse.SUPPRESS)
+        parser.add_argument('-L',
+                            '--layer',
+                            action='append',
+                            help=argparse.SUPPRESS)
 
         for decorator in get_decorators(cls.command_name, cls.get_config()):
             decorator.add_arguments(parser)
 
         add_config_args(parser, cls.get_config(), config_args)
         argcomplete.autocomplete(parser)
-        if os.path.splitext(sys.argv[0])[1].lower() == '.py' or len(sys.argv) == 1:
+        if os.path.splitext(sys.argv[0])[1].lower() == '.py' or len(
+                sys.argv) == 1:
             parser.prog = sys.argv[0]
             first_arg_index = 1
         else:
             first_arg_index = 2
-            parser.prog = "%s %s" % (os.path.basename(sys.argv[0]), sys.argv[1])
+            parser.prog = "%s %s" % (os.path.basename(
+                sys.argv[0]), sys.argv[1])
 
         cls._command_line_args = parser.parse_args(sys.argv[first_arg_index:])
 
@@ -86,7 +106,8 @@ class Dodo:
             for config_arg in config_args:
                 key = Key(cls.get_config(), config_arg.xpath)
                 if key.exists():
-                    setattr(cls._command_line_args, config_arg.arg_name, key.get())
+                    setattr(cls._command_line_args, config_arg.arg_name,
+                            key.get())
 
         return cls._command_line_args
 

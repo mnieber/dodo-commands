@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 
 from dodo_commands import Dodo
 from dodo_commands.framework.command_map import get_command_map, execute_script
-from dodo_commands.framework.command_path import CommandPath
+from dodo_commands.framework.command_path import get_command_dirs
 
 
 def _args():
@@ -38,6 +38,6 @@ if Dodo.is_main(__name__, safe=True):
         ['wget', url, '-O',
          os.path.join(package_dir, os.path.basename(url))])
 
-    command_map = get_command_map(CommandPath([package_dir], []))
+    command_map = get_command_map(get_command_dirs([package_dir], []))
     sys.argv = sys.argv[1:]
     execute_script(command_map, cmd_name)

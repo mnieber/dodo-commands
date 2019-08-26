@@ -2,7 +2,8 @@ from importlib import import_module
 import fnmatch
 import os
 
-from dodo_commands.framework.command_path import get_command_path
+from dodo_commands.framework.command_path import (get_command_dirs_from_config,
+                                                  extend_sys_path)
 
 
 def uses_decorator(config, command_name, decorator_name):
@@ -44,10 +45,10 @@ def _load_decorator(name, directory):
 
 def _all_decorators(config):
     """Returns a mapping from decorator name to its directory."""
-    command_path = get_command_path(config)
-    command_path.extend_sys_path()
+    command_dirs = get_command_dirs_from_config(config)
+    extend_sys_path(command_dirs)
     result = {}
-    for item in command_path.items:
+    for item in command_dirs:
         try:
             module_path = os.path.basename(item) + ".decorators"
             module = import_module(module_path)

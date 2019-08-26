@@ -14,6 +14,7 @@ def _ext():
 
 class Paths:
     # Cached result of finding the current project dir
+    # cc: project,
     _project_dir = None
 
     def __init__(self, project_dir=None):

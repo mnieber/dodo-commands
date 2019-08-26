@@ -10,7 +10,7 @@ class ShellCommandMapItem(CommandMapItem):
 
 
 class ShellCommandHandler:
-    def add_commands_to_map(self, command_path, file_map, command_map):
+    def add_commands_to_map(self, command_dirs, file_map, command_map):
         for command_dir, files in file_map.items():
             for file in files:
                 command_name, ext = os.path.splitext(os.path.basename(file))

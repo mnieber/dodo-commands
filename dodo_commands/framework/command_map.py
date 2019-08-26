@@ -11,7 +11,7 @@ class CommandMapItem(object):
         self.extension = extension
 
 
-def get_command_map(command_path):
+def get_command_map(command_dirs):
     """
     Return a dictionary mapping command names to their Python module directory.
     The dictionary is in the format {command_name: module_name}.
@@ -23,13 +23,13 @@ def get_command_map(command_path):
     command_map = {}
 
     file_map = {}
-    for command_dir in command_path.items:
+    for command_dir in command_dirs:
         file_map[command_dir] = list(
             glob.glob(os.path.join(command_dir, '*.*')))
 
     for handler in (PythonCommandHandler(), YamlCommandHandler(),
                     ShellCommandHandler()):
-        handler.add_commands_to_map(command_path, file_map, command_map)
+        handler.add_commands_to_map(command_dirs, file_map, command_map)
 
     return command_map
 

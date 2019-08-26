@@ -63,9 +63,39 @@ The layering mechanism is simple but powerful. As an example, consider placing t
 
     Calling ``dodo layer foo bar`` makes a small change in your configuration file by adding ``foo.bar.yaml`` to the ``${/ROOT/layers}`` node. Make sure that you do not have any unsaved configuration changes before calling this command.
 
-An alternative way to select a layer is using the ``--layer`` option (which you can use more than once per call). For example, ``dodo print-config --layer foo.baz.yaml ROOT`` loads the ``foo.baz.yaml`` layer and then prints the contents of the ``ROOT`` configuration key. 
+An alternative way to select a layer is using the ``--layer`` option (which you can use more than once per call). For example, ``dodo print-config --layer foo.baz.yaml ROOT`` loads the ``foo.baz.yaml`` layer and then prints the contents of the ``ROOT`` configuration key.
 
 Note that the layers ``foo.bar.yaml`` and ``foo.baz.yaml`` are considered to be mutually exclusive variations of the ``foo`` layer. Therefore, the use of ``--layer foo.baz.yaml`` will nullify any layer such as ``foo.bar.yaml`` in ``${/ROOT/layers}``.
+
+
+Layer aliases
+=============
+
+You can add aliases for any layer in ``${/ROOT/layer_aliases}``, e.g.
+
+.. code-block:: yaml
+
+    ROOT:
+        layer_aliases:
+            react: server.react.yaml
+
+This offers a convient shortcut for the ``--layer`` argument.
+Instead of writing ``dodo --layer server.react.yaml foo`` you can run ``dodo react.foo``. See the section below on Inferred Commands on how to make this even shorter.
+
+
+Inferred Commands
+=================
+
+In case you are always using a command in combination with a specific layer, then you can add it to the inferred commands of that layer:
+
+.. code-block:: yaml
+
+    # Root node in server.react.yaml
+    ROOT:
+        inferred_commands: ['foo']
+
+Now, when you run ``dodo foo``, then Dodo Commands will detect that the ``server.react.yaml`` layer has ``foo`` as an inferred command, and it will add ``--layer server.react.yaml`` to the command line. In other words, the result is that ``dodo foo`` becomes a shortcut for ``dodo react.foo``. Note that if there are two layers that have ``foo`` as an inferred command, then Dodo Commands will report an error.
+
 
 
 Including bits of configuration from packages

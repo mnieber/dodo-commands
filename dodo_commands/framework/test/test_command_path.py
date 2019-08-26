@@ -3,7 +3,7 @@
 import pytest
 import os
 
-from ..command_path import get_command_path
+from ..command_path import get_command_dirs_from_config
 from ..config_io import ConfigIO
 
 
@@ -38,7 +38,6 @@ class TestCommandPaths:  # noqa
     @pytest.mark.usefixtures("create_config", "create_command_dirs")
     def test_command_path(self, tmpdir):  # noqa
         config = ConfigIO(str(tmpdir)).load()
-        command_path = get_command_path(config)
-        expected_path = os.path.join(str(tmpdir), "foo", "foobar")
-        actual_paths = [x for x in command_path.items]
-        assert [expected_path] == actual_paths
+        command_dirs = get_command_dirs_from_config(config)
+        expected_dir = os.path.join(str(tmpdir), "foo", "foobar")
+        assert [expected_dir] == command_dirs

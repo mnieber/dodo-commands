@@ -5,7 +5,7 @@ import sys
 from dodo_commands import Dodo, CommandError
 from dodo_commands.framework.config_io import ConfigIO
 from dodo_commands.framework.command_map import get_command_map
-from dodo_commands.framework.command_path import get_command_path
+from dodo_commands.framework.command_path import get_command_dirs_from_config
 
 
 def _new_commands_dir():
@@ -13,9 +13,8 @@ def _new_commands_dir():
         return 'dodo_%s_commands' % Dodo.get_config('/ROOT/project_name')
 
     return os.path.normpath(
-        os.path.join(
-            Dodo.get_config('/ROOT/shared_config_dir'), '..',
-            _new_commands_basename()))
+        os.path.join(Dodo.get_config('/ROOT/shared_config_dir'), '..',
+                     _new_commands_basename()))
 
 
 def _args():
@@ -78,7 +77,7 @@ if Dodo.is_main(__name__, safe=True):
 
 if Dodo.is_main(__name__, safe='--create-commands-dir' not in sys.argv):
     args = _args()
-    command_path = get_command_path(Dodo.get_config())
+    command_dirs = get_command_dirs_from_config(Dodo.get_config())
 
     if args.create_commands_dir:
         project_dir = Dodo.get_config('/ROOT/project_dir')
@@ -95,7 +94,7 @@ if Dodo.is_main(__name__, safe='--create-commands-dir' not in sys.argv):
             Dodo.run(['touch', init_py])
 
         if not [
-                x for x in command_path.items
+                x for x in command_dirs
                 if os.path.normpath(x) == new_commands_dir
         ]:
             config = ConfigIO().load()
@@ -103,14 +102,14 @@ if Dodo.is_main(__name__, safe='--create-commands-dir' not in sys.argv):
             ConfigIO().save(config)
 
     if args.next_to:
-        command_map = get_command_map(command_path)
+        command_map = get_command_map(command_dirs)
         item = command_map.get(args.next_to)
 
         if not item:
             raise CommandError("Script not found: %s" % args.next_to)
 
-        dest_path = os.path.join(
-            os.path.dirname(item.filename), args.name + ".py")
+        dest_path = os.path.join(os.path.dirname(item.filename),
+                                 args.name + ".py")
 
     if os.path.exists(dest_path):
         raise CommandError("Destination already exists: %s" % dest_path)

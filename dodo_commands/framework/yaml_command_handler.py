@@ -16,7 +16,7 @@ class YamlCommandMapItem(CommandMapItem):
 
 
 class YamlCommandHandler:
-    def add_commands_to_map(self, command_path, file_map, command_map):
+    def add_commands_to_map(self, command_dirs, file_map, command_map):
         for command_dir, files in file_map.items():
             for file in files:
                 command_name, ext = os.path.splitext(os.path.basename(file))
@@ -51,10 +51,9 @@ class YamlCommandHandler:
                     default_val = None
                     if arg.startswith('--') and '=' in arg:
                         arg, default_val = arg.split('=')
-                    parser.add_argument(
-                        arg,
-                        default=None
-                        if default_val is None else self._expand(default_val))
+                    parser.add_argument(arg,
+                                        default=None if default_val is None
+                                        else self._expand(default_val))
 
         args = Dodo.parse_args(parser)
         Dodo.get_config()['_ARGS'] = args.__dict__

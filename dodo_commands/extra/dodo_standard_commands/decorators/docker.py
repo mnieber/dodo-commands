@@ -95,8 +95,6 @@ class Decorator:  # noqa
     def _add_environment_vars(cls, get_config, docker_config, docker_node):
         for key_val in get_config('/ENVIRONMENT/variable_map', {}).items():
             docker_node['env'].append("--env=%s=%s" % key_val)
-        for key_val in docker_config.get('variable_map', {}).items():
-            docker_node['env'].append("--env=%s=%s" % key_val)
 
     @classmethod
     def _add_extra_options(cls, docker_config, docker_node):

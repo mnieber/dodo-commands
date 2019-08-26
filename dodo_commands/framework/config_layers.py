@@ -4,29 +4,51 @@ import os
 from dodo_commands.framework.config_io import ConfigIO
 
 
-def get_layers(base_config=None, extra_layers=None):
-    config_io = ConfigIO()
-    layer_filenames = []
-    base_config = base_config or config_io.load() or {}
+def get_layer_patterns(layer):
+    return layer.get('ROOT', {}).get('layers', [])
 
-    for pattern in base_config.get('ROOT', {}).get('layers', []):
-        filenames = config_io.glob([pattern])
-        if not filenames:
-            print("Warning, no layers found for pattern: %s" % pattern)
-        layer_filenames.extend(filenames)
 
-    for extra_layer_filename in config_io.glob(extra_layers or []):
-        # Remove layers in the same group, because by definition
-        # we should not use both foo.bar.yaml and foo.baz.yaml.
-        parts = os.path.basename(extra_layer_filename).split('.')
+class LayerCollector:
+    def __init__(self, config_io=None):
+        self.config_io = config_io or ConfigIO()
+        self.layer_filenames = []
+
+    def _skip(self, layer_filename):
+        parts = os.path.basename(layer_filename).split('.')
         if len(parts) == 3:
-            pattern = os.path.join(os.path.dirname(extra_layer_filename),
+            pattern = os.path.join(os.path.dirname(layer_filename),
                                    parts[0] + '.*.*')
-            layer_filenames = [
-                x for x in layer_filenames if not fnmatch(x, pattern)
+            conflicts = [
+                x for x in self.layer_filenames if fnmatch(x, pattern)
             ]
+            for conflict in conflicts:
+                if conflict != layer_filename:
+                    raise Exception("Conflicting layers: %s and %s" %
+                                    (conflict, layer_filename))
+            if conflicts:
+                return True
+        return layer_filename in self.layer_filenames
 
-        if extra_layer_filename not in layer_filenames:
-            layer_filenames.append(extra_layer_filename)
+    def glob(self, layer_patterns, recursive=False):
+        new_layer_filenames = []
+        for layer_filename in self.config_io.glob(layer_patterns):
+            if not self._skip(layer_filename):
+                self.layer_filenames.append(layer_filename)
+                new_layer_filenames.append(layer_filename)
 
-    return layer_filenames
+        if recursive:
+            for layer_filename in new_layer_filenames:
+                more_layer_patterns = self.load_layer_patterns(layer_filename)
+                self.glob(more_layer_patterns, recursive)
+
+    def load_layer_patterns(self, layer_filename):
+        layer = self.config_io.load(layer_filename)
+        return get_layer_patterns(layer)
+
+
+def layer_filename_superset(layer_filenames=None,
+                            recursive=True,
+                            config_io=None):
+    layer_collector = LayerCollector(config_io)
+    layer_collector.glob(layer_filenames or ['config.yaml'], recursive)
+    return layer_collector.layer_filenames

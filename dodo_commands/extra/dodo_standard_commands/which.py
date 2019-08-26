@@ -5,10 +5,10 @@ import ruamel.yaml
 import sys
 
 from dodo_commands import Dodo
-from dodo_commands.framework.config_layers import get_layers
+from dodo_commands.framework.config_layers import layer_filename_superset
 from dodo_commands.framework.decorator_utils import _all_decorators
 from dodo_commands.framework.paths import Paths
-from dodo_commands.framework.command_path import get_command_path
+from dodo_commands.framework.command_path import get_command_dirs_from_config
 from dodo_commands.framework.global_config import projects_dir
 
 
@@ -62,13 +62,13 @@ def _args():  # noqa
 
 
 def _which_script(script):
-    command_path = get_command_path(Dodo.get_config())
-    for item in command_path.items:
+    command_dirs = get_command_dirs_from_config(Dodo.get_config())
+    for item in command_dirs:
         script_path = os.path.join(item, script + ".py")
         if os.path.exists(script_path):
             return os.path.realpath(script_path)
 
-    for item in command_path.items:
+    for item in command_dirs:
         for yml in glob.glob(os.path.join(item, "dodo.*.yaml")):
             with open(yml) as ifs:
                 if script in ruamel.yaml.round_trip_load(ifs.read()).keys():
@@ -98,8 +98,9 @@ if Dodo.is_main(__name__):
     elif args.directory:
         sys.stdout.write(_which_dir(args.directory) + '\n')
     elif args.decorators:
-        sys.stdout.write(", ".join(sorted(_all_decorators(Dodo.get_config()).keys())) +
-                         '\n')
+        sys.stdout.write(
+            ", ".join(sorted(_all_decorators(Dodo.get_config()).keys())) +
+            '\n')
     elif args.projects:
         projects = [
             x for x in os.listdir(projects_dir()) if os.path.isdir(
@@ -110,7 +111,7 @@ if Dodo.is_main(__name__):
         if Dodo.get_config("/ROOT/project_name", None):
             sys.stdout.write(Dodo.get_config("/ROOT/project_name") + '\n')
     elif args.layers:
-        for layer_filename in get_layers():
+        for layer_filename in layer_filename_superset():
             sys.stdout.write(layer_filename + '\n')
     elif args.what:
         x = _which_script(args.what) or _which_dir(args.what)

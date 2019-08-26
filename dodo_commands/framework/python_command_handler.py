@@ -10,6 +10,7 @@ from plumbum.commands.processes import CommandNotFound
 from dodo_commands.framework.config import Paths
 from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.command_map import CommandMapItem
+from dodo_commands.framework.command_path import extend_sys_path
 from dodo_commands.framework.util import query_yes_no
 
 
@@ -20,8 +21,8 @@ class PythonCommandMapItem(CommandMapItem):
 
 
 class PythonCommandHandler:
-    def add_commands_to_map(self, command_path, file_map, command_map):
-        command_path.extend_sys_path()
+    def add_commands_to_map(self, command_dirs, file_map, command_map):
+        extend_sys_path(command_dirs)
         for command_dir, files in file_map.items():
             for file in files:
                 command_name, ext = os.path.splitext(os.path.basename(file))

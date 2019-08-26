@@ -51,75 +51,72 @@ def merge_into_config(config, layer, xpath=None):
             config[key] = val
 
 
-class ConfigLoader:
-    """Load the project's dodo config and expand it."""
-    def __init__(self, config_io=None):
-        self.config_io = config_io or ConfigIO()
+def _add_to_config(config, section, key, value):
+    if section in config:
+        if key not in config[section]:
+            config[section][key] = value
 
-    def _add_to_config(self, config, section, key, value):
-        if section in config:
-            if key not in config[section]:
-                config[section][key] = value
 
-    def _system_commands_dir(self):
-        """Return directory where system command scripts are stored"""
-        import dodo_commands.dodo_system_commands
-        return os.path.dirname(dodo_commands.dodo_system_commands.__file__)
+def _system_commands_dir():
+    """Return directory where system command scripts are stored"""
+    import dodo_commands.dodo_system_commands
+    return os.path.dirname(dodo_commands.dodo_system_commands.__file__)
 
-    def _extend_config(self, config):
-        """Add special values to the project's config"""
-        project_dir = Paths().project_dir()
-        if project_dir:
-            self._add_to_config(config, "ROOT", "project_name",
-                                os.path.basename(project_dir))
-            self._add_to_config(config, "ROOT", "project_dir", project_dir)
-            self._add_to_config(config, "ROOT", "res_dir", Paths().res_dir())
 
-    def _extend_command_path(self, config):
-        """Add the system commands to the command path"""
-        self._add_to_config(config, "ROOT", "command_path", [])
-        config['ROOT']['command_path'].append(self._system_commands_dir())
-        if not Paths().project_dir():
-            config['ROOT']['command_path'].append(
-                os.path.join(Paths().default_commands_dir(), '*'))
+def _extend_config(config):
+    """Add special values to the project's config"""
+    project_dir = Paths().project_dir()
+    if project_dir:
+        _add_to_config(config, "ROOT", "project_name",
+                       os.path.basename(project_dir))
+        _add_to_config(config, "ROOT", "project_dir", project_dir)
+        _add_to_config(config, "ROOT", "res_dir", Paths().res_dir())
 
-    def _report(self, x):
-        sys.stderr.write(x)
-        sys.stderr.flush()
 
-    def load(self, layer_filenames, base_config=None, extend=True):
-        fallback_config = dict(ROOT={})
-        try:
-            config = base_config or self.config_io.load() or fallback_config
-            for layer_filename in layer_filenames:
-                layer = self.config_io.load(layer_filename)
-                merge_into_config(config, layer)
+def extend_command_path(config):
+    """Add the system commands to the command path"""
+    _add_to_config(config, "ROOT", "command_path", [])
+    config['ROOT']['command_path'].append(_system_commands_dir())
+    if not Paths().project_dir():
+        config['ROOT']['command_path'].append(
+            os.path.join(Paths().default_commands_dir(), '*'))
 
-        except ruamel.yaml.scanner.ScannerError:
-            config = fallback_config
-            self._report(
-                "There was an error while loading the configuration. "
+
+def _report(x):
+    sys.stderr.write(x)
+    sys.stderr.flush()
+
+
+def load_config(layer_filenames, config_io=None, filenames_and_layers=None):
+    config_io = config_io or ConfigIO()
+    try:
+        config = {'ROOT': {}}
+        for layer_filename in layer_filenames:
+            layer = config_io.load(layer_filename)
+            if filenames_and_layers is not None:
+                filenames_and_layers.append((layer_filename, layer))
+            merge_into_config(config, layer)
+
+    except ruamel.yaml.scanner.ScannerError:
+        _report("There was an error while loading the configuration. "
                 "Run 'dodo diff' to compare your configuration to the "
                 "default one.\n")
 
-        if extend:
-            self._extend_command_path(config)
-            self._extend_config(config)
+    _extend_config(config)
+    extra_vars = dict()
 
-        extra_vars = dict()
+    def _load_env(dotenv_file):
+        if not os.path.exists(dotenv_file):
+            _report("Dotenv file not found: %s\n" % dotenv_file)
+        extra_vars.update(dotenv_values(dotenv_file))
 
-        def _load_env(dotenv_file):
-            if not os.path.exists(dotenv_file):
-                self._report("Dotenv file not found: %s\n" % dotenv_file)
-            extra_vars.update(dotenv_values(dotenv_file))
+    # Call dotenv_values for every item of /ENV/dotenv
+    callbacks = {}
+    for idx, _ in enumerate(config['ROOT'].get('dotenv_files', [])):
+        callbacks['/ROOT/dotenv_files/%d' % idx] = _load_env
 
-        # Call dotenv_values for every item of /ENV/dotenv
-        callbacks = {}
-        for idx, _ in enumerate(config['ROOT'].get('dotenv_files', [])):
-            callbacks['/ROOT/dotenv_files/%d' % idx] = _load_env
-
-        ConfigExpander(extra_vars).run(config, callbacks=callbacks)
-        return config
+    ConfigExpander(extra_vars).run(config, callbacks=callbacks)
+    return config
 
 
 def expand_keys(config, text):
