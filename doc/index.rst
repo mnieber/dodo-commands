@@ -19,6 +19,7 @@ Contents:
    projects
    configuration
    commands
+   aliases
    dodo-singleton
    decorators
    sharing-projects
