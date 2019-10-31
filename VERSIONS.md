@@ -1,5 +1,10 @@
 # Version history
 
+## 0.27.2
+
+- Add cache to ConfigIO
+- Add aliases chapter to documentation
+
 ## 0.27.1
 
 - Add --trace argument
