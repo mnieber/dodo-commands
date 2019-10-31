@@ -1,5 +1,10 @@
 # Version history
 
+## 0.27.3
+
+- Raise an error if the layer alias is unknown
+- Always show help if --help is used
+
 ## 0.27.2
 
 - Add cache to ConfigIO
