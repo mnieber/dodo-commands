@@ -24,14 +24,18 @@ class Dodo:
     _filenames_and_layers = []
 
     @classmethod
-    def _extra_layers(cls):
+    def _parse_layer_arguments(cls, args):
         parser = argparse.ArgumentParser()
         parser.add_argument('-L',
                             '--layer',
                             action='append',
                             help=argparse.SUPPRESS)
-        args, sys.argv = parser.parse_known_args(
-            [x for x in sys.argv if x not in ('--help', '-h')])
+        return parser.parse_known_args(
+            [x for x in args if x not in ('--help', '-h')])
+
+    @classmethod
+    def _extra_layers(cls, args):
+        layer_args, _ = cls._parse_layer_arguments(args)
 
         def parse(x):
             if '=' in x:
@@ -39,13 +43,14 @@ class Dodo:
                 return '.'.join(parts + ['yaml'])
             return x
 
-        return [parse(x) for x in args.layer or []]
+        return [parse(x) for x in layer_args.layer or []]
 
     @classmethod
     def get_config(cls, key='', default_value="__not_set_234234__"):  # noqa
         if cls._config is None:
             cls._config = load_config(
-                layer_filename_superset(['config.yaml'] + cls._extra_layers()),
+                layer_filename_superset(['config.yaml'] +
+                                        cls._extra_layers(sys.argv)),
                 filenames_and_layers=cls._filenames_and_layers)
             extend_command_path(cls._config)
 
@@ -91,16 +96,17 @@ class Dodo:
 
         add_config_args(parser, cls.get_config(), config_args)
         argcomplete.autocomplete(parser)
-        if os.path.splitext(sys.argv[0])[1].lower() == '.py' or len(
-                sys.argv) == 1:
-            parser.prog = sys.argv[0]
+
+        _, args = cls._parse_layer_arguments(sys.argv)
+
+        if os.path.splitext(args[0])[1].lower() == '.py' or len(args) == 1:
+            parser.prog = args[0]
             first_arg_index = 1
         else:
             first_arg_index = 2
-            parser.prog = "%s %s" % (os.path.basename(
-                sys.argv[0]), sys.argv[1])
+            parser.prog = "%s %s" % (os.path.basename(args[0]), args[1])
 
-        cls._command_line_args = parser.parse_args(sys.argv[first_arg_index:])
+        cls._command_line_args = parser.parse_args(args[first_arg_index:])
 
         if config_args:
             for config_arg in config_args:

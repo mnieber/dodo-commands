@@ -103,13 +103,17 @@ def execute_from_command_line(argv):
                                  inferred_commands)
 
     if command_name == '--version':
-        sys.stdout.write(get_version() + '\n')
+        print(get_version())
         sys.exit(0)
 
     command_alias = find_command_alias(command_name, command_aliases)
     if command_alias and command_alias[0] in command_map:
         command_name = command_alias[0]
         sys.argv = sys.argv[:1] + command_alias + sys.argv[2:]
+
+    if ('--trace' in sys.argv):
+        sys.stderr.write('%s\n' % [x for x in sys.argv if x != '--trace'])
+        sys.exit(0)
 
     if command_name not in command_map:
         print("Unknown dodo command: %s" % command_name)

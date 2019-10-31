@@ -21,6 +21,7 @@ The search path for commands is determined by the ``${/ROOT/command_path}`` sett
         - ~/.dodo_commands/default_commands/*
         - ${/ROOT/src_dir}/special_commands
 
+
 Installing global command packages
 ==================================
 
@@ -44,6 +45,7 @@ By using the ``--defaults`` flag, a symlink to the command package is automatica
 .. tip::
 
     Don't use ``dodo install-commands`` for project specific command scripts. Instead, store them inside the project's source tree, and reference them directly in the ``/ROOT/command_path`` node of the configuration file.
+
 
 Excluding directories from the command path
 ===========================================
@@ -74,23 +76,3 @@ Each Dodo command should ideally run out-of-the-box. If your ``foo`` command nee
     - dominate==2.2.0
 
 In this example, calling the ``foo`` command will ask the user for confirmation to automatically install the ``dominate`` package into the python virtual environment of the active Dodo Commands project.
-
-
-Aliases
-=======
-
-You can add aliases for any dodo command in the ``aliases`` section of :ref:`global_config`, e.g.
-
-.. code-block:: ini
-
-    [alias]
-    wh = which
-    whpp = which --projects
-
-You can also add aliases in ``${/ROOT/aliases}``.
-
-.. code-block:: yaml
-
-    ROOT:
-        aliases:
-            pc-foo: print-config --layer foo.bar.yaml
