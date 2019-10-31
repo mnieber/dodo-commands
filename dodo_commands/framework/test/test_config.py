@@ -65,8 +65,7 @@ class TestConfigIO:  # noqa
         foo_dir = os.path.join(str(tmpdir), 'foo')
         config_io = ConfigIO(str(tmpdir))  # noqa
         full_config = load_config(['config.yaml', 'mylayer.yml'],
-                                  config_io=config_io,
-                                  extend=False)
+                                  config_io=config_io)
 
         assert full_config['ROOT']['command_path'] == [
             os.path.join(foo_dir, 'bar'),
