@@ -71,9 +71,11 @@ def _add_matching_layer_aliases_to_argv(layer_aliases, inferred_layer):
     if inferred_layer and inferred_layer not in selected_aliases:
         selected_aliases.append(inferred_layer)
 
-    matching_layer_aliases = [
-        layer_aliases[x] for x in selected_aliases if layer_aliases[x]
-    ]
+    for x in selected_aliases:
+        if x not in layer_aliases:
+            raise CommandError("Unknown layer alias: %s" % x)
+
+    matching_layer_aliases = [layer_aliases[x] for x in selected_aliases]
     aliased_layer_options = ["--layer=%s" % x for x in matching_layer_aliases]
     sys.argv = sys.argv[:2] + [x for x in aliased_layer_options if x
                                ] + sys.argv[2:]
@@ -85,12 +87,11 @@ def execute_from_command_line(argv):
 
     try:
         inferred_commands = get_inferred_commands(root_layer)
+        if len(sys.argv) > 1:
+            inferred_layer = inferred_commands.get(sys.argv[1], None)
+            _add_matching_layer_aliases_to_argv(layer_aliases, inferred_layer)
     except Exception as e:
         _handle_exception(e)
-
-    if len(sys.argv) > 1:
-        inferred_layer = inferred_commands.get(sys.argv[1], None)
-        _add_matching_layer_aliases_to_argv(layer_aliases, inferred_layer)
 
     try:
         config = Dodo.get_config()
