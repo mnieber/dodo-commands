@@ -93,12 +93,13 @@ class Dodo:
                             action='store_true',
                             help=argparse.SUPPRESS)
 
-        # The --layer option is handled by the argument parser in cls._extra_layers.
-        # We need to add it to this parser as well, otherwise it will complain.
-        parser.add_argument('-L',
-                            '--layer',
-                            action='append',
-                            help=argparse.SUPPRESS)
+        # Explicitly call print_help, because some scripts capture all
+        # additional
+        if '--help' in sys.argv:
+            if not ('--' in sys.argv
+                    and sys.argv.index('--') < sys.argv.index('--help')):
+                parser.print_help()
+                sys.exit(0)
 
         for decorator in get_decorators(cls.command_name, cls.get_config()):
             decorator.add_arguments(parser)
@@ -106,6 +107,8 @@ class Dodo:
         add_config_args(parser, cls.get_config(), config_args)
         argcomplete.autocomplete(parser)
 
+        # Remove the layer arguments from the args that are passed to
+        # the script.
         _, args = cls._parse_layer_arguments(sys.argv)
 
         if os.path.splitext(args[0])[1].lower() == '.py' or len(args) == 1:
