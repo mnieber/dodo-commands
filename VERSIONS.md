@@ -1,5 +1,9 @@
 # Version history
 
+## 0.27.1
+
+- Add --trace argument
+
 ## 0.27.0
 
 - Support use of /DOCKER/options/foo/user
