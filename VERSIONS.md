@@ -1,5 +1,13 @@
 # Version history
 
+## 0.27.0
+
+- Support use of /DOCKER/options/foo/user
+- Use /DOCKER_COMPOSE/src_dir and /DOCKER_COMPOSE/map
+- Add argument --user to docker-exec
+- Move --confirm and --echo to decorator
+- Add --layer argument, layer aliases and inferred commands
+
 ## 0.26.0
 
 - Add command docker-compose
@@ -55,7 +63,7 @@
 - Load dot env files when expanding the config
 - Add option --browse to cd.py
 - Add argument --replace to docker-create
-- Add flag is_daemon to docker decorator 
+- Add flag is_daemon to docker decorator
 - Add command dodo exec
 - Support commands written as YAML files and shell scripts
 - Simplify docker-build
