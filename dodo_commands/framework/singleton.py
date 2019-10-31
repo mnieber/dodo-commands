@@ -12,6 +12,7 @@ from dodo_commands.framework.config_expander import Key, KeyNotFound
 from dodo_commands.framework.args_tree import ArgsTreeNode
 from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.config_layers import layer_filename_superset
+from dodo_commands.framework.config_io import ConfigIO
 
 
 class Dodo:
@@ -20,8 +21,9 @@ class Dodo:
     safe = True
 
     _command_line_args = argparse.Namespace()
+    _config_io = None
     _config = None
-    _filenames_and_layers = []
+    _layer_filenames = None
 
     @classmethod
     def _parse_layer_arguments(cls, args):
@@ -46,12 +48,19 @@ class Dodo:
         return [parse(x) for x in layer_args.layer or []]
 
     @classmethod
+    def get_config_io(cls):
+        if cls._config_io is None:
+            cls._config_io = ConfigIO()
+        return cls._config_io
+
+    @classmethod
     def get_config(cls, key='', default_value="__not_set_234234__"):  # noqa
         if cls._config is None:
-            cls._config = load_config(
-                layer_filename_superset(['config.yaml'] +
-                                        cls._extra_layers(sys.argv)),
-                filenames_and_layers=cls._filenames_and_layers)
+            cls._layer_filenames = layer_filename_superset(
+                ['config.yaml'] + cls._extra_layers(sys.argv),
+                config_io=cls.get_config_io())
+            cls._config = load_config(cls._layer_filenames,
+                                      config_io=cls.get_config_io())
             extend_command_path(cls._config)
 
         try:

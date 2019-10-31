@@ -87,14 +87,12 @@ def _report(x):
     sys.stderr.flush()
 
 
-def load_config(layer_filenames, config_io=None, filenames_and_layers=None):
+def load_config(layer_filenames, config_io=None):
     config_io = config_io or ConfigIO()
     try:
         config = {'ROOT': {}}
         for layer_filename in layer_filenames:
             layer = config_io.load(layer_filename)
-            if filenames_and_layers is not None:
-                filenames_and_layers.append((layer_filename, layer))
             merge_into_config(config, layer)
 
     except ruamel.yaml.scanner.ScannerError:

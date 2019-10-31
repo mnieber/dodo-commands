@@ -14,6 +14,7 @@ class ConfigIO:
 
         Arg config_base_dir defaults to Paths().res_dir().
         """
+        self._cache = {}
         self.config_base_dir = (Paths().res_dir() if config_base_dir is None
                                 else config_base_dir)
 
@@ -40,11 +41,17 @@ class ConfigIO:
     def load(self, config_filename='config.yaml'):
         """Get configuration."""
         full_config_filename = self._path_to([config_filename])
+
+        if full_config_filename in self._cache:
+            return self._cache[full_config_filename]
+
         if not os.path.exists(full_config_filename):
             return None
 
         with open(full_config_filename) as f:
             config = ruamel.yaml.round_trip_load(f.read())
+
+        self._cache[full_config_filename] = config
         return config
 
     def save(self, config, config_filename='config.yaml'):

@@ -7,7 +7,6 @@ from dodo_commands.framework.command_map import get_command_map
 from dodo_commands.framework.command_path import get_command_dirs_from_config
 from dodo_commands.framework.config import load_config
 from dodo_commands.framework import get_version
-from dodo_commands.framework.config_io import ConfigIO
 from dodo_commands.framework.inferred_commands import get_inferred_commands
 from dodo_commands import Dodo
 
@@ -81,7 +80,7 @@ def _aliases(config):
 
 
 def _collect_command_dirs(config, layer_filenames, command_dir_2_alias_set):
-    config_io = ConfigIO()
+    config_io = Dodo.get_config_io()
     for alias, alias_target in _aliases(config):
         extra_layer_filenames = [
             x for x in config_io.glob([alias_target])
@@ -129,14 +128,13 @@ if Dodo.is_main(__name__, safe=True):
         Dodo.run([sys.argv[0], args.command, '--help'])
     else:
         command_dirs = get_command_dirs_from_config(Dodo.get_config())
-        layer_filenames = [x[0] for x in Dodo._filenames_and_layers]
 
         command_dir_2_alias_set = defaultdict(lambda: set())
         for command_dir in command_dirs:
             alias_set = command_dir_2_alias_set[command_dir]
             _add_to_alias_set(alias_set, '')
 
-        _collect_command_dirs(Dodo.get_config(), layer_filenames,
+        _collect_command_dirs(Dodo.get_config(), Dodo._layer_filenames,
                               command_dir_2_alias_set)
 
         alias_set_2_command_dirs = defaultdict(lambda: list())

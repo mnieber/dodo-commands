@@ -1,13 +1,13 @@
-from dodo_commands.framework.config_io import ConfigIO
 from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.alias import get_command_aliases
+from dodo_commands.framework.singleton import Dodo
 
 
 def get_inferred_commands(root_layer):
     layer_aliases = root_layer.get('ROOT', {}).get('layer_aliases', {})
 
     inferred_commands = {}
-    config_io = ConfigIO()
+    config_io = Dodo.get_config_io()
     for layer_alias, layer_alias_target in layer_aliases.items():
         layer_filenames = config_io.glob([layer_alias_target])
         for layer_filename in layer_filenames:
