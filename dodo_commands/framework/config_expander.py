@@ -135,8 +135,9 @@ class ConfigExpander:
 
     _key_regexp = r"\$\{(/[^\}]*)\}"
 
-    def __init__(self, extra_vars=None):
+    def __init__(self, extra_vars=None, warn=True):
         self.extra_vars = extra_vars or {}
+        self.warn = warn
 
     @classmethod
     def _get_xpath_from_string(cls, xpath_string):
@@ -157,9 +158,9 @@ class ConfigExpander:
 
                 key = Key(self.config, xpath)
                 if key.exists():
-                    expanded_str = (
-                        expanded_str[:key_expression.start()] + str(
-                            key.get()) + expanded_str[key_expression.end():])
+                    expanded_str = (expanded_str[:key_expression.start()] +
+                                    str(key.get()) +
+                                    expanded_str[key_expression.end():])
 
                     if expanded_str not in known_strs:
                         known_strs.append(expanded_str)
@@ -243,5 +244,7 @@ class ConfigExpander:
 
             nodes = new_nodes
 
-        for node in nodes:
-            sys.stderr.write("Warning: %s\n" % node.warning_msg_not_expanded())
+        if self.warn:
+            for node in nodes:
+                sys.stderr.write("Warning: %s\n" %
+                                 node.warning_msg_not_expanded())

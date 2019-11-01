@@ -86,7 +86,8 @@ def _collect_command_dirs(config, layer_filenames, command_dir_2_alias_set):
             x for x in config_io.glob([alias_target])
             if x not in layer_filenames
         ]
-        updated_layer = load_config(layer_filenames + extra_layer_filenames)
+        updated_layer = load_config(layer_filenames + extra_layer_filenames,
+                                    warn=False)
         for command_dir in get_command_dirs_from_config(updated_layer):
             alias_set = command_dir_2_alias_set[command_dir]
             _add_to_alias_set(alias_set, alias)

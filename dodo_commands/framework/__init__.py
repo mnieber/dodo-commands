@@ -82,7 +82,7 @@ def _add_matching_layer_aliases_to_argv(layer_aliases, inferred_layer):
 
 
 def execute_from_command_line(argv):
-    root_layer = load_config(['config.yaml'])
+    root_layer = load_config(['config.yaml'], warn=False)
     layer_aliases = root_layer.get('ROOT', {}).get('layer_aliases', {})
 
     try:

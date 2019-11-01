@@ -87,7 +87,7 @@ def _report(x):
     sys.stderr.flush()
 
 
-def load_config(layer_filenames, config_io=None):
+def load_config(layer_filenames, config_io=None, warn=True):
     config_io = config_io or ConfigIO()
     try:
         config = {'ROOT': {}}
@@ -113,7 +113,7 @@ def load_config(layer_filenames, config_io=None):
     for idx, _ in enumerate(config['ROOT'].get('dotenv_files', [])):
         callbacks['/ROOT/dotenv_files/%d' % idx] = _load_env
 
-    ConfigExpander(extra_vars).run(config, callbacks=callbacks)
+    ConfigExpander(extra_vars, warn=warn).run(config, callbacks=callbacks)
     return config
 
 
