@@ -65,20 +65,43 @@ def _command_name(command_map, command_aliases, layer_aliases,
     return 'help'
 
 
-def _add_matching_layer_aliases_to_argv(layer_aliases, inferred_layer):
+def _get_selected_layer_alias_set():
     prefix_str, sys.argv[1] = _split_prefix(sys.argv[1])
-    selected_aliases = [x for x in prefix_str.split('.') if x]
-    if inferred_layer and inferred_layer not in selected_aliases:
-        selected_aliases.append(inferred_layer)
+    return set([x for x in prefix_str.split('.') if x])
 
+
+def _get_layer_alias_targets(layer_aliases, selected_aliases):
     for x in selected_aliases:
         if x not in layer_aliases:
             raise CommandError("Unknown layer alias: %s" % x)
+    return [layer_aliases[x] for x in selected_aliases]
 
-    matching_layer_aliases = [layer_aliases[x] for x in selected_aliases]
-    aliased_layer_options = ["--layer=%s" % x for x in matching_layer_aliases]
-    sys.argv = sys.argv[:2] + [x for x in aliased_layer_options if x
-                               ] + sys.argv[2:]
+
+def _add_layers_to_argv(layer_filenames):
+    aliased_layer_options = ["--layer=%s" % x for x in layer_filenames]
+    sys.argv = sys.argv[:2] + [
+        x for x in aliased_layer_options if x and x not in sys.argv
+    ] + sys.argv[2:]
+
+
+def _process_layer_aliases(layer_aliases, inferred_commands):
+    selected_aliases = _get_selected_layer_alias_set()
+
+    inferred_layer = inferred_commands.get(sys.argv[1], None)
+    if inferred_layer:
+        selected_aliases.add(inferred_layer)
+
+    layer_filenames = _get_layer_alias_targets(layer_aliases, selected_aliases)
+    _add_layers_to_argv(layer_filenames)
+
+
+def _process_command_alias(command_alias, layer_aliases, inferred_commands):
+    # The command alias target may itself contain layer aliases and
+    # inferred commands, so call _process_layer_aliases again
+    sys.argv = sys.argv[:1] + command_alias + sys.argv[2:]
+    _process_layer_aliases(layer_aliases, inferred_commands)
+    command_name = sys.argv[1]
+    return command_name
 
 
 def execute_from_command_line(argv):
@@ -88,8 +111,7 @@ def execute_from_command_line(argv):
     try:
         inferred_commands = get_inferred_commands(root_layer)
         if len(sys.argv) > 1:
-            inferred_layer = inferred_commands.get(sys.argv[1], None)
-            _add_matching_layer_aliases_to_argv(layer_aliases, inferred_layer)
+            _process_layer_aliases(layer_aliases, inferred_commands)
     except Exception as e:
         _handle_exception(e)
 
@@ -108,9 +130,9 @@ def execute_from_command_line(argv):
         sys.exit(0)
 
     command_alias = find_command_alias(command_name, command_aliases)
-    if command_alias and command_alias[0] in command_map:
-        command_name = command_alias[0]
-        sys.argv = sys.argv[:1] + command_alias + sys.argv[2:]
+    if command_alias:
+        command_name = _process_command_alias(command_alias, layer_aliases,
+                                              inferred_commands)
 
     if ('--trace' in sys.argv):
         sys.stderr.write('%s\n' % [x for x in sys.argv if x != '--trace'])
