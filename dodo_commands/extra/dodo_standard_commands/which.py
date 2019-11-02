@@ -5,11 +5,11 @@ import ruamel.yaml
 import sys
 
 from dodo_commands import Dodo
-from dodo_commands.framework.config_layers import layer_filename_superset
 from dodo_commands.framework.decorator_utils import _all_decorators
 from dodo_commands.framework.paths import Paths
 from dodo_commands.framework.command_path import get_command_dirs_from_config
 from dodo_commands.framework.global_config import projects_dir
+from dodo_commands.framework.container.utils import get_ordered_layer_paths
 
 
 def _args():  # noqa
@@ -111,8 +111,9 @@ if Dodo.is_main(__name__):
         if Dodo.get_config("/ROOT/project_name", None):
             sys.stdout.write(Dodo.get_config("/ROOT/project_name") + '\n')
     elif args.layers:
-        for layer_filename in layer_filename_superset():
-            sys.stdout.write(layer_filename + '\n')
+        layer_paths = get_ordered_layer_paths(Dodo.get_container())
+        for layer_path in layer_paths:
+            sys.stdout.write(layer_path + '\n')
     elif args.what:
         x = _which_script(args.what) or _which_dir(args.what)
         if x:

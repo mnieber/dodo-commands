@@ -5,87 +5,60 @@ import sys
 
 from plumbum import FG, ProcessExecutionError, local
 
-from dodo_commands.framework.config import load_config, extend_command_path
 from dodo_commands.framework.config_arg import add_config_args
 from dodo_commands.framework.decorator_utils import get_decorators
 from dodo_commands.framework.config_expander import Key, KeyNotFound
 from dodo_commands.framework.args_tree import ArgsTreeNode
 from dodo_commands.framework.command_error import CommandError
-from dodo_commands.framework.config_layers import layer_filename_superset
-from dodo_commands.framework.config_io import ConfigIO
+from dodo_commands.framework.util import classproperty
+from dodo_commands.framework.container.container import Container
 
 
 class Dodo:
-    script_path = None
-    command_name = None
     safe = True
 
     _command_line_args = argparse.Namespace()
-    _config_io = None
-    _config = None
-    _layer_filenames = None
+    _container = None
 
     @classmethod
-    def _parse_layer_arguments(cls, args):
-        parser = argparse.ArgumentParser()
-        parser.add_argument('-L',
-                            '--layer',
-                            action='append',
-                            help=argparse.SUPPRESS)
-        return parser.parse_known_args(
-            [x for x in args if x not in ('--help', '-h')])
+    def get_container(cls):
+        if cls._container is None:
+            cls._container = Container()
+            cls._container.run_actions()
 
-    @classmethod
-    def _extra_layers(cls, args):
-        layer_args, _ = cls._parse_layer_arguments(args)
+        return cls._container
 
-        def parse(x):
-            if '=' in x:
-                parts = x.split('=')
-                return '.'.join(parts + ['yaml'])
-            return x
-
-        return [parse(x) for x in layer_args.layer or []]
-
-    @classmethod
-    def get_config_io(cls):
-        if cls._config_io is None:
-            cls._config_io = ConfigIO()
-        return cls._config_io
+    @classproperty
+    def command_name(cls):  # noqa
+        return cls.get_container().command_line.command_name
 
     @classmethod
     def get_config(cls, key='', default_value="__not_set_234234__"):  # noqa
-        if cls._config is None:
-            cls._layer_filenames = layer_filename_superset(
-                ['config.yaml'] + cls._extra_layers(sys.argv),
-                config_io=cls.get_config_io())
-            cls._config = load_config(cls._layer_filenames,
-                                      config_io=cls.get_config_io())
-            extend_command_path(cls._config)
+        config = cls.get_container().config.config
 
         try:
             xpath = [k for k in key.split("/") if k]
-            return Key(cls._config, xpath).get()
+            return Key(config, xpath).get()
         except KeyNotFound:
             if default_value == "__not_set_234234__":
                 raise
             return default_value
 
     @classmethod
-    def get_layers(cls):
-        return cls._layers
-
-    @classmethod
     def is_main(cls, name, safe=None):
         if safe is not None:
             cls.safe = safe
 
-        if name not in ('__main__', cls.script_path):
+        if name == '__main__':
+            return True
+
+        commands = cls.get_container().commands
+        command_map_item = commands.command_map.get(cls.command_name, None)
+        if not command_map_item:
             return False
 
-        main_file_basename = os.path.basename(sys.modules[name].__file__)
-        cls.command_name = os.path.splitext(main_file_basename)[0]
-        return True
+        script_path = command_map_item.package_path + '.' + cls.command_name
+        return name == script_path
 
     @classmethod
     def parse_args(cls, parser, config_args=None):
@@ -93,13 +66,9 @@ class Dodo:
                             action='store_true',
                             help=argparse.SUPPRESS)
 
-        # Explicitly call print_help, because some scripts capture all
-        # additional
-        if '--help' in sys.argv:
-            if not ('--' in sys.argv
-                    and sys.argv.index('--') < sys.argv.index('--help')):
-                parser.print_help()
-                sys.exit(0)
+        if cls.get_container().command_line.is_help:
+            parser.print_help()
+            sys.exit(0)
 
         for decorator in get_decorators(cls.command_name, cls.get_config()):
             decorator.add_arguments(parser)
@@ -107,18 +76,11 @@ class Dodo:
         add_config_args(parser, cls.get_config(), config_args)
         argcomplete.autocomplete(parser)
 
-        # Remove the layer arguments from the args that are passed to
-        # the script.
-        _, args = cls._parse_layer_arguments(sys.argv)
-
-        if os.path.splitext(args[0])[1].lower() == '.py' or len(args) == 1:
-            parser.prog = args[0]
-            first_arg_index = 1
-        else:
-            first_arg_index = 2
-            parser.prog = "%s %s" % (os.path.basename(args[0]), args[1])
-
-        cls._command_line_args = parser.parse_args(args[first_arg_index:])
+        args = cls.get_container().command_line.input_args
+        parser.prog = os.path.basename(args[0])
+        if len(args) > 1:
+            parser.prog += " %s" % args[1]
+        cls._command_line_args = parser.parse_args(args[2:])
 
         if config_args:
             for config_arg in config_args:

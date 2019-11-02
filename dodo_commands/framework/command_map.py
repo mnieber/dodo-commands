@@ -1,8 +1,6 @@
 import glob
 import os
 
-from dodo_commands.framework.singleton import Dodo
-
 
 class CommandMapItem(object):
     def __init__(self, group, filename, extension):
@@ -47,7 +45,6 @@ def execute_script(command_map, command_name):
     command_map_item = command_map[command_name]
 
     if command_map_item.extension == 'py':
-        Dodo.script_path = command_map_item.package_path + '.' + command_name
         PythonCommandHandler().execute(command_map_item, command_name)
     elif command_map_item.extension == 'yaml':
         YamlCommandHandler().execute(command_map_item, command_name)

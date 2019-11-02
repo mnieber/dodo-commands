@@ -87,18 +87,27 @@ def _report(x):
     sys.stderr.flush()
 
 
-def load_config(layer_filenames, config_io=None, warn=True):
-    config_io = config_io or ConfigIO()
-    try:
-        config = {'ROOT': {}}
-        for layer_filename in layer_filenames:
-            layer = config_io.load(layer_filename)
-            merge_into_config(config, layer)
+def check_conflicts(layer_paths):
+    generic_paths = {}
+    for path in layer_paths:
+        parts = os.path.basename(path).split('.')
+        if len(parts) == 3:
+            generic_path = os.path.join(os.path.dirname(path), parts[0])
 
-    except ruamel.yaml.scanner.ScannerError:
-        _report("There was an error while loading the configuration. "
-                "Run 'dodo diff' to compare your configuration to the "
-                "default one.\n")
+            conflicting_path = generic_paths.get(generic_path, None)
+            if conflicting_path:
+                raise CommandError("Conflicting layers: %s and %s" %
+                                   (path, conflicting_path))
+
+            generic_paths[generic_path] = path
+
+    return layer_paths
+
+
+def build_config(layers, warn=True):
+    config = {'ROOT': {}}
+    for layer in layers:
+        merge_into_config(config, layer)
 
     _extend_config(config)
     extra_vars = dict()
@@ -115,6 +124,20 @@ def load_config(layer_filenames, config_io=None, warn=True):
 
     ConfigExpander(extra_vars, warn=warn).run(config, callbacks=callbacks)
     return config
+
+
+def load_config(layer_filenames, config_io=None, warn=True):
+    layers = []
+    config_io = config_io or ConfigIO()
+    try:
+        for layer_filename in layer_filenames:
+            layers.append(config_io.load(layer_filename))
+    except ruamel.yaml.scanner.ScannerError:
+        _report("There was an error while loading the configuration. "
+                "Run 'dodo diff' to compare your configuration to the "
+                "default one.\n")
+
+    return build_config(layers, warn)
 
 
 def expand_keys(config, text):

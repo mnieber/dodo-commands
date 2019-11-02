@@ -68,6 +68,7 @@ class Activator:
             "ruamel.yaml",
             "semantic_version",
             "six",
+            "funcy",
         )
 
         symlink(os.path.realpath(os.path.dirname(dodo_commands.__file__)),

@@ -1,54 +1,73 @@
-from fnmatch import fnmatch
 import os
-
-from dodo_commands.framework.config_io import ConfigIO
-
-
-def get_layer_patterns(layer):
-    return layer.get('ROOT', {}).get('layers', [])
+from funcy.py2 import distinct, flatten
+from dodo_commands.framework.funcy import (map_with, ds, for_each, drill,
+                                           keep_if)
 
 
-class LayerCollector:
-    def __init__(self, config_io=None):
-        self.config_io = config_io or ConfigIO()
-        self.layer_filenames = []
+def layer_filename_superset(layer_filenames, config_io, recursive=True):
+    selected_layer_by_path = {}
 
-    def _skip(self, layer_filename):
-        parts = os.path.basename(layer_filename).split('.')
-        if len(parts) == 3:
-            pattern = os.path.join(os.path.dirname(layer_filename),
-                                   parts[0] + '.*.*')
-            conflicts = [
-                x for x in self.layer_filenames if fnmatch(x, pattern)
-            ]
-            for conflict in conflicts:
-                if conflict != layer_filename:
-                    raise Exception("Conflicting layers: %s and %s" %
-                                    (conflict, layer_filename))
-            if conflicts:
-                return True
-        return layer_filename in self.layer_filenames
+    def load_layers(layer_paths):
+        def map_to_layer_filenames(layer_paths):
+            return config_io.glob(layer_paths)
 
-    def glob(self, layer_patterns, recursive=False):
-        new_layer_filenames = []
-        for layer_filename in self.config_io.glob(layer_patterns):
-            if not self._skip(layer_filename):
-                self.layer_filenames.append(layer_filename)
-                new_layer_filenames.append(layer_filename)
+        def map_to_filename_and_layer(layer_filename):
+            return layer_filename, config_io.load(layer_filename)
 
-        if recursive:
-            for layer_filename in new_layer_filenames:
-                more_layer_patterns = self.load_layer_patterns(layer_filename)
-                self.glob(more_layer_patterns, recursive)
+        def do_store(layer_filename, layer):
+            selected_layer_by_path[layer_filename] = layer
 
-    def load_layer_patterns(self, layer_filename):
-        layer = self.config_io.load(layer_filename)
-        return get_layer_patterns(layer)
+        def map_to_nested_layer_paths(layer_filename, layer):
+            return drill(layer, 'ROOT', 'layers', default=[])
+
+        def get_flat_list(list_of_lists):
+            return distinct(flatten(list_of_lists))
+
+        x = map_to_layer_filenames(layer_paths)
+        # [[layer_filename]]
+        x = map_with(map_to_filename_and_layer)(x)
+        # [layer_filename, layer]
+        x = for_each(ds(do_store))(x)
+        # [layer_filename, layer]
+        x = map_with(ds(map_to_nested_layer_paths))(x)
+        # [[layer_filename]]
+        x = get_flat_list(x)
+        # [layer_filename, layer]
+        if x:
+            load_layers(x)
+
+    load_layers(layer_filenames)
+    return list(selected_layer_by_path.keys())
 
 
-def layer_filename_superset(layer_filenames=None,
-                            recursive=True,
-                            config_io=None):
-    layer_collector = LayerCollector(config_io)
-    layer_collector.glob(layer_filenames or ['config.yaml'], recursive)
-    return layer_collector.layer_filenames
+def get_conflicts_in_layer_paths(layer_paths):
+    generic_paths = {}
+
+    def map_to_layer_path_and_parts(path):
+        parts = os.path.basename(path).split('.')
+        return path, parts
+
+    def has_flavours(path, parts):
+        return len(parts) == 3
+
+    def map_to_path_and_generic_path(path, parts):
+        generic_path = os.path.join(os.path.dirname(path), parts[0])
+        return path, generic_path
+
+    def is_conflict(path, generic_path):
+        result = bool(generic_paths.get(generic_path, None))
+        if not result:
+            generic_paths[generic_path] = path
+        return result
+
+    x = layer_paths
+    # [path]
+    x = map_with(map_to_layer_path_and_parts)(x)
+    # [(path, parts)]
+    x = keep_if(ds(has_flavours))(x)
+    # [(path, parts)]
+    x = map_with(ds(map_to_path_and_generic_path))(x)
+    # [(path, generic_path)]
+    x = keep_if(ds(is_conflict))(x)
+
+    return x

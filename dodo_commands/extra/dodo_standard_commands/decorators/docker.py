@@ -16,6 +16,7 @@ def _is_tuple(x):
 # Resp: reads docker related settings from the docker_config and uses
 # them to modify the current args_tree_root_node.
 
+
 class Decorator:  # noqa
     def is_used(self, config, command_name, decorator_name):
         return uses_decorator(config, command_name, decorator_name)
@@ -183,7 +184,8 @@ class Decorator:  # noqa
     def add_arguments(self, parser):  # noqa
         pass
 
-    def modify_args(self, command_line_args, args_tree_root_node, cwd):  # override
+    def modify_args(self, command_line_args, args_tree_root_node,
+                    cwd):  # override
         docker_node, _ = self.docker_node(Dodo.get_config, Dodo.command_name,
                                           cwd)
 

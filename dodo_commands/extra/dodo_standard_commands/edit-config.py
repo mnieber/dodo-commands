@@ -1,14 +1,15 @@
 from argparse import ArgumentParser
 import sys
-
 from six.moves import configparser
+
+from funcy.py2 import concat
 
 from dodo_commands import Dodo, CommandError
 from dodo_commands.framework.paths import Paths
-from dodo_commands.framework.config_layers import layer_filename_superset
 from dodo_commands.framework.config_io import ConfigIO
 from dodo_commands.framework.global_config import load_global_config_parser
 from dodo_commands.framework.config_expander import Key
+from dodo_commands.framework.container.utils import get_ordered_layer_paths
 
 
 def _args():
@@ -48,7 +49,11 @@ if Dodo.is_main(__name__, safe=('--key' not in sys.argv)):
         ConfigIO().save(config)
         sys.exit(0)
 
-    yaml_filenames = layer_filename_superset()
+    def add_global_config_filename(layer_paths):
+        return concat(layer_paths, [Paths().global_config_filename()])
 
-    yaml_filenames.append(Paths().global_config_filename())
+    x = get_ordered_layer_paths(Dodo.get_container())
+    x = add_global_config_filename(x)
+    yaml_filenames = x
+
     Dodo.run(args.editor.split() + yaml_filenames, cwd='.')

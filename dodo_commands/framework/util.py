@@ -178,3 +178,8 @@ def poll_docker_container_status(image_name, dodo_run, condition):
         if '(healthy)' in status:
             break
         time.sleep(1)
+
+
+class classproperty(property):  # noqa
+    def __get__(self, cls, owner):  # noqa
+        return classmethod(self.fget).__get__(None, owner)()
