@@ -1,11 +1,11 @@
 from setuptools import setup
 
 setup(name='dodo_commands',
-      version='0.28.0',
+      version='0.28.1',
       description=
       'Project-aware development environments, inspired by django-manage',
       url='https://github.com/mnieber/dodo_commands',
-      download_url='https://github.com/mnieber/dodo_commands/tarball/0.28.0',
+      download_url='https://github.com/mnieber/dodo_commands/tarball/0.28.1',
       author='Maarten Nieber',
       author_email='hallomaarten@yahoo.com',
       license='MIT',
@@ -31,5 +31,6 @@ setup(name='dodo_commands',
           'python-dotenv',
           'ruamel.yaml',
           'six',
+          'funcy',
       ],
       zip_safe=False)
