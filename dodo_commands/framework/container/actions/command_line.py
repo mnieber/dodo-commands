@@ -53,6 +53,7 @@ def action_expand_and_autocomplete_command_name(ctr):
     def transform(
             #
             raw_command_name,
+            input_args,
             command_map,
             aliases,
             layer_alias_by_inferred_command,
@@ -69,13 +70,19 @@ def action_expand_and_autocomplete_command_name(ctr):
             #
             raw_command_name)
 
-        return (aliases.get(completed_command_name) or completed_command_name
-                or 'help', )
+        alias_target = (aliases.get(completed_command_name)
+                        or completed_command_name or 'help')
+        new_args = alias_target.split(' ')
+        command_name = new_args[0]
+        input_args = input_args[:1] + new_args + input_args[2:]
+        return (input_args, command_name)
 
     return map_datas(i_(CommandLine, 'raw_command_name'),
+                     i_(CommandLine, 'input_args'),
                      i_(Commands, 'command_map'),
                      i_(Commands, 'aliases'),
                      i_(Commands, 'layer_alias_by_inferred_command'),
                      i_(Layers, 'target_path_by_alias'),
+                     o_(CommandLine, 'input_args'),
                      o_(CommandLine, 'command_name'),
                      transform=transform)(ctr)
