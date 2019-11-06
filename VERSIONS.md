@@ -1,5 +1,9 @@
 # Version history
 
+## 0.28.0
+
+- Refactor to use container with facets
+
 ## 0.27.3
 
 - Raise an error if the layer alias is unknown
