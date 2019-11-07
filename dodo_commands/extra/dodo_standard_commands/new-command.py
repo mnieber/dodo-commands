@@ -1,70 +1,176 @@
 from argparse import ArgumentParser
 import os
-import sys
+
+from six.moves import input as raw_input
+from funcy.py2 import cut_prefix
 
 from dodo_commands import Dodo, CommandError
 from dodo_commands.framework.config_io import ConfigIO
-from dodo_commands.framework.command_map import get_command_map
-from dodo_commands.framework.command_path import get_command_dirs_from_config
-
-
-def _new_commands_dir():
-    def _new_commands_basename():
-        return 'dodo_%s_commands' % Dodo.get_config('/ROOT/project_name')
-
-    return os.path.normpath(
-        os.path.join(Dodo.get_config('/ROOT/shared_config_dir'), '..',
-                     _new_commands_basename()))
+from dodo_commands.framework.util import filter_choices_ex
+from dodo_commands.framework.funcy import map_with
 
 
 def _args():
     parser = ArgumentParser(description="Creates a new Dodo command.")
-    parser.add_argument('name')
-    parser.add_argument(
-        '--create-commands-dir',
-        nargs='?',
-        const=True,
-        help="Create a directory for storing commands in the shared_config_dir",
-    )
-    parser.add_argument(
-        '--next-to',
-        help='Create the new command at the location of this command')
+    parser.add_argument('-f',
+                        '--force',
+                        action='store_true',
+                        help='Overwrite existing command script')
     args = Dodo.parse_args(parser)
-
-    if not args.create_commands_dir and not args.next_to:
-        raise CommandError(
-            'Either --create-commands-dir or --next-to is required')
-
     return args
 
 
-script = """import os
-from argparse import ArgumentParser
+def create_command_dir():
+    def get_command_dir_name():
+        while True:
+            dir_name = raw_input("\nEnter a name for the commands dir: ")
+            if dir_name:
+                default_src_dir = os.path.join(
+                    Dodo.get_config('/ROOT/project_dir'), 'src')
+                src_dir = Dodo.get_config('/ROOT/src_dir', default_src_dir)
+                return os.path.join(src_dir, "extra", "dodo_commands",
+                                    dir_name)
+            else:
+                print("Sorry, I did not understand that.")
+
+    def create_dir(new_command_dir):
+        if not os.path.exists(new_command_dir):
+            Dodo.run(['mkdir', '-p', new_command_dir])
+
+        init_py = os.path.join(new_command_dir, '__init__.py')
+        if not os.path.exists(init_py):
+            Dodo.run(['touch', init_py])
+
+    def save_config(new_command_dir):
+        if not [
+                x
+                for x in command_dirs if os.path.normpath(x) == new_command_dir
+        ]:
+            config = ConfigIO().load()
+            config['ROOT']['command_path'].append(new_command_dir)
+            ConfigIO().save(config)
+
+    command_dir = get_command_dir_name()
+    create_dir(command_dir)
+    save_config(command_dir)
+    return command_dir
+
+
+def get_command_dir(command_dirs):
+    col_width = max(len(os.path.basename(x)) for x in command_dirs)
+
+    def map_to_choice(command_dir):
+        return "%s (%s)" % (os.path.basename(command_dir).ljust(col_width),
+                            command_dir)
+
+    def print_choices(choices):
+        for idx, command_dir in enumerate(choices):
+            if idx == len(choices) - 1:
+                print("")
+            print("%d - %s" % (idx + 1, command_dir))
+
+    def get_choice(choices):
+        while True:
+            raw_choice = raw_input("\nSelect a target command dir: ")
+            filtered_choices = filter_choices_ex(choices, raw_choice)
+            idxs, span = map_with(filtered_choices)(['idxs', 'span'])
+
+            if len(idxs) == 1:
+                return idxs[0]
+            else:
+                print("Sorry, I did not understand that.")
+
+    choices = map_with(map_to_choice)(command_dirs) + [
+        "create a new commands dir"
+    ]
+    print_choices(choices)
+    choice_idx = get_choice(choices)
+    if choice_idx == len(choices) - 1:
+        return create_command_dir()
+    return command_dirs[choice_idx]
+
+
+def get_parser_args(args):
+    def print_choices(args):
+        for idx, arg in enumerate(args):
+            print("%d - %s" % (idx + 1, arg[1]))
+
+    def get_choices(args):
+        while True:
+            raw_choice = raw_input(
+                "\nSelect the options and args that are given by the user: ")
+            filtered_choices = filter_choices_ex(command_dirs, raw_choice)
+            idxs, span = map_with(filtered_choices)(['idxs', 'span'])
+
+            if span == [0, len(raw_choice)]:
+                return idxs
+
+    def convert_to_single_string(args, idxs):
+        single_string = ""
+        for idx in idxs:
+            arg = args[idx]
+            single_string += "    parser.add_argument('{name}')\n".format(
+                name=arg[0])
+        return single_string
+
+    print_choices(args)
+    idxs = get_choices(args)
+    return idxs, convert_to_single_string(args, idxs)
+
+
+def get_params(args, remaining_idxs):
+    def print_choices(args):
+        for idx, remaining_idx in enumerate(remaining_idxs):
+            print("%d - %s" % (idx + 1, args[remaining_idx][1]))
+
+    def get_choices(args):
+        while True:
+            raw_choice = raw_input(
+                "\nSelect the options and args that come from the config: ")
+            filtered_choices = filter_choices_ex(command_dirs, raw_choice)
+            idxs, span = map_with(filtered_choices)(['idxs', 'span'])
+
+            if span == [0, len(raw_choice)]:
+                return [remaining_idxs[x] for x in idxs]
+
+    def convert_to_single_string(args, idxs):
+        single_string = ""
+        for idx in idxs:
+            name = args[idx][0]
+            clean_name = args[idx][2]
+            single_string += (
+                "        " +
+                "ConfigArg('/PATH/TO/{clean_name}', '{name}')".format(
+                    name=name, clean_name=clean_name))
+        return single_string
+
+    print_choices(args)
+    idxs = get_choices(args)
+    return idxs, convert_to_single_string(args, idxs)
+
+
+script = """from argparse import ArgumentParser
 
 from dodo_commands import Dodo, ConfigArg, CommandError
 
 
 def _args():
     parser = ArgumentParser(
-        description='A new command that runs in the project\\\'s "res" directory'
+        description='{description}'
     )
 
     # Add arguments to the parser here
-    parser.add_argument('name')
-
+{parser_args_str}
     # Parse the arguments.
-    # Optionally, use `config_args` to include additional arguments whose values
-    # come either from the configuration file or from the command line (see docs).
     args = Dodo.parse_args(parser, config_args=[
-        ConfigArg('/ROOT/res_dir', '--cwd')
+{params_str}
     ])
 
-    # Insert additional arguments after parsing
-    args.project_name = Dodo.get_config('/ROOT/project_name')
+    args.cwd = Dodo.get_config('/ROOT/project_dir')
 
     # Raise an error if something is not right
-    if not os.path.exists(args.cwd):
-        raise CommandError('Not found: %s' % args.cwd)
+    if False:
+        raise CommandError('Oops')
 
     return args
 
@@ -72,48 +178,61 @@ def _args():
 # Use safe=False if the script makes changes other than through Dodo.run
 if Dodo.is_main(__name__, safe=True):
     args = _args()
-    Dodo.run(['echo', args.name, args.project_name], cwd=args.cwd)
+    Dodo.run([{args_str}], cwd=args.cwd)
 """
 
-if Dodo.is_main(__name__, safe='--create-commands-dir' not in sys.argv):
-    args = _args()
-    command_dirs = get_command_dirs_from_config(Dodo.get_config())
+if Dodo.is_main(__name__, safe=False):
+    parsed_args = _args()
 
-    if args.create_commands_dir:
-        project_dir = Dodo.get_config('/ROOT/project_dir')
-        new_commands_dir = (_new_commands_dir() if
-                            args.create_commands_dir is True else os.path.join(
-                                project_dir, args.create_commands_dir))
-        dest_path = os.path.join(new_commands_dir, args.name + ".py")
+    description = 'A new command that runs in the project\\\'s "res" directory'
+    parser_args_str = "    parser.add_argument('name')"
 
-        if not os.path.exists(new_commands_dir):
-            Dodo.run(['mkdir', '-p', new_commands_dir])
+    name = raw_input("Enter a name for the command: ")
+    description = raw_input("Enter a description: ")
 
-        init_py = os.path.join(new_commands_dir, '__init__.py')
-        if not os.path.exists(init_py):
-            Dodo.run(['touch', init_py])
+    def get_args():
+        def map_to_split_arg(arg):
+            arg_name = arg.split('=')[0]
 
-        if not [
-                x for x in command_dirs
-                if os.path.normpath(x) == new_commands_dir
-        ]:
-            config = ConfigIO().load()
-            config['ROOT']['command_path'].append(new_commands_dir)
-            ConfigIO().save(config)
+            clean_name = arg_name
+            clean_name = cut_prefix(clean_name, '--')
+            clean_name = cut_prefix(clean_name, '-')
 
-    if args.next_to:
-        command_map = get_command_map(command_dirs)
-        item = command_map.get(args.next_to)
+            return (arg_name, arg, clean_name)
 
-        if not item:
-            raise CommandError("Script not found: %s" % args.next_to)
+        raw_args = raw_input("Enter a command line to run inside the script: ")
+        raw_args = raw_args.split(' ')
+        return map_with(map_to_split_arg)(raw_args)
 
-        dest_path = os.path.join(os.path.dirname(item.filename),
-                                 args.name + ".py")
+    command_dirs = Dodo.get_container().commands.command_dirs
+    command_dir = get_command_dir(command_dirs)
+    dest_path = os.path.join(command_dir, name + ".py")
 
-    if os.path.exists(dest_path):
+    args = get_args()
+    parser_arg_idxs, parser_args_str = get_parser_args(args)
+
+    remaining_arg_idxs = [
+        x for x in range(len(args)) if x not in parser_arg_idxs
+    ]
+    param_arg_idxs, params_str = get_params(args, remaining_arg_idxs)
+
+    if os.path.exists(dest_path) and not parsed_args.force:
         raise CommandError("Destination already exists: %s" % dest_path)
 
+    args_str_parts = []
+    for idx in range(len(args)):
+        arg = args[idx]
+        if idx in parser_arg_idxs or idx in param_arg_idxs:
+            args_str_parts.append("args." + arg[2])
+        else:
+            args_str_parts.append("'%s'" % arg[1])
+    args_str = ", ".join(args_str_parts)
+
     with open(dest_path, "w") as f:
-        f.write(script)
+        f.write(
+            script.format(parser_args_str=parser_args_str,
+                          params_str=params_str,
+                          description=description,
+                          args_str=args_str))
+
     print(dest_path)

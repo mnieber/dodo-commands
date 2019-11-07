@@ -66,6 +66,8 @@ class Dodo:
                             action='store_true',
                             help=argparse.SUPPRESS)
 
+        add_config_args(parser, cls.get_config(), config_args)
+
         if cls.get_container().command_line.is_help:
             parser.print_help()
             sys.exit(0)
@@ -73,7 +75,6 @@ class Dodo:
         for decorator in get_decorators(cls.command_name, cls.get_config()):
             decorator.add_arguments(parser)
 
-        add_config_args(parser, cls.get_config(), config_args)
         argcomplete.autocomplete(parser)
 
         args = cls.get_container().command_line.input_args

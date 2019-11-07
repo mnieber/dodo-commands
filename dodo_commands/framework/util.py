@@ -96,8 +96,14 @@ class InvalidIndex(Exception):
 
 
 def filter_choices(all_choices, raw_choice):
+    result = filter_choices_ex(all_choices, raw_choice)
+    return result['result'], result['span']
+
+
+def filter_choices_ex(all_choices, raw_choice):
     regexp = r"(\d)+(\-(\d)+)?,?"
     result = []
+    idxs = []
     span = [None, None]
     for choice in [x for x in re.finditer(regexp, raw_choice)]:
         if span[0] is None:
@@ -111,8 +117,10 @@ def filter_choices(all_choices, raw_choice):
         if to_index >= len(all_choices):
             raise InvalidIndex(to_index)
         for idx in range(from_index, to_index + 1):
+            idxs.append(idx)
             result.append(all_choices[idx])
-    return result, span
+
+    return dict(result=result, span=span, idxs=idxs)
 
 
 def is_windows():
