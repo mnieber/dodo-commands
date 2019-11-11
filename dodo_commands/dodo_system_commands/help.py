@@ -95,8 +95,17 @@ def _collect_command_dirs(config, config_io, command_dir_2_alias_set,
                 _add_to_alias_set(alias_set, alias)
 
         layer = layer_by_alias_target_path[target_path]
-        for command_alias in layer.get('ROOT', {}).get('aliases', {}):
-            command_aliases[command_alias[0]] = command_alias[1]
+        for command_alias in layer.get('ROOT', {}).get('aliases', {}).items():
+            inferred_commands = drill(layer,
+                                      'ROOT',
+                                      'inferred_commands',
+                                      default=[])
+            prefix = ("" if command_alias[0] in inferred_commands else
+                      (alias + "."))
+
+            postfix = " --layer=%s" % target_path
+            command_aliases[prefix +
+                            command_alias[0]] = command_alias[1] + postfix
 
 
 def _print_command_dirs(args, alias_set_2_command_dirs, inferred_commands):
@@ -136,13 +145,7 @@ def _print_command_aliases(command_aliases, inferred_commands, layer_aliases):
 
     sys.stdout.write("Command aliases:\n\n")
     for alias, target_path in sorted(command_aliases.items()):
-        postfix = ""
-        if alias in inferred_commands:
-            inferred_layer = inferred_commands[alias]
-            if inferred_layer in layer_aliases:
-                postfix = " --layer=%s" % layer_aliases[inferred_layer]
-        sys.stdout.write("%s = %s%s\n" %
-                         (alias.ljust(col_width), target_path, postfix))
+        sys.stdout.write("%s = %s\n" % (alias.ljust(col_width), target_path))
 
 
 def _add_to_alias_set(alias_set, alias):
