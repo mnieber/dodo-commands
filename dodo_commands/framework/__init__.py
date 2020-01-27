@@ -17,9 +17,9 @@ def _handle_exception(e):
 def execute_from_command_line(argv):
     os.environ['__DODO__'] = '1'
 
-    ctr = Dodo.get_container()
-
     try:
+        ctr = Dodo.get_container()
+
         # TODO: move to action_execute_command
         if ctr.command_line.command_name == '--version':
             print(get_version())
