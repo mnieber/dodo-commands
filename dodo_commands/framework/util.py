@@ -7,6 +7,7 @@ import re
 
 from six.moves import input as raw_input
 from plumbum import local
+from plumbum.commands.processes import CommandNotFound
 
 
 def query_yes_no(question, default="yes"):
@@ -175,7 +176,7 @@ def exe_exists(exe):
     try:
         local[exe]
         return True
-    except:
+    except CommandNotFound:
         return False
 
 
