@@ -55,7 +55,7 @@ def debug_as(f):
 def drill(x, *keys, default=None):
     result = x
     for key in keys:
-        if key not in result:
+        if not result or key not in result:
             return default
         result = result[key]
     return result
