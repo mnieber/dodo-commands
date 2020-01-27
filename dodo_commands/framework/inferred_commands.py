@@ -5,9 +5,9 @@ from dodo_commands.framework.funcy import drill, for_each
 
 
 def get_inferred_command_map(
-        global_aliases,
-        target_path_by_alias,
-        layer_by_alias_target_path,
+    global_aliases,
+    target_path_by_alias,
+    layer_by_alias_target_path,
 ):
     layer_alias_by_inferred_command = {}
 
