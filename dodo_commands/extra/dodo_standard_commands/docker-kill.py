@@ -1,10 +1,8 @@
 from argparse import ArgumentParser
-
 from plumbum.cmd import docker
-from six.moves import input as raw_input
 
-from dodo_commands import Dodo, CommandError
-from dodo_commands.framework.util import filter_choices
+from dodo_commands import Dodo
+from dodo_commands.framework.choice_picker import ChoicePicker
 
 
 def _args():
@@ -25,16 +23,17 @@ def _containers():
 
 if Dodo.is_main(__name__):
     args = _args()
-    containers = _containers()
 
-    for idx, container in enumerate(containers):
-        print("%d - %s" % (idx + 1, container['name']))
+    class Picker(ChoicePicker):
+        def print_choices(self, choices):
+            for idx, container in enumerate(choices):
+                print("%d - %s" % (idx + 1, container['name']))
 
-    raw_choice = raw_input("Select a container: ")
+        def question(self):
+            return "Select a container: "
 
-    selected_containers, span = filter_choices(containers, raw_choice)
-    if span == [0, len(raw_choice)]:
-        for container in selected_containers:
-            Dodo.run(['docker', 'kill', container['cid']], )
-    else:
-        raise CommandError("Syntax error")
+    picker = Picker(_containers())
+    picker.pick()
+
+    for container in picker.get_choices():
+        Dodo.run(['docker', 'kill', container['cid']], )

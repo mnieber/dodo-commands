@@ -3,7 +3,6 @@
 import os
 import time
 import sys
-import re
 
 from six.moves import input as raw_input
 from plumbum import local
@@ -88,40 +87,6 @@ else:
 
     def indent(text, amount, ch=' '):
         return textwrap.indent(text, amount * ch)
-
-
-class InvalidIndex(Exception):
-    def __init__(self, index):
-        super(InvalidIndex, self).__init__('Invalid index')
-        self.index = index
-
-
-def filter_choices(all_choices, raw_choice):
-    result = filter_choices_ex(all_choices, raw_choice)
-    return result['result'], result['span']
-
-
-def filter_choices_ex(all_choices, raw_choice):
-    regexp = r"(\d)+(\-(\d)+)?,?"
-    result = []
-    idxs = []
-    span = [None, None]
-    for choice in [x for x in re.finditer(regexp, raw_choice)]:
-        if span[0] is None:
-            span[0] = choice.span()[0]
-        if span[1] is None or span[1] == choice.span()[0]:
-            span[1] = choice.span()[1]
-        from_index = int(choice.group(1)) - 1
-        if from_index < 0:
-            raise InvalidIndex(from_index)
-        to_index = int(choice.group(3)) - 1 if choice.group(3) else from_index
-        if to_index >= len(all_choices):
-            raise InvalidIndex(to_index)
-        for idx in range(from_index, to_index + 1):
-            idxs.append(idx)
-            result.append(all_choices[idx])
-
-    return dict(result=result, span=span, idxs=idxs)
 
 
 def is_windows():

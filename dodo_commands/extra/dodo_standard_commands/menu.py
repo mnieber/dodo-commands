@@ -2,12 +2,11 @@ from argparse import ArgumentParser
 import os
 import sys
 
-from six.moves import input as raw_input
 from plumbum.cmd import tmux
 
 from dodo_commands import Dodo, CommandError
-from dodo_commands.framework.util import (filter_choices, exe_exists,
-                                          InvalidIndex)
+from dodo_commands.framework.choice_picker import ChoicePicker
+from dodo_commands.framework.util import exe_exists
 
 
 def _session_id(category):
@@ -72,21 +71,26 @@ def _get_commands_and_labels(command_map, category):
 
 
 def _get_selected_commands(commands, labels, allow_free_text=False):
-    print()
-    for label in labels:
-        print(label)
+    class Picker(ChoicePicker):
+        def print_choices(self, choices):
+            print()
+            for label in choices:
+                print(label)
+            print()
 
-    while True:
-        raw_choice = raw_input(
-            '\nSelect one or more commands (e.g. 1,3-4)%s or type 0 to exit: '
-            % (', or type a command,' if allow_free_text else ''))
-        selected_commands, span = filter_choices(commands, raw_choice)
-        if span == [0, len(raw_choice)]:
-            return selected_commands
-        elif allow_free_text:
-            return [raw_choice]
-        else:
-            print("Sorry, I could not parse that.")
+        def question(self):
+            global allow_free_text
+            return (
+                'Select one or more commands (e.g. 1,3-4)%s or type 0 to exit: '
+                % (', or type a command,' if allow_free_text else ''))
+
+        def on_invalid_index(self, index):
+            if index == 0:
+                sys.exit(0)
+
+    picker = Picker(commands)
+    picker.pick()
+    return picker.get_choices()
 
 
 if Dodo.is_main(__name__):
@@ -117,7 +121,7 @@ if Dodo.is_main(__name__):
             for session in sessions.split('\n'):
                 has_session = has_session or session.startswith(
                     '%s:' % session_id)
-        except:
+        except:  # noqa
             pass
 
         if not has_session:
@@ -130,13 +134,8 @@ if Dodo.is_main(__name__):
             Dodo.run(['tmux', '-2', 'attach-session', '-t', session_id], )
         else:
             while True:
-                try:
-                    selected_commands = _get_selected_commands(
-                        commands, labels, allow_free_text=True)
-                except InvalidIndex as e:
-                    if e.index == -1:
-                        sys.exit(0)
-                    raise
+                selected_commands = _get_selected_commands(
+                    commands, labels, allow_free_text=True)
                 for command in selected_commands:
                     Dodo.run(['tmux', 'split-window', '-v'], )
                     nr_panes = Dodo.run(['tmux', 'list-panes'],
@@ -150,12 +149,7 @@ if Dodo.is_main(__name__):
                 tmux('select-pane', '-t', '0')
                 tmux('select-layout', 'tile')
     else:
-        try:
-            selected_commands = (_get_selected_commands(commands, labels) if
-                                 args.run == -1 else [commands[args.run - 1]])
-        except InvalidIndex as e:
-            if e.index == -1:
-                sys.exit(0)
-            raise
+        selected_commands = (_get_selected_commands(commands, labels)
+                             if args.run == -1 else [commands[args.run - 1]])
         for command in selected_commands:
             Dodo.run(['bash', '-c', command])

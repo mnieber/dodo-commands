@@ -6,7 +6,7 @@ from funcy.py2 import cut_prefix
 
 from dodo_commands import Dodo, CommandError
 from dodo_commands.framework.config_io import ConfigIO
-from dodo_commands.framework.util import filter_choices_ex
+from dodo_commands.framework.choice_picker import ChoicePicker
 from dodo_commands.framework.funcy import map_with
 
 
@@ -63,47 +63,50 @@ def get_command_dir(command_dirs):
         return "%s (%s)" % (os.path.basename(command_dir).ljust(col_width),
                             command_dir)
 
-    def print_choices(choices):
-        for idx, command_dir in enumerate(choices):
-            if idx == len(choices) - 1:
-                print("")
-            print("%d - %s" % (idx + 1, command_dir))
+    def get_choice_idx0(choices):
+        class Picker(ChoicePicker):
+            def print_choices(self, choices):
+                for idx, command_dir in enumerate(choices):
+                    if idx == len(choices) - 1:
+                        print("")
+                    print("%d - %s" % (idx + 1, command_dir))
+                print()
 
-    def get_choice(choices):
-        while True:
-            raw_choice = raw_input("\nSelect a target command dir: ")
-            filtered_choices = filter_choices_ex(choices, raw_choice)
-            idxs, span = map_with(filtered_choices)(['idxs', 'span'])
+            def question(self):
+                return "Select a target command dir: "
 
-            if len(idxs) == 1:
-                return idxs[0]
-            else:
-                print("Sorry, I did not understand that.")
+        picker = Picker(choices)
+        picker.pick()
+        return picker.get_idxs0()[0]
 
     choices = map_with(map_to_choice)(command_dirs) + [
         "create a new commands dir"
     ]
-    print_choices(choices)
-    choice_idx = get_choice(choices)
-    if choice_idx == len(choices) - 1:
+    choice_idx0 = get_choice_idx0(choices)
+    if choice_idx0 == len(choices) - 1:
         return create_command_dir()
-    return command_dirs[choice_idx]
+    return command_dirs[choice_idx0]
 
 
 def get_parser_args(args):
-    def print_choices(args):
-        for idx, arg in enumerate(args):
-            print("%d - %s" % (idx + 1, arg[1]))
+    def get_choice_idxs0(args):
+        class Picker(ChoicePicker):
+            def print_choices(self, choices):
+                print("0 - none")
+                for idx, arg in enumerate(choices):
+                    print("%d - %s" % (idx + 1, arg[1]))
+                print()
 
-    def get_choices(args):
-        while True:
-            raw_choice = raw_input(
-                "\nSelect the options and args that are given by the user: ")
-            filtered_choices = filter_choices_ex(command_dirs, raw_choice)
-            idxs, span = map_with(filtered_choices)(['idxs', 'span'])
+            def question(self):
+                return "Select the options and args that are given by the user: "
 
-            if span == [0, len(raw_choice)]:
-                return idxs
+            def on_invalid_index(self, index):
+                if index == 0:
+                    self.idxs = []
+
+        picker = Picker(args)
+        picker.pick()
+        return picker.get_idxs0()
 
     def convert_to_single_string(args, idxs):
         single_string = ""
@@ -113,25 +116,34 @@ def get_parser_args(args):
                 name=arg[0])
         return single_string
 
-    print_choices(args)
-    idxs = get_choices(args)
-    return idxs, convert_to_single_string(args, idxs)
+    idxs0 = get_choice_idxs0(args)
+    return idxs0, convert_to_single_string(args, idxs0)
 
 
 def get_params(args, remaining_idxs):
-    def print_choices(args):
-        for idx, remaining_idx in enumerate(remaining_idxs):
-            print("%d - %s" % (idx + 1, args[remaining_idx][1]))
-
     def get_choices(args):
-        while True:
-            raw_choice = raw_input(
-                "\nSelect the options and args that come from the config: ")
-            filtered_choices = filter_choices_ex(command_dirs, raw_choice)
-            idxs, span = map_with(filtered_choices)(['idxs', 'span'])
+        class Picker(ChoicePicker):
+            def print_choices(self, choices):
+                print("0 - none")
+                for idx, command_dir in enumerate(choices):
+                    if idx == len(choices) - 1:
+                        print("")
+                    print("%d - %s" % (idx + 1, command_dir))
+                print()
 
-            if span == [0, len(raw_choice)]:
-                return [remaining_idxs[x] for x in idxs]
+            def question(self):
+                return "Select the options and args that come from the config: "
+
+            def maybe_handle_invalid_index(self, index):
+                if index == 0:
+                    self.idxs = []
+
+        remaining_choices = [
+            args[remaining_idx] for remaining_idx in remaining_idxs
+        ]
+        picker = Picker(remaining_choices)
+        picker.pick()
+        return [remaining_idxs[x] for x in picker.get_idxs0()]
 
     def convert_to_single_string(args, idxs):
         single_string = ""
@@ -144,7 +156,6 @@ def get_params(args, remaining_idxs):
                     name=name, clean_name=clean_name))
         return single_string
 
-    print_choices(args)
     idxs = get_choices(args)
     return idxs, convert_to_single_string(args, idxs)
 
@@ -184,9 +195,6 @@ if Dodo.is_main(__name__, safe=True):
 if Dodo.is_main(__name__, safe=False):
     parsed_args = _args()
 
-    description = 'A new command that runs in the project\\\'s "res" directory'
-    parser_args_str = "    parser.add_argument('name')"
-
     name = raw_input("Enter a name for the command: ")
     description = raw_input("Enter a description: ")
 
@@ -204,6 +212,7 @@ if Dodo.is_main(__name__, safe=False):
         raw_args = raw_args.split(' ')
         return map_with(map_to_split_arg)(raw_args)
 
+    __import__('pudb').set_trace()
     command_dirs = Dodo.get_container().commands.command_dirs
     command_dir = get_command_dir(command_dirs)
     dest_path = os.path.join(command_dir, name + ".py")

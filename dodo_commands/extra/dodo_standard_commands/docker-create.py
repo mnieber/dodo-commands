@@ -5,7 +5,8 @@ from plumbum.cmd import docker
 from six.moves import input as raw_input
 
 from dodo_commands import Dodo, CommandError
-from dodo_commands.framework.util import filter_choices, query_yes_no
+from dodo_commands.framework.util import query_yes_no
+from dodo_commands.framework.choice_picker import ChoicePicker
 
 
 def _container_type_names():
@@ -70,38 +71,37 @@ if Dodo.is_main(__name__, safe=True):
     args = _args()
 
     if args.interactive:
-        container_type_names = _container_type_names()
-        for idx, container_type in enumerate(container_type_names):
-            print('%d - %s' % (idx + 1, container_type))
 
-        raw_choice = raw_input("Select a container type: ")
-        selected_container_type_names, span = filter_choices(
-            container_type_names, raw_choice)
-        if span == [0, len(raw_choice)]:
-            for container_type_name in selected_container_type_names:
-                default_container_name = 'dc_%s_%s' % (args.project_name,
-                                                       container_type_name)
-                name = raw_input(
-                    "Enter a name for container type %s [%s]: " %
-                    (container_type_name,
-                     default_container_name)) or default_container_name
+        class Picker(ChoicePicker):
+            def print_choices(self, choices):
+                for idx, container_type in enumerate(choices):
+                    print('%d - %s' % (idx + 1, container_type))
 
-                if _exists(name):
-                    replace = query_yes_no(
-                        'A container with this name exists. ' +
-                        'To replace choose yes. To quit choose no. Replace it?'
-                    )
-                    if not replace:
-                        sys.exit(0)
+            def question(self):
+                return "Select a container type: "
 
-                _create_container(args.container_types,
-                                  container_type_name,
-                                  name,
-                                  replace=True)
-        else:
-            raise CommandError("Syntax error")
+        picker = Picker(_container_type_names())
+        picker.pick()
 
-        sys.exit(0)
+        for container_type_name in picker.get_choices():
+            default_container_name = 'dc_%s_%s' % (args.project_name,
+                                                   container_type_name)
+            name = raw_input(
+                "Enter a name for container type %s [%s]: " %
+                (container_type_name,
+                 default_container_name)) or default_container_name
+
+            if _exists(name):
+                replace = query_yes_no(
+                    'A container with this name exists. ' +
+                    'To replace choose yes. To quit choose no. Replace it?')
+                if not replace:
+                    sys.exit(0)
+
+            _create_container(args.container_types,
+                              container_type_name,
+                              name,
+                              replace=True)
     else:
         if not args.container_type:
             raise CommandError('Argument container_type is required')

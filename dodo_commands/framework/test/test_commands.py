@@ -59,7 +59,8 @@ class TestConfigIO:  # noqa
         assert os.path.join(dodo_test_dir, 'src') == dodo('which', 'src')[:-1]
         assert res_dir == dodo('which', 'res')[:-1]
         assert config_filename == dodo('which', '--config')[:-1]
-        assert 'confirm, debugger, docker, pause' == dodo('which', '--decorators')[:-1]
+        assert 'confirm, debugger, docker, pause' == dodo(
+            'which', '--decorators')[:-1]
 
         # dodo cd
         assert "cd " + dodo_test_dir == dodo('cd')[:-1]
@@ -85,8 +86,10 @@ class TestConfigIO:  # noqa
 
         # dodo docker
         dodo('layer', 'docker', 'on')
-        result = dodo('docker', '*', '--name', 'foo', '--echo').replace(
-            '\n', '').replace('  \\', '').replace('  ', ' ')
+        result = dodo('docker', '*', '--name', 'foo',
+                      '--echo').replace('\n',
+                                        '').replace('  \\',
+                                                    '').replace('  ', ' ')
         assert "docker run --name=foo --interactive --tty --rm --volume=%s/log:/var/log --workdir=/ dodo_tutorial:1604 /bin/bash" % dodo_test_dir == result
 
         # dodo docker-build
@@ -117,22 +120,13 @@ class TestConfigIO:  # noqa
             'debug.off.yaml'
         ]
 
-        # dodo new-command
-        tutorial_commands_dir = os.path.join(
-            dodo_test_dir, "src/extra/dodo_commands/dodo_tutorial_commands")
-        expected_new_command_file = os.path.join(tutorial_commands_dir,
-                                                 "foo.py")
-        if os.path.exists(expected_new_command_file):
-            os.unlink(expected_new_command_file)
-        dodo('new-command', 'foo', '--next-to', 'cmake')
-        assert os.path.exists(expected_new_command_file)
-        assert expected_new_command_file == dodo('which', 'foo')[:-1]
-
         # dodo print-config
         assert "CMAKE_INSTALL_PREFIX: %s/install" % dodo_test_dir in dodo(
             "print-config")
 
         # dodo drop-in
+        tutorial_commands_dir = os.path.join(
+            dodo_test_dir, "src/extra/dodo_commands/dodo_tutorial_commands")
         drop_in_dir = os.path.join(tutorial_commands_dir, "drop-in")
         os.mkdir(drop_in_dir)
         with open(os.path.join(drop_in_dir, "bar.txt"), "w") as ofs:
