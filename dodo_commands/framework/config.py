@@ -1,4 +1,5 @@
 """Module for working with the dodo configurations."""
+import copy
 import os
 import ruamel.yaml
 import sys
@@ -75,11 +76,13 @@ def _extend_config(config):
 
 def extend_command_path(config):
     """Add the system commands to the command path"""
-    _add_to_config(config, "ROOT", "command_path", [])
-    config['ROOT']['command_path'].append(_system_commands_dir())
+    extended_config = copy.deepcopy(config)
+    _add_to_config(extended_config, "ROOT", "command_path", [])
+    extended_config['ROOT']['command_path'].append(_system_commands_dir())
     if not Paths().project_dir():
-        config['ROOT']['command_path'].append(
+        extended_config['ROOT']['command_path'].append(
             os.path.join(Paths().default_commands_dir(), '*'))
+    return extended_config
 
 
 def _report(x):

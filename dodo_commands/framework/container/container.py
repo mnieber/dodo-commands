@@ -29,4 +29,12 @@ class Container:
 
         actions.commands.action_get_aliases_from_config(self)
         actions.commands.action_get_command_map(self)
+
+        # This step may find out that the selected command alias
+        # contains some --layer=foo.bar.yaml terms. These additional
+        # layers are stored in self.command_line.more_given_layer_paths
         actions.command_line.action_expand_and_autocomplete_command_name(self)
+
+        if self.command_line.more_given_layer_paths:
+            actions.layers.action_select_layers(self)
+            actions.config.action_build_from_selected_layers(self)

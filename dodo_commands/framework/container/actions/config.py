@@ -20,8 +20,8 @@ def action_check_conflicts_in_selected_layer_paths(ctr):
 # CONFIG
 def action_build_from_selected_layers(ctr):
     def transform(
-            #
-            selected_layer_by_path):
+        #
+        selected_layer_by_path):
         def get_selected_layers():
             return selected_layer_by_path.values()
 
@@ -31,7 +31,7 @@ def action_build_from_selected_layers(ctr):
         x = get_selected_layers()
         # [layer]
         config = build_config(x)
-        extend_command_path(config)
+        config = extend_command_path(config)
 
         return (config, )
 

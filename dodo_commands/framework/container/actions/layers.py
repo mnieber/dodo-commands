@@ -7,8 +7,8 @@ from dodo_commands.framework.container.facets import Layers, CommandLine, map_da
 # LAYERS
 def action_load_root_layer(ctr):
     def transform(
-            config_io,
-            root_layer_path,
+        config_io,
+        root_layer_path,
     ):
         if ctr.paths.project_dir():
             return (config_io.load(root_layer_path), )
@@ -23,8 +23,8 @@ def action_load_root_layer(ctr):
 # LAYERS
 def action_load_aliased_layers(ctr):
     def transform(
-            config_io,
-            target_path_by_alias,
+        config_io,
+        target_path_by_alias,
     ):
         layer_by_alias_target_path = load_aliased_layers(
             config_io,
@@ -41,10 +41,10 @@ def action_load_aliased_layers(ctr):
 # LAYERS
 def action_select_layers(ctr):
     def transform(
-            config_io,
-            root_layer_path,
-            root_layer,
-            command_line_layer_paths,
+        config_io,
+        root_layer_path,
+        root_layer,
+        command_line_layer_paths,
     ):
         all_layer_paths = layer_filename_superset(
             distinct([root_layer_path] + command_line_layer_paths),

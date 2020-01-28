@@ -16,12 +16,13 @@ class CommandLine:
         self.inferred_layer_paths = []
         self.expanded_layer_paths = []
         self.given_layer_paths = []
+        self.more_given_layer_paths = []
         self.is_running_directly_from_script = False
 
     @property
     def layer_paths(self):
         return distinct(self.inferred_layer_paths + self.expanded_layer_paths +
-                        self.given_layer_paths)
+                        self.given_layer_paths + self.more_given_layer_paths)
 
     @property
     def _split_input1(self):

@@ -1,3 +1,4 @@
+import argparse
 import os
 
 from dodo_commands.framework.handle_arg_complete import handle_arg_complete
@@ -11,9 +12,9 @@ from dodo_commands.framework.container.facets import (Commands, CommandLine,
 # COMMAND LINE
 def action_get_expanded_layer_paths(ctr):
     def transform(
-            #
-            layer_aliases,
-            target_path_by_alias,
+        #
+        layer_aliases,
+        target_path_by_alias,
     ):
         def map_to_path(alias):
             if alias not in target_path_by_alias:
@@ -31,10 +32,10 @@ def action_get_expanded_layer_paths(ctr):
 # COMMAND LINE
 def action_get_inferred_layer_paths(ctr):
     def transform(
-            #
-            raw_command_name,
-            layer_alias_by_inferred_command,
-            target_path_by_alias):
+        #
+        raw_command_name,
+        layer_alias_by_inferred_command,
+        target_path_by_alias):
         layer_alias = layer_alias_by_inferred_command.get(
             raw_command_name, None)
         target_path = target_path_by_alias.get(layer_alias)
@@ -51,13 +52,13 @@ def action_get_inferred_layer_paths(ctr):
 # COMMAND LINE
 def action_expand_and_autocomplete_command_name(ctr):
     def transform(
-            #
-            raw_command_name,
-            input_args,
-            command_map,
-            aliases,
-            layer_alias_by_inferred_command,
-            target_path_by_alias,
+        #
+        raw_command_name,
+        input_args,
+        command_map,
+        aliases,
+        layer_alias_by_inferred_command,
+        target_path_by_alias,
     ):
         completed_command_name = (
             handle_arg_complete(command_names=list(command_map.keys()),
@@ -72,10 +73,16 @@ def action_expand_and_autocomplete_command_name(ctr):
 
         alias_target = (aliases.get(completed_command_name)
                         or completed_command_name or 'help')
+
         new_args = alias_target.split(' ')
+
+        parser = argparse.ArgumentParser()
+        parser.add_argument('-L', '--layer', action='append')
+        known_args, new_args = parser.parse_known_args(new_args)
+
         command_name = new_args[0]
         input_args = input_args[:1] + new_args + input_args[2:]
-        return (input_args, command_name)
+        return (input_args, command_name, known_args.layer or [])
 
     return map_datas(i_(CommandLine, 'raw_command_name'),
                      i_(CommandLine, 'input_args'),
@@ -85,4 +92,5 @@ def action_expand_and_autocomplete_command_name(ctr):
                      i_(Layers, 'target_path_by_alias'),
                      o_(CommandLine, 'input_args'),
                      o_(CommandLine, 'command_name'),
+                     o_(CommandLine, 'more_given_layer_paths'),
                      transform=transform)(ctr)
