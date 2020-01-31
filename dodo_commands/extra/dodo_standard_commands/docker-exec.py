@@ -10,17 +10,30 @@ from dodo_commands import Dodo
 def _args():
     parser = ArgumentParser()
     parser.add_argument('--user')
+    parser.add_argument('--find')
     parser.add_argument('name', nargs='?')
+    parser.add_argument('--cmd')
     args = Dodo.parse_args(parser)
+
+    args.cmd = args.cmd or '/bin/bash'
+
     return args
+
+
+def _containers():
+    return [x for x in docker("ps", "--format", "{{.Names}}").split('\n') if x]
 
 
 if Dodo.is_main(__name__):
     args = _args()
-    if not args.name:
-        containers = [
-            x for x in docker("ps", "--format", "{{.Names}}").split('\n') if x
-        ]
+
+    if args.find:
+        for container in _containers():
+            if args.find in container:
+                args.name = container
+                break
+    elif not args.name:
+        containers = _containers()
         print("0 - exit")
         for idx, container in enumerate(containers):
             print("%d - %s" % (idx + 1, container))
@@ -40,5 +53,5 @@ if Dodo.is_main(__name__):
         '-t',
     ] + (['--user', args.user] if args.user else []) + [
         args.name,
-        '/bin/bash',
+        args.cmd,
     ], )
