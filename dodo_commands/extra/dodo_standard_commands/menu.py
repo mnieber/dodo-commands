@@ -139,7 +139,12 @@ if Dodo.is_main(__name__):
                     raise
                 for command in selected_commands:
                     Dodo.run(['tmux', 'split-window', '-v'], )
-                    Dodo.run(['tmux', 'send-keys', command, 'C-m'], )
+                    nr_panes = Dodo.run(['tmux', 'list-panes'],
+                                        capture=True).count('\n')
+                    Dodo.run([
+                        'tmux', 'send-keys', '-t',
+                        str(nr_panes - 1), command, 'C-m'
+                    ], )
 
                 # Set default window
                 tmux('select-pane', '-t', '0')
