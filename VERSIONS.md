@@ -1,5 +1,16 @@
 # Version history
 
+## 0.29.0
+
+- Make new-command interactive (3 months ago) <Maarten Nieber>
+- Add docker-inspect command
+- Add --find flag to docker-exec
+- Fix menu --tmux bug
+- Add support for --layer in command alias
+- Warn if a layer does not exist when loading the config
+- Fix reporting CommandErrors
+- Improve output of dodo help
+
 ## 0.28.0
 
 - Refactor to use container with facets
