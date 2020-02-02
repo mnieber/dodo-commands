@@ -79,7 +79,6 @@ def _get_selected_commands(commands, labels, allow_free_text=False):
             print()
 
         def question(self):
-            global allow_free_text
             return (
                 'Select one or more commands (e.g. 1,3-4)%s or type 0 to exit: '
                 % (', or type a command,' if allow_free_text else ''))
