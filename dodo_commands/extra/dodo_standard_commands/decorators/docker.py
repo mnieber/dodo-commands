@@ -169,6 +169,7 @@ class Decorator:  # noqa
             docker_node.add_child(ArgsTreeNode("container"))
 
             cls._add_interactive(merged, docker_node)
+            cls._add_docker_variable_list(merged, docker_node)
             cls._add_workdir(merged, docker_node, cwd)
             cls._add_user(merged, docker_node)
             cls._add_environment_vars(get_config, merged, docker_node)
