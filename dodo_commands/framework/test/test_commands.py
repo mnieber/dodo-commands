@@ -2,6 +2,7 @@
 import os
 import shutil
 import ruamel.yaml
+import sys
 
 
 class TestConfigIO:  # noqa
@@ -36,13 +37,15 @@ class TestConfigIO:  # noqa
     def test_commands(self):  # noqa
         from plumbum import local
         dodo_test_dir = os.path.expanduser('~/projects/dodo_test')
-        global_dodo = local['dodo']
         skip_install = False
 
         if not skip_install:
             if os.path.exists(dodo_test_dir):
                 shutil.rmtree(dodo_test_dir)
-            global_dodo('activate', '--create', 'dodo_test')
+
+            from dodo_commands.dodo import main
+            sys.argv = ['dodo', 'activate', '--create', 'dodo_test']
+            main()
 
         dodo = local[os.path.join(dodo_test_dir, 'dodo_commands/env/bin/dodo')]
         if not skip_install:
