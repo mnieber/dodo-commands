@@ -39,10 +39,10 @@ def _args():
 
 def _create_tmux_window(session_id):
     # Create tmux session
-    Dodo.run(['tmux', '-2', 'new-session', '-d', '-s', session_id], )
+    tmux('-2', 'new-session', '-d', '-s', session_id)
 
     # Create a tmux window
-    Dodo.run(['tmux', 'new-window', '-t', '%s:1' % session_id, '-n', 'Logs'], )
+    tmux('new-window', '-t', '%s:1' % session_id, '-n', 'Logs')
 
 
 def _get_categories(command_map, category):
@@ -74,8 +74,8 @@ def _get_selected_commands(commands, labels, allow_free_text=False):
     class Picker(ChoicePicker):
         def print_choices(self, choices):
             print()
-            for label in choices:
-                print(label)
+            for idx, label in enumerate(choices):
+                print("%02d - %s" % (idx + 1, label))
             print()
 
         def question(self):
@@ -87,9 +87,9 @@ def _get_selected_commands(commands, labels, allow_free_text=False):
             if index == 0:
                 sys.exit(0)
 
-    picker = Picker(commands)
+    picker = Picker(commands, allow_free_text=allow_free_text)
     picker.pick()
-    return picker.get_choices()
+    return [picker.free_text] if picker.free_text else picker.get_choices()
 
 
 if Dodo.is_main(__name__):
@@ -125,24 +125,17 @@ if Dodo.is_main(__name__):
 
         if not has_session:
             _create_tmux_window(session_id)
-            Dodo.run([
-                'tmux', 'send-keys',
-                'dodo menu --tmux %s' % args.category, 'C-m'
-            ], )
+            tmux('send-keys', 'dodo menu --tmux %s' % args.category, 'C-m')
             # Attach to tmux session
+            # HACK: why does this only work via Dodo.run?
             Dodo.run(['tmux', '-2', 'attach-session', '-t', session_id], )
         else:
             while True:
                 selected_commands = _get_selected_commands(
                     commands, labels, allow_free_text=True)
                 for command in selected_commands:
-                    Dodo.run(['tmux', 'split-window', '-v'], )
-                    nr_panes = Dodo.run(['tmux', 'list-panes'],
-                                        capture=True).count('\n')
-                    Dodo.run([
-                        'tmux', 'send-keys', '-t',
-                        str(nr_panes - 1), command, 'C-m'
-                    ], )
+                    tmux('split-window', '-v')
+                    tmux('send-keys', command, 'C-m')
 
                 # Set default window
                 tmux('select-pane', '-t', '0')
