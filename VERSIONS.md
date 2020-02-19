@@ -1,5 +1,11 @@
 # Version history
 
+## 0.29.1
+
+- Allow to inspect multiple Docker containers
+- Fix dodo menu (28 minutes ago) <Maarten Nieber>
+- Fix: remove bad use of global keyword
+
 ## 0.29.0
 
 - Make new-command interactive (3 months ago) <Maarten Nieber>
