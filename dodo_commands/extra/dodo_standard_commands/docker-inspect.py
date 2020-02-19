@@ -12,7 +12,7 @@ def _args():
     parser.add_argument('--find')
     parser.add_argument('--ip', action='store_true')
     args = Dodo.parse_args(parser)
-    args.name = None
+    args.names = []
     return args
 
 
@@ -26,7 +26,7 @@ if Dodo.is_main(__name__):
     if args.find:
         for container in _containers():
             if args.find in container:
-                args.name = container
+                args.names = [container]
                 break
     else:
 
@@ -46,7 +46,10 @@ if Dodo.is_main(__name__):
 
         picker = Picker(_containers())
         picker.pick()
-        args.name = picker.get_choices()[0]
+        args.names = picker.get_choices()
 
-    ip_args = ["-f", "{{ .NetworkSettings.IPAddress }}"] if args.ip else []
-    Dodo.run(['docker', 'inspect', *ip_args, args.name], )
+    ip_args = [
+        "-f", "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}"
+    ] if args.ip else []
+    for container in args.names:
+        Dodo.run(['docker', 'inspect', *ip_args, container], )

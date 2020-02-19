@@ -52,9 +52,11 @@ def parse_choice(raw_choice):
 
 
 class ChoicePicker:
-    def __init__(self, choices, start_index=1):
+    def __init__(self, choices, start_index=1, allow_free_text=False):
         self._choices = choices
         self._start_index = start_index
+        self.allow_free_text = allow_free_text
+        self.free_text = None
 
     def print_choices(self):
         raise NotImplementedError()
@@ -66,12 +68,17 @@ class ChoicePicker:
         pass
 
     def pick(self):
+        self.free_text = None
+        self.idxs = []
         self.print_choices(self._choices)
         while True:
             raw_choice = raw_input(self.question())
             try:
                 self.idxs = parse_choice(raw_choice)
             except ParseError:
+                if self.allow_free_text:
+                    self.free_text = raw_choice
+                    return
                 print("Sorry, I did not understand that")
             else:
                 for idx in self.idxs:

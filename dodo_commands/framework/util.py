@@ -157,3 +157,7 @@ def poll_docker_container_status(image_name, dodo_run, condition):
 class classproperty(property):  # noqa
     def __get__(self, cls, owner):  # noqa
         return classmethod(self.fget).__get__(None, owner)()
+
+
+def maybe_list_to_list(maybe_list):
+    return (maybe_list if isinstance(maybe_list, list) else [maybe_list])
