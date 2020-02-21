@@ -1,22 +1,34 @@
-from argparse import ArgumentParser
 import os
+from argparse import ArgumentParser
 
-from six.moves import input as raw_input
-from funcy.py2 import cut_prefix
-
-from dodo_commands import Dodo, CommandError
-from dodo_commands.framework.config_io import ConfigIO
+from dodo_commands import CommandError, Dodo
 from dodo_commands.framework.choice_picker import ChoicePicker
+from dodo_commands.framework.command_map import get_command_map
+from dodo_commands.framework.command_path import get_command_dirs_from_config
+from dodo_commands.framework.config_io import ConfigIO
 from dodo_commands.framework.funcy import map_with
+from funcy.py2 import cut_prefix
+from six.moves import input as raw_input
 
 
 def _args():
     parser = ArgumentParser(description="Creates a new Dodo command.")
+    parser.add_argument('--name')
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-i', '--interactive', action='store_true')
+    group.add_argument('--next-to')
+
     parser.add_argument('-f',
                         '--force',
                         action='store_true',
                         help='Overwrite existing command script')
     args = Dodo.parse_args(parser)
+
+    if args.next_to and not args.name:
+        raise CommandError(
+            "The --name argument is mandatory when --next-to is used")
+
     return args
 
 
@@ -192,7 +204,8 @@ if Dodo.is_main(__name__, safe=True):
     Dodo.run([{args_str}], cwd=args.cwd)
 """
 
-if Dodo.is_main(__name__, safe=False):
+
+def handle_interactive(parsed_args):
     parsed_args = _args()
 
     name = raw_input("Enter a name for the command: ")
@@ -212,7 +225,6 @@ if Dodo.is_main(__name__, safe=False):
         raw_args = raw_args.split(' ')
         return map_with(map_to_split_arg)(raw_args)
 
-    __import__('pudb').set_trace()
     command_dirs = Dodo.get_container().commands.command_dirs
     command_dir = get_command_dir(command_dirs)
     dest_path = os.path.join(command_dir, name + ".py")
@@ -243,5 +255,35 @@ if Dodo.is_main(__name__, safe=False):
                           params_str=params_str,
                           description=description,
                           args_str=args_str))
-
     print(dest_path)
+
+
+def handle_next_to(parsed_args):
+    command_dirs = get_command_dirs_from_config(Dodo.get_config())
+    command_map = get_command_map(command_dirs)
+    item = command_map.get(parsed_args.next_to)
+
+    if not item:
+        raise CommandError("Script not found: %s" % parsed_args.next_to)
+
+    dest_path = os.path.join(os.path.dirname(item.filename),
+                             parsed_args.name + ".py")
+
+    if os.path.exists(dest_path) and not parsed_args.force:
+        raise CommandError("Destination already exists: %s" % dest_path)
+
+    with open(dest_path, "w") as f:
+        f.write(
+            script.format(parser_args_str="",
+                          params_str="",
+                          description="",
+                          args_str=""))
+    print(dest_path)
+
+
+if Dodo.is_main(__name__, safe=False):
+    parsed_args = _args()
+    if parsed_args.interactive:
+        handle_interactive(parsed_args)
+    else:
+        handle_next_to(parsed_args)
