@@ -60,7 +60,7 @@ The :code:`dodo_standard_commands` directory is added by default to the ``~/.dod
 
 .. code-block:: bash
 
-    dodo install-default-commands --pip dodo_webdev_commands --pip dodo_git_commands --pip dodo_deploy_commands
+    dodo install-commands --pip dodo_webdev_commands --pip dodo_git_commands --pip dodo_deploy_commands
 
 
 Step 5: (Optional) Enable autocompletion
@@ -104,4 +104,4 @@ Upgrading
 
 To upgrade Dodo Commands, you need to upgrade its pip package. If you have activated a Dodo Commands project with ``$(dodo activate foo)`` then the first step is to deactivate it by typing ``deactivate``. This is necessary because we don't want to use the ``pip`` from the virtual environment.
 
-Now, to upgrade, simply run ``pip install --upgrade dodo_commands``. To upgrade a commands package (for example: dodo_git_commands), simply install it again using ``dodo install-default-commands --pip dodo_git_commands``.
+Now, to upgrade, simply run ``pip install --upgrade dodo_commands``. To upgrade a commands package (for example: dodo_git_commands), simply install it again using ``dodo install-commands --pip dodo_git_commands``.

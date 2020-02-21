@@ -61,9 +61,9 @@ def _packages_in_extra_dir():
         packages[-1] = "and " + packages[-1]
         msg = " The %s packages are found automagically " % ", ".join(packages)
 
-    return (msg + " in the dodo_commands.extra package" +
-            ", e.g. the following works: dodo install-default-commands %s." %
-            packages[0])
+    return (
+        msg + " in the dodo_commands.extra package" +
+        ", e.g. the following works: dodo install-commands %s." % packages[0])
 
 
 def _report_error(msg):
@@ -186,9 +186,9 @@ if Dodo.is_main(__name__):
             if args.remove:
                 _remove_package(package)
             else:
-                _install_package(
-                    package, lambda: _install_commands_from_path(path),
-                    args.to_defaults)
+                _install_package(package,
+                                 lambda: _install_commands_from_path(path),
+                                 args.to_defaults)
 
     if args.pip:
         for package in args.pip:

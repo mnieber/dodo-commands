@@ -77,6 +77,7 @@ Since pipes and redirection are handled by the shell, you need to explicitly men
 You can shorten this a little using the ``bash_cmd`` helper function:
 
 .. code-block:: python
+
     from dodo_commands.framework.util import bash_cmd
 
     if Dodo.is_main(__name__):
