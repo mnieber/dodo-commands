@@ -1,8 +1,9 @@
 """Tests for all standard commands."""
 import os
 import shutil
-import ruamel.yaml
 import sys
+
+import ruamel.yaml
 
 
 class TestConfigIO:  # noqa
@@ -31,7 +32,7 @@ class TestConfigIO:  # noqa
     @classmethod
     def _clear_layers(cls, config_filename):
         config = cls._load_config(config_filename)
-        config['ROOT']['layers'] = []
+        config['LAYERS']['fixed'] = []
         cls._write_config(config, config_filename)
 
     def test_commands(self):  # noqa
@@ -115,11 +116,11 @@ class TestConfigIO:  # noqa
         # dodo layer
         self._clear_layers(config_filename)
         dodo('layer', 'debug', 'on')
-        assert self._load_config(config_filename)['ROOT']['layers'] == [
+        assert self._load_config(config_filename)['LAYERS']['fixed'] == [
             'debug.on.yaml'
         ]
         dodo('layer', 'debug', 'off')
-        assert self._load_config(config_filename)['ROOT']['layers'] == [
+        assert self._load_config(config_filename)['LAYERS']['fixed'] == [
             'debug.off.yaml'
         ]
 

@@ -1,7 +1,8 @@
 import os
+
+from dodo_commands.framework.funcy import (drill, ds, for_each, keep_if,
+                                           map_with)
 from funcy.py2 import distinct, flatten
-from dodo_commands.framework.funcy import (map_with, ds, for_each, drill,
-                                           keep_if)
 
 
 def layer_filename_superset(layer_filenames, config_io, recursive=True):
@@ -18,7 +19,7 @@ def layer_filename_superset(layer_filenames, config_io, recursive=True):
             selected_layer_by_path[layer_filename] = layer
 
         def map_to_nested_layer_paths(layer_filename, layer):
-            return drill(layer, 'ROOT', 'layers', default=[])
+            return drill(layer, 'LAYERS', 'fixed', default=[])
 
         def get_flat_list(list_of_lists):
             return distinct(flatten(list_of_lists))

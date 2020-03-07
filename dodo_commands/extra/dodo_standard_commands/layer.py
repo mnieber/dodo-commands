@@ -1,8 +1,8 @@
-from argparse import ArgumentParser
 import os
 import sys
+from argparse import ArgumentParser
 
-from dodo_commands import Dodo, CommandError
+from dodo_commands import CommandError, Dodo
 from dodo_commands.framework.config_io import ConfigIO
 
 
@@ -54,7 +54,7 @@ def _layer_value(layers, layer):
 
 
 def _layers(config, filter_abs_paths=False):
-    layers = config.get('ROOT', {}).get('layers', [])
+    layers = config.get('LAYERS', {}).get('fixed', [])
 
     if filter_abs_paths:
         layers = [
@@ -90,5 +90,5 @@ if Dodo.is_main(__name__, safe=False):
         raise CommandError("Layer file %s does not exist" % layer_file)
 
     newlayers = _update_list_of_layers(layers, args.layer, args.value)
-    config['ROOT']['layers'] = newlayers
+    config.get('LAYERS', {})['fixed'] = newlayers
     ConfigIO().save(config)

@@ -1,9 +1,10 @@
 """Tests for config.py."""
 
 import os
-import pytest
 
 import ruamel.yaml
+
+import pytest
 
 from ..config import load_config
 from ..config_io import ConfigIO
@@ -14,8 +15,10 @@ class TestConfigIO:  # noqa
     def simple_config(self, tmpdir):
         foo_dir = os.path.join(str(tmpdir), 'foo')
         return {
+            'LAYERS': {
+                'fixed': ['mylayer.yml'],
+            },
             'ROOT': {
-                'layers': ['mylayer.yml'],
                 'command_path': [os.path.join(foo_dir, 'bar')],
                 'foo': {
                     'bar': 'foobar',

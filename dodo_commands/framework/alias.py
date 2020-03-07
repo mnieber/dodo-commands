@@ -21,8 +21,8 @@ def load_named_layers(
 
         if not config_io.glob([target_path]):
             sys.stderr.write(
-                "Warning: layer not found: %s. Check /ROOT/layer_aliases/%s\n"
-                % (target_path, layer_name))
+                "Warning: layer not found: %s. Check /LAYERS%s\n" %
+                (target_path, layer_name))
 
     def add_layer(layer_name, target_path):
         is_found = config_io.glob([target_path])

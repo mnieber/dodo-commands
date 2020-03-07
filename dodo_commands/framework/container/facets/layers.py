@@ -13,7 +13,16 @@ class Layers:
 
     @property
     def target_path_by_layer_name(self):
-        return drill(self.root_layer, 'ROOT', 'layer_names', default={})
+        result = {}
+
+        groups = drill(self.root_layer,
+                       'LAYERS',
+                       'optional_groups',
+                       default={})
+        for group_name, group in groups.items():
+            for layer_name in group:
+                result[layer_name] = "%s.%s.yaml"
+        return result
 
     @staticmethod
     def get(ctr):
