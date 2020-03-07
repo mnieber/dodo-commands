@@ -8,12 +8,12 @@ class Layers:
         self.config_io = ConfigIO()
         self.root_layer_path = None
         self.root_layer = None
-        self.layer_by_alias_target_path = {}
+        self.layer_by_target_path = {}
         self.selected_layer_by_path = {}
 
     @property
-    def target_path_by_alias(self):
-        return drill(self.root_layer, 'ROOT', 'layer_aliases', default={})
+    def target_path_by_layer_name(self):
+        return drill(self.root_layer, 'ROOT', 'layer_names', default={})
 
     @staticmethod
     def get(ctr):

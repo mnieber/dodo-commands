@@ -1,29 +1,29 @@
-from dodo_commands.framework.funcy import drill
-from dodo_commands.framework.container.facets import (Commands, Layers, Config,
-                                                      map_datas, i_, o_)
-from dodo_commands.framework.command_path import get_command_dirs_from_config
 from dodo_commands.framework.command_map import get_command_map
+from dodo_commands.framework.command_path import get_command_dirs_from_config
+from dodo_commands.framework.container.facets import (Commands, Config, Layers,
+                                                      i_, map_datas, o_)
+from dodo_commands.framework.funcy import drill
 from dodo_commands.framework.inferred_commands import get_inferred_command_map
 
 
 # COMMANDS
 def action_get_inferred_command_map(ctr):
     def transform(
-            global_aliases,
-            target_path_by_alias,
-            layer_by_alias_target_path,
+        global_aliases,
+        target_path_by_layer_name,
+        layer_by_target_path,
     ):
-        layer_alias_by_inferred_command = get_inferred_command_map(
+        layer_name_by_inferred_command = get_inferred_command_map(
             global_aliases,
-            target_path_by_alias,
-            layer_by_alias_target_path,
+            target_path_by_layer_name,
+            layer_by_target_path,
         )
-        return (layer_alias_by_inferred_command, )
+        return (layer_name_by_inferred_command, )
 
     return map_datas(i_(Commands, 'global_aliases'),
-                     i_(Layers, 'target_path_by_alias'),
-                     i_(Layers, 'layer_by_alias_target_path'),
-                     o_(Commands, 'layer_alias_by_inferred_command'),
+                     i_(Layers, 'target_path_by_layer_name'),
+                     i_(Layers, 'layer_by_target_path'),
+                     o_(Commands, 'layer_name_by_inferred_command'),
                      transform=transform)(ctr)
 
 

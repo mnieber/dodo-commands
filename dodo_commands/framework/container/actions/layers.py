@@ -1,7 +1,8 @@
-from funcy.py2 import distinct
+from dodo_commands.framework.alias import load_named_layers
 from dodo_commands.framework.config_layers import layer_filename_superset
-from dodo_commands.framework.alias import load_aliased_layers
-from dodo_commands.framework.container.facets import Layers, CommandLine, map_datas, i_, o_
+from dodo_commands.framework.container.facets import (CommandLine, Layers, i_,
+                                                      map_datas, o_)
+from funcy.py2 import distinct
 
 
 # LAYERS
@@ -21,21 +22,21 @@ def action_load_root_layer(ctr):
 
 
 # LAYERS
-def action_load_aliased_layers(ctr):
+def action_load_named_layers(ctr):
     def transform(
         config_io,
-        target_path_by_alias,
+        target_path_by_layer_name,
     ):
-        layer_by_alias_target_path = load_aliased_layers(
+        layer_by_target_path = load_named_layers(
             config_io,
-            target_path_by_alias,
+            target_path_by_layer_name,
         )
-        return (layer_by_alias_target_path, )
+        return (layer_by_target_path, )
 
     return map_datas(i_(Layers, 'config_io'),
-                     i_(Layers, 'target_path_by_alias'),
-                     o_(Layers, 'layer_by_alias_target_path'),
-                     transform=load_aliased_layers)(ctr)
+                     i_(Layers, 'target_path_by_layer_name'),
+                     o_(Layers, 'layer_by_target_path'),
+                     transform=load_named_layers)(ctr)
 
 
 # LAYERS

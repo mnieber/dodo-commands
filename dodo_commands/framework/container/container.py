@@ -1,5 +1,5 @@
+from dodo_commands.framework.container import actions, facets
 from dodo_commands.framework.paths import Paths
-from dodo_commands.framework.container import facets, actions
 
 
 class Container:
@@ -15,7 +15,7 @@ class Container:
 
     def run_actions(self):
         actions.layers.action_load_root_layer(self)
-        actions.layers.action_load_aliased_layers(self)
+        actions.layers.action_load_named_layers(self)
 
         actions.commands.action_get_inferred_command_map(self)
 

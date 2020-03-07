@@ -1,20 +1,19 @@
-from funcy.py2 import distinct, merge
-
 from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.funcy import drill, for_each
+from funcy.py2 import distinct, merge
 
 
 def get_inferred_command_map(
     global_aliases,
-    target_path_by_alias,
-    layer_by_alias_target_path,
+    target_path_by_layer_name,
+    layer_by_target_path,
 ):
-    layer_alias_by_inferred_command = {}
+    layer_name_by_inferred_command = {}
 
-    for alias, target_path in target_path_by_alias.items():
+    for layer_name, target_path in target_path_by_layer_name.items():
 
         def get_layer(target_path):
-            return layer_by_alias_target_path[target_path]
+            return layer_by_target_path[target_path]
 
         def get_inferred_commands(layer):
             return drill(layer, 'ROOT', 'inferred_commands', default=[])
@@ -37,13 +36,13 @@ def get_inferred_command_map(
             return distinct(inferred_commands + inferred_aliases)
 
         def do_store(inferred_command):
-            if inferred_command in layer_alias_by_inferred_command:
+            if inferred_command in layer_name_by_inferred_command:
                 raise CommandError(
                     "Ambigous inferred command %s. " % inferred_command +
                     "Could be %s or %s" %
                     (target_path,
-                     layer_alias_by_inferred_command[inferred_command]))
-            layer_alias_by_inferred_command[inferred_command] = alias
+                     layer_name_by_inferred_command[inferred_command]))
+            layer_name_by_inferred_command[inferred_command] = layer_name
 
         x = target_path
         x = layer = get_layer(x)
@@ -55,4 +54,4 @@ def get_inferred_command_map(
                                               inferred_aliases)
         for_each(do_store)(x)
 
-    return layer_alias_by_inferred_command
+    return layer_name_by_inferred_command

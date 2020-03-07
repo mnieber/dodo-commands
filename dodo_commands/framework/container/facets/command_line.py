@@ -1,9 +1,9 @@
+import argparse
 import os
 import sys
-import argparse
 
 from dodo_commands.framework.funcy import keep_truthy, str_split_at
-from funcy.py2 import distinct, cut_suffix
+from funcy.py2 import cut_suffix, distinct
 
 
 class CommandLine:
@@ -29,7 +29,7 @@ class CommandLine:
         input1 = self.input_args[1] if len(self.input_args) > 1 else ""
 
         # When running directly from a script, then we know the command was not
-        # prefixed with layer aliases.
+        # prefixed with layer names.
         if self.is_running_directly_from_script:
             return '', cut_suffix(input1, '.py')
         return str_split_at(input1, input1.rfind('.') + 1)
@@ -43,7 +43,7 @@ class CommandLine:
         return self._split_input1[0]
 
     @property
-    def layer_aliases(self):
+    def layer_names(self):
         return distinct(keep_truthy()(self.raw_command_prefix.split('.')))
 
     def get_trace(self):

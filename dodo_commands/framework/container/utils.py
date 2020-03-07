@@ -1,6 +1,7 @@
 import os
-from funcy.py2 import distinct, concat
+
 from dodo_commands.framework.funcy import remove_if
+from funcy.py2 import concat, distinct
 
 
 def get_ordered_layer_paths(ctr):
@@ -8,7 +9,7 @@ def get_ordered_layer_paths(ctr):
                                                  ])[0]
 
     x = concat(ctr.layers.selected_layer_by_path.keys(),
-               ctr.layers.layer_by_alias_target_path.keys())
+               ctr.layers.layer_by_target_path.keys())
     x = distinct(x)
     x = sorted(x, key=os.path.basename)
     x = ctr.layers.config_io.glob(x)
