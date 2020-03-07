@@ -10,18 +10,18 @@ from dodo_commands.framework.inferred_commands import get_inferred_command_map
 def action_get_inferred_command_map(ctr):
     def transform(
         global_aliases,
-        target_path_by_layer_name,
+        layer_config_by_layer_name,
         layer_by_target_path,
     ):
         layer_name_by_inferred_command = get_inferred_command_map(
             global_aliases,
-            target_path_by_layer_name,
+            layer_config_by_layer_name,
             layer_by_target_path,
         )
         return (layer_name_by_inferred_command, )
 
     return map_datas(i_(Commands, 'global_aliases'),
-                     i_(Layers, 'target_path_by_layer_name'),
+                     i_(Layers, 'layer_config_by_layer_name'),
                      i_(Layers, 'layer_by_target_path'),
                      o_(Commands, 'layer_name_by_inferred_command'),
                      transform=transform)(ctr)

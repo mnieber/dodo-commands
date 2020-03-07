@@ -14,17 +14,17 @@ def action_get_expanded_layer_paths(ctr):
     def transform(
         #
         layer_names,
-        target_path_by_layer_name,
+        layer_config_by_layer_name,
     ):
         def map_to_path(layer_name):
-            if layer_name not in target_path_by_layer_name:
+            if layer_name not in layer_config_by_layer_name:
                 raise CommandError("Unknown layer: %s" % layer_name)
-            return target_path_by_layer_name[layer_name]
+            return layer_config_by_layer_name[layer_name].target_path
 
         return (map_with(map_to_path)(layer_names), )
 
     return map_datas(i_(CommandLine, 'layer_names'),
-                     i_(Layers, 'target_path_by_layer_name'),
+                     i_(Layers, 'layer_config_by_layer_name'),
                      o_(CommandLine, 'expanded_layer_paths'),
                      transform=transform)(ctr)
 
@@ -35,15 +35,15 @@ def action_get_inferred_layer_paths(ctr):
         #
         raw_command_name,
         layer_name_by_inferred_command,
-        target_path_by_layer_name):
+        layer_config_by_layer_name):
         layer_name = layer_name_by_inferred_command.get(raw_command_name, None)
-        target_path = target_path_by_layer_name.get(layer_name)
+        layer_config = layer_config_by_layer_name.get(layer_name)
 
-        return ([target_path] if target_path else [], )
+        return ([layer_config.target_path] if layer_config else [], )
 
     return map_datas(i_(CommandLine, 'raw_command_name'),
                      i_(Commands, 'layer_name_by_inferred_command'),
-                     i_(Layers, 'target_path_by_layer_name'),
+                     i_(Layers, 'layer_config_by_layer_name'),
                      o_(CommandLine, 'inferred_layer_paths'),
                      transform=transform)(ctr)
 
@@ -57,7 +57,7 @@ def action_expand_and_autocomplete_command_name(ctr):
         command_map,
         command_aliases,
         layer_name_by_inferred_command,
-        target_path_by_layer_name,
+        layer_config_by_layer_name,
     ):
         completed_command_name = (
             handle_arg_complete(
@@ -65,7 +65,7 @@ def action_expand_and_autocomplete_command_name(ctr):
                 inferred_command_names=list(
                     layer_name_by_inferred_command.keys()),
                 command_aliases=list(command_aliases.keys()),
-                target_path_by_layer_name=target_path_by_layer_name)
+                layer_config_by_layer_name=layer_config_by_layer_name)
             #
             if "_ARGCOMPLETE" in os.environ else
             #
@@ -89,7 +89,7 @@ def action_expand_and_autocomplete_command_name(ctr):
                      i_(Commands, 'command_map'),
                      i_(Commands, 'aliases', alt_name='command_aliases'),
                      i_(Commands, 'layer_name_by_inferred_command'),
-                     i_(Layers, 'target_path_by_layer_name'),
+                     i_(Layers, 'layer_config_by_layer_name'),
                      o_(CommandLine, 'input_args'),
                      o_(CommandLine, 'command_name'),
                      o_(CommandLine, 'more_given_layer_paths'),

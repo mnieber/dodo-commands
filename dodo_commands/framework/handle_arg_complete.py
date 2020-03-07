@@ -9,7 +9,7 @@ from funcy.py2 import distinct, flatten
 
 
 def handle_arg_complete(command_names, inferred_command_names, command_aliases,
-                        target_path_by_layer_name):
+                        layer_config_by_layer_name):
     def get_args():
         return os.environ['COMP_LINE'].split()
 
@@ -37,15 +37,17 @@ def handle_arg_complete(command_names, inferred_command_names, command_aliases,
     choices = get_choices(commands)  # [choice]
 
     def get_possible_layer_names():
-        return target_path_by_layer_name.keys()
+        return layer_config_by_layer_name.keys()
 
     def is_already_used(layer_name):
         return layer_name in used_layer_names
 
     def is_conflicting(layer_name):
-        used_layer_paths = map_with(target_path_by_layer_name)(
+        used_layer_configs = map_with(layer_config_by_layer_name)(
             used_layer_names)
-        layer_path = target_path_by_layer_name[layer_name]
+        used_layer_paths = [x.target_path for x in used_layer_configs]
+
+        layer_path = layer_config_by_layer_name[layer_name].target_path
         return get_conflicts_in_layer_paths(used_layer_paths + [layer_path])
 
     def map_to_choices(layer_name):
