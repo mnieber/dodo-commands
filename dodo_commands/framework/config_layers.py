@@ -1,8 +1,8 @@
 import os
 
+from dodo_commands.dependencies.funcy.py2 import distinct, flatten
 from dodo_commands.framework.funcy import (drill, ds, for_each, keep_if,
                                            map_with)
-from funcy.py2 import distinct, flatten
 
 
 def layer_filename_superset(layer_filenames, config_io, recursive=True):

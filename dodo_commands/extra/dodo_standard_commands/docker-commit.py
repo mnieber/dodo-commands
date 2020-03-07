@@ -1,10 +1,9 @@
-from argparse import ArgumentParser
 import sys
+from argparse import ArgumentParser
 
-from plumbum.cmd import docker
-from six.moves import input as raw_input
-
-from dodo_commands import Dodo, CommandError
+from dodo_commands import CommandError, Dodo
+from dodo_commands.dependencies.plumbum.cmd import docker
+from dodo_commands.dependencies.six import input as raw_input
 
 
 def _args():

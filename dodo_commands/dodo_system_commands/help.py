@@ -3,8 +3,8 @@ import sys
 from argparse import ArgumentParser
 from collections import defaultdict
 
-import ruamel.yaml
 from dodo_commands import Dodo
+from dodo_commands.dependencies.ruamel import yaml
 from dodo_commands.framework.command_map import get_command_map
 from dodo_commands.framework.command_path import get_command_dirs_from_config
 from dodo_commands.framework.config import build_config
@@ -77,7 +77,7 @@ def _commands_section(command_map, inferred_commands, use_columns=True):
 def _collect_command_dirs(config, config_io, layer_names_by_command_dir,
                           command_aliases, layer_config_by_layer_name,
                           layer_by_target_path):
-    config_memo = ruamel.yaml.round_trip_dump(config)
+    config_memo = yaml.round_trip_dump(config)
 
     for layer_name, layer_config in layer_config_by_layer_name.items():
 
@@ -88,7 +88,7 @@ def _collect_command_dirs(config, config_io, layer_names_by_command_dir,
                                                   config_io=config_io)
         extra_layers = map_with(config_io.load)(layer_filenames)
         if keep_if(has_command_path)(extra_layers):
-            base_config = ruamel.yaml.round_trip_load(config_memo)
+            base_config = yaml.round_trip_load(config_memo)
             updated_config = build_config([base_config] + extra_layers)
             for command_dir in get_command_dirs_from_config(updated_config):
                 layer_names = layer_names_by_command_dir[command_dir]

@@ -1,7 +1,6 @@
 import os
 
-from six.moves import configparser
-
+from dodo_commands.dependencies.six.moves import configparser
 from dodo_commands.framework.paths import Paths
 from dodo_commands.framework.util import symlink
 

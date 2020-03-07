@@ -1,9 +1,9 @@
 """Decorates command lines with docker arguments."""
-from fnmatch import fnmatch
-from plumbum import local
 import os
+from fnmatch import fnmatch
 
-from dodo_commands import Dodo, CommandError
+from dodo_commands import CommandError, Dodo
+from dodo_commands.dependencies.plumbum import local
 from dodo_commands.framework.args_tree import ArgsTreeNode
 from dodo_commands.framework.config import merge_into_config
 from dodo_commands.framework.decorator_utils import uses_decorator

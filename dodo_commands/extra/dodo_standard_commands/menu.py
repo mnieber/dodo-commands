@@ -1,10 +1,9 @@
-from argparse import ArgumentParser
 import os
 import sys
+from argparse import ArgumentParser
 
-from plumbum.cmd import tmux
-
-from dodo_commands import Dodo, CommandError
+from dodo_commands import CommandError, Dodo
+from dodo_commands.dependencies.plumbum.cmd import tmux
 from dodo_commands.framework.choice_picker import ChoicePicker
 from dodo_commands.framework.util import exe_exists
 

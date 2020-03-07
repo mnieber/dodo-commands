@@ -1,18 +1,17 @@
 """Script for activating/creating a project in the projects dir."""
-from argparse import ArgumentParser
 import os
 import shutil
 import sys
+from argparse import ArgumentParser
 
-import ruamel.yaml
-from plumbum import local
-
-from dodo_commands import Dodo, CommandError
-from dodo_commands.framework.paths import Paths
+import dodo_commands
+from dodo_commands import CommandError, Dodo
+from dodo_commands.dependencies.plumbum import local
+from dodo_commands.dependencies.ruamel import yaml
 from dodo_commands.framework.global_config import (load_global_config_parser,
                                                    write_global_config_parser)
+from dodo_commands.framework.paths import Paths
 from dodo_commands.framework.util import is_windows, symlink
-import dodo_commands
 
 
 def _make_executable(script_filename):
@@ -41,7 +40,6 @@ def dodo_template_bat(python_path, dodo_path):
 
 class Activator:
     """Creates and activates projects."""
-
     def _virtual_env_filename(self, basename):
         return os.path.join(self.paths.virtual_env_bin_dir(), basename)
 
@@ -57,19 +55,6 @@ class Activator:
                             self.config.get("settings", "python_interpreter"),
                             self.paths.virtual_env_dir(), "--prompt",
                             self.project)
-
-        local[self.paths.pip()](
-            "install",
-            "ansimarkup",
-            "argcomplete",
-            "parsimonious",
-            "plumbum",
-            "python-dotenv",
-            "ruamel.yaml",
-            "semantic_version",
-            "six",
-            "funcy",
-        )
 
         symlink(os.path.realpath(os.path.dirname(dodo_commands.__file__)),
                 os.path.join(self.paths.site_packages_dir(), "dodo_commands"))
@@ -107,7 +92,7 @@ class Activator:
             }
         }
         with open(config_filename, "w") as f:
-            f.write(ruamel.yaml.round_trip_dump(default_config))
+            f.write(yaml.round_trip_dump(default_config))
 
     def _dodo_commands_sub_dir(self):
         return os.path.join(self.paths.project_dir(), "dodo_commands")

@@ -2,7 +2,7 @@
 
 import os
 
-import ruamel.yaml
+from dodo_commands.dependencies.ruamel import yaml
 
 import pytest
 
@@ -55,7 +55,7 @@ class TestConfigIO:  # noqa
         """Create a config layer file in the tmpdir."""
         layer_filename = os.path.join(str(tmpdir), "mylayer.yml")
         with open(layer_filename, "w") as f:
-            f.write(ruamel.yaml.round_trip_dump(layer))
+            f.write(yaml.round_trip_dump(layer))
 
     def test_save(self, tmpdir, simple_config):  # noqa
         config_io = ConfigIO(str(tmpdir))  # noqa

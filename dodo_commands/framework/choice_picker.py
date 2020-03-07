@@ -1,9 +1,9 @@
 import re
-from six.moves import input as raw_input
 
-from parsimonious.grammar import Grammar
-from parsimonious.nodes import NodeVisitor
-from parsimonious.exceptions import ParseError
+from dodo_commands.dependencies.parsimonious.exceptions import ParseError
+from dodo_commands.dependencies.parsimonious.grammar import Grammar
+from dodo_commands.dependencies.parsimonious.nodes import NodeVisitor
+from dodo_commands.dependencies.six.moves import input as raw_input
 
 
 def parse_choice(raw_choice):

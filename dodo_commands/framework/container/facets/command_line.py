@@ -2,8 +2,8 @@ import argparse
 import os
 import sys
 
+from dodo_commands.dependencies.funcy.py2 import cut_suffix, distinct
 from dodo_commands.framework.funcy import keep_truthy, str_split_at
-from funcy.py2 import cut_suffix, distinct
 
 
 class CommandLine:

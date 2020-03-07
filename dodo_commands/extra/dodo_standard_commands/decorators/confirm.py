@@ -1,9 +1,8 @@
 import os
 import sys
 
-from plumbum import local
-
-from dodo_commands import Dodo, CommandError
+from dodo_commands import CommandError, Dodo
+from dodo_commands.dependencies.plumbum import local
 from dodo_commands.framework.util import query_yes_no
 
 
@@ -21,7 +20,6 @@ def _count_confirm_in_argv():
 
 def _ask_confirmation(args, cwd, is_echo, is_confirm):
     """Ask the user whether to continue with executing func."""
-
     def to_str():
         return args.to_str(slash=args.children)
 

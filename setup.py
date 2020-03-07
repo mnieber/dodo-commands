@@ -25,12 +25,5 @@ setup(name='dodo_commands',
       entry_points={'console_scripts': [
           'dodo=dodo_commands.dodo:main',
       ]},
-      install_requires=[
-          'argcomplete',
-          'plumbum',
-          'python-dotenv',
-          'ruamel.yaml',
-          'six',
-          'funcy',
-      ],
+      install_requires=[],
       zip_safe=False)

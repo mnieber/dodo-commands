@@ -3,19 +3,19 @@ import os
 import shutil
 import sys
 
-import ruamel.yaml
+from dodo_commands.dependencies.ruamel import yaml
 
 
 class TestConfigIO:  # noqa
     @classmethod
     def _load_config(cls, config_filename):
         with open(config_filename) as f:
-            return ruamel.yaml.round_trip_load(f.read())
+            return yaml.round_trip_load(f.read())
 
     @classmethod
     def _write_config(cls, config, config_filename):
         with open(config_filename, 'w') as f:
-            f.write(ruamel.yaml.round_trip_dump(config))
+            f.write(yaml.round_trip_dump(config))
 
     @classmethod
     def _set_config_version(cls, config_filename, version):
@@ -36,7 +36,7 @@ class TestConfigIO:  # noqa
         cls._write_config(config, config_filename)
 
     def test_commands(self):  # noqa
-        from plumbum import local
+        from dodo_commands.dependencies.plumbum import local
         dodo_test_dir = os.path.expanduser('~/projects/dodo_test')
         skip_install = False
 

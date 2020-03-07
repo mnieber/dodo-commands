@@ -1,12 +1,11 @@
-from argparse import ArgumentParser
 import os
 import sys
-
-from semantic_version import Version
-from plumbum import local
-import ruamel.yaml
+from argparse import ArgumentParser
 
 from dodo_commands import Dodo
+from dodo_commands.dependencies.plumbum import local
+from dodo_commands.dependencies.ruamel import yaml
+from dodo_commands.dependencies.semantic_version import Version
 from dodo_commands.framework import get_version
 from dodo_commands.framework.config import Paths
 from dodo_commands.framework.util import bordered
@@ -43,7 +42,7 @@ def _shared_config_dir():
 
 def _get_root_config_field(config_filename, field_name):
     with open(config_filename) as f:
-        config = ruamel.yaml.round_trip_load(f.read())
+        config = yaml.round_trip_load(f.read())
     return config.get("ROOT", {}).get(field_name, "")
 
 
@@ -82,15 +81,15 @@ def check_config_version():  # noqa
 
     original_version = _get_root_config_field(original_file, 'version')
     if not original_version:
-        sys.stderr.write(
-            "No version found in original file %s\n" % original_file)
+        sys.stderr.write("No version found in original file %s\n" %
+                         original_file)
         return
 
     copied_file = os.path.join(Paths().res_dir(), "config.yaml")
     copied_version = _get_root_config_field(copied_file, 'version')
     if not copied_version:
-        sys.stderr.write(
-            "No version found in user managed file %s\n" % copied_file)
+        sys.stderr.write("No version found in user managed file %s\n" %
+                         copied_file)
         return
 
     if (_partial_sem_version(copied_version) <

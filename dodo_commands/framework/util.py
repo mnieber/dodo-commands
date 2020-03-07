@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """Utilities."""
 import os
-import time
 import sys
+import time
 
-from six.moves import input as raw_input
-from plumbum import local
-from plumbum.commands.processes import CommandNotFound
+from dodo_commands.dependencies.plumbum import local
+from dodo_commands.dependencies.plumbum.commands.processes import \
+    CommandNotFound
+from dodo_commands.dependencies.six.moves import input as raw_input
 
 
 def query_yes_no(question, default="yes"):

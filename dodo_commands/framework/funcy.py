@@ -1,4 +1,5 @@
-from funcy.py2 import rcompose, partial, remove, filter, map
+from dodo_commands.dependencies.funcy.py2 import (filter, map, partial,
+                                                  rcompose, remove)
 
 
 def keep_if(f):

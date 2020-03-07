@@ -1,26 +1,18 @@
 """Module for working with the dodo configurations."""
 import copy
-import os
-import ruamel.yaml
-import sys
 import json
+import os
 import re
+import sys
 
-from dodo_commands.framework.paths import Paths
-from dodo_commands.framework.config_io import ConfigIO
+from dodo_commands.dependencies.dotenv import dotenv_values
+from dodo_commands.dependencies.ruamel import yaml
 from dodo_commands.framework.command_error import CommandError
-from dodo_commands.framework.config_expander import ConfigExpander
-from dodo_commands.framework.config_expander import Key, KeyNotFound  # noqa
+from dodo_commands.framework.config_expander import ConfigExpander  # noqa
+from dodo_commands.framework.config_expander import Key, KeyNotFound
+from dodo_commands.framework.config_io import ConfigIO
 from dodo_commands.framework.global_config import create_global_config  # noqa
-
-try:
-    from dotenv import dotenv_values
-except ImportError:
-    # Stub
-    def dotenv_values(x):
-        raise CommandError(
-            "Package python-dotenv not installed. Please run: pip install python-dotenv."
-        )
+from dodo_commands.framework.paths import Paths
 
 
 def merge_into_config(config, layer, xpath=None):
@@ -135,7 +127,7 @@ def load_config(layer_filenames, config_io=None, warn=True):
     try:
         for layer_filename in layer_filenames:
             layers.append(config_io.load(layer_filename))
-    except ruamel.yaml.scanner.ScannerError:
+    except yaml.scanner.ScannerError:
         _report("There was an error while loading the configuration. "
                 "Run 'dodo diff' to compare your configuration to the "
                 "default one.\n")

@@ -2,12 +2,11 @@ import os
 import shlex
 from argparse import ArgumentParser
 
-import ruamel.yaml
-
+from dodo_commands.dependencies.ruamel import yaml
+from dodo_commands.framework.command_map import CommandMapItem
+from dodo_commands.framework.config import Key, expand_keys
 from dodo_commands.framework.singleton import Dodo
 from dodo_commands.framework.util import chop
-from dodo_commands.framework.command_map import CommandMapItem
-from dodo_commands.framework.config import expand_keys, Key
 
 
 class YamlCommandMapItem(CommandMapItem):
@@ -36,7 +35,7 @@ class YamlCommandHandler:
 
     def execute(self, command_map_item, command_name):
         with open(command_map_item.filename) as ifs:
-            data = ruamel.yaml.round_trip_load(ifs.read())
+            data = yaml.round_trip_load(ifs.read())
 
         description = None
         for key, val in data[command_name].items():

@@ -3,9 +3,9 @@ from argparse import ArgumentParser
 from configparser import NoOptionError
 
 from dodo_commands import CommandError, Dodo
+from dodo_commands.dependencies.plumbum.cmd import docker
+from dodo_commands.dependencies.six.moves import input as raw_input
 from dodo_commands.framework.global_config import load_global_config_parser
-from plumbum.cmd import docker
-from six.moves import input as raw_input
 
 
 def _args():

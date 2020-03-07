@@ -1,8 +1,7 @@
-from argparse import ArgumentParser, REMAINDER
-
-from plumbum import local
+from argparse import REMAINDER, ArgumentParser
 
 from dodo_commands import Dodo, remove_trailing_dashes
+from dodo_commands.dependencies.plumbum import local
 from dodo_commands.framework.config import expand_keys
 
 

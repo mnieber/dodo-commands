@@ -1,16 +1,16 @@
-import re
 import os
 import platform
-import ruamel.yaml
+import re
 import subprocess
 from importlib import import_module
 
-from plumbum.commands.processes import CommandNotFound
-
-from dodo_commands.framework.config import Paths
+from dodo_commands.dependencies.plumbum.commands.processes import \
+    CommandNotFound
+from dodo_commands.dependencies.ruamel import yaml
 from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.command_map import CommandMapItem
 from dodo_commands.framework.command_path import extend_sys_path
+from dodo_commands.framework.config import Paths
 from dodo_commands.framework.util import query_yes_no
 
 
@@ -39,7 +39,7 @@ class PythonCommandHandler:
         def meta_data():
             if os.path.exists(meta_data_filename()):
                 with open(meta_data_filename()) as f:
-                    return ruamel.yaml.round_trip_load(f.read())
+                    return yaml.round_trip_load(f.read())
             return None
 
         def install_packages(meta_data, dependency):

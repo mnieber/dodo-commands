@@ -1,7 +1,8 @@
 import os
 import sys
 from os.path import dirname
-from plumbum import local
+
+from dodo_commands.dependencies.plumbum import local
 
 
 def _is_windows():

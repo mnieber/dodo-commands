@@ -1,14 +1,12 @@
-import os
 import glob
+import os
 
-import ruamel.yaml
-
+from dodo_commands.dependencies.ruamel import yaml
 from dodo_commands.framework.paths import Paths
 
 
 class ConfigIO:
     """Read and writes dodo configuration (yaml) files."""
-
     def __init__(self, config_base_dir=None):
         """Arg config_base_dir is where config files are searched.
 
@@ -24,7 +22,6 @@ class ConfigIO:
 
     def glob(self, patterns):
         """Returns list of filenames"""
-
         def add_prefix(filename):
             return (filename
                     if filename.startswith('/') else self._path_to([filename]))
@@ -49,7 +46,7 @@ class ConfigIO:
             return None
 
         with open(full_config_filename) as f:
-            config = ruamel.yaml.round_trip_load(f.read())
+            config = yaml.round_trip_load(f.read())
 
         self._cache[full_config_filename] = config
         return config
@@ -57,4 +54,4 @@ class ConfigIO:
     def save(self, config, config_filename='config.yaml'):
         """Write config to config_filename."""
         with open(self._path_to([config_filename]), 'w') as f:
-            return f.write(ruamel.yaml.round_trip_dump(config))
+            return f.write(yaml.round_trip_dump(config))

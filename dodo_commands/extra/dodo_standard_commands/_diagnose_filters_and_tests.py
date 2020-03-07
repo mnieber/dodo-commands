@@ -1,13 +1,13 @@
 import os
-import plumbum
 
-import ruamel.yaml
-
+import dodo_commands.dependencies.plumbum as plumbum
 from dodo_commands import CommandError, Dodo
-from dodo_standard_commands.decorators.docker import (Decorator as
-                                                      DockerDecorator)
+from dodo_commands.dependencies.ruamel import yaml
 from dodo_commands.framework.config import expand_keys
 from dodo_commands.framework.util import indent
+
+from dodo_standard_commands.decorators.docker import \
+    Decorator as DockerDecorator
 
 filters = {}
 tests = {}
@@ -73,9 +73,9 @@ def _dodo_expand(key_str,
     elif layout:
         if key:
             result += "%s:\n" % quoted_key_str
-        result += ("\n\n.. code-block:: yaml\n\n" + indent(
-            "# %s\n" % key_str, 4) + indent(
-                ruamel.yaml.round_trip_dump(val, indent=4).strip(), amount=4))
+        result += (
+            "\n\n.. code-block:: yaml\n\n" + indent("# %s\n" % key_str, 4) +
+            indent(yaml.round_trip_dump(val, indent=4).strip(), amount=4))
     else:
         if key:
             result += "%s = " % quoted_key_str

@@ -1,5 +1,5 @@
+from dodo_commands.dependencies.funcy.py2 import merge
 from dodo_commands.framework.global_config import load_global_config_parser
-from funcy.py2 import merge
 
 
 class Commands:

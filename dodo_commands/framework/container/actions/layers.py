@@ -1,8 +1,8 @@
+from dodo_commands.dependencies.funcy.py2 import distinct
 from dodo_commands.framework.alias import load_named_layers
 from dodo_commands.framework.config_layers import layer_filename_superset
 from dodo_commands.framework.container.facets import (CommandLine, Layers, i_,
                                                       map_datas, o_)
-from funcy.py2 import distinct
 
 
 # LAYERS
