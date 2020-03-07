@@ -1,10 +1,11 @@
-from argparse import ArgumentParser
 import sys
+from argparse import ArgumentParser
+from configparser import NoOptionError
 
+from dodo_commands import CommandError, Dodo
+from dodo_commands.framework.global_config import load_global_config_parser
 from plumbum.cmd import docker
 from six.moves import input as raw_input
-
-from dodo_commands import Dodo
 
 
 def _args():
@@ -15,7 +16,14 @@ def _args():
     parser.add_argument('--cmd')
     args = Dodo.parse_args(parser)
 
-    args.cmd = args.cmd or '/bin/bash'
+    config = load_global_config_parser()
+
+    try:
+        default_shell = config.get("settings", "shell")
+    except NoOptionError:
+        default_shell = '/bin/bash'
+
+    args.cmd = args.cmd or default_shell
 
     return args
 
@@ -28,10 +36,13 @@ if Dodo.is_main(__name__):
     args = _args()
 
     if args.find:
+        args.name = None
         for container in _containers():
             if args.find in container:
                 args.name = container
                 break
+        if not args.name:
+            raise CommandError("Container not found: %s" % args.find)
     elif not args.name:
         containers = _containers()
         print("0 - exit")
