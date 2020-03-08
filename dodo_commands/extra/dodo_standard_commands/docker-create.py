@@ -2,10 +2,12 @@ import sys
 from argparse import ArgumentParser
 
 from dodo_commands import CommandError, Dodo
-from dodo_commands.dependencies.plumbum.cmd import docker
-from dodo_commands.dependencies.six.moves import input as raw_input
+from dodo_commands.dependencies.get import plumbum, six
 from dodo_commands.framework.choice_picker import ChoicePicker
 from dodo_commands.framework.util import query_yes_no
+
+docker = plumbum.cmd.docker
+raw_input = six.moves.input
 
 
 def _container_type_names():

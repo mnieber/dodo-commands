@@ -1,8 +1,10 @@
 import os
 
-from dodo_commands.dependencies.six.moves import configparser
+from dodo_commands.dependencies.get import six
 from dodo_commands.framework.paths import Paths
 from dodo_commands.framework.util import symlink
+
+configparser = six.moves.configparser
 
 
 def load_global_config_parser():

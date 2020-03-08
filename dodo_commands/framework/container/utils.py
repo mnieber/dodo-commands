@@ -1,7 +1,9 @@
 import os
 
-from dodo_commands.dependencies.funcy.py2 import concat, distinct
+from dodo_commands.dependencies.get import funcy
 from dodo_commands.framework.funcy import remove_if
+
+concat, distinct = funcy.concat, funcy.distinct
 
 
 def get_ordered_layer_paths(ctr):

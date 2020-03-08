@@ -1,7 +1,7 @@
 from argparse import REMAINDER, ArgumentParser
 
 from dodo_commands import Dodo, remove_trailing_dashes
-from dodo_commands.dependencies.plumbum import local
+from dodo_commands.dependencies.get import plumbum
 from dodo_commands.framework.config import expand_keys
 
 
@@ -28,7 +28,7 @@ if Dodo.is_main(__name__, safe=True):
     compose_project_name = Dodo.get_config(
         '/DOCKER_COMPOSE/compose_project_name',
         Dodo.get_config('/ROOT/project_name'))
-    with local.env(COMPOSE_PROJECT_NAME=compose_project_name):
+    with plumbum.local.env(COMPOSE_PROJECT_NAME=compose_project_name):
         Dodo.run(['docker-compose'] +
                  remove_trailing_dashes(args.compose_args),
                  cwd=args.cwd)

@@ -3,12 +3,12 @@ import sys
 from argparse import ArgumentParser
 
 from dodo_commands import Dodo
-from dodo_commands.dependencies.plumbum import local
-from dodo_commands.dependencies.ruamel import yaml
-from dodo_commands.dependencies.semantic_version import Version
+from dodo_commands.dependencies.get import plumbum, semantic_version, yaml
 from dodo_commands.framework import get_version
 from dodo_commands.framework.config import Paths
 from dodo_commands.framework.util import bordered
+
+Version = semantic_version.Version
 
 
 def _args():

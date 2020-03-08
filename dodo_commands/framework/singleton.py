@@ -2,8 +2,7 @@ import argparse
 import os
 import sys
 
-from dodo_commands.dependencies import argcomplete
-from dodo_commands.dependencies.plumbum import FG, ProcessExecutionError, local
+from dodo_commands.dependencies.get import argcomplete, plumbum
 from dodo_commands.framework.args_tree import ArgsTreeNode
 from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.config_arg import add_config_args
@@ -103,17 +102,17 @@ class Dodo:
         if cwd and not os.path.exists(cwd):
             raise CommandError("Directory not found: %s" % cwd)
 
-        with local.cwd(cwd or local.cwd):
+        with plumbum.local.cwd(cwd or plumbum.local.cwd):
             flat_args = args_tree_root_node.flatten()
-            func = local[flat_args[0]][flat_args[1:]]
+            func = plumbum.local[flat_args[0]][flat_args[1:]]
             variable_map = cls.get_config('/ENVIRONMENT/variable_map', {})
-            with local.env(**variable_map):
+            with plumbum.local.env(**variable_map):
                 if capture:
                     return func()
                 try:
-                    func & FG
+                    func & plumbum.FG
                     return True
-                except ProcessExecutionError:
+                except plumbum.ProcessExecutionError:
                     if not quiet:
                         print(
                             "\nDodo Commands error while running this command:"

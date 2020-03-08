@@ -2,7 +2,7 @@ import os
 import sys
 from os.path import dirname
 
-from dodo_commands.dependencies.plumbum import local
+from dodo_commands.dependencies.get import plumbum
 
 
 def _is_windows():
@@ -54,8 +54,8 @@ class Paths:
         return os.path.join(self.virtual_env_bin_dir(), 'pip' + _ext())
 
     def site_packages_dir(self):
-        python = local[os.path.join(self.virtual_env_bin_dir(),
-                                    "python" + _ext())]
+        python = plumbum.local[os.path.join(self.virtual_env_bin_dir(),
+                                            "python" + _ext())]
 
         result = python(
             "-c", "from distutils.sysconfig import get_python_lib; " +

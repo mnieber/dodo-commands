@@ -2,13 +2,15 @@ import os
 from argparse import ArgumentParser
 
 from dodo_commands import CommandError, Dodo
-from dodo_commands.dependencies.funcy.py2 import cut_prefix
-from dodo_commands.dependencies.six.moves import input as raw_input
+from dodo_commands.dependencies.get import funcy, six
 from dodo_commands.framework.choice_picker import ChoicePicker
 from dodo_commands.framework.command_map import get_command_map
 from dodo_commands.framework.command_path import get_command_dirs_from_config
 from dodo_commands.framework.config_io import ConfigIO
 from dodo_commands.framework.funcy import map_with
+
+cut_prefix = funcy.cut_prefix
+raw_input = six.moves.input
 
 
 def _args():

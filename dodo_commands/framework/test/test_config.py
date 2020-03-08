@@ -2,7 +2,7 @@
 
 import os
 
-from dodo_commands.dependencies.ruamel import yaml
+from dodo_commands.dependencies.get import yaml
 
 import pytest
 

@@ -2,7 +2,7 @@ import os
 import shlex
 from argparse import ArgumentParser
 
-from dodo_commands.dependencies.ruamel import yaml
+from dodo_commands.dependencies.get import yaml
 from dodo_commands.framework.command_map import CommandMapItem
 from dodo_commands.framework.config import Key, expand_keys
 from dodo_commands.framework.singleton import Dodo

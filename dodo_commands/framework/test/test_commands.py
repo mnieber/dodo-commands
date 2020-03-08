@@ -3,7 +3,7 @@ import os
 import shutil
 import sys
 
-from dodo_commands.dependencies.ruamel import yaml
+from dodo_commands.dependencies.get import yaml
 
 
 class TestConfigIO:  # noqa

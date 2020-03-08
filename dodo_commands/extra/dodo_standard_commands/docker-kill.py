@@ -1,8 +1,10 @@
 from argparse import ArgumentParser
 
 from dodo_commands import Dodo
-from dodo_commands.dependencies.plumbum.cmd import docker
+from dodo_commands.dependencies.get import plumbum
 from dodo_commands.framework.choice_picker import ChoicePicker
+
+docker = plumbum.cmd.docker
 
 
 def _args():

@@ -1,6 +1,8 @@
-from dodo_commands.dependencies.funcy.py2 import distinct, merge
+from dodo_commands.dependencies.get import funcy
 from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.funcy import drill, for_each
+
+distinct, merge = funcy.distinct, funcy.merge
 
 
 def get_inferred_command_map(

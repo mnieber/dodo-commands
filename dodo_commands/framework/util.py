@@ -4,10 +4,9 @@ import os
 import sys
 import time
 
-from dodo_commands.dependencies.plumbum import local
-from dodo_commands.dependencies.plumbum.commands.processes import \
-    CommandNotFound
-from dodo_commands.dependencies.six.moves import input as raw_input
+from dodo_commands.dependencies.get import plumbum, six
+
+raw_input = six.moves.input
 
 
 def query_yes_no(question, default="yes"):
@@ -140,9 +139,9 @@ class EnvironMemo:
 
 def exe_exists(exe):
     try:
-        local[exe]
+        plumbum.local[exe]
         return True
-    except CommandNotFound:
+    except plumbum.commands.processes.CommandNotFound:
         return False
 
 

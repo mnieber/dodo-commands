@@ -5,14 +5,15 @@ import os
 import re
 import sys
 
-from dodo_commands.dependencies.dotenv import dotenv_values
-from dodo_commands.dependencies.ruamel import yaml
+from dodo_commands.dependencies.get import dotenv, yaml
 from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.config_expander import ConfigExpander  # noqa
 from dodo_commands.framework.config_expander import Key, KeyNotFound
 from dodo_commands.framework.config_io import ConfigIO
 from dodo_commands.framework.global_config import create_global_config  # noqa
 from dodo_commands.framework.paths import Paths
+
+dotenv_values = dotenv.dotenv_values
 
 
 def merge_into_config(config, layer, xpath=None):

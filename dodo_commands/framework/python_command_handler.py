@@ -4,14 +4,14 @@ import re
 import subprocess
 from importlib import import_module
 
-from dodo_commands.dependencies.plumbum.commands.processes import \
-    CommandNotFound
-from dodo_commands.dependencies.ruamel import yaml
+from dodo_commands.dependencies.get import plumbum, yaml
 from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.command_map import CommandMapItem
 from dodo_commands.framework.command_path import extend_sys_path
 from dodo_commands.framework.config import Paths
 from dodo_commands.framework.util import query_yes_no
+
+CommandNotFound = plumbum.commands.processes.CommandNotFound
 
 
 class PythonCommandMapItem(CommandMapItem):

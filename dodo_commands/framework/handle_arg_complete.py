@@ -1,11 +1,12 @@
 import os
 from argparse import ArgumentParser
 
-from dodo_commands.dependencies import argcomplete
-from dodo_commands.dependencies.funcy.py2 import distinct, flatten
+from dodo_commands.dependencies.get import argcomplete, funcy
 from dodo_commands.framework.config_layers import get_conflicts_in_layer_paths
 from dodo_commands.framework.funcy import (keep_truthy, map_with, remove_if,
                                            str_split_at)
+
+distinct, flatten = funcy.distinct, funcy.flatten
 
 
 def handle_arg_complete(command_names, inferred_command_names, command_aliases,

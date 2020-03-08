@@ -2,8 +2,10 @@ import os
 import sys
 
 from dodo_commands import CommandError, Dodo
-from dodo_commands.dependencies.plumbum import local
+from dodo_commands.dependencies.get import plumbum
 from dodo_commands.framework.util import query_yes_no
+
+local = plumbum.local
 
 
 def _count_confirm_in_argv():

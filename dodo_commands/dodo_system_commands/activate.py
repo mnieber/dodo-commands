@@ -6,8 +6,7 @@ from argparse import ArgumentParser
 
 import dodo_commands
 from dodo_commands import CommandError, Dodo
-from dodo_commands.dependencies.plumbum import local
-from dodo_commands.dependencies.ruamel import yaml
+from dodo_commands.dependencies.get import plumbum, yaml
 from dodo_commands.framework.global_config import (load_global_config_parser,
                                                    write_global_config_parser)
 from dodo_commands.framework.paths import Paths
@@ -46,15 +45,16 @@ class Activator:
     def _create_virtual_env(self):
         """Install a virtual env."""
         try:
-            local["virtualenv"]('--version')
+            plumbum.local["virtualenv"]('--version')
         except:
             raise CommandError(
                 "Could not find virtualenv, please install it first.")
 
-        local["virtualenv"]("-p",
-                            self.config.get("settings", "python_interpreter"),
-                            self.paths.virtual_env_dir(), "--prompt",
-                            self.project)
+        plumbum.local["virtualenv"]("-p",
+                                    self.config.get("settings",
+                                                    "python_interpreter"),
+                                    self.paths.virtual_env_dir(), "--prompt",
+                                    self.project)
 
         symlink(os.path.realpath(os.path.dirname(dodo_commands.__file__)),
                 os.path.join(self.paths.site_packages_dir(), "dodo_commands"))

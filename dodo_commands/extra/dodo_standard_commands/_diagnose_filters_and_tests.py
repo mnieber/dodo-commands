@@ -1,8 +1,7 @@
 import os
 
-import dodo_commands.dependencies.plumbum as plumbum
 from dodo_commands import CommandError, Dodo
-from dodo_commands.dependencies.ruamel import yaml
+from dodo_commands.dependencies.get import plumbum, yaml
 from dodo_commands.framework.config import expand_keys
 from dodo_commands.framework.util import indent
 

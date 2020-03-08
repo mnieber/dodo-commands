@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 from collections import defaultdict
 
 from dodo_commands import Dodo
-from dodo_commands.dependencies.ruamel import yaml
+from dodo_commands.dependencies.get import yaml
 from dodo_commands.framework.command_map import get_command_map
 from dodo_commands.framework.command_path import get_command_dirs_from_config
 from dodo_commands.framework.config import build_config

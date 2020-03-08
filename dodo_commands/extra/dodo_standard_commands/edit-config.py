@@ -2,13 +2,15 @@ import sys
 from argparse import ArgumentParser
 
 from dodo_commands import CommandError, Dodo
-from dodo_commands.dependencies.funcy.py2 import concat
-from dodo_commands.dependencies.six.moves import configparser
+from dodo_commands.dependencies.get import funcy, six
 from dodo_commands.framework.config_expander import Key
 from dodo_commands.framework.config_io import ConfigIO
 from dodo_commands.framework.container.utils import get_ordered_layer_paths
 from dodo_commands.framework.global_config import load_global_config_parser
 from dodo_commands.framework.paths import Paths
+
+concat = funcy.concat
+configparser = six.moves.configparser
 
 
 def _args():

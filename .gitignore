@@ -5,7 +5,9 @@ dodo_commands.egg-info
 dodo_commands.sublime-project
 dodo_commands.sublime-workspace
 dodo_commands/default_commands
-dodo_commands/dependencies
+dodo_commands/dependencies/*/
+dodo_commands/dependencies/*.*
+!dodo_commands/dependencies/__init__.py
 *.pyc
 dist/*
 doc_build

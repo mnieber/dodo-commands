@@ -3,9 +3,11 @@ import sys
 from argparse import ArgumentParser
 
 from dodo_commands import CommandError, Dodo
-from dodo_commands.dependencies.plumbum.cmd import tmux
+from dodo_commands.dependencies.get import plumbum
 from dodo_commands.framework.choice_picker import ChoicePicker
 from dodo_commands.framework.util import exe_exists
+
+tmux = plumbum.cmd.tmux
 
 
 def _session_id(category):
