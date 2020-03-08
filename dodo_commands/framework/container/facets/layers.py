@@ -30,6 +30,7 @@ class Layers:
 
                 if isinstance(group_item, str):
                     layer_name = group_item
+                    full_layer_name = layer_name
                     inferred_commands = []
                     target_path = None
                 elif isinstance(group_item, dict):
@@ -38,9 +39,10 @@ class Layers:
                     inferred_commands = list(
                         layer_config.get('inferred_by', []))
                     target_path = layer_config.get('target_path')
+                    full_layer_name = layer_config.get('name', layer_name)
 
                 target_path = target_path or "%s.%s.yaml" % (group_name,
-                                                             layer_name)
+                                                             full_layer_name)
                 result[layer_name] = LayerConfig(target_path,
                                                  inferred_commands)
         return result
