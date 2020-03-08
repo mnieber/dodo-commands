@@ -1,16 +1,18 @@
-from argparse import ArgumentParser
+import os
 import sys
+from argparse import ArgumentParser
 from configparser import NoOptionError
 
-from dodo_commands import Dodo, CommandError
+from dodo_commands import CommandError, Dodo
 from dodo_commands.framework.global_config import load_global_config_parser
 
 
 def _args():
     parser = ArgumentParser(description='Print the command line to cd to'
                             ' a folder inside the project folder.')
-    parser.add_argument(
-        '--browse', action='store_true', help='Open file browser')
+    parser.add_argument('--browse',
+                        action='store_true',
+                        help='Open file browser')
 
     parser.add_argument(
         'to',
@@ -35,4 +37,4 @@ if Dodo.is_main(__name__):
             )
         Dodo.run([browser, args.path])
 
-    sys.stdout.write("cd %s\n" % args.path)
+    sys.stdout.write("cd %s\n" % os.path.expanduser(args.path))
