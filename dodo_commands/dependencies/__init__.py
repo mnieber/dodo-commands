@@ -6,6 +6,7 @@ from types import ModuleType
 
 class Switcher:
     def __init__(self):
+        self.is_private = False
         self.public_sys_modules = {}
         self.private_sys_modules = {}
         self.package_path = os.path.join(
@@ -27,6 +28,7 @@ class Switcher:
         self.private_sys_modules.clear()
 
         sys.path = [self.package_path] + sys.path
+        self.is_private = True
 
     def switch_to_public(self):
         # Move non-built-in modules to self.private_sys_modules
@@ -41,20 +43,31 @@ class Switcher:
         self.public_sys_modules.clear()
 
         sys.path.remove(self.package_path)
+        self.is_private = False
 
 
 switcher = Switcher()
+
+
+class private_sys_modules:
+    def __enter__(self):
+        self.is_switching = not switcher.is_private
+        if self.is_switching:
+            switcher.switch_to_private()
+        return self
+
+    def __exit__(self, *exc):
+        if self.is_switching and switcher.is_private:
+            switcher.switch_to_public()
+        return False
 
 
 def get_dependency(path):
     if path in switcher.private_sys_modules:
         return switcher.private_sys_modules[path]
 
-    try:
-        switcher.switch_to_private()
+    with private_sys_modules():
         return importlib.import_module(path)
-    finally:
-        switcher.switch_to_public()
 
 
 class LocalModule(ModuleType):
@@ -73,3 +86,15 @@ class LocalModule(ModuleType):
 
 get = LocalModule(__name__ + ".get", LocalModule.__doc__)
 sys.modules[get.__name__] = get
+
+
+def yaml_round_trip_load(text):
+    with private_sys_modules():
+        yaml = get_dependency("ruamel.yaml")
+        return yaml.round_trip_load(text)
+
+
+def yaml_round_trip_dump(text):
+    with private_sys_modules():
+        yaml = get_dependency("ruamel.yaml")
+        return yaml.round_trip_dump(text)

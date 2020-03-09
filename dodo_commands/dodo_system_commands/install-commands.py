@@ -1,11 +1,11 @@
-from argparse import ArgumentParser
-import sys
 import os
+import sys
 import tempfile
+from argparse import ArgumentParser
 
-from dodo_commands import Dodo, CommandError
-from dodo_commands.framework.paths import Paths
+from dodo_commands import CommandError, Dodo
 from dodo_commands.framework.global_config import load_global_config_parser
+from dodo_commands.framework.paths import Paths
 from dodo_commands.framework.util import is_using_system_dodo, symlink
 
 
@@ -142,16 +142,9 @@ def _install_commands_from_path(path, mv=False):
 
 def _install_commands_from_package(package):
     config = load_global_config_parser()
-    python_path_parts = os.path.split(
-        config.get("settings", "python_interpreter"))
-    pip_path_parts = list(python_path_parts[:-1]) + [
-        python_path_parts[-1].replace('python', 'pip')
-    ]
-    pip = os.path.join(*pip_path_parts)
-    if not os.path.exists(pip):
-        pip = os.path.splitext(pip)[0]
+    python_path = config.get("settings", "python_interpreter")
     Dodo.run([
-        pip, 'install', '--upgrade', '--target',
+        python_path, '-m', 'pip', 'install', '--upgrade', '--target',
         Paths().global_commands_dir(), package
     ])
 

@@ -54,8 +54,7 @@ def _layer_value(layers, layer):
 
 
 def _layers(config, filter_abs_paths=False):
-    layers = config.get('LAYERS', {}).get('fixed', [])
-
+    layers = config.get('LAYERS', [])
     if filter_abs_paths:
         layers = [
             x for x in layers
@@ -83,12 +82,11 @@ if Dodo.is_main(__name__, safe=False):
         print(_layer_value(layers, args.layer))
         sys.exit(0)
 
-    layer_file = os.path.join(Dodo.get_config("/ROOT/res_dir"),
+    layer_file = os.path.join(Dodo.get_config("/ROOT/config_dir"),
                               "%s.%s.yaml" % (args.layer, args.value))
 
     if not args.force and not os.path.exists(layer_file):
         raise CommandError("Layer file %s does not exist" % layer_file)
 
-    newlayers = _update_list_of_layers(layers, args.layer, args.value)
-    config.get('LAYERS', {})['fixed'] = newlayers
+    config['LAYERS'] = _update_list_of_layers(layers, args.layer, args.value)
     ConfigIO().save(config)

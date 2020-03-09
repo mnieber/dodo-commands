@@ -1,4 +1,3 @@
-import os
 import sys
 
 from dodo_commands.framework.command_error import CommandError
@@ -24,8 +23,8 @@ def load_named_layers(
 
         if not config_io.glob([target_path]):
             sys.stderr.write(
-                "Warning: layer not found: %s. Check /LAYERS for layer %s\n" %
-                (target_path, layer_name))
+                "Warning: layer not found: %s. Check /LAYER_GROUPS for layer %s\n"
+                % (target_path, layer_name))
 
     def add_layer(layer_name, target_path):
         is_found = config_io.glob([target_path])

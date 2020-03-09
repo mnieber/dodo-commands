@@ -3,19 +3,20 @@ import os
 import shutil
 import sys
 
-from dodo_commands.dependencies.get import yaml
+from dodo_commands.dependencies import (yaml_round_trip_dump,
+                                        yaml_round_trip_load)
 
 
 class TestConfigIO:  # noqa
     @classmethod
     def _load_config(cls, config_filename):
         with open(config_filename) as f:
-            return yaml.round_trip_load(f.read())
+            return yaml_round_trip_load(f.read())
 
     @classmethod
     def _write_config(cls, config, config_filename):
         with open(config_filename, 'w') as f:
-            f.write(yaml.round_trip_dump(config))
+            f.write(yaml_round_trip_dump(config))
 
     @classmethod
     def _set_config_version(cls, config_filename, version):
@@ -32,7 +33,7 @@ class TestConfigIO:  # noqa
     @classmethod
     def _clear_layers(cls, config_filename):
         config = cls._load_config(config_filename)
-        config['LAYERS']['fixed'] = []
+        config['LAYERS'] = []
         cls._write_config(config, config_filename)
 
     def test_commands(self):  # noqa
@@ -45,7 +46,7 @@ class TestConfigIO:  # noqa
                 shutil.rmtree(dodo_test_dir)
 
             from dodo_commands.dodo import main
-            sys.argv = ['dodo', 'activate', '--create', 'dodo_test']
+            sys.argv = ['dodo', 'env', '--create', 'dodo_test']
             main()
 
         dodo = local[os.path.join(dodo_test_dir, 'dodo_commands/env/bin/dodo')]
@@ -54,14 +55,14 @@ class TestConfigIO:  # noqa
                  '--git-url',
                  'https://github.com/mnieber/dodo_commands_tutorial.git')
 
-        res_dir = os.path.join(dodo_test_dir, 'dodo_commands', 'res')
-        config_filename = os.path.join(res_dir, 'config.yaml')
+        config_dir = os.path.join(dodo_test_dir, '.dodo_commands')
+        config_filename = os.path.join(config_dir, 'config.yaml')
 
         # dodo which
         assert "dodo_test" == dodo('which')[:-1]
         assert dodo_test_dir == dodo('which', 'project')[:-1]
         assert os.path.join(dodo_test_dir, 'src') == dodo('which', 'src')[:-1]
-        assert res_dir == dodo('which', 'res')[:-1]
+        assert config_dir == dodo('which', 'res')[:-1]
         assert config_filename == dodo('which', '--config')[:-1]
         assert 'confirm, debugger, docker, pause' == dodo(
             'which', '--decorators')[:-1]
@@ -85,8 +86,8 @@ class TestConfigIO:  # noqa
 
         # dodo diff
         result = dodo('diff', '.', '--echo').replace('\n', '')
-        assert "diff %s/src/extra/dodo_commands/res %s/." % (dodo_test_dir,
-                                                             res_dir) == result
+        assert "diff %s/src/extra/dodo_commands/res %s/." % (
+            dodo_test_dir, config_dir) == result
 
         # dodo docker
         dodo('layer', 'docker', 'on')
@@ -116,11 +117,11 @@ class TestConfigIO:  # noqa
         # dodo layer
         self._clear_layers(config_filename)
         dodo('layer', 'debug', 'on')
-        assert self._load_config(config_filename)['LAYERS']['fixed'] == [
+        assert self._load_config(config_filename)['LAYERS'] == [
             'debug.on.yaml'
         ]
         dodo('layer', 'debug', 'off')
-        assert self._load_config(config_filename)['LAYERS']['fixed'] == [
+        assert self._load_config(config_filename)['LAYERS'] == [
             'debug.off.yaml'
         ]
 
@@ -135,7 +136,7 @@ class TestConfigIO:  # noqa
         os.mkdir(drop_in_dir)
         with open(os.path.join(drop_in_dir, "bar.txt"), "w") as ofs:
             ofs.write("bar")
-        target_bar_path = os.path.join(res_dir, 'drops',
+        target_bar_path = os.path.join(config_dir, 'drops',
                                        'dodo_tutorial_commands', 'bar.txt')
         assert not os.path.exists(target_bar_path)
         dodo('drop-in', 'dodo_tutorial_commands')

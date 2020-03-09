@@ -66,12 +66,12 @@ class Dodo:
 
         add_config_args(parser, cls.get_config(), config_args)
 
+        for decorator in get_decorators(cls.command_name, cls.get_config()):
+            decorator.add_arguments(parser)
+
         if cls.get_container().command_line.is_help:
             parser.print_help()
             sys.exit(0)
-
-        for decorator in get_decorators(cls.command_name, cls.get_config()):
-            decorator.add_arguments(parser)
 
         argcomplete.autocomplete(parser)
 

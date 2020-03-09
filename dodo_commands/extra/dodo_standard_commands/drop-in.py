@@ -1,7 +1,7 @@
-from argparse import ArgumentParser
 import os
+from argparse import ArgumentParser
 
-from dodo_commands import Dodo, CommandError
+from dodo_commands import CommandError, Dodo
 from dodo_commands.framework.command_path import get_command_dirs_from_config
 from dodo_commands.framework.global_config import load_global_config_parser
 from dodo_commands.framework.util import chop
@@ -80,8 +80,8 @@ if Dodo.is_main(__name__, safe=True):
         raise CommandError("The drop-in directory does not exist: %s" %
                            drop_src_dir)
 
-    res_dir = Dodo.get_config('/ROOT/res_dir')
-    drops_target_dir = os.path.join(res_dir, 'drops')
+    config_dir = Dodo.get_config('/ROOT/config_dir')
+    drops_target_dir = os.path.join(config_dir, 'drops')
     if not os.path.exists(drops_target_dir):
         Dodo.run(['mkdir', drops_target_dir])
     target_dir = os.path.join(drops_target_dir, args.package)
@@ -90,7 +90,7 @@ if Dodo.is_main(__name__, safe=True):
         msg = ''
         msg += 'Target directory already exists: %s\n' % target_dir
         msg += '\nThis probably means that %s has been already dropped into %s.\n' % (
-            args.package, res_dir)
+            args.package, config_dir)
         msg += 'To update the drop-in manually, please run:\n\n'
         msg += '%s %s %s' % (_diff_tool(), drop_src_dir, target_dir)
         raise CommandError(msg)

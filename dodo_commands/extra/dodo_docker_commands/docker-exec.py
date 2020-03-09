@@ -1,10 +1,9 @@
 import sys
 from argparse import ArgumentParser
-from configparser import NoOptionError
 
 from dodo_commands import CommandError, Dodo
 from dodo_commands.dependencies.get import plumbum, six
-from dodo_commands.framework.global_config import load_global_config_parser
+from dodo_docker_commands.decorators.docker import Decorator as DockerDecorator
 
 docker = plumbum.cmd.docker
 raw_input = six.moves.input
@@ -17,15 +16,6 @@ def _args():
     parser.add_argument('name', nargs='?')
     parser.add_argument('--cmd')
     args = Dodo.parse_args(parser)
-
-    config = load_global_config_parser()
-
-    try:
-        default_shell = config.get("settings", "shell")
-    except NoOptionError:
-        default_shell = '/bin/bash'
-
-    args.cmd = args.cmd or default_shell
 
     return args
 
@@ -58,6 +48,12 @@ if Dodo.is_main(__name__):
             sys.exit(0)
 
         args.name = containers[choice]
+
+    if not args.cmd:
+        default_shell = Dodo.get_config("/DOCKER/default_shell", "sh")
+        docker_options = DockerDecorator.merged_options(
+            Dodo.get_config, "docker-exec")
+        args.cmd = docker_options.get("shell", default_shell)
 
     Dodo.run([
         'docker',

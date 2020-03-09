@@ -58,10 +58,7 @@ def remove_trailing_dashes(args):
 def bordered(text):
     lines = text.splitlines()
     width = max(len(s) for s in lines)
-    if is_windows():
-        tl, tr, bl, br, v, h = u'+', u'+', u'+', u'+', u'|', u'-'
-    else:
-        tl, tr, bl, br, v, h = u'┌', u'┐', u'└', u'┘', u'│', u'─'
+    tl, tr, bl, br, v, h = u'┌', u'┐', u'└', u'┘', u'│', u'─'
     res = [tl + h * width + tr]
     for s in lines:
         res.append(v + (s + ' ' * width)[:width] + v)
@@ -89,8 +86,9 @@ else:
         return textwrap.indent(text, amount * ch)
 
 
-def is_windows():
-    return os.name == 'nt'
+def make_executable(script_filename):
+    st = os.stat(script_filename)
+    os.chmod(script_filename, st.st_mode | 0o111)
 
 
 def symlink(source, link_name):
@@ -119,10 +117,6 @@ def _log(string):
         ofs.write(string + '\n')
 
 
-def bash_cmd(cmd):
-    return ['/bin/bash', '-c', cmd]
-
-
 class EnvironMemo:
     def __init__(self, extra_vars):
         self.extra_vars = extra_vars
@@ -143,15 +137,6 @@ def exe_exists(exe):
         return True
     except plumbum.commands.processes.CommandNotFound:
         return False
-
-
-def poll_docker_container_status(image_name, dodo_run, condition):
-    while True:
-        status = dodo_run(bash_cmd('docker ps | grep -i %s' % image_name),
-                          capture=True)
-        if '(healthy)' in status:
-            break
-        time.sleep(1)
 
 
 class classproperty(property):  # noqa

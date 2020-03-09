@@ -2,7 +2,7 @@
 
 import os
 
-from dodo_commands.dependencies.get import yaml
+from dodo_commands.dependencies import yaml_round_trip_dump
 
 import pytest
 
@@ -15,9 +15,7 @@ class TestConfigIO:  # noqa
     def simple_config(self, tmpdir):
         foo_dir = os.path.join(str(tmpdir), 'foo')
         return {
-            'LAYERS': {
-                'fixed': ['mylayer.yml'],
-            },
+            'LAYERS': ['mylayer.yml'],
             'ROOT': {
                 'command_path': [os.path.join(foo_dir, 'bar')],
                 'foo': {
@@ -55,7 +53,7 @@ class TestConfigIO:  # noqa
         """Create a config layer file in the tmpdir."""
         layer_filename = os.path.join(str(tmpdir), "mylayer.yml")
         with open(layer_filename, "w") as f:
-            f.write(yaml.round_trip_dump(layer))
+            f.write(yaml_round_trip_dump(layer))
 
     def test_save(self, tmpdir, simple_config):  # noqa
         config_io = ConfigIO(str(tmpdir))  # noqa

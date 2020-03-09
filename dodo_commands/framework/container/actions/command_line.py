@@ -18,7 +18,9 @@ def action_get_expanded_layer_paths(ctr):
     ):
         def map_to_path(layer_name):
             if layer_name not in layer_config_by_layer_name:
-                raise CommandError("Unknown layer: %s" % layer_name)
+                layer_names = layer_config_by_layer_name.keys()
+                raise CommandError("Unknown layer: %s. Known layers: %s" %
+                                   (layer_name, ", ".join(layer_names)))
             return layer_config_by_layer_name[layer_name].target_path
 
         return (map_with(map_to_path)(layer_names), )

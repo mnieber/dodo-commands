@@ -4,9 +4,10 @@ from dodo_commands.framework.funcy import drill
 
 
 class LayerConfig:
-    def __init__(self, target_path, inferred_commands):
+    def __init__(self, target_path, inferred_commands, group_name):
         self.target_path = target_path
         self.inferred_commands = inferred_commands
+        self.group_name = group_name
 
 
 class Layers:
@@ -21,16 +22,13 @@ class Layers:
     def layer_config_by_layer_name(self):
         result = {}
 
-        groups = drill(self.root_layer,
-                       'LAYERS',
-                       'optional_groups',
-                       default={})
+        groups = drill(self.root_layer, 'LAYER_GROUPS', default={})
         for group_name, group in groups.items():
             for group_item in group:
 
                 if isinstance(group_item, str):
                     layer_name = group_item
-                    full_layer_name = layer_name
+                    base_name = layer_name
                     inferred_commands = []
                     target_path = None
                 elif isinstance(group_item, dict):
@@ -39,12 +37,22 @@ class Layers:
                     inferred_commands = list(
                         layer_config.get('inferred_by', []))
                     target_path = layer_config.get('target_path')
-                    full_layer_name = layer_config.get('name', layer_name)
+                    base_name = layer_config.get('base_name', layer_name)
 
                 target_path = target_path or "%s.%s.yaml" % (group_name,
-                                                             full_layer_name)
-                result[layer_name] = LayerConfig(target_path,
-                                                 inferred_commands)
+                                                             base_name)
+
+                layer_config = LayerConfig(target_path, inferred_commands,
+                                           group_name)
+
+                if layer_name in result:
+                    prev_layer_config = result[layer_name]
+                    raise CommandError(
+                        "Name conlict for layer '%s' in groups '%s' and '%s'" %
+                        (layer_name, prev_layer_config.group_name,
+                         layer_config.group_name))
+
+                result[layer_name] = layer_config
         return result
 
     @staticmethod

@@ -54,8 +54,13 @@ def parse_choice(raw_choice):
 
 
 class ChoicePicker:
-    def __init__(self, choices, start_index=1, allow_free_text=False):
+    def __init__(self,
+                 choices,
+                 start_index=1,
+                 allow_free_text=False,
+                 labels=None):
         self._choices = choices
+        self._labels = labels
         self._start_index = start_index
         self.allow_free_text = allow_free_text
         self.free_text = None
@@ -72,7 +77,7 @@ class ChoicePicker:
     def pick(self):
         self.free_text = None
         self.idxs = []
-        self.print_choices(self._choices)
+        self.print_choices(self._labels or self._choices)
         while True:
             raw_choice = raw_input(self.question())
             try:

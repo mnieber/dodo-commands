@@ -1,7 +1,8 @@
 import glob
 import os
 
-from dodo_commands.dependencies.get import yaml
+from dodo_commands.dependencies import (yaml_round_trip_dump,
+                                        yaml_round_trip_load)
 from dodo_commands.framework.paths import Paths
 
 
@@ -10,10 +11,10 @@ class ConfigIO:
     def __init__(self, config_base_dir=None):
         """Arg config_base_dir is where config files are searched.
 
-        Arg config_base_dir defaults to Paths().res_dir().
+        Arg config_base_dir defaults to Paths().config_dir().
         """
         self._cache = {}
-        self.config_base_dir = (Paths().res_dir() if config_base_dir is None
+        self.config_base_dir = (Paths().config_dir() if config_base_dir is None
                                 else config_base_dir)
 
     def _path_to(self, post_fix_paths):
@@ -25,6 +26,9 @@ class ConfigIO:
         def add_prefix(filename):
             return (filename
                     if filename.startswith('/') else self._path_to([filename]))
+
+        if not self.config_base_dir:
+            return []
 
         patterns = [
             add_prefix(os.path.expanduser(pattern)) for pattern in patterns
@@ -46,7 +50,7 @@ class ConfigIO:
             return None
 
         with open(full_config_filename) as f:
-            config = yaml.round_trip_load(f.read())
+            config = yaml_round_trip_load(f.read())
 
         self._cache[full_config_filename] = config
         return config
@@ -54,4 +58,4 @@ class ConfigIO:
     def save(self, config, config_filename='config.yaml'):
         """Write config to config_filename."""
         with open(self._path_to([config_filename]), 'w') as f:
-            return f.write(yaml.round_trip_dump(config))
+            return f.write(yaml_round_trip_dump(config))

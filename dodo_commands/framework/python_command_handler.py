@@ -4,7 +4,8 @@ import re
 import subprocess
 from importlib import import_module
 
-from dodo_commands.dependencies.get import plumbum, yaml
+from dodo_commands.dependencies import yaml_round_trip_load
+from dodo_commands.dependencies.get import plumbum
 from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.command_map import CommandMapItem
 from dodo_commands.framework.command_path import extend_sys_path
@@ -39,7 +40,7 @@ class PythonCommandHandler:
         def meta_data():
             if os.path.exists(meta_data_filename()):
                 with open(meta_data_filename()) as f:
-                    return yaml.round_trip_load(f.read())
+                    return yaml_round_trip_load(f.read())
             return None
 
         def install_packages(meta_data, dependency):
@@ -71,8 +72,8 @@ class PythonCommandHandler:
                 requirement = requirements[0]
                 print("This command wants to install %s:\n" % requirement)
                 if query_yes_no("Install (yes), or abort (no)?"):
-                    pip = Paths().pip()
-                    subprocess.check_call([pip, "install", requirement])
+                    subprocess.check_call(
+                        [sys.executable, "-m", "pip", "install", requirement])
                     print("--- Done ---\n\n")
 
         def get_program_from_exception(e):

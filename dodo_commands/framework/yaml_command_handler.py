@@ -2,7 +2,7 @@ import os
 import shlex
 from argparse import ArgumentParser
 
-from dodo_commands.dependencies.get import yaml
+from dodo_commands.dependencies import yaml_round_trip_load
 from dodo_commands.framework.command_map import CommandMapItem
 from dodo_commands.framework.config import Key, expand_keys
 from dodo_commands.framework.singleton import Dodo
@@ -23,7 +23,7 @@ class YamlCommandHandler:
                 if ext == '.yaml' and command_name.startswith(prefix):
                     command_name = command_name[len(prefix):]
                     with open(file) as ifs:
-                        data = ruamel.yaml.round_trip_load(ifs.read())
+                        data = ruamel.yaml_round_trip_load(ifs.read())
                         for command_name in data.keys():
                             command_map[command_name] = YamlCommandMapItem(
                                 group=os.path.basename(command_dir),
@@ -35,7 +35,7 @@ class YamlCommandHandler:
 
     def execute(self, command_map_item, command_name):
         with open(command_map_item.filename) as ifs:
-            data = yaml.round_trip_load(ifs.read())
+            data = yaml_round_trip_load(ifs.read())
 
         description = None
         for key, val in data[command_name].items():

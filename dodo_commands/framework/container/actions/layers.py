@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from dodo_commands.dependencies.get import funcy
 from dodo_commands.framework.alias import load_named_layers
 from dodo_commands.framework.config_layers import layer_filename_superset
@@ -53,7 +55,7 @@ def action_select_layers(ctr):
             distinct([root_layer_path] + command_line_layer_paths),
             config_io=config_io)
 
-        selected_layer_by_path = {}
+        selected_layer_by_path = OrderedDict()
         for layer_path in all_layer_paths:
             selected_layer_by_path[layer_path] = config_io.load(layer_path)
         return (selected_layer_by_path, )

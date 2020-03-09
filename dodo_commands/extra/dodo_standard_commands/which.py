@@ -4,11 +4,10 @@ import sys
 from argparse import ArgumentParser
 
 from dodo_commands import Dodo
-from dodo_commands.dependencies.get import yaml
+from dodo_commands.dependencies import yaml_round_trip_load
 from dodo_commands.framework.command_path import get_command_dirs_from_config
 from dodo_commands.framework.container.utils import get_ordered_layer_paths
 from dodo_commands.framework.decorator_utils import _all_decorators
-from dodo_commands.framework.global_config import projects_dir
 from dodo_commands.framework.paths import Paths
 
 
@@ -40,12 +39,12 @@ def _args():  # noqa
     group.add_argument('--decorators',
                        action="store_true",
                        help='Prints which command decorators are available')
-    group.add_argument('--projects',
+    group.add_argument('--envs',
                        action="store_true",
-                       help='Prints which projects are available')
-    group.add_argument('--project',
+                       help='Prints which environments are available')
+    group.add_argument('--env',
                        action="store_true",
-                       help='Prints name of the active project')
+                       help='Prints name of the active environment')
     group.add_argument('--layers',
                        action="store_true",
                        help='Prints which layers are active')
@@ -71,7 +70,7 @@ def _which_script(script):
     for item in command_dirs:
         for yml in glob.glob(os.path.join(item, "dodo.*.yaml")):
             with open(yml) as ifs:
-                if script in yaml.round_trip_load(ifs.read()).keys():
+                if script in yaml_round_trip_load(ifs.read()).keys():
                     return os.path.realpath(yml)
 
     return None
@@ -85,8 +84,8 @@ if Dodo.is_main(__name__):
     args = _args()
 
     if args.config:
-        if os.path.exists(Paths().project_dir()):
-            print(os.path.join(Paths().res_dir(), "config.yaml"))
+        if os.path.exists(Paths().config_dir()):
+            print(os.path.join(Paths().config_dir(), "config.yaml"))
     elif args.global_config:
         sys.stdout.write(Paths().global_config_filename() + '\n')
     elif args.global_commands:
@@ -101,15 +100,12 @@ if Dodo.is_main(__name__):
         sys.stdout.write(
             ", ".join(sorted(_all_decorators(Dodo.get_config()).keys())) +
             '\n')
-    elif args.projects:
-        projects = [
-            x for x in os.listdir(projects_dir()) if os.path.isdir(
-                os.path.join(projects_dir(), x, "dodo_commands", "res"))
-        ] if os.path.exists(projects_dir()) else []
-        sys.stdout.write('\n'.join(sorted(projects)) + '\n')
-    elif args.project:
-        if Dodo.get_config("/ROOT/project_name", None):
-            sys.stdout.write(Dodo.get_config("/ROOT/project_name") + '\n')
+    elif args.envs:
+        sys.stdout.write('\n'.join(sorted(os.listdir(Paths().envs_dir()))) +
+                         '\n')
+    elif args.env:
+        if Dodo.get_config("/ROOT/env_name", None):
+            sys.stdout.write(Dodo.get_config("/ROOT/env_name") + '\n')
     elif args.layers:
         layer_paths = get_ordered_layer_paths(Dodo.get_container())
         for layer_path in layer_paths:
@@ -119,5 +115,5 @@ if Dodo.is_main(__name__):
         if x:
             sys.stdout.write(x + '\n')
     else:
-        if Dodo.get_config("/ROOT/project_name", None):
-            sys.stdout.write(Dodo.get_config("/ROOT/project_name") + '\n')
+        if Dodo.get_config("/ROOT/env_name", None):
+            sys.stdout.write(Dodo.get_config("/ROOT/env_name") + '\n')

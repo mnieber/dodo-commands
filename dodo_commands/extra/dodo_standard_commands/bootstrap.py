@@ -1,13 +1,13 @@
 """Pull the latest version of the Dodo Commands system."""
-from argparse import ArgumentParser
 import glob
 import os
 import sys
+from argparse import ArgumentParser
 
-from dodo_commands import Dodo, CommandError
-from dodo_commands.framework.paths import Paths
+from dodo_commands import CommandError, Dodo
 from dodo_commands.framework.config_io import ConfigIO
-from dodo_commands.framework.util import symlink, query_yes_no
+from dodo_commands.framework.paths import Paths
+from dodo_commands.framework.util import query_yes_no, symlink
 
 
 def _args():
@@ -62,9 +62,9 @@ def _report(msg):
 
 
 def _copy_defaults(args, shared_config_dir):
-    res_dir = os.path.join(args.project_dir, "dodo_commands", "res")
+    config_dir = os.path.join(args.project_dir, ".dodo_commands")
     for filename in glob.glob(os.path.join(shared_config_dir, "*")):
-        dest_path = os.path.join(res_dir, os.path.basename(filename))
+        dest_path = os.path.join(config_dir, os.path.basename(filename))
         if os.path.exists(dest_path):
             if args.confirm:
                 print(
@@ -111,7 +111,7 @@ def _link_dir(link_target, link_name):
 
 
 def _update_config(src_dir, relative_shared_config_dir):
-    config_file = os.path.join(Paths().res_dir(), "config.yaml")
+    config_file = os.path.join(Paths().config_dir(), "config.yaml")
 
     if args.confirm:
         print("Update the key /ROOT/src_dir in your configuration file (%s)" %

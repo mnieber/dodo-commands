@@ -3,12 +3,14 @@ import sys
 from argparse import ArgumentParser
 
 from dodo_commands import Dodo
-from dodo_commands.dependencies.get import plumbum, semantic_version, yaml
+from dodo_commands.dependencies import yaml_round_trip_load
+from dodo_commands.dependencies.get import plumbum, semantic_version
 from dodo_commands.framework import get_version
 from dodo_commands.framework.config import Paths
 from dodo_commands.framework.util import bordered
 
 Version = semantic_version.Version
+local = plumbum.local
 
 
 def _args():
@@ -42,7 +44,7 @@ def _shared_config_dir():
 
 def _get_root_config_field(config_filename, field_name):
     with open(config_filename) as f:
-        config = yaml.round_trip_load(f.read())
+        config = yaml_round_trip_load(f.read())
     return config.get("ROOT", {}).get(field_name, "")
 
 
@@ -52,7 +54,7 @@ def _partial_sem_version(version):
 
 
 def _config_filename():
-    return os.path.join(Paths().res_dir(), "config.yaml")
+    return os.path.join(Paths().config_dir(), "config.yaml")
 
 
 def check_dodo_commands_version():  # noqa
@@ -85,7 +87,7 @@ def check_config_version():  # noqa
                          original_file)
         return
 
-    copied_file = os.path.join(Paths().res_dir(), "config.yaml")
+    copied_file = os.path.join(Paths().config_dir(), "config.yaml")
     copied_version = _get_root_config_field(copied_file, 'version')
     if not copied_version:
         sys.stderr.write("No version found in user managed file %s\n" %
@@ -105,8 +107,8 @@ def check_config_version():  # noqa
 
 
 def check_config_changes():  # noqa
-    if os.path.exists(os.path.join(Paths().res_dir(), '.git')):
-        with local.cwd(Paths().res_dir()):
+    if os.path.exists(os.path.join(Paths().config_dir(), '.git')):
+        with local.cwd(Paths().config_dir()):
             changes = local['git']('status', '--short')
             if changes:
                 sys.stdout.write(

@@ -1,6 +1,7 @@
 import os
 
 from dodo_commands.dependencies.get import six
+from dodo_commands.dodo_system_commands._create_env_dir import create_env_dir
 from dodo_commands.framework.paths import Paths
 from dodo_commands.framework.util import symlink
 
@@ -32,6 +33,12 @@ diff_tool=diff
 [recent]
 """
 
+_default_config = """ROOT:
+  version: 1.0.0
+  command_path:
+  - ${/ROOT/project_dir}/commands/*
+"""
+
 
 def _touch_init_py(dir_name):
     init_py = os.path.join(dir_name, "__init__.py")
@@ -51,16 +58,33 @@ def create_global_config():
         with open(config_filename, 'w') as f:
             f.write(_global_config)
 
-    default_commands_dir = Paths().default_commands_dir()
-    if not os.path.exists(default_commands_dir):
-        os.mkdir(default_commands_dir)
-        _touch_init_py(default_commands_dir)
-        symlink(
-            os.path.join(Paths().extra_dir(), "dodo_standard_commands"),
-            os.path.join(Paths().default_commands_dir(),
-                         "dodo_standard_commands"))
+    default_project_dir = Paths().default_project_dir()
 
+    if not os.path.exists(default_project_dir):
+        os.makedirs(default_project_dir)
+        default_config_filename = os.path.join(default_project_dir,
+                                               "config.yaml")
+        with open(default_config_filename, 'w') as f:
+            f.write(_default_config)
+
+    default_env_dir = Paths().env_dir('default')
+    if not os.path.exists(default_env_dir):
+        create_env_dir('default', default_env_dir, default_project_dir,
+                       default_project_dir, None)
+
+    preset_commands_dirs = ("dodo_standard_commands", "dodo_docker_commands")
     global_commands_dir = Paths().global_commands_dir()
     if not os.path.exists(global_commands_dir):
         os.mkdir(global_commands_dir)
         _touch_init_py(global_commands_dir)
+        for d in preset_commands_dirs:
+            symlink(os.path.join(Paths().extra_dir(), d),
+                    os.path.join(global_commands_dir, d))
+
+    default_commands_dir = Paths().default_commands_dir()
+    if not os.path.exists(default_commands_dir):
+        os.makedirs(default_commands_dir)
+        _touch_init_py(default_commands_dir)
+        for d in preset_commands_dirs:
+            symlink(os.path.join(global_commands_dir, d),
+                    os.path.join(default_commands_dir, d))

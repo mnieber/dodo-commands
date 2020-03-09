@@ -1,8 +1,7 @@
 from argparse import ArgumentParser
 
-from dodo_commands import Dodo, DecoratorScope
-from dodo_standard_commands.decorators.docker import (Decorator as
-                                                      DockerDecorator)
+from dodo_commands import DecoratorScope, Dodo
+from dodo_docker_commands.decorators.docker import Decorator as DockerDecorator
 
 
 def _choices():
@@ -17,7 +16,7 @@ def _choices():
 
 def _args():
     parser = ArgumentParser(
-        description='Opens a bash shell in the docker container.')
+        description='Opens a shell in the docker container.')
     parser.add_argument(
         'service',
         choices=_choices(),
@@ -26,8 +25,8 @@ def _args():
         '--image',
         choices=Dodo.get_config('/DOCKER/images', {}).keys(),
         help=("Use the docker image stored under this key in /DOCKER/images"))
-    parser.add_argument(
-        '--image-name', help=("Use the docker image with this name"))
+    parser.add_argument('--image-name',
+                        help=("Use the docker image with this name"))
     parser.add_argument(
         '--name', help=("Override the name of the started docker container"))
     parser.add_argument('--command')
@@ -55,6 +54,5 @@ if Dodo.is_main(__name__):
     Dodo.get_config('/DOCKER')['options'] = {Dodo.command_name: docker_options}
 
     with DecoratorScope('docker'):
-        Dodo.run(
-            ["/bin/bash"] + (["-c", args.command] if args.command else []),
-            cwd=docker_options.get("cwd", "/"))
+        Dodo.run([args.command] if args.command else [],
+                 cwd=docker_options.get("cwd", "/"))

@@ -4,7 +4,8 @@ from argparse import ArgumentParser
 from collections import defaultdict
 
 from dodo_commands import Dodo
-from dodo_commands.dependencies.get import yaml
+from dodo_commands.dependencies import (yaml_round_trip_dump,
+                                        yaml_round_trip_load)
 from dodo_commands.framework.command_map import get_command_map
 from dodo_commands.framework.command_path import get_command_dirs_from_config
 from dodo_commands.framework.config import build_config
@@ -77,7 +78,7 @@ def _commands_section(command_map, inferred_commands, use_columns=True):
 def _collect_command_dirs(config, config_io, layer_names_by_command_dir,
                           command_aliases, layer_config_by_layer_name,
                           layer_by_target_path):
-    config_memo = yaml.round_trip_dump(config)
+    config_memo = yaml_round_trip_dump(config)
 
     for layer_name, layer_config in layer_config_by_layer_name.items():
 
@@ -88,7 +89,7 @@ def _collect_command_dirs(config, config_io, layer_names_by_command_dir,
                                                   config_io=config_io)
         extra_layers = map_with(config_io.load)(layer_filenames)
         if keep_if(has_command_path)(extra_layers):
-            base_config = yaml.round_trip_load(config_memo)
+            base_config = yaml_round_trip_load(config_memo)
             updated_config = build_config([base_config] + extra_layers)
             for command_dir in get_command_dirs_from_config(updated_config):
                 layer_names = layer_names_by_command_dir[command_dir]
@@ -96,13 +97,12 @@ def _collect_command_dirs(config, config_io, layer_names_by_command_dir,
 
         layer = layer_by_target_path[layer_config.target_path]
         for command_alias in layer.get('ROOT', {}).get('aliases', {}).items():
-            inferred_commands = drill(layer, 'ROOT', 'inferred_by', default=[])
-            prefix = ("" if command_alias[0] in inferred_commands else
-                      (layer_name + "."))
-
-            postfix = " --layer=%s" % layer_config.target_path
-            command_aliases[prefix +
-                            command_alias[0]] = command_alias[1] + postfix
+            alias_prefix = (
+                "" if command_alias[0] in layer_config.inferred_commands else
+                (layer_name + "."))
+            cmd_prefix = layer_name + "."
+            command_aliases[alias_prefix +
+                            command_alias[0]] = cmd_prefix + command_alias[1]
 
 
 def _print_command_dirs(args, layer_names_2_command_dirs, inferred_commands):
@@ -141,11 +141,13 @@ def _print_layer_names(layer_config_by_layer_name):
 
 
 def _print_command_aliases(command_aliases, inferred_commands):
-    col_width = max(len(x) for x in command_aliases.keys())
+    if command_aliases:
+        col_width = max(len(x) for x in command_aliases.keys())
 
-    sys.stdout.write("Command aliases:\n\n")
-    for alias, target_path in sorted(command_aliases.items()):
-        sys.stdout.write("%s = %s\n" % (alias.ljust(col_width), target_path))
+        sys.stdout.write("Command aliases:\n\n")
+        for alias, target_path in sorted(command_aliases.items()):
+            sys.stdout.write("%s = %s\n" %
+                             (alias.ljust(col_width), target_path))
 
 
 def _add_to_layer_names(layer_names, layer_name):

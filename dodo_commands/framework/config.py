@@ -11,7 +11,7 @@ from dodo_commands.framework.config_expander import ConfigExpander  # noqa
 from dodo_commands.framework.config_expander import Key, KeyNotFound
 from dodo_commands.framework.config_io import ConfigIO
 from dodo_commands.framework.global_config import create_global_config  # noqa
-from dodo_commands.framework.paths import Paths
+from dodo_commands.framework.paths import Paths, _env
 
 dotenv_values = dotenv.dotenv_values
 
@@ -61,10 +61,9 @@ def _extend_config(config):
     """Add special values to the project's config"""
     project_dir = Paths().project_dir()
     if project_dir:
-        _add_to_config(config, "ROOT", "project_name",
-                       os.path.basename(project_dir))
+        _add_to_config(config, "ROOT", "env_name", _env())
         _add_to_config(config, "ROOT", "project_dir", project_dir)
-        _add_to_config(config, "ROOT", "res_dir", Paths().res_dir())
+        _add_to_config(config, "ROOT", "config_dir", Paths().config_dir())
 
 
 def extend_command_path(config):

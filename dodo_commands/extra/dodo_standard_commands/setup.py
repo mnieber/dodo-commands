@@ -70,8 +70,6 @@ ec = edit-config
 dk = docker-kill
 de = docker-exec
 dc = docker-commit
-ac = activate
-acc = activate --create
 mr = menu --run
 mm = menu
 """

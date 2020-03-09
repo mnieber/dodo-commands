@@ -29,7 +29,7 @@ def _args():
 
     args = Dodo.parse_args(parser)
     args.container_types = Dodo.get_config("/DOCKER/container_types")
-    args.project_name = Dodo.get_config('/ROOT/project_name')
+    args.env_name = Dodo.get_config('/ROOT/env_name')
 
     return args
 
@@ -61,12 +61,6 @@ def _create_container(container_types, container_type_name, name, replace):
         cmd_args.append(image)
         Dodo.run(cmd_args)
 
-    Dodo.runcmd([
-        'dodo', 'edit-config',
-        '--key=/DOCKER/containers/%s' % container_type_name,
-        '--val=%s' % name
-    ])
-
 
 if Dodo.is_main(__name__, safe=True):
     args = _args()
@@ -85,7 +79,7 @@ if Dodo.is_main(__name__, safe=True):
         picker.pick()
 
         for container_type_name in picker.get_choices():
-            default_container_name = 'dc_%s_%s' % (args.project_name,
+            default_container_name = 'dc_%s_%s' % (args.env_name,
                                                    container_type_name)
             name = raw_input(
                 "Enter a name for container type %s [%s]: " %

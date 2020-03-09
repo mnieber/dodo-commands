@@ -1,4 +1,5 @@
 import os
+from collections import OrderedDict
 
 from dodo_commands.dependencies.get import funcy
 from dodo_commands.framework.funcy import (drill, ds, for_each, keep_if,
@@ -8,7 +9,7 @@ distinct, flatten = funcy.distinct, funcy.flatten
 
 
 def layer_filename_superset(layer_filenames, config_io, recursive=True):
-    selected_layer_by_path = {}
+    selected_layer_by_path = OrderedDict()
 
     def load_layers(layer_paths):
         def map_to_layer_filenames(layer_paths):
@@ -21,7 +22,7 @@ def layer_filename_superset(layer_filenames, config_io, recursive=True):
             selected_layer_by_path[layer_filename] = layer
 
         def map_to_nested_layer_paths(layer_filename, layer):
-            return drill(layer, 'LAYERS', 'fixed', default=[])
+            return drill(layer, 'LAYERS', default=[])
 
         def get_flat_list(list_of_lists):
             return distinct(flatten(list_of_lists))

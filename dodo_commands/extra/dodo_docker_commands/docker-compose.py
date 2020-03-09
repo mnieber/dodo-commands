@@ -27,7 +27,7 @@ if Dodo.is_main(__name__, safe=True):
 
     compose_project_name = Dodo.get_config(
         '/DOCKER_COMPOSE/compose_project_name',
-        Dodo.get_config('/ROOT/project_name'))
+        Dodo.get_config('/ROOT/env_name'))
     with plumbum.local.env(COMPOSE_PROJECT_NAME=compose_project_name):
         Dodo.run(['docker-compose'] +
                  remove_trailing_dashes(args.compose_args),

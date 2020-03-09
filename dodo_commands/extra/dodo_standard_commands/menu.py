@@ -88,7 +88,7 @@ def _get_selected_commands(commands, labels, allow_free_text=False):
             if index == 0:
                 sys.exit(0)
 
-    picker = Picker(commands, allow_free_text=allow_free_text)
+    picker = Picker(commands, allow_free_text=allow_free_text, labels=labels)
     picker.pick()
     return [picker.free_text] if picker.free_text else picker.get_choices()
 
@@ -135,6 +135,7 @@ if Dodo.is_main(__name__):
                 selected_commands = _get_selected_commands(
                     commands, labels, allow_free_text=True)
                 for command in selected_commands:
+                    print(command)
                     tmux('split-window', '-v')
                     tmux('send-keys', command, 'C-m')
 

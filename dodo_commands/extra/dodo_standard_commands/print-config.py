@@ -1,7 +1,7 @@
 import re
 from argparse import ArgumentParser
 
-from dodo_commands.dependencies.get import yaml
+from dodo_commands.dependencies import yaml_round_trip_dump
 from dodo_commands.framework.singleton import Dodo
 
 
@@ -21,10 +21,10 @@ if Dodo.is_main(__name__):
         if isinstance(contents, str):
             print(contents)
         else:
-            print("%s" % yaml.round_trip_dump(contents))
+            print("%s" % yaml_round_trip_dump(contents))
     else:
         content = re.sub(r'^([0-9_A-Z]+\:)$',
                          r'\n\1',
-                         yaml.round_trip_dump(Dodo.get_config()),
+                         yaml_round_trip_dump(Dodo.get_config()),
                          flags=re.MULTILINE)
         print(re.sub(r'^\n\n', r'\n', content, flags=re.MULTILINE))
