@@ -15,6 +15,9 @@ Contents:
 
    goals
    installation
+   tutorial/part_1_working_with_microservices
+   tutorial/part_2_local_development_with_docker
+   tutorial/part_3_project_specific_sets_of_aliases.rst
    dodo-commands-script
    projects
    configuration
@@ -24,7 +27,6 @@ Contents:
    decorators
    sharing-projects
    yaml-and-shell-commands
-   diagnose
 
 Indices and tables
 ==================

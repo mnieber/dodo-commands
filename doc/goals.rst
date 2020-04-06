@@ -1,45 +1,29 @@
-*********************************
-Goals of the Dodo Commands system
-*********************************
+**************************************
+Dodo Commands, who and what is it for?
+**************************************
 
-The main goal is to associate a set of short commands with each project to automate frequent tasks. The following list gives a general overview of how this achieved. We also encourage you to try the tutorial on this `page <https://github.com/mnieber/dodo_commands>`_.
+The main goal of Dodo Commands is to make it easier to run a variety of scripts and commands from the command line. Below we will describe a few scenarios in which Dodo Commands can be useful. In the next chapter, we will explain how Dodo Commands can be set up to support these scenarios.
 
-Provide a per-project environment
-=================================
 
-Each Dodo Commands project contains a specific set of commands and configuration values. It's also possible to install default commands that will be available in any project.
+Scenario: working with micro-services
+=====================================
 
-Single entry point to run a variety of command scripts
-======================================================
+Working with micro-services by definition involves working with multiple environments, where each environment offers specific commands. Typically these commands are organized in a Makefile or package.json file. Dodo Commands allows you to use these files from any directory. For example, use `dodo foo.make bar` to call the `bar` function for the Foo micro-service, and use `dodo foo.git log` to see the git history of this micro-service. Finally, Dodo Commands makes it easy to show the console output of different services in a single screen using tmux.
 
-Dodo Commands finds command scripts for you in the project's search path, so there is no need to remember where they are located. This means that commands work from any current working directory. Running :code:`dodo help` shows the list of available commands.
 
-Give access to the configuration of the current project
-=======================================================
+Scenario: local development with Docker
+=======================================
 
-Dodo Commands fetches arguments from the current project's configuration file. However, arguments not found in the configuration file can still be obtained from the command line.
+It's a good idea to install the entire tool-chain that is needed for local development in one or more Docker containers. This isolates the run-time environment from the host computer. Dodo Commands makes it easy to execute commands inside these containers. For example, if you have a Makefile inside the Foo service container, then you can use it (from the host computer) by calling `dodo foo.make test`. Dodo commands will take care of prefixing the command with the right Docker arguments.
 
-Flexible configurations
-=======================
 
-Configuration files can be layered, and layers can be switched on or off, giving you a lot of flexibility. Just like excel sheets, configuration files may contain cross-references. The power of Dodo Commands is mostly in the configuration file.
+Scenario: using project-specific sets of aliases
+================================================
 
-Show what each command script does
-==================================
+Shell aliases are useful but they also have some drawbacks. You need to make sure that you only load the aliases for your current project into the shell. Also, for more complex aliases it would make sense to use a powerful language such as Python. Finally, maintaining sets of similar but slightly different aliases for various projects can become unwieldy. With Dodo Commands, you can write your aliases and functions as Python scripts. These aliases can read some of their arguments from a project specific configuration file. This helps to keep them short and makes them reusable between projects.
 
-In some cases you don't want to run a script blindly. Running :code:`dodo foo --bar --confirm` makes the foo.py script print each command line call that it executes, and ask for confirmation. This allows you to see exactly what the script does.
 
-Share commands easily, while allowing customization
-===================================================
+Scenario: getting colleagues up-to-speed in a new environment
+=============================================================
 
-You can synchronize your local project configuration with a shared one. This works by cherry-picking the parts you need. New colleagues can initialize their project by boot-strapping from the shared configuration.
-
-Run commands in a docker container
-==================================
-
-You can tell Dodo Commands to prefix particular commands with a Docker invocation. The appropriate volume mappings, environment variables, etc come from the configuration file.
-
-Install dependencies automatically
-==================================
-
-By specifying the dependencies of a command script in a :code:`<script-name>.meta` file, missing Python packages can be automatically installed into the virtualenv of the current Dodo Commands project.
+There are usually some steps that every developer needs to take to get started. You can describe these steps in a README but a more effective way is to automate them. With Dodo Commands, you can write setup scripts for your project that can be invoked as simple commands. You can group these commands into menus that can be accessed by calling `dodo menu`. Moreover, new developers can run these commands with the `--confirm` flag. This prints each step and asks for confirmation, giving new developers the chance to understand what happens in each script.

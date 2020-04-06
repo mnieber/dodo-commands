@@ -20,8 +20,8 @@ class Paths:
     def envs_dir(self):
         return os.path.join(self.global_config_dir(), "envs")
 
-    def env_dir(self, env):
-        return os.path.join(self.envs_dir(), env)
+    def env_dir(self, env=None):
+        return os.path.join(self.envs_dir(), env or _env())
 
     def global_config_dir(self, expanduser=True):
         return os.path.join(self.home_dir(expanduser), '.dodo_commands')

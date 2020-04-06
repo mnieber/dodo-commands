@@ -27,6 +27,9 @@ def _args():  # noqa
     group.add_argument('--global-config',
                        action="store_true",
                        help='Print where the global config file is')
+    group.add_argument('--env-dir',
+                       action="store_true",
+                       help='Print where the environment directory is')
     group.add_argument(
         '--script',
         help='Print where the dodo command script with given name is')
@@ -94,6 +97,8 @@ if Dodo.is_main(__name__):
         sys.stdout.write(Paths().default_commands_dir() + '\n')
     elif args.script:
         sys.stdout.write(_which_script(args.script) + '\n')
+    elif args.env_dir:
+        sys.stdout.write(Paths().env_dir())
     elif args.directory:
         sys.stdout.write(_which_dir(args.directory) + '\n')
     elif args.decorators:
