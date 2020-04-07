@@ -30,15 +30,18 @@ def _args():  # noqa
     group.add_argument('--env-dir',
                        action="store_true",
                        help='Print where the environment directory is')
+    group.add_argument('--project-dir',
+                       action="store_true",
+                       help='Print where the project directory is')
+    group.add_argument('--config-dir',
+                       action="store_true",
+                       help='Print where the config directory is')
+    group.add_argument('--python-env-dir',
+                       action="store_true",
+                       help='Print where the python virtual env directory is')
     group.add_argument(
         '--script',
         help='Print where the dodo command script with given name is')
-    group.add_argument(
-        '--dir',
-        dest='directory',
-        help=
-        'Finds the X_dir value in the configuration, where X is the given option value'
-    )
     group.add_argument('--decorators',
                        action="store_true",
                        help='Prints which command decorators are available')
@@ -99,8 +102,15 @@ if Dodo.is_main(__name__):
         sys.stdout.write(_which_script(args.script) + '\n')
     elif args.env_dir:
         sys.stdout.write(Paths().env_dir())
-    elif args.directory:
-        sys.stdout.write(_which_dir(args.directory) + '\n')
+    elif args.project_dir:
+        sys.stdout.write(_which_dir("project") + '\n')
+    elif args.config_dir:
+        sys.stdout.write(_which_dir("config") + '\n')
+    elif args.python_env_dir:
+        python_env_dir = os.path.realpath(
+            os.path.join(Paths().env_dir(), "python_env_dir"))
+        if os.path.exists(python_env_dir):
+            sys.stdout.write(python_env_dir + '\n')
     elif args.decorators:
         sys.stdout.write(
             ", ".join(sorted(_all_decorators(Dodo.get_config()).keys())) +
@@ -116,7 +126,7 @@ if Dodo.is_main(__name__):
         for layer_path in layer_paths:
             sys.stdout.write(layer_path + '\n')
     elif args.what:
-        x = _which_script(args.what) or _which_dir(args.what)
+        x = _which_script(args.what)
         if x:
             sys.stdout.write(x + '\n')
     else:
