@@ -94,7 +94,7 @@ if Dodo.is_main(__name__, safe=True):
     args = _args()
     if not is_using_system_dodo():
         raise CommandError(
-            "Please deactivate your dodo project first by running 'deactivate'."
+            "Please activate the default environment first by running 'dodo env default'."
         )
 
     if not args.confirm:

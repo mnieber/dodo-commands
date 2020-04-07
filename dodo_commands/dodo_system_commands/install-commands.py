@@ -6,7 +6,8 @@ from argparse import ArgumentParser
 from dodo_commands import CommandError, Dodo
 from dodo_commands.framework.global_config import load_global_config_parser
 from dodo_commands.framework.paths import Paths
-from dodo_commands.framework.util import is_using_system_dodo, symlink
+from dodo_commands.framework.util import (bordered, is_using_system_dodo,
+                                          symlink)
 
 
 def _args():
@@ -43,6 +44,15 @@ def _args():
     )
     args = Dodo.parse_args(parser)
     return args
+
+
+def check_setuptools():
+    if not Dodo.run([_python_path(), '-c', 'import setuptools']):
+        _report_error("\n" + bordered(
+            "Error: your python version does not have setuptools installed.\n"
+            + "Check the settings.python option in %s" %
+            Paths().global_config_filename()))
+        sys.exit(1)
 
 
 def _packages_in_extra_dir():
@@ -140,11 +150,14 @@ def _install_commands_from_path(path, mv=False):
     return True
 
 
-def _install_commands_from_package(package):
+def _python_path():
     config = load_global_config_parser()
-    python_path = config.get("settings", "python_interpreter")
+    return config.get("settings", "python_interpreter")
+
+
+def _install_commands_from_package(package):
     Dodo.run([
-        python_path, '-m', 'pip', 'install', '--upgrade', '--target',
+        _python_path(), '-m', 'pip', 'install', '--upgrade', '--target',
         Paths().global_commands_dir(), package
     ])
 
@@ -162,7 +175,7 @@ if Dodo.is_main(__name__):
     args = _args()
     if args.pip and not is_using_system_dodo():
         raise CommandError(
-            "Please deactivate your dodo project first by running 'deactivate'."
+            "Please activate the default environment first by running 'dodo env default'."
         )
 
     if args.make_default:
@@ -184,6 +197,7 @@ if Dodo.is_main(__name__):
                                  args.to_defaults)
 
     if args.pip:
+        check_setuptools()
         for package in args.pip:
             if args.remove:
                 _remove_package(package)
