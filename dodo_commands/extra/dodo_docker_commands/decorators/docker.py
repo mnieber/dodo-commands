@@ -107,8 +107,8 @@ class Decorator:  # noqa
     @classmethod
     def merged_options(cls, get_config, command_name):
         merged = {}
-        for patterns, docker_config in get_config('/DOCKER/options',
-                                                  {}).items():
+        docker_options = get_config('/DOCKER_OPTIONS', {})
+        for patterns, docker_config in docker_options.items():
             should_merge = False
             for pattern in (patterns if _is_tuple(patterns) else [patterns]):
                 if pattern.startswith('!'):
@@ -179,7 +179,7 @@ class Decorator:  # noqa
             docker_node['container'].append(container)
         else:
             raise CommandError(
-                "No docker image or container found in /DOCKER/options for command %s"
+                "No docker image or container found in /DOCKER_OPTIONS for command %s"
                 % command_name)
 
         return docker_node, image

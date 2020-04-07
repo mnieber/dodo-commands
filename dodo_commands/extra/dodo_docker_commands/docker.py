@@ -1,12 +1,13 @@
 from argparse import ArgumentParser
 
 from dodo_commands import DecoratorScope, Dodo
+
 from dodo_docker_commands.decorators.docker import Decorator as DockerDecorator
 
 
 def _choices():
     choices = []
-    for key in Dodo.get_config('/DOCKER/options', {}).keys():
+    for key in Dodo.get_config('/DOCKER_OPTIONS', {}).keys():
         keys = [key] if isinstance(key, str) else key
         for x in keys:
             if x not in choices and not x.startswith('!'):
@@ -20,7 +21,7 @@ def _args():
     parser.add_argument(
         'service',
         choices=_choices(),
-        help=("Use this key to look up the docker options in /DOCKER/options"))
+        help=("Use this key to look up the docker options in /DOCKER_OPTIONS"))
     parser.add_argument(
         '--image',
         choices=Dodo.get_config('/DOCKER/images', {}).keys(),

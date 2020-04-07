@@ -27,9 +27,9 @@ if Dodo.is_main(__name__, safe=True):
     container_name = Dodo.get_config('/DOCKER/containers/' +
                                      args.container_type)
 
-    Dodo.get_config('/DOCKER')['options'].setdefault('docker-snapshot', {})
-    Dodo.get_config('/DOCKER')['options']['docker-snapshot'][
-        'volumes_from'] = container_name
+    docker_options = Dodo.get_config('/DOCKER_OPTIONS', {})
+    docker_options.setdefault('docker-snapshot', {})
+    docker_options['docker-snapshot']['volumes_from'] = container_name
 
     container_type = Dodo.get_config('/DOCKER/container_types/' +
                                      args.container_type)
