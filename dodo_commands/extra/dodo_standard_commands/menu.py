@@ -76,7 +76,7 @@ def _get_selected_commands(commands, labels, allow_free_text=False):
         def print_choices(self, choices):
             print()
             for idx, label in enumerate(choices):
-                print("%02d - %s" % (idx + 1, label))
+                print(label)
             print()
 
         def question(self):

@@ -14,8 +14,9 @@ from dodo_commands.framework.util import classproperty
 
 class Dodo:
     safe = True
+    parser = argparse.ArgumentParser()
 
-    _command_line_args = argparse.Namespace()
+    _args = None
     _container = None
 
     @classmethod
@@ -25,6 +26,16 @@ class Dodo:
             cls._container.run_actions()
 
         return cls._container
+
+    @classproperty
+    def command_name(cls):  # noqa
+        return cls.get_container().command_line.command_name
+
+    @classproperty
+    def args(cls):  # noqa
+        if cls._args is None:
+            cls.parse_args(cls.parser)
+        return cls._args
 
     @classproperty
     def command_name(cls):  # noqa
@@ -79,23 +90,22 @@ class Dodo:
         parser.prog = os.path.basename(args[0])
         if len(args) > 1:
             parser.prog += " %s" % args[1]
-        cls._command_line_args = parser.parse_args(args[2:])
+        cls._args = parser.parse_args(args[2:])
 
         if config_args:
             for config_arg in config_args:
                 key = Key(cls.get_config(), config_arg.xpath)
                 if key.exists():
-                    setattr(cls._command_line_args, config_arg.arg_name,
-                            key.get())
+                    setattr(cls._args, config_arg.arg_name, key.get())
 
-        return cls._command_line_args
+        return cls._args
 
     @classmethod
     def run(cls, args, cwd=None, quiet=False, capture=False):
         args_tree_root_node = ArgsTreeNode('original_args', args=args)
         for decorator in get_decorators(cls.command_name, cls.get_config()):
             args_tree_root_node, cwd = decorator.modify_args(
-                cls._command_line_args, args_tree_root_node, cwd)
+                cls._args, args_tree_root_node, cwd)
             if args_tree_root_node is None:
                 return False
 

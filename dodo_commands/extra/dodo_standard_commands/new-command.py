@@ -34,7 +34,7 @@ def _args():
     return args
 
 
-def create_command_dir():
+def create_command_dir(command_dirs):
     def get_command_dir_name():
         while True:
             dir_name = raw_input("\nEnter a name for the commands dir: ")
@@ -98,7 +98,7 @@ def get_command_dir(command_dirs):
     ]
     choice_idx0 = get_choice_idx0(choices)
     if choice_idx0 == len(choices) - 1:
-        return create_command_dir()
+        return create_command_dir(command_dirs)
     return command_dirs[choice_idx0]
 
 
@@ -139,10 +139,10 @@ def get_params(args, remaining_idxs):
         class Picker(ChoicePicker):
             def print_choices(self, choices):
                 print("0 - none")
-                for idx, command_dir in enumerate(choices):
+                for idx, arg in enumerate(choices):
                     if idx == len(choices) - 1:
                         print("")
-                    print("%d - %s" % (idx + 1, command_dir))
+                    print("%d - %s" % (idx + 1, arg[1]))
                 print()
 
             def question(self):
