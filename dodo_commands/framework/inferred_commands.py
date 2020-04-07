@@ -7,15 +7,15 @@ distinct, merge = funcy.distinct, funcy.merge
 
 def get_inferred_command_map(
     global_aliases,
-    layer_config_by_layer_name,
+    layer_props_by_layer_name,
     layer_by_target_path,
 ):
     layer_name_by_inferred_command = {}
 
-    for layer_name, layer_config in layer_config_by_layer_name.items():
+    for layer_name, layer_props in layer_props_by_layer_name.items():
 
-        def get_layer(layer_config):
-            return layer_by_target_path[layer_config.target_path]
+        def get_layer(layer_props):
+            return layer_by_target_path[layer_props.target_path]
 
         def get_cmd_aliases(layer):
             command_aliases = drill(layer, 'ROOT', 'aliases', default={})
@@ -39,16 +39,16 @@ def get_inferred_command_map(
                 raise CommandError(
                     "Ambigous inferred command %s. " % inferred_command +
                     "Could be %s or %s" %
-                    (layer_config.target_path,
+                    (layer_props.target_path,
                      layer_name_by_inferred_command[inferred_command]))
             layer_name_by_inferred_command[inferred_command] = layer_name
 
-        x = layer_config
+        x = layer_props
         x = layer = get_layer(x)
         x = command_aliases = get_cmd_aliases(layer)
         x = inferred_aliases = get_inferred_aliases(
-            command_aliases, layer_config.inferred_commands)
-        x = get_inferred_commands_and_aliases(layer_config.inferred_commands,
+            command_aliases, layer_props.inferred_commands)
+        x = get_inferred_commands_and_aliases(layer_props.inferred_commands,
                                               inferred_aliases)
         for_each(do_store)(x)
 

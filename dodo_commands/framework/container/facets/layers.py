@@ -19,7 +19,7 @@ class Layers:
         self.selected_layer_by_path = {}
 
     @property
-    def layer_config_by_layer_name(self):
+    def layer_props_by_layer_name(self):
         result = {}
 
         groups = drill(self.root_layer, 'LAYER_GROUPS', default={})
@@ -32,27 +32,27 @@ class Layers:
                     inferred_commands = []
                     target_path = None
                 elif isinstance(group_item, dict):
-                    layer_name, layer_config = list(group_item.items())[0]
-                    layer_config = layer_config or {}
-                    inferred_commands = list(
-                        layer_config.get('inferred_by', []))
-                    target_path = layer_config.get('target_path')
-                    base_name = layer_config.get('base_name', layer_name)
+                    layer_name, layer_props = list(group_item.items())[0]
+                    layer_props = layer_props or {}
+                    inferred_commands = list(layer_props.get(
+                        'inferred_by', []))
+                    target_path = layer_props.get('target_path')
+                    base_name = layer_props.get('base_name', layer_name)
 
                 target_path = target_path or "%s.%s.yaml" % (group_name,
                                                              base_name)
 
-                layer_config = LayerConfig(target_path, inferred_commands,
-                                           group_name)
+                layer_props = LayerConfig(target_path, inferred_commands,
+                                          group_name)
 
                 if layer_name in result:
-                    prev_layer_config = result[layer_name]
+                    prev_layer_props = result[layer_name]
                     raise CommandError(
                         "Name conlict for layer '%s' in groups '%s' and '%s'" %
-                        (layer_name, prev_layer_config.group_name,
-                         layer_config.group_name))
+                        (layer_name, prev_layer_props.group_name,
+                         layer_props.group_name))
 
-                result[layer_name] = layer_config
+                result[layer_name] = layer_props
         return result
 
     @staticmethod

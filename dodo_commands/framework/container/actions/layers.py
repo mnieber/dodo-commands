@@ -29,16 +29,16 @@ def action_load_root_layer(ctr):
 def action_load_named_layers(ctr):
     def transform(
         config_io,
-        layer_config_by_layer_name,
+        layer_props_by_layer_name,
     ):
         layer_by_target_path = load_named_layers(
             config_io,
-            layer_config_by_layer_name,
+            layer_props_by_layer_name,
         )
         return (layer_by_target_path, )
 
     return map_datas(i_(Layers, 'config_io'),
-                     i_(Layers, 'layer_config_by_layer_name'),
+                     i_(Layers, 'layer_props_by_layer_name'),
                      o_(Layers, 'layer_by_target_path'),
                      transform=load_named_layers)(ctr)
 

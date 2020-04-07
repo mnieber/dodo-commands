@@ -76,16 +76,16 @@ def _commands_section(command_map, inferred_commands, use_columns=True):
 
 
 def _collect_command_dirs(config, config_io, layer_names_by_command_dir,
-                          command_aliases, layer_config_by_layer_name,
+                          command_aliases, layer_props_by_layer_name,
                           layer_by_target_path):
     config_memo = yaml_round_trip_dump(config)
 
-    for layer_name, layer_config in layer_config_by_layer_name.items():
+    for layer_name, layer_props in layer_props_by_layer_name.items():
 
         def has_command_path(layer):
             return drill(layer, 'ROOT', 'command_path', default=None)
 
-        layer_filenames = layer_filename_superset([layer_config.target_path],
+        layer_filenames = layer_filename_superset([layer_props.target_path],
                                                   config_io=config_io)
         extra_layers = map_with(config_io.load)(layer_filenames)
         if keep_if(has_command_path)(extra_layers):
@@ -95,10 +95,10 @@ def _collect_command_dirs(config, config_io, layer_names_by_command_dir,
                 layer_names = layer_names_by_command_dir[command_dir]
                 _add_to_layer_names(layer_names, layer_name)
 
-        layer = layer_by_target_path[layer_config.target_path]
+        layer = layer_by_target_path[layer_props.target_path]
         for command_alias in layer.get('ROOT', {}).get('aliases', {}).items():
             alias_prefix = (
-                "" if command_alias[0] in layer_config.inferred_commands else
+                "" if command_alias[0] in layer_props.inferred_commands else
                 (layer_name + "."))
             cmd_prefix = layer_name + "."
             command_aliases[alias_prefix +
@@ -129,15 +129,15 @@ def _print_command_dirs(args, layer_names_2_command_dirs, inferred_commands):
                               use_columns=not args.commands) + '\n')
 
 
-def _print_layer_names(layer_config_by_layer_name):
-    layer_names = layer_config_by_layer_name.keys()
+def _print_layer_names(layer_props_by_layer_name):
+    layer_names = layer_props_by_layer_name.keys()
     col_width = max(len(x) for x in layer_names)
 
     sys.stdout.write("Layers:\n\n")
-    for layer_name, layer_config in sorted(layer_config_by_layer_name.items()):
+    for layer_name, layer_props in sorted(layer_props_by_layer_name.items()):
         sys.stdout.write(
             "%s = %s\n" %
-            (layer_name.ljust(col_width), layer_config.target_path))
+            (layer_name.ljust(col_width), layer_props.target_path))
 
 
 def _print_command_aliases(command_aliases, inferred_commands):
@@ -174,7 +174,7 @@ if Dodo.is_main(__name__, safe=True):
         command_aliases = dict(ctr.commands.aliases)
         _collect_command_dirs(ctr.config.config, ctr.layers.config_io,
                               layer_names_by_command_dir, command_aliases,
-                              ctr.layers.layer_config_by_layer_name,
+                              ctr.layers.layer_props_by_layer_name,
                               ctr.layers.layer_by_target_path)
 
         layer_names_2_command_dirs = defaultdict(lambda: list())
@@ -185,8 +185,8 @@ if Dodo.is_main(__name__, safe=True):
                             ctr.commands.layer_name_by_inferred_command)
 
         if not args.commands:
-            if ctr.layers.layer_config_by_layer_name:
-                _print_layer_names(dict(ctr.layers.layer_config_by_layer_name))
+            if ctr.layers.layer_props_by_layer_name:
+                _print_layer_names(dict(ctr.layers.layer_props_by_layer_name))
             sys.stdout.write('\n')
             _print_command_aliases(command_aliases,
                                    ctr.commands.layer_name_by_inferred_command)

@@ -6,14 +6,14 @@ from dodo_commands.framework.funcy import ds, for_each, map_with
 
 def load_named_layers(
     config_io,
-    layer_config_by_layer_name,
+    layer_props_by_layer_name,
 ):
     layer_by_target_path = {}
 
     def get_target_paths_and_layer_names():
         result = {}
-        for layer_name, layer_config in layer_config_by_layer_name.items():
-            result[layer_name] = layer_config.target_path
+        for layer_name, layer_props in layer_props_by_layer_name.items():
+            result[layer_name] = layer_props.target_path
         return result.items()
 
     def do_check_valid_target_path(layer_name, target_path):
