@@ -42,7 +42,7 @@ class Dodo:
         return cls.get_container().command_line.command_name
 
     @classmethod
-    def get_config(cls, key='', default_value="__not_set_234234__"):  # noqa
+    def get(cls, key='', default_value="__not_set_234234__"):  # noqa
         config = cls.get_container().config.config
 
         try:
@@ -132,3 +132,4 @@ class Dodo:
 
     # add alias for the legacy 'runcmd' method
     runcmd = run
+    get_config = get
