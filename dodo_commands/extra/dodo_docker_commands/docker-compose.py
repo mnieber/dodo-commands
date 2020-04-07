@@ -10,7 +10,7 @@ def _args():
 
     parser.add_argument('compose_args', nargs=REMAINDER)
     args = Dodo.parse_args(parser)
-    args.cwd = Dodo.get_config('/DOCKER_COMPOSE/src_dir')
+    args.cwd = Dodo.get_config('/DOCKER_COMPOSE/cwd')
     args.map = Dodo.get_config('/DOCKER_COMPOSE/map', {})
     return args
 
