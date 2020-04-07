@@ -49,6 +49,10 @@ def _is_confirm(command_line_args):
             or os.environ.get('__DODO_UNIVERSAL_CONFIRM__', None) == '1')
 
 
+def _is_echo(command_line_args):
+    return getattr(command_line_args, 'echo', False)
+
+
 class Decorator:  # noqa
     def is_used(self, config, command_name, decorator_name):
         return True
@@ -71,7 +75,7 @@ class Decorator:  # noqa
         if _count_confirm_in_argv() > 1:
             local.env['__DODO_UNIVERSAL_CONFIRM__'] = '1'
 
-        if command_line_args.echo and not Dodo.safe:
+        if _is_echo(command_line_args) and not Dodo.safe:
             raise CommandError(
                 "The --echo option is not supported for unsafe commands.\n" +
                 "Since this command is marked as unsafe, some operations will "
