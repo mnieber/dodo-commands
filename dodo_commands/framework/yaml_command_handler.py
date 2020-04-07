@@ -23,7 +23,7 @@ class YamlCommandHandler:
                 if ext == '.yaml' and command_name.startswith(prefix):
                     command_name = command_name[len(prefix):]
                     with open(file) as ifs:
-                        data = ruamel.yaml_round_trip_load(ifs.read())
+                        data = yaml_round_trip_load(ifs.read())
                         for command_name in data.keys():
                             command_map[command_name] = YamlCommandMapItem(
                                 group=os.path.basename(command_dir),
