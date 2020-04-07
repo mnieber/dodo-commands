@@ -67,11 +67,10 @@ class YamlCommandHandler:
 
             try:
                 cwd = self._expand(cmd.get('cwd'))
-                store_xpath = [x for x in cmd.get('store', '').split('/') if x]
             except:
                 cwd = None
-                store_xpath = None
 
+            store_xpath = cmd.get('store', '')
             res = Dodo.run([self._expand(x) for x in args],
                            cwd=cwd,
                            capture=bool(store_xpath))

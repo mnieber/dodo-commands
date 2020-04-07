@@ -9,8 +9,6 @@ def _args():
     parser = ArgumentParser(description="Print the full configuration.")
     parser.add_argument('key', nargs='?')
     args = Dodo.parse_args(parser)
-    if args.key and args.key.startswith('/'):
-        args.key = args.key[1:]
     return args
 
 

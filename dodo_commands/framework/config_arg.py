@@ -13,16 +13,12 @@ class ConfigArg:
     def arg_name(self):
         return self.args[0].strip('-').replace('-', '_')
 
-    @property
-    def xpath(self):
-        return [x for x in self.config_key.split('/') if x]
-
 
 def add_config_args(parser, config, config_args):
     show_help = '--help' in sys.argv
 
     for config_arg in (config_args or []):
-        key = Key(config, config_arg.xpath)
+        key = Key(config, config_arg.config_key)
         key_exists = key.exists()
 
         if show_help or not key_exists:

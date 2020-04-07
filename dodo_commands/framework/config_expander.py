@@ -11,8 +11,8 @@ class KeyNotFound(CommandError):
     pass
 
 
-def _xpath_string(node):
-    return '/' + '/'.join([str(x) for x in node.xpath])
+def _xpath_to_string(xpath):
+    return '/' + '/'.join([str(x) for x in xpath])
 
 
 class DictKey:
@@ -25,8 +25,8 @@ class DictKey:
         return "DK[%s]" % self.key
 
     def warning_msg_not_expanded(self):
-        return "Unexpanded key {key} at location /{xpath}".format(
-            key=self.key, xpath='/'.join([str(x) for x in self.xpath]))
+        return "Unexpanded key {key} at location {xpath}".format(
+            key=self.key, xpath=_xpath_to_string(self.xpath))
 
     def create_dict_val(self, expanded_key):  # noqa
         if expanded_key != self.key:
@@ -48,8 +48,8 @@ class DictVal:
         self.dict[self.key] = new_value
 
     def warning_msg_not_expanded(self):
-        return "Unexpanded value {val} at location /{xpath}".format(
-            val=self.get_value(), xpath='/'.join([str(x) for x in self.xpath]))
+        return "Unexpanded value {val} at location {xpath}".format(
+            val=self.get_value(), xpath=_xpath_to_string(self.xpath))
 
     def __repr__(self):  # noqa
         return "DV[%s]" % self.key
@@ -68,8 +68,8 @@ class ListVal:
         self.list[self.idx] = new_value
 
     def warning_msg_not_expanded(self):
-        return "Unexpanded value {val} at location /{xpath}".format(
-            val=self.get_value(), xpath='/'.join([str(x) for x in self.xpath]))
+        return "Unexpanded value {val} at location {xpath}".format(
+            val=self.get_value(), xpath=_xpath_to_string(self.xpath))
 
     def __repr__(self):  # noqa
         return "L[%s]" % self.idx
@@ -77,11 +77,15 @@ class ListVal:
 
 class Key:
     """Access a nested value in a dict."""
-
-    def __init__(self, config, xpath):  # noqa
+    def __init__(self, config, xpath_or_str):  # noqa
         self.config = config
+
+        def split_on_slash(key):
+            return [k for k in key[1:].split("/") if k]
+
         # the list of sub-keys along the path to an item in self.config
-        self.xpath = xpath
+        self.xpath = split_on_slash(xpath_or_str) if isinstance(
+            xpath_or_str, str) else xpath_or_str
 
     def child(self, subkey):
         """Return key for child with subkey."""
@@ -127,7 +131,7 @@ class Key:
         del node[self.xpath[-1]]
 
     def __repr__(self):  # noqa
-        return "/" + "/".join([str(x) for x in self.xpath])
+        return _xpath_to_string(self.xpath)
 
 
 class ConfigExpander:
@@ -138,10 +142,6 @@ class ConfigExpander:
     def __init__(self, extra_vars=None, warn=True):
         self.extra_vars = extra_vars or {}
         self.warn = warn
-
-    @classmethod
-    def _get_xpath_from_string(cls, xpath_string):
-        return tuple([ix for ix in xpath_string.split("/") if ix])
 
     def _expand_str(self, current_str):
         expanded_str = current_str
@@ -154,9 +154,8 @@ class ConfigExpander:
             changed = False
             for key_expression in reversed(key_expressions):
                 xpath_string = key_expression.group(1)
-                xpath = self._get_xpath_from_string(xpath_string)
 
-                key = Key(self.config, xpath)
+                key = Key(self.config, xpath_string)
                 if key.exists():
                     expanded_str = (expanded_str[:key_expression.start()] +
                                     str(key.get()) +
@@ -237,8 +236,10 @@ class ConfigExpander:
                             changed = True
 
                             node.replace_value(expanded_value)
-                            if _xpath_string(node) in (callbacks or {}):
-                                callbacks[_xpath_string(node)](expanded_value)
+                            if _xpath_to_string(node.xpath) in (callbacks
+                                                                or {}):
+                                callbacks[_xpath_to_string(
+                                    node.xpath)](expanded_value)
                 else:
                     raise CommandError("Should not reach here")
 

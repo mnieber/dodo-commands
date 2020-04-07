@@ -43,11 +43,8 @@ class Dodo:
 
     @classmethod
     def get(cls, key='', default_value="__not_set_234234__"):  # noqa
-        config = cls.get_container().config.config
-
         try:
-            xpath = [k for k in key.split("/") if k]
-            return Key(config, xpath).get()
+            return Key(cls.get_container().config.config, key).get()
         except KeyNotFound:
             if default_value == "__not_set_234234__":
                 raise
@@ -94,7 +91,7 @@ class Dodo:
 
         if config_args:
             for config_arg in config_args:
-                key = Key(cls.get_config(), config_arg.xpath)
+                key = Key(cls.get_config(), config_arg.config_key)
                 if key.exists():
                     setattr(cls._args, config_arg.arg_name, key.get())
 

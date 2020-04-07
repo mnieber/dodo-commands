@@ -140,8 +140,7 @@ def expand_keys(config, text):
     val_terms = re.split('\$\{([^\}]+)\}', text)
     for idx, term in enumerate(val_terms):
         if idx % 2:
-            xpath = [k for k in term.split("/") if k]
-            str_rep = json.dumps(Key(config, xpath).get())
+            str_rep = json.dumps(Key(config, term).get())
             if str_rep.startswith('"') and str_rep.endswith('"'):
                 str_rep = str_rep[1:-1]
             result += str_rep

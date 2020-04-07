@@ -44,8 +44,7 @@ if Dodo.is_main(__name__, safe=('--key' not in sys.argv)):
     config = ConfigIO().load()
 
     if args.key and args.val:
-        xpath = [x for x in args.key.split('/') if x]
-        key = Key(config, xpath)
+        key = Key(config, args.key)
         key.set(args.val)
         ConfigIO().save(config)
         sys.exit(0)
