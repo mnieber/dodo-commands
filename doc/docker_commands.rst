@@ -92,15 +92,14 @@ Patterns starting with '!' indicate names that should be excluded:
 The docker-build command
 ========================
 
-When referring to a docker image in ``$(/DOCKER_OPTIONS/<pattern>/image}``, you may also need to ensure this image is built. The details for building an image are specified in ``$(/DOCKER/images}``:
+When referring to a docker image in ``$(/DOCKER_OPTIONS/<pattern>/image}``, you may also need to ensure this image is built. The details for building an image are specified in ``$(/DOCKER_IMAGES}``:
 
 .. code-block:: yaml
 
-    DOCKER:
-      images:
-        'base':
-          image: foobar:base
-          build_dir: ${/ROOT/src_dir}/docker/base
+    DOCKER_IMAGES:
+      'base':
+        image: foobar:base
+        build_dir: ${/ROOT/src_dir}/docker/base
 
 Running ``dodo docker-build base`` builds the image:
 

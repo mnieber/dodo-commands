@@ -24,8 +24,8 @@ def _args():
         help=("Use this key to look up the docker options in /DOCKER_OPTIONS"))
     parser.add_argument(
         '--image',
-        choices=Dodo.get_config('/DOCKER/images', {}).keys(),
-        help=("Use the docker image stored under this key in /DOCKER/images"))
+        choices=Dodo.get_config('/DOCKER_IMAGES', {}).keys(),
+        help=("Use the docker image stored under this key in /DOCKER_IMAGES"))
     parser.add_argument('--image-name',
                         help=("Use the docker image with this name"))
     parser.add_argument(
@@ -43,7 +43,7 @@ if Dodo.is_main(__name__):
 
     if args.image:
         docker_options['image'] = Dodo.get_config(
-            '/DOCKER/images/%s/image' % args.image, args.image)
+            '/DOCKER_IMAGES/%s/image' % args.image, args.image)
     elif args.image_name:
         docker_options['image'] = args.image_name
 
