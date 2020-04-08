@@ -9,8 +9,7 @@ class Switcher:
         self.is_private = False
         self.public_sys_modules = {}
         self.private_sys_modules = {}
-        self.package_path = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), "packages")
+        self.package_path = "/usr/local/dodo_commands/dependencies"
         self.built_in = {}
         for x in sys.builtin_module_names:
             self.built_in[x] = True
