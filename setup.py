@@ -21,9 +21,5 @@ setup(name='dodo_commands',
       entry_points={'console_scripts': [
           'dodo=dodo_commands.dodo:main',
       ]},
-      data_files=[('/etc/bash_completion.d', [
-          'dodo_commands/bin/dodo_autocomplete.sh',
-          'dodo_commands/bin/sdodo_autocomplete.sh'
-      ]), ('/etc/fish/conf.d', ['dodo_commands/bin/dodo_autocomplete.fish'])],
       install_requires=[],
       zip_safe=False)
