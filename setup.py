@@ -8,7 +8,13 @@ from setuptools import find_packages, setup
 
 class InstallPrivatePackages(install_data):
     def _packages_dirname(self):
-        return os.path.join(self.install_dir, "dodo_commands", "dependencies")
+        def find_module_path():
+            for p in sys.path:
+                if os.path.isdir(p) and "dodo_commands" in os.listdir(p):
+                    return os.path.join(p, "dodo_commands")
+
+        install_path = find_module_path()
+        return os.path.join(install_path, "dependencies", "packages")
 
     def _install_packages(self, packages_dirname):
         if not os.path.exists(packages_dirname):
