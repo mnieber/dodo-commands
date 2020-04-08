@@ -11,21 +11,21 @@ of the previous scenario, run these steps to get started:
   git clone git@github.com:mnieber/dodo_commands_tutorial.git
 
   # Copy the end state of part 1 of the tutorial
-  cp -rf ./dodo_commands_tutorial/part1/after ./dodo_tutorial
+  cp -rf ./dodo_commands_tutorial/part1/after ./tutorial
 
   # Create and activate a dodo environment for our project
-  cd ./dodo_tutorial
-  $(dodo env --init dodo_tutorial)
+  cd ./tutorial
+  $(dodo env --init tutorial)
 
 
 Adding a docker-compose file
 ============================
 
-In the /tmp/dodo_tutorial directory, create the following docker-compose.yaml file
+In the /tmp/tutorial directory, create the following docker-compose.yaml file
 
 .. code-block:: yaml
 
-  # /tmp/dodo_tutorial/docker-compose.yaml
+  # /tmp/tutorial/docker-compose.yaml
 
   version : '3'
   services :
@@ -35,16 +35,16 @@ In the /tmp/dodo_tutorial directory, create the following docker-compose.yaml fi
         dockerfile: ./Dockerfile
         context: .
       volumes:
-        - /tmp/dodo_tutorial/writer:/tmp/app
-        - /tmp/dodo_tutorial/time.log:/tmp/time.log
+        - /tmp/tutorial/writer:/tmp/app
+        - /tmp/tutorial/time.log:/tmp/time.log
       working_dir: /tmp/app
       command: make runserver
     reader:
       depends_on: [writer]
       image: python:3.7-alpine-make
       volumes:
-        - /tmp/dodo_tutorial/reader:/tmp/app
-        - /tmp/dodo_tutorial/time.log:/tmp/time.log
+        - /tmp/tutorial/reader:/tmp/app
+        - /tmp/tutorial/time.log:/tmp/time.log
       working_dir: /tmp/app
       command: make runserver
 
@@ -52,7 +52,7 @@ and also add this Dockerfile:
 
 .. code-block:: docker
 
-  # /tmp/dodo_tutorial/Dockerfile
+  # /tmp/tutorial/Dockerfile
   FROM python:3.7-alpine
   RUN apk add make
 
@@ -60,13 +60,13 @@ Let's test if it works:
 
 .. code-block:: bash
 
-  cd /tmp/dodo_tutorial
+  cd /tmp/tutorial
   docker-compose up
 
-      Creating network "dodo_tutorial_default" with the default driver
-      Creating dodo_tutorial_writer_1 ... done
-      Creating dodo_tutorial_reader_1 ... done
-      Attaching to dodo_tutorial_writer_1, dodo_tutorial_reader_1
+      Creating network "tutorial_default" with the default driver
+      Creating tutorial_writer_1 ... done
+      Creating tutorial_reader_1 ... done
+      Attaching to tutorial_writer_1, tutorial_reader_1
       reader_1  | echo "Starting reader service"
       reader_1  | Starting reader service
       writer_1  | echo "Starting writer service"
@@ -79,11 +79,11 @@ Using the docker-compose command
 ================================
 
 We'd like to be able to bring this docker system up from any directory, so we'll create
-a new configuration layer in ``/tmp/dodo_tutorial/.dodo_commands/docker.yaml``:
+a new configuration layer in ``/tmp/tutorial/.dodo_commands/docker.yaml``:
 
 .. code-block:: yaml
 
-  # /tmp/dodo_tutorial/.dodo_commands/docker.yaml
+  # /tmp/tutorial/.dodo_commands/docker.yaml
   DOCKER_COMPOSE:
     cwd: ${/ROOT/project_dir}
 
@@ -92,7 +92,7 @@ Note that this layer is always loaded.
 
 .. code-block:: yaml
 
-  # /tmp/dodo_tutorial/.dodo_commands/config.yaml
+  # /tmp/tutorial/.dodo_commands/config.yaml
   LAYERS:
   - docker.yaml
 
@@ -122,7 +122,7 @@ alias we can start the Docker system with ``dodo dcu``:
 
 .. code-block:: yaml
 
-  # /tmp/dodo_tutorial/.dodo_commands/config.yaml
+  # /tmp/tutorial/.dodo_commands/config.yaml
   ROOT:
     # other stuff
     aliases:
@@ -147,8 +147,8 @@ a menu in which you can select the container that you want to kill:
 
   dodo docker-kill
 
-      1 - dodo_tutorial_writer_1
-      2 - dodo_tutorial_reader_1
+      1 - tutorial_writer_1
+      2 - tutorial_reader_1
       Select a container:
 
 The ``dodo docker-exec`` command lets you execute a command in a selected docker container.
@@ -158,8 +158,8 @@ The ``dodo docker-exec`` command lets you execute a command in a selected docker
   dodo docker-exec --cmd ls
 
       0 - exit
-      1 - dodo_tutorial_reader_1
-      2 - dodo_tutorial_writer_1
+      1 - tutorial_reader_1
+      2 - tutorial_writer_1
 
       Select a container:
       2
@@ -173,100 +173,101 @@ Let's add another command to the Makefile of the writer service:
 
 .. code-block:: bash
 
-  # /tmp/dodo_tutorial/writer/Makefile
+  # /tmp/tutorial/writer/Makefile
   greeting:
     echo "Hello $GREETING"
 
-We'll add a ``make-greet.py`` script to ``/tmp/dodo_tutorial/commands`` that sets the ``GREETING``
+We'll add a ``mk-greet.py`` script to ``/tmp/tutorial/commands`` that sets the ``GREETING``
 environment variable and then runs ``make greeting``:
 
 .. code-block:: python
 
-  # /tmp/dodo_tutorial/commands/make-greet.py
-  import os
+  # /tmp/tutorial/commands/mk-greet.py
   from dodo_commands import Dodo
 
   Dodo.parser.add_argument("greeting")
-  os.environ["GREETING"] = Dodo.args.greeting
-  Dodo.run(["make", "greeting"], cwd=Dodo.get("/MAKE/cwd"))
+  Dodo.run(
+    ["make", "greeting", "GREETING=%s" % Dodo.args.greeting],
+    cwd=Dodo.get("/MAKE/cwd")
+  )
 
-Remember that we have to run this as ``dodo writer.make-greet`` so that the ``server.writer.yaml`` layer
+Remember that we have to run this as ``dodo writer.mk-greet`` so that the ``server.writer.yaml`` layer
 is loaded. Let's see what it currently looks like:
 
 .. code-block:: bash
 
-  dodo writer.greet hi --confirm
+  dodo writer.mk-greet hi --confirm
 
-      (/tmp/dodo_tutorial/writer) make greeting
+      (/tmp/tutorial/writer) make greeting GREETING=hi
 
       confirm? [Y/n]
 
-This is not quite right yet, because we want to run this command in the ``dodo_tutorial_writer_1`` container.
-To achieve this, we first need to tell Dodo Commands that the ``greet`` command is dockerized:
+This is not quite right yet, because we want to run this command in the ``tutorial_writer_1`` container.
+To achieve this, we first need to tell Dodo Commands that the ``mk-greet`` command is dockerized:
 
 .. code-block:: yaml
 
-  # /tmp/dodo_tutorial/.dodo_commands/writer.yaml
+  # /tmp/tutorial/.dodo_commands/writer.yaml
   ROOT:
     # other stuff
     decorators:
-      docker: [greet]
+      docker: [mk-greet]
 
-Next, we need to specify in which container the ``greet`` command should run:
+Next, we need to specify in which container the ``mk-greet`` command should run:
 
 .. code-block:: yaml
 
-  # /tmp/dodo_tutorial/.dodo_commands/writer.yaml
+  # /tmp/tutorial/.dodo_commands/writer.yaml
   DOCKER_OPTIONS:
-    greet:
-      container: dodo_tutorial_writer_1
+    mk-greet:
+      container: tutorial_writer_1
 
 When we try again we see that the command is prefixed with the proper Docker arguments:
 
 .. code-block:: bash
 
-  dodo writer.greet hi --confirm
+  dodo writer.mk-greet hi --confirm
 
-      (/tmp/dodo_tutorial) docker exec  \
+      (/tmp/tutorial) docker exec  \
         --interactive --tty  \
-        --workdir=/tmp/dodo_tutorial/writer  \
-        dodo_tutorial_writer_1  \
-        make greeting
+        --workdir=/tmp/tutorial/writer  \
+        tutorial_writer_1  \
+        make greeting GREETING=hi
 
       confirm? [Y/n]
 
 .. tip::
 
-  The keys in the ``DOCKER_OPTIONS`` take wild-cards, so instead of ``greet`` we could have used
+  The keys in the ``DOCKER_OPTIONS`` take wild-cards, so instead of ``mk-greet`` we could have used
   ``*``. In our example, this means that any dockerized script will use the
-  ``dodo_tutorial_writer_1`` container.
+  ``tutorial_writer_1`` container.
 
 
 Inferred commands
 =================
 
-If the greet command is only used in combination with the ``writer`` layer then there is a way to make
-the call of this command even shorter. We can tell Dodo Commands that the ``writer`` layer is inferred by
-the ``greet`` command:
+If the ``mk-greet`` command is only used in combination with the ``writer`` layer then there is a way
+to make the call of this command even shorter. We can tell Dodo Commands that the ``writer`` layer
+is inferred by the ``mk-greet`` command:
 
 .. code-block:: yaml
 
-  # /tmp/dodo_tutorial/.dodo_commands/config.yaml
+  # /tmp/tutorial/.dodo_commands/config.yaml
 
   LAYER_GROUPS:
     server:
     - writer:
-        inferred_by: [greet]
+        inferred_by: [mk-greet]
     - reader
 
-Now we can run ``dodo greet hi`` instead of ``dodo writer.greet hi`` because
+Now we can run ``dodo mk-greet hi`` instead of ``dodo writer.mk-greet hi`` because
 the ``writer`` layer will be inferred:
 
 .. code-block:: bash
 
-  dodo greet hi --trace
+  dodo mk-greet hi --trace
 
-      ['/usr/local/bin/dodo', 'greet', 'hi', '--layer=server.writer.yaml']
+      ['/usr/local/bin/dodo', 'mk-greet', 'hi', '--layer=server.writer.yaml']
 
 .. warning::
 

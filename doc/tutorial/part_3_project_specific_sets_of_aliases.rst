@@ -2,8 +2,8 @@
 Scenario: using project-specific sets of aliases
 ************************************************
 
-We will again continue where we left off in part 2. This time we will create a new Dodo Commands
-environment, and show how to reuse one of the scripts that we created before.
+We will again continue where we left off in part 2. This time we will create a new Dodo Commands environment,
+and show how to reuse the ``tutorial/commands`` directory that we created before.
 If you haven't done the steps of the previous scenario, run these steps to get started:
 
 .. code-block:: bash
@@ -12,17 +12,17 @@ If you haven't done the steps of the previous scenario, run these steps to get s
   git clone git@github.com:mnieber/dodo_commands_tutorial.git
 
   # Copy the end state of part 2 of the tutorial
-  cp -rf ./dodo_commands_tutorial/part2/after ./dodo_tutorial
+  cp -rf ./dodo_commands_tutorial/part2/after ./tutorial
 
   # Create and activate a dodo environment for our project
-  cd ./dodo_tutorial
-  $(dodo env --init dodo_tutorial)
+  cd ./tutorial
+  $(dodo env --init tutorial)
 
 
 Activating the default Dodo Commands environment
 ================================================
 
-Let's start by deactivating the current ``dodo_tutorial`` environment. You do this by activating
+Let's start by deactivating the current ``tutorial`` environment. You do this by activating
 the default environment:
 
 .. code-block:: bash
@@ -57,78 +57,8 @@ The default environment is similar to all other environment. Let's check it out:
         config_dir: ~/.dodo_commands/default_project
         command_path:
         - ~/.dodo_commands/default_project/commands/*
-        - /home/dodo/projects/dodo_commands/dodo_commands/dodo_system_commands
+        - /some/path/to/dodo_commands/dodo_system_commands
         project_dir: ~/.dodo_commands/default_project
-
-
-Creating a new environment
-==========================
-
-Let's start by deactivating the current ``dodo_tutorial`` environment. You do this by activating
-the default environment:
-
-.. code-block:: bash
-
-  # activate default environment
-  $(dodo env default)
-
-  dodo which
-
-      default
-
-Now we'll create a new project in the ``~/projects`` directory. The new project will have
-a python virtual environment:
-
-.. code-block:: bash
-
-  # create a new project with python virtual environment
-  $(dodo env --create --create-virtual-env foo)
-
-      Creating project directory ~/projects/foo ... done
-
-  # check that we've switched to the foo environment
-  dodo which
-
-      foo
-
-  # check that we're using the new python virtual environment
-  which python
-
-      ~/projects/foo/.env/bin/python
-
-.. tip::
-
-  You can change the standard location for creating new projects in the
-  ``~/.dodo_commands/config`` file. You can edit this file or call
-
-  .. code-block:: bash
-
-    dodo global-config settings.projects_dir /path/to/projects
-
-
-Using environments directly
-===========================
-
-If we want to use the previous ``dodo_tutorial`` environment, then we can activate it with
-``$(dodo env -)``. However, we can also use it directly with
-``~/.dodo_commands/bin/dodo-dodo_tutorial``. It's a good idea to add ``~/.dodo_commands/bin/`` to the
-system path to make this easier:
-
-
-.. code-block:: bash
-
-  # extend the path
-  export PATH=$PATH:~/.dodo_commands/bin
-
-  # call the dodo entry point in the dodo_tutorial environment
-  dodo-dodo_tutorial which
-
-      dodo_tutorial
-
-  # call the dodo entry point in the foo environment
-  dodo-foo which
-
-      foo
 
 
 Installing more commands
@@ -166,36 +96,179 @@ all the default commands, the new git commands will be available:
   dodo pc /ROOT/command_path
 
       - ~/.dodo_commands/default_project/commands/*
-      - /some/path/to/dodo_commands/dodo_commands/dodo_system_commands
+      - /some/path/to/dodo_commands/dodo_system_commands
 
   dodo which git-multi-status
 
       ~/.dodo_commands/commands/dodo_git_commands/git-multi-status.py
 
+
+Creating a new environment
+==========================
+
+Now we'll create a new project in the ``~/projects`` directory. The new project will have
+a python virtual environment:
+
+.. code-block:: bash
+
+  # create a new project with python virtual environment
+  $(dodo env --create --create-virtual-env foo)
+
+      Creating project directory ~/projects/foo ... done
+
+  # check that we've switched to the foo environment
+  dodo which
+
+      foo
+
+  # check that we're using the new python virtual environment
+  which python
+
+      ~/projects/foo/.env/bin/python
+
 .. tip::
 
-    Don't use ``dodo install-commands`` for project specific command scripts. Instead, store them inside the project's source tree, and reference them directly in the ``/ROOT/command_path`` node of the configuration file.
+  You can change the standard location for creating new projects in the
+  ``~/.dodo_commands/config`` file. You can edit this file or call
+
+  .. code-block:: bash
+
+    dodo global-config settings.projects_dir /path/to/projects
 
 
-Importing symbols from another module
-=====================================
+Using environments directly
+===========================
 
-In your Dodo command script, you can import a symbol from another module in the command path using (for example) ``import foo from dodo_my_commands.bar``. Note that the names of the modules in the command path must be unique. Also, it is required that ``dodo_my_commands`` exists in the active project's command path, otherwise the import will fail.
+In some cases we may want to call a command in a different environment without switching
+to that environment. For example, we may only want to print its configuration. We can
+do this by calling one of the entry-points in ``~/.dodo_commands/bin``:
+
+.. code-block:: bash
+
+  # Directly call the entry point of the tutorial environment
+  ~/.dodo_commands/bin/dodo-tutorial which
+
+      tutorial
+
+  # We can extend the path to make this easier
+  export PATH=$PATH:~/.dodo_commands/bin
+
+  # Directly call the dodo entry point in the foo environment
+  dodo-tutorial which
+
+      tutorial
+
+
+Using the mk.py script in the new environment
+=============================================
+
+To use the ``mk`` command script that we created in the ``tutorial`` environment, we need to have
+``/tmp/tutorial/commands`` in our command_path. Surely, we can simply add this path to ${/ROOT/command_path}
+in ``~/projects/foo/.dodo_commands/config.yaml``. The problem with this approach is that we may move the
+``tutorial`` project to a new location, and then the hard-coded path ``/tmp/tutorial/commands`` will no longer
+be correct. A better option is to install ``/tmp/tutorial/commands``
+in the global commands directory, and then reference that location. Since the directory name ``commands`` is not
+very descriptive, we will use the ``--as`` option to rename it to ``dodo_tutorial_commands``:
+
+.. code-block:: bash
+
+  dodo install-commands /tmp/tutorial/commands --as dodo_tutorial_commands --confirm
+
+      (~/projects/dodo_commands) ln -s /tmp/tutorial/commands ~/.dodo_commands/commands/dodo_tutorial_commands
+
+      confirm? [Y/n]
+
+Now, if we add ``~/.dodo_commands/commands/dodo_tutorial_commands`` to ``${/ROOT/command_path}`` then the ``mk``
+command will be found. Finally, we should add a ``MAKE`` section to ``config.yaml``, otherwise calling ``mk``
+will fail:
+
+.. code-block:: yaml
+
+  # ~/projects/foo/.dodo_commands/config.yaml
+  MAKE:
+    cwd: /tmp
+
+
+Importing symbols from a command script
+=======================================
+
+So far, we've kept our ``mk`` script deliberately very simple. Let's refactor it by extracting a function for running
+``make``. We can then use this function also in our ``mk-greet`` script. Change the ``mk.py`` script so it
+looks like this:
+
+.. code-block:: python
+
+  # /tmp/tutorial/commands/mk.py
+
+  from dodo_commands import Dodo
+
+  def run_make(*what):
+      Dodo.run(["make", *what], cwd=Dodo.get("/MAKE/cwd"))
+
+  if Dodo.is_main(__name__):
+      Dodo.parser.add_argument("what")
+      run_make(Dodo.args.what)
+
+You see that we added a line that says ``if Dodo.is_main(__name__):``. This replaces the standard line
+``if __name__ == "__main__"`` which doesn't work when executing the script via the ``dodo mk``
+invocation. The reason is that ``dodo`` will import the ``mk.py`` script, which means that
+``mk.py`` is not the main module. We can now use the ``run_make`` function in ``mk-greet.py``:
+
+.. code-block:: python
+
+  # /tmp/tutorial/commands/mk-greet.py
+
+  from dodo_commands import Dodo
+  from dodo_tutorial_commands.mk import run_make
+
+  Dodo.parser.add_argument("greeting")
+  run_make("greeting", "GREETING=%s" % Dodo.args.greeting)
+
+.. note::
+
+  The import of ``run_make`` from the ``dodo_tutorial_commands`` package succeeded because all
+  packages in the ``${/ROOT/command_path}`` are added to ``sys.path`` during execution of the
+  command.
 
 
 Specifying command dependencies in the .meta file
 =================================================
 
-Each Dodo command should ideally run out-of-the-box. If your ``foo`` command needs additional Python packages, you can describe them in a ``foo.meta`` file:
+Each Dodo command should ideally run out-of-the-box. If the ``mk`` command needs additional Python packages,
+you can describe them in a ``mk.meta`` file:
 
 .. code-block:: yaml
 
-    requirements:
-    - dominate==2.2.0
+  # /tmp/tutorial/commands/mk.meta
+  requirements:
+  - dominate==2.2.0
 
-In this example, calling the ``foo`` command will ask the user for confirmation to automatically install the ``dominate`` package into the python virtual environment of the active Dodo Commands project.
+In this example, calling the ``mk`` command will ask the user for confirmation to install the ``dominate``
+package into the current Python environment. We can try this out by importing ``dominate`` in ``mk.py``:
 
-Using configuration values in scripts
-=====================================
+.. code-block:: python
 
-To use a configuration value in your script, call ``Dodo.get_config('/SOME/path/to/the/value')``. By convention, items in the root of the configuration are capitalized. Though you will rarely need to, you can access array elements by index, e.g. ``Dodo.get_config('/SOME/array/3/name')``. Finally, you can specify a fallback value, e.g. ``Dodo.get_config('/ROOT/maybe/some/value', 42)``
+  # /tmp/tutorial/commands/mk.py
+
+  import dominate
+  from dodo_commands import Dodo
+
+  # ... rest of the script stays the same
+
+Now when we run ``dodo mk runserver`` it will ask us if ``dominate`` should be installed:
+
+.. code-block:: bash
+
+  dodo mk runserver --confirm
+
+      This command wants to install dominate==2.2.0:
+
+      Install (yes), or abort (no)? [Y/n]
+
+      Collecting dominate==2.2.0
+      Successfully installed dominate-2.2.0
+      --- Done ---
+
+      (/tmp) make runserver
+
+      confirm? [Y/n]

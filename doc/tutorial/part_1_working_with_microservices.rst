@@ -22,16 +22,16 @@ The first micro-service writes the time to a file in the ``/tmp`` directory, whe
   git clone git@github.com:mnieber/dodo_commands_tutorial.git
 
   # Copy part 1 of the tutorial so that we can work with a short path
-  cp -rf ./dodo_commands_tutorial/part1/before ./dodo_tutorial
+  cp -rf ./dodo_commands_tutorial/part1/before ./tutorial
 
 Let's try out the services:
 
 .. code-block:: bash
 
-  cd /tmp/dodo_tutorial/writer
+  cd /tmp/tutorial/writer
   make runserver
 
-  cd /tmp/dodo_tutorial/reader
+  cd /tmp/tutorial/reader
   make runserver
 
 
@@ -42,8 +42,8 @@ The next step is to create a Dodo Commands environment for working with our proj
 
 .. code-block:: bash
 
-  cd /tmp/dodo_tutorial
-  $(dodo env --init dodo_tutorial)
+  cd /tmp/tutorial
+  $(dodo env --init tutorial)
 
 The environment contains the following directories:
 
@@ -53,19 +53,19 @@ The environment contains the following directories:
   # In this case, it's the directory where we called 'dodo env --init'.
   dodo which --project-dir
 
-      */tmp/dodo_tutorial*
+      */tmp/tutorial*
 
   # The configuration directory is where the Dodo Commands configuration files
   # for the environment are stored.
   dodo which --config-dir
 
-      /tmp/dodo_tutorial/.dodo_commands
+      /tmp/tutorial/.dodo_commands
 
   # The environment directory is where Dodo Commands stores all other information
   # about your environment. Usually, you don't need to work with this directory directly.
   dodo which --env-dir
 
-      ~/.dodo_commands/envs/dodo_tutorial
+      ~/.dodo_commands/envs/tutorial
 
   # The (optional) python_env directory contains the virtual Python environment for your project.
   # In this case, we don't have any
@@ -83,7 +83,7 @@ Each environment contains a set of configuration files:
   # The main configuration file is called config.yaml
   dodo which --config
 
-      /tmp/dodo_tutorial/.dodo_commands/config.yaml
+      /tmp/tutorial/.dodo_commands/config.yaml
 
   # Let's take a look at the configuration file:
   cat $(dodo which --config)
@@ -98,7 +98,7 @@ Each environment contains a set of configuration files:
   dodo print-config
 
       ROOT:
-      env_name: dodo_tutorial
+      env_name: tutorial
       command_path:
       - ~/.dodo_commands/default_project/commands/*
       - /some/path/to/dodo_commands/dodo_system_commands
@@ -110,7 +110,7 @@ You can extend the configuration in any way you like. Let's add the following se
 
 .. code-block:: yaml
 
-  # (bottom of) /tmp/dodo_tutorial/.dodo_commands/config.yaml
+  # (bottom of) /tmp/tutorial/.dodo_commands/config.yaml
   MAKE:
     cwd: ${/ROOT/project_dir}/writer
 
@@ -120,7 +120,7 @@ Now, when we print the contents of the ``MAKE`` section, we get:
 
   dodo print-config MAKE
 
-      cwd: /tmp/dodo_tutorial/writer
+      cwd: /tmp/tutorial/writer
 
 We see that we can interpolate values, for example ``${/ROOT/project_dir}``.
 
@@ -137,7 +137,7 @@ We'll now create an alias that runs the writer service.
 
 .. code-block:: bash
 
-  cd /tmp/dodo_tutorial
+  cd /tmp/tutorial
   mkdir ./commands
   touch ./commands/mk.py
 
@@ -151,7 +151,7 @@ Add the following code to ``mk.py``:
   Dodo.run(["make", Dodo.args.what], cwd=Dodo.get("/MAKE/cwd"))
 
 We need one last step to ensure that Dodo Commands finds the new command.
-Open ``/tmp/dodo_tutorial/.dodo_commands/config.yaml`` again and edit
+Open ``/tmp/tutorial/.dodo_commands/config.yaml`` again and edit
 ``${/ROOT/command_path}`` so it looks like this:
 
 .. code-block:: yaml
@@ -169,11 +169,11 @@ command, let's use the ``--confirm`` flag so we can check that everything is loo
 
   dodo mk runserver --confirm
 
-      (/tmp/dodo_tutorial/writer) make runserver
+      (/tmp/tutorial/writer) make runserver
 
       confirm? [Y/n]
 
-We see that the command will run ``make runserver`` in the ``/tmp/dodo_tutorial/writer directory``, great!
+We see that the command will run ``make runserver`` in the ``/tmp/tutorial/writer directory``, great!
 
 
 Using layers to run the reader and writer service
@@ -186,7 +186,7 @@ file should therefore look like this:
 
 .. code-block:: yaml
 
-  # /tmp/dodo_tutorial/.dodo_commands/server.writer.yaml
+  # /tmp/tutorial/.dodo_commands/server.writer.yaml
   MAKE:
     cwd: ${/ROOT/project_dir}/writer
 
@@ -194,7 +194,7 @@ Add a similar file for the reader:
 
 .. code-block:: yaml
 
-  # /tmp/dodo_tutorial/.dodo_commands/server.reader.yaml
+  # /tmp/tutorial/.dodo_commands/server.reader.yaml
   MAKE:
     cwd: ${/ROOT/project_dir}/reader
 
@@ -202,7 +202,7 @@ Finally, we will add a ``LAYERS_GROUP`` in the main configuration file:
 
 .. code-block:: yaml
 
-  # (bottom of) /tmp/dodo_tutorial/.dodo_commands/config.yaml
+  # (bottom of) /tmp/tutorial/.dodo_commands/config.yaml
   LAYER_GROUPS:
     server:
     - writer
@@ -216,7 +216,7 @@ that has the name ``writer``. It will find this layer in the ``server`` group an
 
   dodo writer.mk runserver --confirm
 
-      (/tmp/dodo_tutorial/writer) make runserver
+      (/tmp/tutorial/writer) make runserver
 
       confirm? [Y/n]
 
@@ -245,7 +245,7 @@ in a tmux session. Add a ``MENU`` section to the configuration file like this:
 
 .. code-block:: yaml
 
-  # (bottom of) /tmp/dodo_tutorial/.dodo_commands/config.yaml
+  # (bottom of) /tmp/tutorial/.dodo_commands/config.yaml
   MENU:
     commands:
       server:

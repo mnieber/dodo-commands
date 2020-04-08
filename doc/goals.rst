@@ -20,7 +20,7 @@ It's a good idea to install the entire tool-chain that is needed for local devel
 Scenario: using project-specific sets of aliases
 ================================================
 
-Shell aliases are useful but they also have some drawbacks. You need to make sure that you only load the aliases for your current project into the shell. Also, for more complex aliases it would make sense to use a powerful language such as Python. Finally, maintaining sets of similar but slightly different aliases for various projects can become unwieldy. With Dodo Commands, you can write your aliases and functions as Python scripts. These aliases can read some of their arguments from a project specific configuration file. This helps to keep them short and makes them reusable between projects.
+Shell aliases are useful but they also have some drawbacks. You need to make sure that you load the right set of aliases for your current project into the shell. If you reuse your aliases between projects, then you can run into the problem of having to maintain sets of similar but slightly different aliases. Finally, for more complex aliases it would make sense to use a powerful language such as Python. With Dodo Commands, you can write your aliases and functions as Python scripts. These aliases can read some of their arguments from a project specific configuration file. This helps to keep them short and makes them reusable between projects.
 
 
 Scenario: getting colleagues up-to-speed in a new environment
