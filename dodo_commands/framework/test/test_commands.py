@@ -37,19 +37,27 @@ class TestConfigIO:  # noqa
         cls._write_config(config, config_filename)
 
     def test_commands(self):  # noqa
-        from dodo_commands.dependencies.plumbum import local
+        from dodo_commands.dependencies.get import plumbum
+        local = plumbum.local
+
         dodo_test_dir = os.path.expanduser('~/projects/dodo_test')
+        dodo_test_env_dir = os.path.expanduser(
+            '~/.dodo_commands/envs/dodo_test')
         skip_install = False
 
         if not skip_install:
             if os.path.exists(dodo_test_dir):
                 shutil.rmtree(dodo_test_dir)
+            if os.path.exists(dodo_test_env_dir):
+                shutil.rmtree(dodo_test_env_dir)
 
             from dodo_commands.dodo import main
-            sys.argv = ['dodo', 'env', '--create', 'dodo_test']
+            sys.argv = [
+                'dodo', 'env', '--create', '--create-python-env', 'dodo_test'
+            ]
             main()
 
-        dodo = local[os.path.join(dodo_test_dir, 'dodo_commands/env/bin/dodo')]
+        dodo = local[os.path.join(dodo_test_dir, '.env/bin/dodo')]
         if not skip_install:
             dodo('bootstrap', 'src', 'extra/dodo_commands/res', '--force',
                  '--git-url',
