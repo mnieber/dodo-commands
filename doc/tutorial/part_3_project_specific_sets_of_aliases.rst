@@ -172,3 +172,30 @@ all the default commands, the new git commands will be available:
 
       ~/.dodo_commands/commands/dodo_git_commands/git-multi-status.py
 
+.. tip::
+
+    Don't use ``dodo install-commands`` for project specific command scripts. Instead, store them inside the project's source tree, and reference them directly in the ``/ROOT/command_path`` node of the configuration file.
+
+
+Importing symbols from another module
+=====================================
+
+In your Dodo command script, you can import a symbol from another module in the command path using (for example) ``import foo from dodo_my_commands.bar``. Note that the names of the modules in the command path must be unique. Also, it is required that ``dodo_my_commands`` exists in the active project's command path, otherwise the import will fail.
+
+
+Specifying command dependencies in the .meta file
+=================================================
+
+Each Dodo command should ideally run out-of-the-box. If your ``foo`` command needs additional Python packages, you can describe them in a ``foo.meta`` file:
+
+.. code-block:: yaml
+
+    requirements:
+    - dominate==2.2.0
+
+In this example, calling the ``foo`` command will ask the user for confirmation to automatically install the ``dominate`` package into the python virtual environment of the active Dodo Commands project.
+
+Using configuration values in scripts
+=====================================
+
+To use a configuration value in your script, call ``Dodo.get_config('/SOME/path/to/the/value')``. By convention, items in the root of the configuration are capitalized. Though you will rarely need to, you can access array elements by index, e.g. ``Dodo.get_config('/SOME/array/3/name')``. Finally, you can specify a fallback value, e.g. ``Dodo.get_config('/ROOT/maybe/some/value', 42)``

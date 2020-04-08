@@ -1,11 +1,8 @@
 .. _sharing_projects:
 
-****************
-Sharing projects
-****************
-
-Objectives
-==========
+****************************************
+Scenario: getting colleagues up-to-speed
+****************************************
 
 If someone joins your project, then it makes sense to share your working environment with them. At the same time, you want working environments to be independent, so that each project member can arrange it to their preferences. This is achieved by having a shared configuration from which you cherry-pick the parts you need (this is somewhat comparable to how remote repositories work in git).
 

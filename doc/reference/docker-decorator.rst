@@ -1,11 +1,8 @@
 .. _docker_support:
 
-**************
-Docker support
-**************
-
+********************
 The docker decorator
-====================
+********************
 
 If the "docker" decorator is used, then all command lines will be prefixed with ``/usr/bin/docker run`` and related docker arguments found in ``$(/DOCKER_OPTIONS/<pattern>``. Here, ``<pattern>`` matches the name of the current dodo command. For example, consider this configuration:
 
@@ -88,71 +85,3 @@ Patterns starting with '!' indicate names that should be excluded:
       ['django-*', '!django-runserver']:
         extra_options:
         - '--publish=127.0.0.1:27017:27017'
-
-The docker-build command
-========================
-
-When referring to a docker image in ``$(/DOCKER_OPTIONS/<pattern>/image}``, you may also need to ensure this image is built. The details for building an image are specified in ``$(/DOCKER_IMAGES}``:
-
-.. code-block:: yaml
-
-    DOCKER_IMAGES:
-      'base':
-        image: foobar:base
-        build_dir: ${/ROOT/src_dir}/docker/base
-
-Running ``dodo docker-build base`` builds the image:
-
-.. code-block:: bash
-
-    dodo docker-build --confirm base
-
-    # outputs something like:
-    (/home/maarten/projects/foobar/src/docker/base) docker build -t foobar:base -f Dockerfile .
-
-    continue? [Y/n]
-
-
-The docker-exec command
-=======================
-
-To inspect a running docker container, run ``dodo docker-exec``. This will print a list of running containers, allowing you to select one. A bash shell will be opened giving you access to the container.
-
-
-The docker-kill command
-=======================
-
-Similar to how ``dodo docker-exec`` works, this command kills a selected docker container.
-
-
-The docker-create command
-=========================
-
-If your environment depends on docker data containers, then you can store their configuration in ``$(/DOCKER/container_types}``:
-
-.. code-block:: yaml
-
-    DOCKER:
-      container_types:
-        mongodb:
-            image: foobar:base
-            dirs:
-            - /var/lib/mongodb
-
-Now, running ``dodo docker-create mongodb dc_mongodb`` will create a new docker container (with name ``dc_mongodb``) based on the ``foobar:base`` image. This container can be used in a ``volumes_from_list`` to persist the contents of the ``/var/lib/mongodb`` directory:
-
-.. code-block:: yaml
-
-    DOCKER_OPTIONS:
-      django-manage:
-        volumes_from_list:
-        - dc_mongodb
-
-For each container type, the ``docker-create`` command stores the name of the last created container in ``$(/DOCKER/containers}``, so you can also use:
-
-.. code-block:: yaml
-
-    DOCKER_OPTIONS:
-      django-manage:
-        volumes_from_list:
-        - ${/DOCKER/containers/mongodb}
