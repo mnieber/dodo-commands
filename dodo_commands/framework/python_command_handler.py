@@ -1,7 +1,7 @@
 import os
-import platform
 import re
 import subprocess
+import sys
 from importlib import import_module
 
 from dodo_commands.dependencies import yaml_round_trip_load
@@ -43,20 +43,6 @@ class PythonCommandHandler:
                     return yaml_round_trip_load(f.read())
             return None
 
-        def install_packages(meta_data, dependency):
-            """Pip install packages found in meta_data."""
-            packager_name = 'brew' if platform.system() == 'Darwin' else 'apt'
-            package_data = meta_data['packages'].get(packager_name, {})
-            recipe = package_data.get(dependency, None)
-            if recipe:
-                commands = [recipe] if isinstance(recipe, str) else recipe
-
-                print("This command wants to run:\n%s\n" % '\n'.join(commands))
-                if query_yes_no("Install (yes), or abort (no)?"):
-                    for package_cmd in commands:
-                        subprocess.check_call(package_cmd.split())
-                    print("--- Done ---\n\n")
-
         def install_python_packages(meta_data, dependency):
             """Pip install packages found in meta_data."""
             requirements = [
@@ -76,11 +62,6 @@ class PythonCommandHandler:
                         [sys.executable, "-m", "pip", "install", requirement])
                     print("--- Done ---\n\n")
 
-        def get_program_from_exception(e):
-            m = re.search(r"cannot import name '(\w+)' from 'plumbum.cmd'",
-                          e.args[0]) if len(e.args) else None
-            return m.groups(1)[0] if m else None
-
         import_path = '%s.%s' % (command_map_item.package_path, command_name)
         if command_map_item.package_path in ("", None, "."):
             import_path = command_name
@@ -88,14 +69,7 @@ class PythonCommandHandler:
         # Try the import, return if success
         try:
             return import_module(import_path)
-        except ImportError as e:
-            exception_type = type(e)
-            program = get_program_from_exception(e)
-            if program:
-                dependency, install = program, install_packages
-            else:
-                dependency, install = e.name, install_python_packages
-        except CommandNotFound as e:
+        except (ImportError, CommandNotFound) as e:
             exception_type = type(e)
             dependency, install = e.name, install_python_packages
 
@@ -106,7 +80,5 @@ class PythonCommandHandler:
                 install(md, dependency)
             import_module(import_path)
         except exception_type:
-            fail_msg = ('Could not find executable: %s' % dependency if
-                        (install is install_packages) else
-                        'Could not import python module: %s' % dependency)
-            raise CommandError(fail_msg)
+            raise CommandError('Could not import python module: %s' %
+                               dependency)
