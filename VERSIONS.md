@@ -1,5 +1,17 @@
 # Version history
 
+## 0.30.0
+
+- Lots of refactoring and minor fixes
+- Improve documentation
+- Reintroduce --next-to in new-command
+- Use /LAYERS and /LAYER_GROUPS
+- Put inferred commands in root layer
+- Rename Dodo.get_config to Dodo.get
+- Rename to DOCKER_OPTIONS and DOCKER_IMAGES
+- Use DOCKER_COMPOSE/cwd
+
+
 ## 0.29.1
 
 - Allow to inspect multiple Docker containers
