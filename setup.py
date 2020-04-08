@@ -1,20 +1,15 @@
 import os
 import subprocess
 import sys
-from distutils.command.install_data import install_data
 
 from setuptools import find_packages, setup
+from setuptools.command.install import install
 
 
-class InstallPrivatePackages(install_data):
+class InstallPrivatePackages(install):
     def _packages_dirname(self):
-        def find_module_path():
-            for p in sys.path:
-                if os.path.isdir(p) and "dodo_commands" in os.listdir(p):
-                    return os.path.join(p, "dodo_commands")
-
-        install_path = find_module_path()
-        return os.path.join(install_path, "dependencies", "packages")
+        return os.path.join(self.install_lib, "dodo_commands", "dependencies",
+                            "packages")
 
     def _install_packages(self, packages_dirname):
         if not os.path.exists(packages_dirname):
@@ -40,7 +35,7 @@ class InstallPrivatePackages(install_data):
                 pass
 
     def run(self):
-        super().run()
+        super(InstallPrivatePackages, self).run()
         self._install_packages(self._packages_dirname())
 
 
@@ -67,6 +62,6 @@ setup(name='dodo_commands',
           'dodo_commands/bin/dodo_autocomplete.sh',
           'dodo_commands/bin/sdodo_autocomplete.sh'
       ]), ('/etc/fish/conf.d', ['dodo_commands/bin/dodo_autocomplete.fish'])],
-      cmdclass={'install_data': InstallPrivatePackages},
+      cmdclass={'install': InstallPrivatePackages},
       install_requires=[],
       zip_safe=False)
