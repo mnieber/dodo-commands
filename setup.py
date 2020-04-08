@@ -1,4 +1,5 @@
 import os
+import shutil
 import subprocess
 import sys
 
@@ -7,13 +8,16 @@ from setuptools.command.install import install
 
 
 class InstallPrivatePackages(install):
-    def _packages_dirname(self):
+    def _package_dirname(self):
         return os.path.join(self.install_lib, "dodo_commands", "dependencies",
                             "packages")
 
-    def _install_packages(self, packages_dirname):
-        if not os.path.exists(packages_dirname):
-            os.makedirs(packages_dirname)
+    def _bin_dirname(self):
+        return os.path.join(self.install_lib, "dodo_commands", "bin")
+
+    def _install_packages(self, package_dirname):
+        if not os.path.exists(package_dirname):
+            os.makedirs(package_dirname)
 
         for dependency in [
                 'python-dotenv==0.12.0',
@@ -29,14 +33,29 @@ class InstallPrivatePackages(install):
             try:
                 subprocess.check_call([
                     sys.executable, '-m', 'pip', 'install', '--target',
-                    packages_dirname, dependency
+                    package_dirname, dependency
                 ])
+            except:  # noqa
+                pass
+
+    def _install_autocomplete_scripts(self, bin_dirname):
+        bash_autocomplete_dir = "/etc/bash_completion.d/"
+        fish_autocomplete_dir = "/etc/fish/conf.d/"
+
+        for (f, d) in (("dodo_autocomplete.sh", bash_autocomplete_dir),
+                       ("sdodo_autocomplete.sh", bash_autocomplete_dir),
+                       ("dodo_autocomplete.fish", fish_autocomplete_dir)):
+            try:
+                if not os.path.exists(d):
+                    os.makedirs(d)
+                shutil.copy(os.path.join(bin_dirname, f), d)
             except:  # noqa
                 pass
 
     def run(self):
         super(InstallPrivatePackages, self).run()
-        self._install_packages(self._packages_dirname())
+        self._install_packages(self._package_dirname())
+        self._install_autocomplete_scripts(self._bin_dirname())
 
 
 setup(name='dodo_commands',
@@ -51,6 +70,8 @@ setup(name='dodo_commands',
       packages=find_packages(),
       package_data={
           'dodo_commands': [
+              'bin/*.sh',
+              'bin/*.fish',
               'extra/dodo_standard_commands/*.meta',
               'extra/dodo_docker_commands/*.meta',
           ]
