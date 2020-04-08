@@ -8,9 +8,7 @@ from setuptools import find_packages, setup
 
 class InstallPrivatePackages(install_data):
     def _packages_dirname(self):
-        return os.path.join(
-            self.install_dir,
-            *("dodo_commands.dependencies.packages".split(".")))
+        return os.path.join(self.install_dir, "dodo_commands", "dependencies")
 
     def _install_packages(self, packages_dirname):
         if not os.path.exists(packages_dirname):
@@ -27,15 +25,13 @@ class InstallPrivatePackages(install_data):
                 'argcomplete==1.11.1',
                 'semantic_version==2.8.4',
         ]:
-            package_dirname = os.path.join(packages_dirname,
-                                           *dependency.split("."))
-            module_filename = package_dirname + ".py"
-            if not os.path.exists(package_dirname) and not os.path.exists(
-                    module_filename):
+            try:
                 subprocess.check_call([
                     sys.executable, '-m', 'pip', 'install', '--target',
                     packages_dirname, dependency
                 ])
+            except:  # noqa
+                pass
 
     def run(self):
         super().run()
