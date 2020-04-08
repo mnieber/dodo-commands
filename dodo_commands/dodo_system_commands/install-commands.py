@@ -46,15 +46,6 @@ def _args():
     return args
 
 
-def check_setuptools():
-    if not Dodo.run([_python_path(), '-c', 'import setuptools']):
-        _report_error("\n" + bordered(
-            "Error: your python version does not have setuptools installed.\n"
-            + "Check the settings.python option in %s" %
-            Paths().global_config_filename()))
-        sys.exit(1)
-
-
 def _packages_in_extra_dir():
     extra_dir = Paths().extra_dir()
     packages = [
@@ -197,7 +188,6 @@ if Dodo.is_main(__name__):
                                  args.to_defaults)
 
     if args.pip:
-        check_setuptools()
         for package in args.pip:
             if args.remove:
                 _remove_package(package)
