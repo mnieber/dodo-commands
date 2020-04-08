@@ -1,5 +1,9 @@
 # Version history
 
+## 0.30.1
+
+- Use dodo init-system to finish installation
+
 ## 0.30.0
 
 - Lots of refactoring and minor fixes
