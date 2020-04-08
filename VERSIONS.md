@@ -1,6 +1,6 @@
 # Version history
 
-## 0.30.5
+## 0.30.6
 
 - Lots of refactoring and minor fixes
 - Improve documentation
