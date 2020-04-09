@@ -37,12 +37,18 @@ Source code: https://github.com/mnieber/dodo_commands.
    reference/global-directories-and-files
    reference/configuration-rules
    reference/configuration
-   reference/system-commands
    reference/entry-point
    reference/singleton
    reference/decorators
-   reference/docker-decorator
    reference/yaml-and-shell-commands
+
+
+.. toctree::
+   :glob:
+   :maxdepth: 2
+   :caption: System Commands Reference
+
+   reference/system-commands/*
 
 
 .. toctree::
@@ -58,4 +64,5 @@ Source code: https://github.com/mnieber/dodo_commands.
    :maxdepth: 2
    :caption: Docker Commands Reference
 
+   reference/docker-decorator
    reference/docker-commands/*

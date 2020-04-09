@@ -1,5 +1,5 @@
 autostart [on off]
-------------------
+==================
 
 Writes (or removes) a small shell script in ``~/.config/fish/conf.d`` and
 ``~/.config/bash/conf.d``. When this small script is sourced, it activates the last
