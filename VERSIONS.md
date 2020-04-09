@@ -1,5 +1,13 @@
 # Version history
 
+## 0.31.0
+
+- Update docs
+- Fix: always add shebang in dodo script
+- Fix: meta_data_filename()
+- Add --as option to install-commands
+- Remove --create-scd argument from bootstrap
+
 ## 0.30.7
 
 - Lots of refactoring and minor fixes
