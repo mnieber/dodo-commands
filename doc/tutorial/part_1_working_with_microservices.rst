@@ -3,17 +3,26 @@
 Scenario: working with micro-services
 =====================================
 
-In this scenerio we'll see how Dodo Commands can be used to work with two micro-services. It's definitely over-kill to use Dodo Commmands in this simple scenario, but as the project grows bigger, it will start to be worth it. To keep it simple the services are not Dockerized. The source code for this scenario is found in ``part1/before`` of the `dodo_commands_tutorial <https://github.com/mnieber/dodo_commands_tutorial>`_ repository.
+In this scenerio we'll see how Dodo Commands can be used to work with two micro-services.
+It's probably over-kill to use Dodo Commmands in this simple scenario, but as the project
+grows bigger, it will start to be worth it. To keep it simple the services are not Dockerized.
+The source code for this scenario is found in ``part1/before`` of the
+`dodo_commands_tutorial <https://github.com/mnieber/dodo_commands_tutorial>`_ repository.
 
 .. tip::
 
-  In the tutorials we'll assume that Bash is used. In some cases we will source the output of a Dodo command using ``$(dodo <command>)``. If you are using the Fish shell, then you can use ``dodo <command> | source``. In case you are curious what is being sourced, you can run the command without ``$()`` and source it manually on the command line.
+  In the tutorials we'll assume that Bash is used. In some cases we will source the output of
+  a Dodo command using ``$(dodo <command>)``. If you are using the Fish shell, then you can
+  use ``dodo <command> | source``. In case you are curious what is being sourced, you can run the
+  command without ``$()`` and source it manually on the command line.
 
 
 Two simple micro-services
 -------------------------
 
-The first micro-service writes the time to a file in the ``/tmp`` directory, whereas the second micro-service runs a ``tail`` command that tracks the contents of this file. We will go ahead and clone the code for this part of the tutorial:
+The first micro-service writes the time to a file in the ``/tmp`` directory, whereas the second
+micro-service runs a ``tail`` command that tracks the contents of this file. We will go ahead
+and clone the code for this part of the tutorial:
 
 .. code-block:: bash
 
