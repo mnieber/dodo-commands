@@ -1,6 +1,6 @@
 # Version history
 
-## 0.31.0
+## 0.31.1
 
 - Update docs
 - Fix: always add shebang in dodo script
