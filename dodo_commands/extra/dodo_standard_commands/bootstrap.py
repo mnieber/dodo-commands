@@ -20,11 +20,6 @@ def _args():
         "Location relative to src_dir where the shared project config is stored",
     )
     parser.add_argument('--force', dest="use_force", action="store_true")
-    parser.add_argument(
-        '--create-scd',
-        action='store_true',
-        help="Create shared_config_dir if it does not exist",
-    )
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -110,30 +105,6 @@ def _link_dir(link_target, link_name):
         Dodo.run(["ln", "-s", link_target, link_name])
 
 
-def _update_config(src_dir, relative_shared_config_dir):
-    config_file = os.path.join(Paths().config_dir(), "config.yaml")
-
-    if args.confirm:
-        print("Update the key /ROOT/src_dir in your configuration file (%s)" %
-              config_file)
-
-    if not args.confirm or query_yes_no("confirm?"):
-        config = ConfigIO().load()
-        config['ROOT']['src_dir'] = src_dir
-        ConfigIO().save(config)
-
-    if args.confirm:
-        print(
-            "Update the key /ROOT/shared_config_dir in your configuration file (%s)"
-            % config_file)
-
-    if not args.confirm or query_yes_no("confirm?"):
-        config = ConfigIO().load()
-        config['ROOT'][
-            'shared_config_dir'] = '${/ROOT/src_dir}/%s' % relative_shared_config_dir
-        ConfigIO().save(config)
-
-
 def _get_full_src_dir(src_dir, src_subdir):
     postfix = os.path.join(src_dir, src_subdir) if src_subdir else src_dir
     return (postfix if os.path.isabs(src_dir) else os.path.abspath(
@@ -154,16 +125,4 @@ if Dodo.is_main(__name__, safe=True):
         _cookiecutter(full_src_dir, os.path.expanduser(args.cookiecutter_url))
 
     shared_config_dir = os.path.join(full_src_dir, args.shared_config_dir)
-    if not os.path.exists(shared_config_dir):
-        if args.create_scd:
-            Dodo.run(['mkdir', '-p', shared_config_dir])
-        else:
-            raise CommandError(
-                "Shared configuration directory %s does not exist. Hint: use --create-scd."
-                % shared_config_dir)
-
     _copy_defaults(args, shared_config_dir)
-    _update_config(
-        args.src_dir if os.path.isabs(args.src_dir) else os.path.join(
-            "${/ROOT/project_dir}", args.src_dir),
-        os.path.join(args.src_subdir or '', args.shared_config_dir))
