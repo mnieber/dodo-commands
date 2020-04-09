@@ -1,7 +1,6 @@
 import os
 import sys
 import tempfile
-from argparse import ArgumentParser
 
 from dodo_commands import CommandError, Dodo
 from dodo_commands.framework.global_config import load_global_config_parser
@@ -11,9 +10,10 @@ from dodo_commands.framework.util import (bordered, is_using_system_dodo,
 
 
 def _args():
-    parser = ArgumentParser(
-        description=("Install command packages into the global " +
-                     "commands directory. " + _packages_in_extra_dir()))
+    parser = Dodo.parser
+
+    parser.description = ("Install command packages into the global " +
+                          "commands directory. " + _packages_in_extra_dir())
     parser.add_argument("paths",
                         nargs='*',
                         help='Create symlinks to these command directories')
@@ -42,8 +42,7 @@ def _args():
         help=
         'Remove a symlink to a global commands package from the default commands directory'
     )
-    args = Dodo.parse_args(parser)
-    return args
+    return Dodo.parse_args()
 
 
 def check_setuptools():
