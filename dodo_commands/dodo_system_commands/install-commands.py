@@ -17,6 +17,9 @@ def _args():
     parser.add_argument("paths",
                         nargs='*',
                         help='Create symlinks to these command directories')
+    parser.add_argument("--as",
+                        dest="as_directory",
+                        help='Use this name for the target commands directory')
     parser.add_argument("--pip",
                         nargs='*',
                         help='Pip install the commands in these packages')
@@ -42,6 +45,7 @@ def _args():
         help=
         'Remove a symlink to a global commands package from the default commands directory'
     )
+
     return Dodo.parse_args()
 
 
@@ -92,16 +96,19 @@ def _remove_package(package, only_from_defaults=False):
         Dodo.run(['rm', defaults_dest_dir])
 
 
-def _install_package(package, install_commands_function, add_to_defaults):
+def _install_package(package, as_directory, install_commands_function,
+                     add_to_defaults):
     """Install the dir with the global commands."""
-    dest_dir = os.path.join(Paths().global_commands_dir(), package)
-    defaults_dest_dir = os.path.join(Paths().default_commands_dir(), package)
+    package_dirname = as_directory or package
+    dest_dir = os.path.join(Paths().global_commands_dir(), package_dirname)
+    defaults_dest_dir = os.path.join(Paths().default_commands_dir(),
+                                     package_dirname)
 
     if add_to_defaults and os.path.exists(defaults_dest_dir):
         _report_error("Error: already installed: %s" % defaults_dest_dir)
         return False
 
-    if not install_commands_function():
+    if not install_commands_function(dest_dir):
         return False
 
     if add_to_defaults:
@@ -117,11 +124,8 @@ def _install_package(package, install_commands_function, add_to_defaults):
     return True
 
 
-def _install_commands_from_path(path, mv=False):
+def _install_commands_from_path(path, dest_dir, mv=False):
     """Install the dir with the global commands."""
-    dest_dir = os.path.join(Paths().global_commands_dir(),
-                            os.path.basename(path))
-
     if not os.path.exists(path):
         alt_path = os.path.join(Paths().extra_dir(), path)
         if os.path.exists(alt_path):
@@ -178,7 +182,7 @@ if Dodo.is_main(__name__):
         )
 
     if args.make_default:
-        _install_package(args.make_default, lambda: True, True)
+        _install_package(args.make_default, None, lambda: True, True)
         sys.exit(0)
 
     if args.remove_default:
@@ -191,9 +195,10 @@ if Dodo.is_main(__name__):
             if args.remove:
                 _remove_package(package)
             else:
-                _install_package(package,
-                                 lambda: _install_commands_from_path(path),
-                                 args.to_defaults)
+                _install_package(
+                    package, args.as_directory,
+                    lambda dest_dir: _install_commands_from_path(
+                        path, dest_dir), args.to_defaults)
 
     if args.pip:
         check_setuptools()
@@ -201,8 +206,13 @@ if Dodo.is_main(__name__):
             if args.remove:
                 _remove_package(package)
             else:
+                if args.as_directory:
+                    raise CommandError(
+                        "Sorry, the --as option is not supported when --pip is used."
+                    )
                 _install_package(
-                    package, lambda: _install_commands_from_package(package),
+                    package, args.as_directory,
+                    lambda dest_dir: _install_commands_from_package(package),
                     args.to_defaults)
 
     if args.git:
@@ -214,6 +224,8 @@ if Dodo.is_main(__name__):
 
             tmp_dir, package = _clone_git_repo(repo_path)
             _install_package(
-                package, lambda: _install_commands_from_path(
-                    os.path.join(tmp_dir, package), mv=True), args.to_defaults)
+                package, args.as_directory,
+                lambda dest_dir: _install_commands_from_path(
+                    os.path.join(tmp_dir, package), dest_dir, mv=True),
+                args.to_defaults)
             Dodo.run(['rm', '-rf', tmp_dir])
