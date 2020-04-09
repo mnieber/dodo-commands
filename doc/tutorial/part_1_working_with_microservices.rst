@@ -3,7 +3,7 @@
 Scenario: working with micro-services
 =====================================
 
-In this scenerio we'll see how Dodo Commands can be used to work with two micro-services. It's definitely over-kill to use Dodo Commmands in this simple scenario, but as the project grows bigger, it will start to be worth it. To keep it simple the services are not Dockerized. The source code for this scenario is found in tutorial/micro_services/before of the `dodo_commands_tutorial <https://github.com/mnieber/dodo_commands_tutorial>` repository.
+In this scenerio we'll see how Dodo Commands can be used to work with two micro-services. It's definitely over-kill to use Dodo Commmands in this simple scenario, but as the project grows bigger, it will start to be worth it. To keep it simple the services are not Dockerized. The source code for this scenario is found in ``part1/before`` of the `dodo_commands_tutorial <https://github.com/mnieber/dodo_commands_tutorial>`_ repository.
 
 .. tip::
 
@@ -43,6 +43,11 @@ The next step is to create a Dodo Commands environment for working with our proj
 
   cd /tmp/tutorial
   $(dodo env --init tutorial)
+
+  # Check that we are in the "tutorial" environment
+  dodo which
+
+      tutorial
 
 The environment contains the following directories:
 
@@ -101,8 +106,8 @@ Each environment contains a set of configuration files:
         command_path:
         - ~/.dodo_commands/default_project/commands/*
         - /some/path/to/dodo_commands/dodo_system_commands
-        project_dir: /tmp/dodo_commands_tutorial/part1
-        config_dir: /tmp/dodo_commands_tutorial/part1/.dodo_commands
+        project_dir: /tmp/tutorial/part1
+        config_dir: /tmp/tutorial/part1/.dodo_commands
         version: 1.0.0
 
 You can extend the configuration in any way you like. Let's add the following section:
@@ -121,7 +126,7 @@ Now, when we print the contents of the ``MAKE`` section, we get:
 
       cwd: /tmp/tutorial/writer
 
-We see that we can interpolate values. For example ``${/ROOT/project_dir}/writer`` was
+We see that we can interpolate values. In this case ``${/ROOT/project_dir}/writer`` was
 interpolated to ``/tmp/tutorial/writer``.
 
 .. note::
@@ -173,7 +178,7 @@ command, let's use the ``--confirm`` flag so we can check that everything is loo
 
       confirm? [Y/n]
 
-We see that the command will run ``make runserver`` in the ``/tmp/tutorial/writer directory``, great!
+We see that the command will run ``make runserver`` in the ``/tmp/tutorial/writer`` directory, great!
 
 
 Using layers to run the reader and writer service
@@ -243,7 +248,8 @@ Running the services in tmux
 ----------------------------
 
 We'll now put the commands to run our services in a menu so we can easily run them
-in a tmux session. Add a ``MENU`` section to the configuration file like this:
+in a tmux session. First, make sure that tmux is installed on your system.
+Then, add a ``MENU`` section to the configuration file like this:
 
 .. code-block:: yaml
 

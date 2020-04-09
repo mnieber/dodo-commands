@@ -1,3 +1,5 @@
+.. _tutorial_part2:
+
 Scenario: local development with Docker
 =======================================
 

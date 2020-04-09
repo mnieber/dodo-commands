@@ -1,4 +1,4 @@
-.. _sharing_projects:
+.. _tutorial_part4:
 
 Scenario: getting colleagues up-to-speed
 ========================================
@@ -8,8 +8,8 @@ At the same time, you want working environments to be independent, so that each 
 can arrange it to their preferences. This is achieved by having a shared configuration from
 which you cherry-pick the parts you need,
 
-We will continue where we left off in part 3. If you haven't done the steps of the previous
-scenario, run these steps to get started:
+We will continue where we left off in part 3 (:ref:`tutorial_part3`). If you haven't done the
+steps of the previous scenario, run these steps to get started:
 
 .. code-block:: bash
 
@@ -30,7 +30,7 @@ Preparing the configuration files for sharing
 We currently have a working Dodo Commands configuration in ``/tmp/tutorial/.dodo_commands``,
 and some scripts in ``/tmp/tutorial/commands``. We want to share this configuration with
 colleagues. The first step we will take is to move some files into a ``src`` directory that
-we can add to a local git repository:
+we can add to a git repository:
 
 .. code-block:: bash
 

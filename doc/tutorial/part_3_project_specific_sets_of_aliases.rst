@@ -1,9 +1,11 @@
+.. _tutorial_part3:
+
 Scenario: using project-specific sets of aliases
 ================================================
 
-We will again continue where we left off in part 2. This time we will create a new Dodo Commands environment,
-and show how to reuse the ``/tpm/tutorial/commands`` directory that we created before.
-If you haven't done the steps of the previous scenario, run these steps to get started:
+We will again continue where we left off in part 2 (:ref:`tutorial_part2`). This time we will create a
+new Dodo Commands environment, and show how to reuse the ``/tpm/tutorial/commands`` directory that we
+created. If you haven't done the steps of the previous scenario, run these steps to get started:
 
 .. code-block:: bash
 
@@ -89,13 +91,13 @@ To install more commands there, use ``dodo install-commands``:
 
 We see that the commands are installed into the ``~/.dodo_commands/commands`` directory.
 Because we passed the ``to-default`` flag, a symlink to dodo_git_commands is created in
-``~/.dodo_commands/default_project/commands``. Because our project uses
-all the default commands, the new git commands will be available:
+``~/.dodo_commands/default_project/commands``. Since our project uses all the default commands,
+the new git commands will be available:
 
 .. code-block:: bash
 
   # Print the command path
-  dodo pc /ROOT/command_path
+  dodo print-config /ROOT/command_path
 
       - ~/.dodo_commands/default_project/commands/*
       - /some/path/to/dodo_commands/dodo_system_commands
@@ -143,7 +145,7 @@ Using environments directly
 
 In some cases we may want to call a command in a different environment without switching
 to that environment. For example, we may only want to print its configuration. We can
-do this by calling one of the entry-points in ``~/.dodo_commands/bin``:
+do this by calling its entry-point in ``~/.dodo_commands/bin``:
 
 .. code-block:: bash
 
@@ -165,9 +167,9 @@ Using the mk.py script in the new environment
 ---------------------------------------------
 
 To use the ``mk`` command script that we created in the ``tutorial`` environment, we need to have
-``/tmp/tutorial/commands`` in our command_path. Surely, we can simply add this path to ``${/ROOT/command_path}``
-in ``~/projects/foo/.dodo_commands/config.yaml``. The problem with this approach is that we may move the
-``tutorial`` project to a new location, and then the hard-coded path (``/tmp/tutorial/commands``) will no longer
+``/tmp/tutorial/commands`` in our command_path. Surely, we can simply add this path to
+``${/ROOT/command_path}``. The problem with this approach is that we may move the
+``tutorial`` project to a new location, and then the hard-coded path will no longer
 be correct. A better option is to install ``/tmp/tutorial/commands``
 in the global commands directory, and then reference that location. Since the directory name ``commands`` is not
 very descriptive, we will use the ``--as`` option to rename it to ``dodo_tutorial_commands``:
@@ -183,7 +185,18 @@ very descriptive, we will use the ``--as`` option to rename it to ``dodo_tutoria
       confirm? [Y/n]
 
 Now, if we add ``~/.dodo_commands/commands/dodo_tutorial_commands`` to ``${/ROOT/command_path}`` then the ``mk``
-command will be found. Before we can successfully call ``mk``, we should add a ``MAKE`` section to ``config.yaml``,
+command will be found:
+
+.. code-block:: yaml
+
+  ROOT:
+    # other stuff
+    command_path:
+    - ~/.dodo_commands/default_project/commands/*
+    - ~/.dodo_commands/commands/dodo_tutorial_commands
+
+
+Before we can successfully call ``mk``, we should add a ``MAKE`` section to ``config.yaml``,
 otherwise the command will fail:
 
 .. code-block:: yaml
@@ -196,9 +209,9 @@ otherwise the command will fail:
 Importing symbols from a command script
 ---------------------------------------
 
-So far, we've kept our ``mk`` script deliberately very simple. Let's refactor it by extracting a function for running
-``make``. We can then use this function in our ``mk-greet`` script. Change the ``mk.py`` script so it
-looks like this:
+So far, we've kept our ``mk`` script deliberately very simple. Let's refactor it by extracting a function
+for running ``make``. We can then use this function in our ``mk-greet`` script. Change the ``mk.py``
+script so it looks like this:
 
 .. code-block:: python
 
@@ -235,8 +248,7 @@ We can now use the ``run_make`` function in ``mk-greet.py``:
 
   You see that we added a line that says ``if Dodo.is_main(__name__)``. This replaces the standard line
   ``if __name__ == "__main__"`` which doesn't work when executing the script with ``dodo mk``. The reason
-  is that ``dodo`` will import the ``mk.py`` script, which means that
-  ``mk.py`` is not the main module.
+  is that ``dodo`` will import the ``mk.py`` script, which means that   ``mk.py`` is not the main module.
 
 .. note::
 
