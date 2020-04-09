@@ -9,6 +9,8 @@ def create_dodo_script(env, dodo_file, python_path):
 
         if python_path:
             add("#!{python_path}")
+        else:
+            add("#!/usr/bin/env python")
 
         add("import os")
         add("import sys")
