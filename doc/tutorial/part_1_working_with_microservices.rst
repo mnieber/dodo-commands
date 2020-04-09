@@ -52,7 +52,7 @@ The environment contains the following directories:
   # In this case, it's the directory where we called 'dodo env --init'.
   dodo which --project-dir
 
-      */tmp/tutorial*
+      /tmp/tutorial
 
   # The configuration directory is where the Dodo Commands configuration files
   # for the environment are stored.
@@ -88,22 +88,22 @@ Each environment contains a set of configuration files:
   cat $(dodo which --config)
 
       ROOT:
-      command_path:
-      - ~/.dodo_commands/default_project/commands/*
-      version: 1.0.0
+        command_path:
+        - ~/.dodo_commands/default_project/commands/*
+        version: 1.0.0
 
   # When we print the contents of the configuration, we see that some extra values
   # were added automatically
   dodo print-config
 
       ROOT:
-      env_name: tutorial
-      command_path:
-      - ~/.dodo_commands/default_project/commands/*
-      - /some/path/to/dodo_commands/dodo_system_commands
-      project_dir: /tmp/dodo_commands_tutorial/part1
-      config_dir: /tmp/dodo_commands_tutorial/part1/.dodo_commands
-      version: 1.0.0
+        env_name: tutorial
+        command_path:
+        - ~/.dodo_commands/default_project/commands/*
+        - /some/path/to/dodo_commands/dodo_system_commands
+        project_dir: /tmp/dodo_commands_tutorial/part1
+        config_dir: /tmp/dodo_commands_tutorial/part1/.dodo_commands
+        version: 1.0.0
 
 You can extend the configuration in any way you like. Let's add the following section:
 

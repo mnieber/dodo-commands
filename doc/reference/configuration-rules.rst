@@ -23,13 +23,13 @@ The configuration file uses the yaml format, with a few extra rules:
 .. code-block:: yaml
 
     ROOT:
-        layers:
-            # contents of this file are layered on top of this configuration
-            - buildtype.debug.yaml
-            # layer with an absolute path
-            - ~/.dodo_commands/default_layer.yaml
-            # example of using wildcards
-            - ~/.dodo_commands/default_layers/*.yaml
+      layers:
+        # contents of this file are layered on top of this configuration
+        - buildtype.debug.yaml
+        # layer with an absolute path
+        - ~/.dodo_commands/default_layer.yaml
+        # example of using wildcards
+        - ~/.dodo_commands/default_layers/*.yaml
 
 Layers can be switched on and off with the ``dodo layer`` command (except for the ones with absolute paths). In the above example, to replace the layer ``buildtype.debug.yaml`` with ``buildtype.release.yaml`` call:
 
