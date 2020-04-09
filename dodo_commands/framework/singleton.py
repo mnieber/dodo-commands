@@ -67,7 +67,9 @@ class Dodo:
         return name == script_path
 
     @classmethod
-    def parse_args(cls, parser, config_args=None):
+    def parse_args(cls, parser=None, config_args=None):
+        parser = parser or cls.parser
+
         parser.add_argument('--traceback',
                             action='store_true',
                             help=argparse.SUPPRESS)
