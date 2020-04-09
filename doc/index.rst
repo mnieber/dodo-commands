@@ -11,9 +11,9 @@ Dodo Commands
 Source code: https://github.com/mnieber/dodo_commands.
 
 
-************
+############
 Introduction
-************
+############
 
 .. toctree::
    :maxdepth: 2
@@ -22,9 +22,9 @@ Introduction
    installation
 
 
-********
+########
 Tutorial
-********
+########
 
 .. toctree::
    :maxdepth: 2
@@ -35,9 +35,9 @@ Tutorial
    tutorial/part_4_getting_colleagues_up_to_speed.rst
 
 
-***************
+###############
 Reference Guide
-***************
+###############
 
 .. toctree::
    :maxdepth: 2
@@ -54,9 +54,9 @@ Reference Guide
    reference/yaml-and-shell-commands
 
 
-***************************
+###########################
 Standard Commands Reference
-***************************
+###########################
 
 .. toctree::
    :glob:
@@ -65,9 +65,9 @@ Standard Commands Reference
    reference/standard-commands/*
 
 
-*************************
+#########################
 Docker Commands Reference
-*************************
+#########################
 
 .. toctree::
    :glob:

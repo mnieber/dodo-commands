@@ -20,11 +20,11 @@ of the previous scenario, run these steps to get started:
 Adding a docker-compose file
 ----------------------------
 
-In the /tmp/tutorial directory, create the following docker-compose.yaml file
+In the ``/tmp/tutorial`` directory, create the following ``docker-compose.yml`` file
 
 .. code-block:: yaml
 
-  # /tmp/tutorial/docker-compose.yaml
+  # /tmp/tutorial/docker-compose.yml
 
   version : '3'
   services :
@@ -77,7 +77,8 @@ Let's test if it works:
 Using the docker-compose command
 --------------------------------
 
-We'd like to be able to bring this docker system up from any directory, so we'll create
+We'd like to be able to bring this docker system up from any directory with the
+``dodo docker-compose up`` command. To facilitate this, we'll create
 a new configuration layer in ``/tmp/tutorial/.dodo_commands/docker.yaml``:
 
 .. code-block:: yaml
@@ -86,7 +87,7 @@ a new configuration layer in ``/tmp/tutorial/.dodo_commands/docker.yaml``:
   DOCKER_COMPOSE:
     cwd: ${/ROOT/project_dir}
 
-To enable this layer, we can add it to the ``LAYERS`` of the main configuration file.
+To enable this layer, we should add it to the ``LAYERS`` of the main configuration file.
 Note that this layer is always loaded.
 
 .. code-block:: yaml
@@ -110,7 +111,7 @@ Dodo Commands. If you want to see its location and inspect its contents, you can
 .. tip::
 
   We could also have added the ``DOCKER_COMPOSE`` section directly to ``config.yaml``. It's
-  up to you to decide when parts of the configuration should be moved to a separate file.
+  up to you to decide when parts of the configuration should be moved to a separate layer file.
 
 
 Adding an alias for docker-compose up
@@ -246,8 +247,8 @@ Inferred commands
 -----------------
 
 If the ``mk-greet`` command is only used in combination with the ``writer`` layer then there is a way
-to make the call of this command even shorter. We can tell Dodo Commands that the ``writer`` layer
-is inferred by the ``mk-greet`` command:
+to make the call even shorter. We can tell Dodo Commands that the ``writer`` layer is inferred by
+the ``mk-greet`` command:
 
 .. code-block:: yaml
 
@@ -259,8 +260,7 @@ is inferred by the ``mk-greet`` command:
         inferred_by: [mk-greet]
     - reader
 
-Now we can run ``dodo mk-greet hi`` instead of ``dodo writer.mk-greet hi`` because
-the ``writer`` layer will be inferred:
+Now we can run ``dodo mk-greet hi`` instead of ``dodo writer.mk-greet hi``:
 
 .. code-block:: bash
 

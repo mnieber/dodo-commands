@@ -6,8 +6,7 @@ Scenario: getting colleagues up-to-speed
 If someone joins your project, then it makes sense to share your working environment with them.
 At the same time, you want working environments to be independent, so that each project member
 can arrange it to their preferences. This is achieved by having a shared configuration from
-which you cherry-pick the parts you need (this is somewhat comparable to how remote repositories
-work in git).
+which you cherry-pick the parts you need,
 
 We will continue where we left off in part 3. If you haven't done the steps of the previous
 scenario, run these steps to get started:
@@ -30,14 +29,15 @@ Preparing the configuration files for sharing
 
 We currently have a working Dodo Commands configuration in ``/tmp/tutorial/.dodo_commands``,
 and some scripts in ``/tmp/tutorial/commands``. We want to share this configuration with
-colleagues. The first step we will take is to move some files into a ``src`` directory and
-add them to a local git repository:
+colleagues. The first step we will take is to move some files into a ``src`` directory that
+we can add to a local git repository:
 
 .. code-block:: bash
 
   cd /tmp/tutorial
   mkdir src
   mv commands/ docker-compose.yml Dockerfile reader/ writer/ time.log src/
+
   cd src
   git init
   git add *
@@ -56,7 +56,7 @@ add them to a local git repository:
        create mode 100644 writer/write_periodically.py
 
 
-We could also have added our configuration files in ``.dodo_commands`` to git, but then the
+We're not adding our configuration files in ``.dodo_commands`` to git, because then the
 ownership of these files will become a problem. It's better if each developer can tweak the
 configuration to their liking. Therefore, we will copy our configuration files to a new
 location inside ``/tmp/tutorial.src`` and consider this copy to be the shared configuration:
@@ -66,6 +66,7 @@ location inside ``/tmp/tutorial.src`` and consider this copy to be the shared co
   cd /tmp/tutorial
   mkdir -p ./src/extra/dodo_commands
   cp -rf .dodo_commands ./src/extra/dodo_commands/config
+
   cd src
   git add *
   git commit -m "Add shared configuration files"
@@ -116,10 +117,10 @@ to git and commit them:
 
 .. note::
 
-  The purpose of the ``${/ROOT/version}`` key is to track the version of the configuration
+  The purpose of ``${/ROOT/version}`` is to track the version of the configuration
   file. If the version in the local file is smaller than the version in the shared file, then
   it means that your colleague added something to the shared file. In this case, use
-  ``dodo diff`` to synchronize your local file with the shared file. When you are done, make
+  ``dodo diff`` to synchronize your local file with the shared one. When you are done, make
   sure that the local file has the same ``${/ROOT/version}`` value as the shared file (this acts
   as a reminder that you are up-to-date with the shared configuration).
 
@@ -130,7 +131,7 @@ Bootstrapping a Dodo Commands environment
 We are now ready to let a colleague work on our project. To similate the steps that our
 colleague would take, we will create a foo2 environment and use the ``bootstrap`` command to
 initialize it. This will provide our colleage with a copy of the configuration files that we
-added to git in the steps above:
+just added to git:
 
 .. code-block:: bash
 
@@ -179,12 +180,18 @@ Checking the config version
 ---------------------------
 
 When your colleague changes their local configuration files, they may decide at some point to
-contribute these changes to the shared configuration files (that are stored in git). Hopefully, they
+contribute these changes to the shared configuration files. Hopefully, they
 will also bump the ``${/ROOT/version}`` value when they do. Whenever you pull the git repository
 on which you both work, you can run the ``dodo check-config --config`` command to find out if the
 shared configuration has changed. This command compares the ``${/ROOT/version}`` value in your local
-configuration with the value in the shared configuration. Again, use ``dodo diff`` to synchronize
-any changes. There is a similar (optional) value ``${/ROOT/required_dodo_commands_version}`` that is
+configuration with the value in the shared configuration. Then, use ``dodo diff`` to synchronize
+any changes.
+
+
+Checking the Dodo Commands version
+----------------------------------
+
+There is a similar (optional) value ``${/ROOT/required_dodo_commands_version}`` that is
 used to check that you have the right version of Dodo Commands. The call ``dodo check-version --dodo``
 verifies this. If you are using the ``autostart`` script to enable the last used environment
 automatically when opening a shell, then these checks happen automatically (they are
@@ -194,7 +201,7 @@ part of the ``autostart`` script).
 Alternatives to git as the starting point
 -----------------------------------------
 
-In the steps above, we cloned a git repository to obtain a ``src`` directory that has shared
+In the steps above, we cloned a git repository to obtain a ``src`` directory that has the shared
 configuration files. However, there are other ways to obtain these files. First of all, you can
 obtain the ``src`` directory from a cookiecutter template:
 

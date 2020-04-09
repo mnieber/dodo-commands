@@ -121,7 +121,8 @@ Now, when we print the contents of the ``MAKE`` section, we get:
 
       cwd: /tmp/tutorial/writer
 
-We see that we can interpolate values, for example ``${/ROOT/project_dir}``.
+We see that we can interpolate values. For example ``${/ROOT/project_dir}/writer`` was
+interpolated to ``/tmp/tutorial/writer``.
 
 .. note::
 
@@ -132,7 +133,7 @@ We see that we can interpolate values, for example ``${/ROOT/project_dir}``.
 Adding an alias to run the writer service
 -----------------------------------------
 
-We'll now create an alias that runs the writer service.
+We'll now create a ``mk.py`` script that can be used as an alias for running the writer service.
 
 .. code-block:: bash
 
@@ -178,9 +179,10 @@ We see that the command will run ``make runserver`` in the ``/tmp/tutorial/write
 Using layers to run the reader and writer service
 -------------------------------------------------
 
-Of course, we made a rather strange choice in our configuration file by binding ${/MAKE/cwd} to the
-directory of the writer service. What if we want to run the Makefile of the reader service?
-To fix this we will move the ${/MAKE} section to a new configuration file: ``server.writer.yaml``. This
+Of course, we made a rather strange choice in our configuration file by binding ``${/MAKE/cwd}`` to the
+directory of the writer service. What if we instead want to run the Makefile of the reader service? We should
+not tightly couple the ``mk`` alias to the writer service but somehow make it work with both services.
+To fix this we will move the ``${/MAKE}`` section to a new configuration file: ``server.writer.yaml``. This
 file should therefore look like this:
 
 .. code-block:: yaml
@@ -223,9 +225,10 @@ Of course, to run the reader, we can use ``dodo reader.mk runserver``.
 
 .. tip::
 
-  We saw above the Dodo Commands applies some magic to find out what command you want to run. Use
-  the ``--trace`` option to print the result of this translation process (without running any commands).
-  For example:
+  We saw above the Dodo Commands applies some magic to find out what command you want to run based
+  on the prefixes that you use before the name of the command. To find out what is going on below
+  the surface, use the ``--trace`` option to print the result of this translation process
+  (without running any commands). For example:
 
   .. code-block:: bash
 
@@ -233,7 +236,7 @@ Of course, to run the reader, we can use ``dodo reader.mk runserver``.
 
         ['/usr/local/bin/dodo', 'mk', 'runserver', '--layer=server.reader.yaml']
 
-  This tells us that we can also invoke this command as ``dodo mk runserver --layer=server.reader.yaml``.
+  This tells us that we are actually invoking the command ``dodo mk runserver --layer=server.reader.yaml``.
 
 
 Running the services in tmux

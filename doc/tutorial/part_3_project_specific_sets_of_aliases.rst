@@ -2,7 +2,7 @@ Scenario: using project-specific sets of aliases
 ================================================
 
 We will again continue where we left off in part 2. This time we will create a new Dodo Commands environment,
-and show how to reuse the ``tutorial/commands`` directory that we created before.
+and show how to reuse the ``/tpm/tutorial/commands`` directory that we created before.
 If you haven't done the steps of the previous scenario, run these steps to get started:
 
 .. code-block:: bash
@@ -22,7 +22,7 @@ Activating the default Dodo Commands environment
 ------------------------------------------------
 
 Let's start by deactivating the current ``tutorial`` environment. You do this by activating
-the default environment:
+the ``default`` environment:
 
 .. code-block:: bash
 
@@ -64,7 +64,7 @@ Installing more commands
 ------------------------
 
 By default, our new environment is using all command directories in ``~/.dodo_commands/default_project/commands/*``.
-To install more commands, use ``dodo install-commands``:
+To install more commands there, use ``dodo install-commands``:
 
 .. code-block:: bash
 
@@ -81,12 +81,15 @@ To install more commands, use ``dodo install-commands``:
       Collecting dodo_git_commands
       Successfully installed dodo-git-commands-0.3.0
 
-      (/) ln -s ~/.dodo_commands/commands/dodo_git_commands ~/.dodo_commands/default_project/commands/dodo_git_commands
+      (/) ln -s \
+        ~/.dodo_commands/commands/dodo_git_commands \
+        ~/.dodo_commands/default_project/commands/dodo_git_commands
 
       confirm? [Y/n]
 
-We see that the commands are installed into the ~/.dodo_commands/commands directory. Because we passed the ``to-default``
-flag, a symlink to dodo_git_commands is created in ~/.dodo_commands/default_project/commands. Because our project uses
+We see that the commands are installed into the ``~/.dodo_commands/commands`` directory.
+Because we passed the ``to-default`` flag, a symlink to dodo_git_commands is created in
+``~/.dodo_commands/default_project/commands``. Because our project uses
 all the default commands, the new git commands will be available:
 
 .. code-block:: bash
@@ -162,9 +165,9 @@ Using the mk.py script in the new environment
 ---------------------------------------------
 
 To use the ``mk`` command script that we created in the ``tutorial`` environment, we need to have
-``/tmp/tutorial/commands`` in our command_path. Surely, we can simply add this path to ${/ROOT/command_path}
+``/tmp/tutorial/commands`` in our command_path. Surely, we can simply add this path to ``${/ROOT/command_path}``
 in ``~/projects/foo/.dodo_commands/config.yaml``. The problem with this approach is that we may move the
-``tutorial`` project to a new location, and then the hard-coded path ``/tmp/tutorial/commands`` will no longer
+``tutorial`` project to a new location, and then the hard-coded path (``/tmp/tutorial/commands``) will no longer
 be correct. A better option is to install ``/tmp/tutorial/commands``
 in the global commands directory, and then reference that location. Since the directory name ``commands`` is not
 very descriptive, we will use the ``--as`` option to rename it to ``dodo_tutorial_commands``:
@@ -173,13 +176,15 @@ very descriptive, we will use the ``--as`` option to rename it to ``dodo_tutoria
 
   dodo install-commands /tmp/tutorial/commands --as dodo_tutorial_commands --confirm
 
-      (~/projects/dodo_commands) ln -s /tmp/tutorial/commands ~/.dodo_commands/commands/dodo_tutorial_commands
+      (/tmp) ln -s \
+        /tmp/tutorial/commands \
+        ~/.dodo_commands/commands/dodo_tutorial_commands
 
       confirm? [Y/n]
 
 Now, if we add ``~/.dodo_commands/commands/dodo_tutorial_commands`` to ``${/ROOT/command_path}`` then the ``mk``
-command will be found. Finally, we should add a ``MAKE`` section to ``config.yaml``, otherwise calling ``mk``
-will fail:
+command will be found. Before we can successfully call ``mk``, we should add a ``MAKE`` section to ``config.yaml``,
+otherwise the command will fail:
 
 .. code-block:: yaml
 
@@ -192,7 +197,7 @@ Importing symbols from a command script
 ---------------------------------------
 
 So far, we've kept our ``mk`` script deliberately very simple. Let's refactor it by extracting a function for running
-``make``. We can then use this function also in our ``mk-greet`` script. Change the ``mk.py`` script so it
+``make``. We can then use this function in our ``mk-greet`` script. Change the ``mk.py`` script so it
 looks like this:
 
 .. code-block:: python
@@ -208,10 +213,7 @@ looks like this:
       Dodo.parser.add_argument("what")
       run_make(Dodo.args.what)
 
-You see that we added a line that says ``if Dodo.is_main(__name__):``. This replaces the standard line
-``if __name__ == "__main__"`` which doesn't work when executing the script via the ``dodo mk``
-invocation. The reason is that ``dodo`` will import the ``mk.py`` script, which means that
-``mk.py`` is not the main module. We can now use the ``run_make`` function in ``mk-greet.py``:
+We can now use the ``run_make`` function in ``mk-greet.py``:
 
 .. code-block:: python
 
@@ -222,6 +224,13 @@ invocation. The reason is that ``dodo`` will import the ``mk.py`` script, which 
 
   Dodo.parser.add_argument("greeting")
   run_make("greeting", "GREETING=%s" % Dodo.args.greeting)
+
+.. note::
+
+  You see that we added a line that says ``if Dodo.is_main(__name__)``. This replaces the standard line
+  ``if __name__ == "__main__"`` which doesn't work when executing the script with ``dodo mk``. The reason
+  is that ``dodo`` will import the ``mk.py`` script, which means that
+  ``mk.py`` is not the main module.
 
 .. note::
 
@@ -242,8 +251,7 @@ you can describe them in a ``mk.meta`` file:
   requirements:
   - dominate==2.2.0
 
-In this example, calling the ``mk`` command will ask the user for confirmation to install the ``dominate``
-package into the current Python environment. We can try this out by importing ``dominate`` in ``mk.py``:
+We can try this out by importing ``dominate`` in ``mk.py``:
 
 .. code-block:: python
 
@@ -254,7 +262,8 @@ package into the current Python environment. We can try this out by importing ``
 
   # ... rest of the script stays the same
 
-Now when we run ``dodo mk runserver`` it will ask us if ``dominate`` should be installed:
+Calling the ``mk`` command will ask the user for confirmation to install the ``dominate``
+package into the current Python environment:
 
 .. code-block:: bash
 
