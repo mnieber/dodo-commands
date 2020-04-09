@@ -1,6 +1,5 @@
-************************************************
 Scenario: using project-specific sets of aliases
-************************************************
+================================================
 
 We will again continue where we left off in part 2. This time we will create a new Dodo Commands environment,
 and show how to reuse the ``tutorial/commands`` directory that we created before.
@@ -20,7 +19,7 @@ If you haven't done the steps of the previous scenario, run these steps to get s
 
 
 Activating the default Dodo Commands environment
-================================================
+------------------------------------------------
 
 Let's start by deactivating the current ``tutorial`` environment. You do this by activating
 the default environment:
@@ -62,7 +61,7 @@ The default environment is similar to all other environment. Let's check it out:
 
 
 Installing more commands
-========================
+------------------------
 
 By default, our new environment is using all command directories in ``~/.dodo_commands/default_project/commands/*``.
 To install more commands, use ``dodo install-commands``:
@@ -104,7 +103,7 @@ all the default commands, the new git commands will be available:
 
 
 Creating a new environment
-==========================
+--------------------------
 
 Now we'll create a new project in the ``~/projects`` directory. The new project will have
 a python virtual environment:
@@ -137,7 +136,7 @@ a python virtual environment:
 
 
 Using environments directly
-===========================
+---------------------------
 
 In some cases we may want to call a command in a different environment without switching
 to that environment. For example, we may only want to print its configuration. We can
@@ -160,7 +159,7 @@ do this by calling one of the entry-points in ``~/.dodo_commands/bin``:
 
 
 Using the mk.py script in the new environment
-=============================================
+---------------------------------------------
 
 To use the ``mk`` command script that we created in the ``tutorial`` environment, we need to have
 ``/tmp/tutorial/commands`` in our command_path. Surely, we can simply add this path to ${/ROOT/command_path}
@@ -190,7 +189,7 @@ will fail:
 
 
 Importing symbols from a command script
-=======================================
+---------------------------------------
 
 So far, we've kept our ``mk`` script deliberately very simple. Let's refactor it by extracting a function for running
 ``make``. We can then use this function also in our ``mk-greet`` script. Change the ``mk.py`` script so it
@@ -232,7 +231,7 @@ invocation. The reason is that ``dodo`` will import the ``mk.py`` script, which 
 
 
 Specifying command dependencies in the .meta file
-=================================================
+-------------------------------------------------
 
 Each Dodo command should ideally run out-of-the-box. If the ``mk`` command needs additional Python packages,
 you can describe them in a ``mk.meta`` file:

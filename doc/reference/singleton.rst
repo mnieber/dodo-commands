@@ -1,16 +1,15 @@
 .. _singleton:
 
-******************
 The Dodo singleton
-******************
+==================
 
 The Dodo singleton class gives Dodo Commands scripts access to the core Dodo Commands functions.
 
 Methods
-=======
+-------
 
 The is_main function
---------------------
+^^^^^^^^^^^^^^^^^^^^
 
 Using ``if Dodo.is_main(__name__)`` instead of the usual ``if __name__ == '__main__'`` allows Dodo Commands to execute your script when its invoked through calling ``dodo``.
 
@@ -24,7 +23,7 @@ Using ``if Dodo.is_main(__name__)`` instead of the usual ``if __name__ == '__mai
 
 
 The get function
-----------------
+^^^^^^^^^^^^^^^^
 
 Calling ``Dodo.get('/ROOT/my/key', 'default-value')`` will retrieve a value
 from the project's configuration. Use ``Dodo.get()`` to get direct
@@ -32,7 +31,7 @@ access to the entire configuration dictionary.
 
 
 The parse_args function (--confirm and --echo)
-----------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The ``Dodo.parse_args(parser)`` function uses ``parser`` to parse the arguments in ``sys.argv``. It adds an ``--echo`` and ``--confirm`` flag to the command line arguments of your script:
 
@@ -65,7 +64,7 @@ If you call ``Dodo.parse_args`` then you should do so before any calls to ``Dodo
 
 
 The run function
-----------------
+^^^^^^^^^^^^^^^^
 
 The ``Dodo.run`` function takes a list of arguments (and a current working directory) and runs them on the command line. It also adds all variables in ``${/ENVIRONMENT/variable_map}`` to the system environment for the duration of running the command.
 
@@ -76,7 +75,7 @@ The ``Dodo.run`` function takes a list of arguments (and a current working direc
 
 
 Config arguments
-================
+----------------
 
 Although it's possible to use ``Dodo.get`` directly inside the ``Dodo.run`` invocation, doing this work in the ``_args()`` helper function yields a better separation of concerns:
 
@@ -109,7 +108,7 @@ The ``ConfigArg`` is constructed with the configuration key, followed by any (ke
 
 
 Using pipes and redirection
-===========================
+---------------------------
 
 Since pipes and redirection are handled by the shell, you need to explicitly mention the shell executable to use them, e.g.
 
@@ -121,7 +120,7 @@ Since pipes and redirection are handled by the shell, you need to explicitly men
 
 
 Marking a script as unsafe
-==========================
+--------------------------
 
 Since command scripts are written in Python, the script can in principle perform any operation without explicitly asking your permission. In other words, it may choose to ignore the ``--confirm`` and ``--echo`` options. This sitation should of course be avoided. However, if a Command script does not completely honor the ``--confirm`` and ``--echo`` flags, it should pass ``safe=False`` when it calls ``Dodo.is_main``, as shown in the example below. Unsafe commands will not run with the --echo flag, and will pause with a warning when run with the --confirm flag.
 

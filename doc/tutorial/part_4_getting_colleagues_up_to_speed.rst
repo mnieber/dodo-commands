@@ -1,8 +1,7 @@
 .. _sharing_projects:
 
-****************************************
 Scenario: getting colleagues up-to-speed
-****************************************
+========================================
 
 If someone joins your project, then it makes sense to share your working environment with them.
 At the same time, you want working environments to be independent, so that each project member
@@ -27,7 +26,7 @@ scenario, run these steps to get started:
 
 
 Preparing the configuration files for sharing
-=============================================
+---------------------------------------------
 
 We currently have a working Dodo Commands configuration in ``/tmp/tutorial/.dodo_commands``,
 and some scripts in ``/tmp/tutorial/commands``. We want to share this configuration with
@@ -126,7 +125,7 @@ to git and commit them:
 
 
 Bootstrapping a Dodo Commands environment
-=========================================
+-----------------------------------------
 
 We are now ready to let a colleague work on our project. To similate the steps that our
 colleague would take, we will create a foo2 environment and use the ``bootstrap`` command to
@@ -177,7 +176,7 @@ were supplied in the call to ``bootstrap``:
 
 
 Checking the config version
-===========================
+---------------------------
 
 When your colleague changes their local configuration files, they may decide at some point to
 contribute these changes to the shared configuration files (that are stored in git). Hopefully, they
@@ -192,8 +191,8 @@ automatically when opening a shell, then these checks happen automatically (they
 part of the ``autostart`` script).
 
 
-Alternatives to git as the starting point.
-==========================================
+Alternatives to git as the starting point
+-----------------------------------------
 
 In the steps above, we cloned a git repository to obtain a ``src`` directory that has shared
 configuration files. However, there are other ways to obtain these files. First of all, you can

@@ -1,6 +1,5 @@
-***************************************
 Scenario: local development with Docker
-***************************************
+=======================================
 
 We will continue the previous scenario (:ref:`tutorial_part1`) by Dockerizing the two services. If you haven't done the steps
 of the previous scenario, run these steps to get started:
@@ -19,7 +18,7 @@ of the previous scenario, run these steps to get started:
 
 
 Adding a docker-compose file
-============================
+----------------------------
 
 In the /tmp/tutorial directory, create the following docker-compose.yaml file
 
@@ -76,7 +75,7 @@ Let's test if it works:
 
 
 Using the docker-compose command
-================================
+--------------------------------
 
 We'd like to be able to bring this docker system up from any directory, so we'll create
 a new configuration layer in ``/tmp/tutorial/.dodo_commands/docker.yaml``:
@@ -115,7 +114,7 @@ Dodo Commands. If you want to see its location and inspect its contents, you can
 
 
 Adding an alias for docker-compose up
-=====================================
+-------------------------------------
 
 We can add an alias for ``docker-compose up`` so we don't have to type too much. With this
 alias we can start the Docker system with ``dodo dcu``:
@@ -167,7 +166,7 @@ The ``dodo docker-exec`` command lets you execute a command in a selected docker
 
 
 Running a command inside a container
-====================================
+------------------------------------
 
 Let's add another command to the Makefile of the writer service:
 
@@ -244,7 +243,7 @@ When we try again we see that the command is prefixed with the proper Docker arg
 
 
 Inferred commands
-=================
+-----------------
 
 If the ``mk-greet`` command is only used in combination with the ``writer`` layer then there is a way
 to make the call of this command even shorter. We can tell Dodo Commands that the ``writer`` layer

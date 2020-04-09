@@ -1,11 +1,10 @@
-********************
 Global configuration
-********************
+====================
 
 The global configuration is stored in ``~/.dodo_commands/config``.
 
 The settings section
-====================
+--------------------
 
 .. code-block:: ini
 
@@ -24,7 +23,7 @@ The settings section
 
 
 The alias section
-=================
+-----------------
 
 This section contains aliases for any dodo command, e.g.
 

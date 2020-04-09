@@ -1,8 +1,7 @@
 .. _docker_support:
 
-********************
 The docker decorator
-********************
+====================
 
 If the "docker" decorator is used, then all command lines will be prefixed with ``/usr/bin/docker run`` and related docker arguments found in ``$(/DOCKER_OPTIONS/<pattern>``. Here, ``<pattern>`` matches the name of the current dodo command. For example, consider this configuration:
 
@@ -65,7 +64,7 @@ Running the ``django-manage`` command will produce something like this:
 
 
 Matching multiple names
-=======================
+-----------------------
 
 It's possible to match multiple names using a list:
 

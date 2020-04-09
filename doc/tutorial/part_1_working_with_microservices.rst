@@ -1,8 +1,7 @@
 .. _tutorial_part1:
 
-*************************************
 Scenario: working with micro-services
-*************************************
+=====================================
 
 In this scenerio we'll see how Dodo Commands can be used to work with two micro-services. It's definitely over-kill to use Dodo Commmands in this simple scenario, but as the project grows bigger, it will start to be worth it. To keep it simple the services are not Dockerized. The source code for this scenario is found in tutorial/micro_services/before of the `dodo_commands_tutorial <https://github.com/mnieber/dodo_commands_tutorial>` repository.
 
@@ -12,7 +11,7 @@ In this scenerio we'll see how Dodo Commands can be used to work with two micro-
 
 
 Two simple micro-services
-=========================
+-------------------------
 
 The first micro-service writes the time to a file in the ``/tmp`` directory, whereas the second micro-service runs a ``tail`` command that tracks the contents of this file. We will go ahead and clone the code for this part of the tutorial:
 
@@ -36,7 +35,7 @@ Let's try out the services:
 
 
 Setting up an environment
-=========================
+-------------------------
 
 The next step is to create a Dodo Commands environment for working with our project:
 
@@ -74,7 +73,7 @@ The environment contains the following directories:
       (nothing here)
 
 Working with the configuration
-==============================
+------------------------------
 
 Each environment contains a set of configuration files:
 
@@ -131,7 +130,7 @@ We see that we can interpolate values, for example ``${/ROOT/project_dir}``.
 
 
 Adding an alias to run the writer service
-=========================================
+-----------------------------------------
 
 We'll now create an alias that runs the writer service.
 
@@ -177,7 +176,7 @@ We see that the command will run ``make runserver`` in the ``/tmp/tutorial/write
 
 
 Using layers to run the reader and writer service
-=================================================
+-------------------------------------------------
 
 Of course, we made a rather strange choice in our configuration file by binding ${/MAKE/cwd} to the
 directory of the writer service. What if we want to run the Makefile of the reader service?
@@ -238,7 +237,7 @@ Of course, to run the reader, we can use ``dodo reader.mk runserver``.
 
 
 Running the services in tmux
-============================
+----------------------------
 
 We'll now put the commands to run our services in a menu so we can easily run them
 in a tmux session. Add a ``MENU`` section to the configuration file like this:
