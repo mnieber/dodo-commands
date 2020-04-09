@@ -34,17 +34,17 @@ In the ``/tmp/tutorial`` directory, create the following ``docker-compose.yml`` 
         dockerfile: ./Dockerfile
         context: .
       volumes:
-        - /tmp/tutorial/writer:/tmp/app
+        - /tmp/tutorial/writer:/app
         - /tmp/tutorial/time.log:/tmp/time.log
-      working_dir: /tmp/app
+      working_dir: /app
       command: make runserver
     reader:
       depends_on: [writer]
       image: python:3.7-alpine-make
       volumes:
-        - /tmp/tutorial/reader:/tmp/app
+        - /tmp/tutorial/reader:/app
         - /tmp/tutorial/time.log:/tmp/time.log
-      working_dir: /tmp/app
+      working_dir: /app
       command: make runserver
 
 and also add this Dockerfile:
@@ -222,6 +222,15 @@ Next, we need to specify in which container the ``mk-greet`` command should run:
     mk-greet:
       container: tutorial_writer_1
 
+Finally, we need to update the value of ``${/MAKE/cwd}}`` because it should point to a location
+in the container:
+
+.. code-block:: yaml
+
+  # /tmp/tutorial/.dodo_commands/writer.yaml
+  MAKE:
+    cwd: /app
+
 When we try again we see that the command is prefixed with the proper Docker arguments:
 
 .. code-block:: bash
@@ -230,7 +239,7 @@ When we try again we see that the command is prefixed with the proper Docker arg
 
       (/tmp/tutorial) docker exec  \
         --interactive --tty  \
-        --workdir=/tmp/tutorial/writer  \
+        --workdir=/app  \
         tutorial_writer_1  \
         make greeting GREETING=hi
 
