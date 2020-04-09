@@ -33,8 +33,7 @@ class PythonCommandHandler:
 
     def execute(self, command_map_item, command_name):
         def meta_data_filename():
-            base_path = import_module(
-                command_map_item.package_path).__path__[0]
+            base_path = os.path.dirname(command_map_item.filename)
             return os.path.join(base_path, command_name + ".meta")
 
         def meta_data():
