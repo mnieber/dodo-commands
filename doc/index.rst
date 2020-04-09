@@ -11,23 +11,17 @@ Dodo Commands
 Source code: https://github.com/mnieber/dodo_commands.
 
 
-############
-Introduction
-############
-
 .. toctree::
    :maxdepth: 2
+   :caption: Introduction
 
    goals
    installation
 
 
-########
-Tutorial
-########
-
 .. toctree::
    :maxdepth: 2
+   :caption: Tutorial
 
    tutorial/part_1_working_with_microservices
    tutorial/part_2_local_development_with_docker
@@ -35,12 +29,9 @@ Tutorial
    tutorial/part_4_getting_colleagues_up_to_speed.rst
 
 
-###############
-Reference Guide
-###############
-
 .. toctree::
    :maxdepth: 2
+   :caption: Reference Guide
 
    reference/global-configuration
    reference/global-directories-and-files
@@ -54,23 +45,17 @@ Reference Guide
    reference/yaml-and-shell-commands
 
 
-###########################
-Standard Commands Reference
-###########################
-
 .. toctree::
    :glob:
    :maxdepth: 2
+   :caption: Standard Commands Reference
 
    reference/standard-commands/*
 
 
-#########################
-Docker Commands Reference
-#########################
-
 .. toctree::
    :glob:
    :maxdepth: 2
+   :caption: Docker Commands Reference
 
    reference/docker-commands/*

@@ -227,6 +227,12 @@ We can now use the ``run_make`` function in ``mk-greet.py``:
 
 .. note::
 
+  The import of ``run_make`` from the ``dodo_tutorial_commands`` package succeeded because all
+  packages in the ``${/ROOT/command_path}`` are added to ``sys.path`` during execution of the
+  command.
+
+.. note::
+
   You see that we added a line that says ``if Dodo.is_main(__name__)``. This replaces the standard line
   ``if __name__ == "__main__"`` which doesn't work when executing the script with ``dodo mk``. The reason
   is that ``dodo`` will import the ``mk.py`` script, which means that
@@ -234,9 +240,10 @@ We can now use the ``run_make`` function in ``mk-greet.py``:
 
 .. note::
 
-  The import of ``run_make`` from the ``dodo_tutorial_commands`` package succeeded because all
-  packages in the ``${/ROOT/command_path}`` are added to ``sys.path`` during execution of the
-  command.
+  If the caller of the script uses the ``-confirm`` flag then they expect to be notified of any
+  action before it's taken. If your script violates this assumption, then you should use
+  ``Dodo.is_main(__name__, safe=False)``. This has the effect that the script will not run in combination
+  with ``--confirm`` (instead, it will stop with an error message).
 
 
 Specifying command dependencies in the .meta file
