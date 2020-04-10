@@ -5,7 +5,8 @@ from contextlib import contextmanager
 
 from dodo_commands import CommandError, Dodo
 from dodo_commands.dependencies.get import plumbum
-from dodo_commands.framework.global_config import (load_global_config_parser,
+from dodo_commands.framework.global_config import (global_config_get,
+                                                   load_global_config_parser,
                                                    write_global_config_parser)
 from dodo_commands.framework.paths import Paths
 
@@ -48,20 +49,19 @@ class Activator:
         sys.stderr.write(x)
         sys.stderr.flush()
 
-    def _global_config_get(self, section, key, default=""):
-        return (self.global_config.get(section, key)
-                if self.global_config.has_option(section, key) else default)
-
     def init(self, env, use_latest):
         self.global_config = load_global_config_parser()
         if not self.global_config.has_section('recent'):
             self.global_config.add_section('recent')
 
-        self.latest_env = self._global_config_get("recent", "latest_env")
-        self.shell = self._global_config_get("settings", "shell", "bash")
+        self.latest_env = global_config_get(self.global_config, "recent",
+                                            "latest_env")
+        self.shell = global_config_get(self.global_config, "settings", "shell",
+                                       "bash")
 
         if env == '-':
-            env = self._global_config_get("recent", "previous_env")
+            env = global_config_get(self.global_config, "recent",
+                                    "previous_env")
             if not env:
                 raise CommandError("There is no previous environment")
 

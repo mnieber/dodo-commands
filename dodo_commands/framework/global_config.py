@@ -8,6 +8,11 @@ from dodo_commands.framework.util import symlink
 configparser = six.moves.configparser
 
 
+def global_config_get(config, section, key, default=""):
+    return (config.get(section, key)
+            if config.has_option(section, key) else default)
+
+
 def load_global_config_parser():
     config_parser = configparser.ConfigParser()
     config_parser.read(Paths().global_config_filename())
