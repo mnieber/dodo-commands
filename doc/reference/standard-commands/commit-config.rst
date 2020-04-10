@@ -1,5 +1,5 @@
-dodo commit-config
-==================
+commit-config
+=============
 
 Breaking your local configuration can be serious problem, because it stops all
 Dodo Commands from working. Therefore, it's advisable to store your local configuration

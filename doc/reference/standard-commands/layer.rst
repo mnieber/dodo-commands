@@ -1,5 +1,5 @@
-dodo layer layer-group layer-value
-----------------------------------
+layer layer-group layer-value
+=============================
 
 Selects a layer from the chosen group and adds it to ``/LAYERS``. E.g. ``dodo layer server foo`` will add server.foo.yaml to ``LAYERS``.
 

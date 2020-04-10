@@ -1,5 +1,5 @@
-dodo env [--init/--create/--forget] --create-python-env [--latest <name>]
-=========================================================================
+env [--init/--create/--forget] --create-python-env [--latest <name>]
+====================================================================
 
 This command returns a string that - when sourced - activates the <name> environment.
 

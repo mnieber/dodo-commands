@@ -36,31 +36,94 @@ Running the ``django-manage`` command will produce something like this:
         python manage.py
 
 
-#. The value of ``$(/DOCKER_OPTIONS/<pattern>/image}`` is used to identify the docker image.
+``$(/DOCKER_OPTIONS/<pattern>/image}``
+--------------------------------------
 
-#. The value of ``$(/DOCKER_OPTIONS/<pattern>/name}`` is used to name the docker docker container (defaults to the name of the dodo command).
+Identifies the docker image.
 
-#. each key-value pair in ``$(/DOCKER_OPTIONS/<pattern>/volume_map}`` will be added as a docker volume (where 'key' in the host maps to 'value' in the docker container)
 
-#. each key-value pair in ``$(/DOCKER_OPTIONS/<pattern>/volume_map_strict}`` is also added as a docker volume. If the key does not exist as a local path, an error is raised.
+``$(/DOCKER_OPTIONS/<pattern>/name}``
+-------------------------------------
 
-#. each item in ``$(/DOCKER_OPTIONS/<pattern>/volume_list}`` will be added as a docker volume (where 'item' in the host maps to 'item' in the docker container)
+Used to name the docker docker container (defaults to the name of the dodo command).
 
-#. each key-value pair in ``$(/DOCKER_OPTIONS/<pattern>/publish_map}`` and each item in ``$(/DOCKER_OPTIONS/<pattern>/publish_list}`` will be added as a docker published port
 
-#. each item in ``$(/DOCKER_OPTIONS/<pattern>/volumes_from_list}`` will be added as a docker "volumes_from" argument
+``$(/DOCKER_OPTIONS/<pattern>/volume_map}``
+-------------------------------------------
 
-#. each item in ``$(/DOCKER_OPTIONS/<pattern>/link_list}`` will be added as a docker "link" argument
+Each key-value pair will be added as a docker volume (where 'key' in the host maps to 'value' in the docker container)
 
-#. each environment variable listed in ``$(/DOCKER_OPTIONS/<pattern>/variable_list}`` or ``$(/DOCKER_OPTIONS/<pattern>/variable_map}`` will be added as an environment variable in the docker container. Variables in ``variable_list`` have the same name in the host and in the container.
 
-#. arguments in ``${/DOCKER_OPTIONS/<pattern>/extra_options}`` are passed as extra options to the docker command line call.
+``$(/DOCKER_OPTIONS/<pattern>/volume_map_strict}``
+--------------------------------------------------
 
-#. each key-value pair in ``$(/ENVIRONMENT/variable_map}`` will be added as an environment variable in the docker container.
+Each key-value pair is added as a docker volume. If the key does not exist as a local path, an error is raised.
 
-#. The docker container is automatically removed depending on ``$(/DOCKER_OPTIONS/<pattern>/rm}`` (defaults to True).
 
-#. the ``-i`` and ``-t`` flags are added unless the ``$(/DOCKER_OPTIONS/<pattern>/is_interactive}`` flag is set to ``False``.
+``$(/DOCKER_OPTIONS/<pattern>/volume_list}``
+--------------------------------------------
+
+Each item will be added as a docker volume (where 'item' in the host maps to 'item' in the docker container)
+
+
+``$(/DOCKER_OPTIONS/<pattern>/publish_map}``
+--------------------------------------------
+
+Each key-value pair will be added as a docker published port
+
+
+``$(/DOCKER_OPTIONS/<pattern>/publish_list}``
+--------------------------------------------
+
+Each item will be added as a docker published port
+
+
+``$(/DOCKER_OPTIONS/<pattern>/volumes_from_list}``
+--------------------------------------------------
+
+Each item will be added as a docker "volumes_from" argument
+
+
+``$(/DOCKER_OPTIONS/<pattern>/link_list}``
+------------------------------------------
+
+Each item will be added as a docker "link" argument
+
+
+``$(/DOCKER_OPTIONS/<pattern>/variable_list}``
+----------------------------------------------
+
+Each environment variable will be added as an environment variable in the docker container. Variables in ``variable_list`` have the same name in the host and in the container.
+
+
+``$(/DOCKER_OPTIONS/<pattern>/variable_map}``
+---------------------------------------------
+
+Each key-value pair will be added as an environment variable in the docker container.
+
+
+``${/DOCKER_OPTIONS/<pattern>/extra_options}``
+----------------------------------------------
+
+Key-value pairs are passed as extra options to the docker command line call.
+
+
+``$(/ENVIRONMENT/variable_map}``
+--------------------------------
+
+Each key-value pair will be added as an environment variable in the docker container.
+
+
+``$(/DOCKER_OPTIONS/<pattern>/rm}``
+-----------------------------------
+
+Decides if the docker container is automatically removed (defaults to True).
+
+
+``$(/DOCKER_OPTIONS/<pattern>/is_interactive}``
+-----------------------------------------------
+
+Decides if the ``-i`` and ``-t`` flags are added.
 
 
 Matching multiple names

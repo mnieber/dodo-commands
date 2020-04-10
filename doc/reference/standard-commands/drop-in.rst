@@ -1,5 +1,5 @@
-dodo drop-in
-=============
+drop-in
+=======
 
 When you install a package with ``dodo install-commands`` it may contain more than just
 command scripts. Some packages contain a so-called "drop-in" directory with configuration

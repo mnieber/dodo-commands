@@ -143,6 +143,14 @@ interpolated to ``/tmp/tutorial/writer``.
     From here on, we will use the notation ${/FOO/bar} to refer to the ``bar``
     key in the ``FOO`` section of the configuration file.
 
+.. tip::
+
+    Run the ``dodo edit-config`` command to open all files in the configuration directory
+    in an editor. Set the ``config_editor`` field in the global configuration file
+    (~/.dodo_commands/config) to the editor you wish to use (we recommend using gedit with the
+    Side Panel enabled).
+
+
 
 Adding an alias to run the writer service
 -----------------------------------------
