@@ -15,7 +15,8 @@ def _args():
 if Dodo.is_main(__name__):
     args = _args()
     if args.key:
-        contents = Dodo.get_config(args.key)
+        prefix = "" if args.key.startswith("/") else "/"
+        contents = Dodo.get_config(prefix + args.key)
         if isinstance(contents, str):
             print(contents)
         else:
