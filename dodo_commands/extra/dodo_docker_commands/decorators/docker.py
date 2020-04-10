@@ -11,6 +11,25 @@ from dodo_commands.framework.decorator_utils import uses_decorator
 local = plumbum.local
 
 
+def invert_path(path):
+    def _len(path):
+        return len(path.split(os.sep))
+
+    options = Decorator.merged_options(Dodo.get, Dodo.command_name)
+    inverse_volume_map = options.get("inverse_volume_map", {})
+    best_common_path = ""
+    best_host_path = ""
+
+    for container_path, host_path in inverse_volume_map.items():
+        common_path = os.path.commonpath([path, container_path])
+        if _len(common_path) > _len(best_common_path):
+            best_common_path = common_path
+            best_host_path = os.path.join(host_path,
+                                          os.path.relpath(path, common_path))
+
+    return best_host_path
+
+
 def _is_tuple(x):
     return hasattr(x, "__len__") and not isinstance(x, type(str()))
 
