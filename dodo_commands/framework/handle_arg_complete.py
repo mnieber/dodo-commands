@@ -3,8 +3,7 @@ from argparse import ArgumentParser
 
 from dodo_commands.dependencies.get import argcomplete, funcy
 from dodo_commands.framework.config_layers import get_conflicts_in_layer_paths
-from dodo_commands.framework.funcy import (keep_truthy, map_with, remove_if,
-                                           str_split_at)
+from dodo_commands.framework.funcy import map_with, remove_if, str_split_at
 
 distinct, flatten = funcy.distinct, funcy.flatten
 
@@ -23,7 +22,10 @@ def handle_arg_complete(command_names, inferred_command_names, command_aliases,
     (command_prefix, command_name) = get_prefix_and_command(input_args)
 
     def get_used_layer_names(command_prefix):
-        return keep_truthy()(command_prefix.split('.'))
+        return [
+            x for x in command_prefix.split('.')
+            if x in layer_props_by_layer_name
+        ]
 
     used_layer_names = get_used_layer_names(command_prefix)
 
