@@ -44,9 +44,9 @@ def handle_arg_complete(command_names, inferred_command_names, command_aliases,
         return layer_name in used_layer_names
 
     def is_conflicting(layer_name):
-        used_layer_propss = map_with(layer_props_by_layer_name)(
+        used_layer_props = map_with(layer_props_by_layer_name)(
             used_layer_names)
-        used_layer_paths = [x.target_path for x in used_layer_propss]
+        used_layer_paths = [x.target_path for x in used_layer_props]
 
         layer_path = layer_props_by_layer_name[layer_name].target_path
         return get_conflicts_in_layer_paths(used_layer_paths + [layer_path])
