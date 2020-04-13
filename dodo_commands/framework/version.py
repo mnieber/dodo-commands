@@ -1,2 +1,2 @@
 def get_version():  # noqa
-    return "0.31.1"
+    return "0.32.0"

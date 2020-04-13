@@ -1,5 +1,13 @@
 # Version history
 
+## 0.32.0
+
+- Update docs
+- Add ``remove`` flag to DecoratorScope
+- Add arg --alt to commit-config
+- Several fixes related to previous refactoring
+- Fix: print-config <key> without leading slash
+
 ## 0.31.1
 
 - Update docs
