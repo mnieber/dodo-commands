@@ -65,7 +65,10 @@ This is similar to prepending, except that we do not need to create a new node
 Mapping decorators to commands
 ------------------------------
 
-Not all decorators are compatible with all commands. For example, only some commands can be run inside a debugger. Therefore, the configuration contains a list of decorated command for each decorator. In this list, wildcards are allowed, and you can exclude commands by prefixing them with an exclamation mark:
+Not all decorators are compatible with all commands. For example, only some commands can
+be run inside a debugger. Therefore, the configuration contains a list of decorated
+command for each decorator. In this list, wildcards are allowed, and you can exclude
+commands by prefixing them with an exclamation mark:
 
 .. code-block:: yaml
 
@@ -75,6 +78,33 @@ Not all decorators are compatible with all commands. For example, only some comm
         debugger: ['*', '!foo']
         # The cmake and runserver scripts can be run inside docker
         docker: ['cmake', 'runserver']
+
+
+Using DecoratorScope in scripts
+-------------------------------
+
+The ``DecoratorScope`` context manager makes it possible to enforce the use of a
+decorator inside a section of the the command script:
+
+.. code-block:: python
+
+    from dodo_commands import DecoratorScope
+
+    with DecoratorScope("docker"):
+        # This command will run inside docker
+        Dodo.run(["ls"])
+
+It's also possible to force a decorator to be disabled. In this case, even if the
+command was decorated, the ``Dodo.run`` calls inside ``DecoratorScope`` will not
+use the decorator:
+
+.. code-block:: python
+
+    from dodo_commands import DecoratorScope
+
+    with DecoratorScope("docker", remove=True):
+        # This command will not run inside docker
+        Dodo.run(["ls"])
 
 
 Printing arguments
