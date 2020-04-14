@@ -1,17 +1,14 @@
 import os
-from argparse import ArgumentParser
 
 from dodo_commands import Dodo
 
 
 def _args():
-    parser = ArgumentParser()
-    parser.add_argument('container_type',
-                        choices=Dodo.get_config('/DOCKER/containers').keys())
-    parser.add_argument('output_dir')
-    parser.add_argument('--reverse', action='store_true')
-    args = Dodo.parse_args(parser)
-    return args
+    Dodo.parser.add_argument(
+        'container_type', choices=Dodo.get_config('/DOCKER/containers').keys())
+    Dodo.parser.add_argument('output_dir')
+    Dodo.parser.add_argument('--reverse', action='store_true')
+    return Dodo.parse_args()
 
 
 def _docker_run(output_dir, args):
