@@ -22,6 +22,16 @@ The current directory is taken as the project directory in this environment.
 
 Removes <name> from the global environments directory
 
+--create-python-env
+-------------------
+
+Create a new Python virtual environment inside the project directory.
+
+--use-python-env=<path>
+-----------------------
+
+Register the existing Python virtual environment inside the Dodo Commands environment.
+
 --latest
 --------
 
