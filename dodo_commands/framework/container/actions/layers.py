@@ -40,7 +40,7 @@ def action_load_named_layers(ctr):
     return map_datas(i_(Layers, 'config_io'),
                      i_(Layers, 'layer_props_by_layer_name'),
                      o_(Layers, 'layer_by_target_path'),
-                     transform=load_named_layers)(ctr)
+                     transform=transform)(ctr)
 
 
 # LAYERS

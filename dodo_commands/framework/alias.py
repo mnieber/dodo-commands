@@ -42,4 +42,4 @@ def load_named_layers(
     # [(path, layer_name, layer)]
     for_each(ds(do_store))(x)
 
-    return (layer_by_target_path, )
+    return layer_by_target_path
