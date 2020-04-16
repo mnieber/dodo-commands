@@ -41,8 +41,11 @@ class TestConfigIO:  # noqa
         local = plumbum.local
 
         dodo_test_dir = os.path.expanduser('~/projects/dodo_test')
+        dodo_bin_dir = os.path.expanduser('~/.dodo_commands/bin')
         dodo_test_env_dir = os.path.expanduser(
             '~/.dodo_commands/envs/dodo_test')
+        config_dir = os.path.join(dodo_test_dir, '.dodo_commands')
+        config_filename = os.path.join(config_dir, 'config.yaml')
         skip_install = False
 
         if not skip_install:
@@ -57,20 +60,26 @@ class TestConfigIO:  # noqa
             ]
             main()
 
-        dodo = local[os.path.join(dodo_test_dir, '.env/bin/dodo')]
+        dodo = local[os.path.join(dodo_bin_dir, 'dodo-dodo_test')]
         if not skip_install:
-            dodo('bootstrap', 'src', 'extra/dodo_commands/res', '--force',
+            dodo('bootstrap', 'src', 'extra/dodo_commands/config', '--force',
                  '--git-url',
                  'https://github.com/mnieber/dodo_commands_tutorial.git')
 
-        config_dir = os.path.join(dodo_test_dir, '.dodo_commands')
-        config_filename = os.path.join(config_dir, 'config.yaml')
+            # create shared config file
+            extra_dir = os.path.join(dodo_test_dir, "extra")
+            os.makedirs(extra_dir)
+
+            config = self._load_config(config_filename)
+            self._write_config(config, os.path.join(extra_dir, "config.yaml"))
+            config['ROOT'][
+                'shared_config_dir'] = '${/ROOT/project_dir}/extra'
+            self._write_config(config, config_filename)
 
         # dodo which
         assert "dodo_test" == dodo('which')[:-1]
-        assert dodo_test_dir == dodo('which', 'project')[:-1]
-        assert os.path.join(dodo_test_dir, 'src') == dodo('which', 'src')[:-1]
-        assert config_dir == dodo('which', 'res')[:-1]
+        assert dodo_test_dir == dodo('which', '--project-dir')[:-1]
+        assert config_dir == dodo('which', '--config-dir')[:-1]
         assert config_filename == dodo('which', '--config')[:-1]
         assert 'confirm, debugger, docker, pause' == dodo(
             'which', '--decorators')[:-1]
