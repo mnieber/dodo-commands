@@ -68,16 +68,14 @@ class PythonCommandHandler:
         # Try the import, return if success
         try:
             return import_module(import_path)
-        except (ImportError, CommandNotFound) as e:
-            exception_type = type(e)
-            dependency, install = e.name, install_python_packages
-
-        # Try the import again, but first run install
-        try:
-            md = meta_data()
-            if md:
-                install(md, dependency)
-            import_module(import_path)
-        except exception_type:
-            raise CommandError('Could not import python module: %s' %
-                               dependency)
+        except ImportError as e:
+            # Try the import again, but first run install_python_packages
+            dependency = e.name,
+            try:
+                md = meta_data()
+                if md:
+                    install_python_packages(md, dependency)
+                import_module(import_path)
+            except ImportError:
+                raise CommandError('Could not import python module: %s' %
+                                   dependency)
