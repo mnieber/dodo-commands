@@ -1,20 +1,18 @@
-import argparse
 import os
 import sys
-from argparse import ArgumentParser
 
 from dodo_commands import Dodo
-from dodo_commands.framework.command_map import get_command_map, execute_script
+from dodo_commands.framework.command_map import execute_script, get_command_map
 from dodo_commands.framework.command_path import get_command_dirs
 
 
 def _args():
-    parser = ArgumentParser(description='Download a command script and run it')
+    Dodo.parser.description = 'Download a command script and run it'
 
-    parser.add_argument('url')
-    parser.add_argument('script_args', nargs=argparse.REMAINDER)
+    Dodo.parser.add_argument('url')
+    Dodo.parser.add_argument('script_args', nargs="*")
 
-    args = Dodo.parse_args(parser)
+    args = Dodo.parse_args()
     return args
 
 
