@@ -50,11 +50,6 @@ class classproperty(object):  # noqa
         return self.f(owner)
 
 
-def remove_trailing_dashes(args):
-    """Removes first -- item from args."""
-    return args[1:] if args[:1] == ['--'] else args
-
-
 def bordered(text):
     lines = text.splitlines()
     width = max(len(s) for s in lines)
