@@ -116,8 +116,17 @@ Since pipes and redirection are handled by the shell, you need to explicitly men
 
     if Dodo.is_main(__name__):
         args = _args()
-        Dodo.run(['/bin/bash', '-c', 'echo \'Hello world\' > /tmp.out'])
+        Dodo.run(['sh', '-c', 'echo \'Hello world\' > /tmp.out'])
 
+The ``sh_cmd`` function offers a shortcut for this:
+
+.. code-block:: python
+
+    from dodo_commands import Dodo, sh_cmd
+
+    if Dodo.is_main(__name__):
+        args = _args()
+        Dodo.run(sh_cmd('echo \'Hello world\' > /tmp.out'))
 
 Marking a script as unsafe
 --------------------------

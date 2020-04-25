@@ -2,7 +2,6 @@
 """Utilities."""
 import os
 import sys
-import time
 
 from dodo_commands.dependencies.get import plumbum, six
 
@@ -141,3 +140,7 @@ class classproperty(property):  # noqa
 
 def maybe_list_to_list(maybe_list):
     return (maybe_list if isinstance(maybe_list, list) else [maybe_list])
+
+
+def sh_cmd(cmd):
+    return ['sh', '-c', cmd]
