@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 
 from dodo_commands import CommandError, Dodo
 from dodo_commands.dependencies.get import plumbum, six
+
 from dodo_docker_commands.decorators.docker import Decorator as DockerDecorator
 
 docker = plumbum.cmd.docker
@@ -50,9 +51,9 @@ if Dodo.is_main(__name__):
         args.name = containers[choice]
 
     if not args.cmd:
-        default_shell = Dodo.get_config("/DOCKER/default_shell", "sh")
+        default_shell = Dodo.get("/DOCKER/default_shell", "sh")
         docker_options = DockerDecorator.merged_options(
-            Dodo.get_config, "docker-exec")
+            Dodo.get, "docker-exec")
         args.cmd = docker_options.get("shell", default_shell)
 
     Dodo.run([

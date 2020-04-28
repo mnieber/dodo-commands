@@ -67,7 +67,7 @@ def _args():  # noqa
 
 
 def _which_script(script):
-    command_dirs = get_command_dirs_from_config(Dodo.get_config())
+    command_dirs = get_command_dirs_from_config(Dodo.get())
     for item in command_dirs:
         script_path = os.path.join(item, script + ".py")
         if os.path.exists(script_path):
@@ -83,7 +83,7 @@ def _which_script(script):
 
 
 def _which_dir(directory):
-    return Dodo.get_config("/ROOT/%s_dir" % directory, None)
+    return Dodo.get("/ROOT/%s_dir" % directory, None)
 
 
 if Dodo.is_main(__name__):
@@ -113,14 +113,14 @@ if Dodo.is_main(__name__):
             sys.stdout.write(python_env_dir + '\n')
     elif args.decorators:
         sys.stdout.write(
-            ", ".join(sorted(_all_decorators(Dodo.get_config()).keys())) +
+            ", ".join(sorted(_all_decorators(Dodo.get()).keys())) +
             '\n')
     elif args.envs:
         sys.stdout.write('\n'.join(sorted(os.listdir(Paths().envs_dir()))) +
                          '\n')
     elif args.env:
-        if Dodo.get_config("/ROOT/env_name", None):
-            sys.stdout.write(Dodo.get_config("/ROOT/env_name") + '\n')
+        if Dodo.get("/ROOT/env_name", None):
+            sys.stdout.write(Dodo.get("/ROOT/env_name") + '\n')
     elif args.layers:
         layer_paths = get_ordered_layer_paths(Dodo.get_container())
         for layer_path in layer_paths:
@@ -130,5 +130,5 @@ if Dodo.is_main(__name__):
         if x:
             sys.stdout.write(x + '\n')
     else:
-        if Dodo.get_config("/ROOT/env_name", None):
-            sys.stdout.write(Dodo.get_config("/ROOT/env_name") + '\n')
+        if Dodo.get("/ROOT/env_name", None):
+            sys.stdout.write(Dodo.get("/ROOT/env_name") + '\n')

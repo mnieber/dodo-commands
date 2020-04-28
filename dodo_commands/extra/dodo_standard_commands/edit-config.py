@@ -30,7 +30,7 @@ def _args():
                 "The options --key and --val should always be used together")
 
     args.editor = load_global_config_parser().get("settings", "config_editor")
-    args.config_dir = Dodo.get_config('/ROOT/config_dir')
+    args.config_dir = Dodo.get('/ROOT/config_dir')
     return args
 
 

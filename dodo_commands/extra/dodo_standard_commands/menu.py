@@ -19,7 +19,7 @@ def _normalize(category):
 
 
 def _args():
-    command_map = Dodo.get_config('/MENU/commands', {})
+    command_map = Dodo.get('/MENU/commands', {})
 
     parser = ArgumentParser()
     parser.add_argument('category',
@@ -95,7 +95,7 @@ def _get_selected_commands(commands, labels, allow_free_text=False):
 
 if Dodo.is_main(__name__):
     args = _args()
-    check_exists = Dodo.get_config('/MENU/check_exists', '/')
+    check_exists = Dodo.get('/MENU/check_exists', '/')
     if not os.path.exists(check_exists):
         raise CommandError("Path %s does not exist" % check_exists)
 

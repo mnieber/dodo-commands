@@ -82,7 +82,7 @@ if Dodo.is_main(__name__, safe=False):
         print(_layer_value(layers, args.layer))
         sys.exit(0)
 
-    layer_file = os.path.join(Dodo.get_config("/ROOT/config_dir"),
+    layer_file = os.path.join(Dodo.get("/ROOT/config_dir"),
                               "%s.%s.yaml" % (args.layer, args.value))
 
     if not args.force and not os.path.exists(layer_file):

@@ -1,5 +1,4 @@
 import os
-from argparse import ArgumentParser
 
 from dodo_commands import CommandError, Dodo
 from dodo_commands.framework.command_path import get_command_dirs_from_config
@@ -8,9 +7,8 @@ from dodo_commands.framework.util import chop
 
 
 def _args():
-    parser = ArgumentParser()
-    parser.add_argument('package', choices=_drop_dir_by_package_name().keys())
-    return Dodo.parse_args(parser)
+    Dodo.parser.add_argument('package', choices=_drop_dir_by_package_name().keys())
+    return Dodo.parse_args()
 
 
 def _diff_tool():
@@ -48,7 +46,7 @@ def _drop_src_dir(item):
 
 def _drop_dir_by_package_name():
     drop_dir_by_package_name = {}
-    command_dirs = get_command_dirs_from_config(Dodo.get_config())
+    command_dirs = get_command_dirs_from_config(Dodo.get())
     for item in command_dirs:
         dot_drop_path = _dot_drop_path(item)
         default_drop_src_dir = _drop_src_dir(item)
@@ -80,7 +78,7 @@ if Dodo.is_main(__name__, safe=True):
         raise CommandError("The drop-in directory does not exist: %s" %
                            drop_src_dir)
 
-    config_dir = Dodo.get_config('/ROOT/config_dir')
+    config_dir = Dodo.get('/ROOT/config_dir')
     drops_target_dir = os.path.join(config_dir, 'drops')
     if not os.path.exists(drops_target_dir):
         Dodo.run(['mkdir', drops_target_dir])

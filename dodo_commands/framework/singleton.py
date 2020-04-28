@@ -42,7 +42,7 @@ class Dodo:
         return cls.get_container().command_line.command_name
 
     @classmethod
-    def get(cls, key='', default_value="__not_set_234234__"):  # noqa
+    def get(cls, key="", default_value="__not_set_234234__"):  # noqa
         try:
             return Key(cls.get_container().config.config, key).get()
         except KeyNotFound:
@@ -55,7 +55,7 @@ class Dodo:
         if safe is not None:
             cls.safe = safe
 
-        if name == '__main__':
+        if name == "__main__":
             return True
 
         commands = cls.get_container().commands
@@ -63,20 +63,18 @@ class Dodo:
         if not command_map_item:
             return False
 
-        script_path = command_map_item.package_path + '.' + cls.command_name
+        script_path = command_map_item.package_path + "." + cls.command_name
         return name == script_path
 
     @classmethod
     def parse_args(cls, parser=None, config_args=None):
         parser = parser or cls.parser
 
-        parser.add_argument('--traceback',
-                            action='store_true',
-                            help=argparse.SUPPRESS)
+        parser.add_argument("--traceback", action="store_true", help=argparse.SUPPRESS)
 
-        add_config_args(parser, cls.get_config(), config_args)
+        add_config_args(parser, cls.get(), config_args)
 
-        for decorator in get_decorators(cls.command_name, cls.get_config()):
+        for decorator in get_decorators(cls.command_name, cls.get()):
             decorator.add_arguments(parser)
 
         if cls.get_container().command_line.is_help:
@@ -93,7 +91,7 @@ class Dodo:
 
         if config_args:
             for config_arg in config_args:
-                key = Key(cls.get_config(), config_arg.config_key)
+                key = Key(cls.get(), config_arg.config_key)
                 if key.exists():
                     setattr(cls._args, config_arg.arg_name, key.get())
 
@@ -101,10 +99,11 @@ class Dodo:
 
     @classmethod
     def run(cls, args, cwd=None, quiet=False, capture=False):
-        args_tree_root_node = ArgsTreeNode('original_args', args=args)
-        for decorator in get_decorators(cls.command_name, cls.get_config()):
+        args_tree_root_node = ArgsTreeNode("original_args", args=args)
+        for decorator in get_decorators(cls.command_name, cls.get()):
             args_tree_root_node, cwd = decorator.modify_args(
-                cls._args, args_tree_root_node, cwd)
+                cls._args, args_tree_root_node, cwd
+            )
             if args_tree_root_node is None:
                 return False
 
@@ -114,7 +113,7 @@ class Dodo:
         with plumbum.local.cwd(cwd or plumbum.local.cwd):
             flat_args = args_tree_root_node.flatten()
             func = plumbum.local[flat_args[0]][flat_args[1:]]
-            variable_map = cls.get_config('/ENVIRONMENT/variable_map', {})
+            variable_map = cls.get("/ENVIRONMENT/variable_map", {})
             with plumbum.local.env(**variable_map):
                 if capture:
                     return func()
@@ -123,9 +122,7 @@ class Dodo:
                     return True
                 except plumbum.ProcessExecutionError:
                     if not quiet:
-                        print(
-                            "\nDodo Commands error while running this command:"
-                        )
+                        print("\nDodo Commands error while running this command:")
                         print("\n\n%s" % func)
                     return False
 

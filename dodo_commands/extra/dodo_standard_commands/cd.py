@@ -20,7 +20,7 @@ def _args():
         help=('cd to /ROOT/<to>_dir. For example: dodo cd src ' +
               'cds to the value of /ROOT/src_dir.'))
     args = Dodo.parse_args(parser)
-    args.path = Dodo.get_config("/ROOT/%s_dir" % (args.to or 'project'))
+    args.path = Dodo.get("/ROOT/%s_dir" % (args.to or 'project'))
     return args
 
 

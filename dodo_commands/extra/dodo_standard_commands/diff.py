@@ -35,7 +35,7 @@ if Dodo.is_main(__name__):
         original_file = os.path.join(ref_project_dir, file)
         copied_file = os.path.join(project_dir, file)
     else:
-        shared_config_dir = Dodo.get_config('/ROOT/shared_config_dir')
+        shared_config_dir = Dodo.get('/ROOT/shared_config_dir')
         original_file = os.path.realpath(os.path.join(shared_config_dir, file))
         copied_file = os.path.join(Paths().config_dir(), file)
 

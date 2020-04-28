@@ -16,7 +16,7 @@ if Dodo.is_main(__name__):
     args = _args()
     if args.key:
         prefix = "" if args.key.startswith("/") else "/"
-        contents = Dodo.get_config(prefix + args.key)
+        contents = Dodo.get(prefix + args.key)
         if isinstance(contents, str):
             print(contents)
         else:
@@ -24,6 +24,6 @@ if Dodo.is_main(__name__):
     else:
         content = re.sub(r'^([0-9_A-Z]+\:)$',
                          r'\n\1',
-                         yaml_round_trip_dump(Dodo.get_config()),
+                         yaml_round_trip_dump(Dodo.get()),
                          flags=re.MULTILINE)
         print(re.sub(r'^\n\n', r'\n', content, flags=re.MULTILINE))

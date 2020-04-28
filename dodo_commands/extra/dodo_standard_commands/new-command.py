@@ -40,8 +40,8 @@ def create_command_dir(command_dirs):
             dir_name = raw_input("\nEnter a name for the commands dir: ")
             if dir_name:
                 default_src_dir = os.path.join(
-                    Dodo.get_config('/ROOT/project_dir'), 'src')
-                src_dir = Dodo.get_config('/ROOT/src_dir', default_src_dir)
+                    Dodo.get('/ROOT/project_dir'), 'src')
+                src_dir = Dodo.get('/ROOT/src_dir', default_src_dir)
                 return os.path.join(src_dir, "extra", "dodo_commands",
                                     dir_name)
             else:
@@ -191,7 +191,7 @@ def _args():
 {params_str}
     ])
 
-    args.cwd = Dodo.get_config('/ROOT/project_dir')
+    args.cwd = Dodo.get('/ROOT/project_dir')
 
     # Raise an error if something is not right
     if False:
@@ -261,7 +261,7 @@ def handle_interactive(parsed_args):
 
 
 def handle_next_to(parsed_args):
-    command_dirs = get_command_dirs_from_config(Dodo.get_config())
+    command_dirs = get_command_dirs_from_config(Dodo.get())
     command_map = get_command_map(command_dirs)
     item = command_map.get(parsed_args.next_to)
 

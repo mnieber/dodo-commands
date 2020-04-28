@@ -48,7 +48,7 @@ def _args():
     )
 
     args = Dodo.parse_args(parser)
-    args.project_dir = Dodo.get_config('/ROOT/project_dir')
+    args.project_dir = Dodo.get('/ROOT/project_dir')
     return args
 
 

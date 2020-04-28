@@ -6,25 +6,23 @@ from dodo_commands import CommandError, Dodo
 def _args():
     Dodo.parser.add_argument(
         "name",
-        choices=Dodo.get_config("/DOCKER_IMAGES").keys(),
+        choices=Dodo.get("/DOCKER_IMAGES").keys(),
         help="Key to look up in /DOCKER_IMAGES",
     )
     Dodo.parser.add_argument(
         "build_args", nargs="*", help="Extra args to pass to docker build"
     )
     args = Dodo.parse_args()
-    args.build_dir = Dodo.get_config(
+    args.build_dir = Dodo.get(
         "/DOCKER_IMAGES/{name}/build_dir".format(name=args.name), "."
     )
-    args.docker_file = Dodo.get_config(
+    args.docker_file = Dodo.get(
         "/DOCKER_IMAGES/{name}/docker_file".format(name=args.name), "Dockerfile"
     )
-    args.extra_dirs = Dodo.get_config(
+    args.extra_dirs = Dodo.get(
         "/DOCKER_IMAGES/{name}/extra_dirs".format(name=args.name), []
     )
-    args.docker_image = Dodo.get_config(
-        "/DOCKER_IMAGES/{name}/image".format(name=args.name)
-    )
+    args.docker_image = Dodo.get("/DOCKER_IMAGES/{name}/image".format(name=args.name))
     return args
 
 

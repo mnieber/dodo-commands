@@ -5,7 +5,7 @@ from dodo_commands.framework.singleton import Dodo
 # to the list of commands decorated by decorator_name.
 class DecoratorScope:
     def __init__(self, decorator_name, remove=False):
-        self.decorators = Dodo.get_config('/ROOT').setdefault(
+        self.decorators = Dodo.get('/ROOT').setdefault(
             'decorators', {}).setdefault(decorator_name, [])
         self.prefix = "!" if remove else ""
 
