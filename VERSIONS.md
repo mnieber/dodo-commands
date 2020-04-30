@@ -1,5 +1,14 @@
 # Version history
 
+## 0.33.0
+
+- Add option --use-python-env to dodo env
+- Fix: return type of load_named_layers
+- Fix: tests
+- Remove remove_trailing_dashes
+- Add sh_cmd
+- Add dial command
+
 ## 0.32.0
 
 - Update docs
