@@ -9,6 +9,8 @@ configparser = six.moves.configparser
 
 
 def global_config_get(config, section, key, default=""):
+    if config is None:
+        config = load_global_config_parser()
     return (config.get(section, key)
             if config.has_option(section, key) else default)
 
