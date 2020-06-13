@@ -13,7 +13,7 @@ def _args():
 
 if Dodo.is_main(__name__):
     args = _args()
-    dirs = args.dirs[args.group] if args.group else args.dirs
+    dirs = args.dirs.get(args.group, {}) if args.group else args.dirs
 
     for k, v in dirs.items():
         if args.number == str(k):
