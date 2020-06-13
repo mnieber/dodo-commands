@@ -6,7 +6,7 @@ from dodo_commands.dependencies.get import argcomplete, plumbum
 from dodo_commands.framework.args_tree import ArgsTreeNode
 from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.config_arg import add_config_args
-from dodo_commands.framework.config_expander import Key, KeyNotFound
+from dodo_commands.framework.config_key import Key, KeyNotFound
 from dodo_commands.framework.container.container import Container
 from dodo_commands.framework.decorator_utils import get_decorators
 from dodo_commands.framework.util import classproperty

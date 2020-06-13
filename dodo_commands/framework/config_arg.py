@@ -1,6 +1,6 @@
 import sys
 
-from dodo_commands.framework.config_expander import Key
+from dodo_commands.framework.config_key import Key
 
 
 class ConfigArg:

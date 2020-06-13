@@ -3,16 +3,8 @@ import re
 import sys
 
 from dodo_commands.framework.command_error import CommandError
-from dodo_commands.framework.util import EnvironMemo
-
-
-class KeyNotFound(CommandError):
-    """Raised if an xpath is not found in a configuration."""
-    pass
-
-
-def _xpath_to_string(xpath):
-    return '/' + '/'.join([str(x) for x in xpath])
+from dodo_commands.framework.config_key import Key
+from dodo_commands.framework.util import EnvironMemo, xpath_to_string
 
 
 class DictKey:
@@ -26,7 +18,7 @@ class DictKey:
 
     def warning_msg_not_expanded(self):
         return "Unexpanded key {key} at location {xpath}".format(
-            key=self.key, xpath=_xpath_to_string(self.xpath))
+            key=self.key, xpath=xpath_to_string(self.xpath))
 
     def create_dict_val(self, expanded_key):  # noqa
         if expanded_key != self.key:
@@ -49,7 +41,7 @@ class DictVal:
 
     def warning_msg_not_expanded(self):
         return "Unexpanded value {val} at location {xpath}".format(
-            val=self.get_value(), xpath=_xpath_to_string(self.xpath))
+            val=self.get_value(), xpath=xpath_to_string(self.xpath))
 
     def __repr__(self):  # noqa
         return "DV[%s]" % self.key
@@ -69,69 +61,10 @@ class ListVal:
 
     def warning_msg_not_expanded(self):
         return "Unexpanded value {val} at location {xpath}".format(
-            val=self.get_value(), xpath=_xpath_to_string(self.xpath))
+            val=self.get_value(), xpath=xpath_to_string(self.xpath))
 
     def __repr__(self):  # noqa
         return "L[%s]" % self.idx
-
-
-class Key:
-    """Access a nested value in a dict."""
-    def __init__(self, config, xpath_or_str):  # noqa
-        self.config = config
-
-        def split_on_slash(key):
-            return [k for k in key[1:].split("/") if k]
-
-        # the list of sub-keys along the path to an item in self.config
-        self.xpath = split_on_slash(xpath_or_str) if isinstance(
-            xpath_or_str, str) else xpath_or_str
-
-    def child(self, subkey):
-        """Return key for child with subkey."""
-        return Key(self.config, list(self.xpath) + [subkey])
-
-    def _step_into(self, node, subkey):
-        try:
-            if isinstance(node, type(dict())):
-                return node[subkey]
-            if isinstance(node, type(list())):
-                return node[int(subkey)]
-        except:
-            raise KeyNotFound("Cannot get value at %s\n" % self)
-
-    def exists(self):
-        config_node = self.config
-        for xpath_node in self.xpath:
-            if isinstance(config_node, dict) and xpath_node in config_node:
-                config_node = config_node[xpath_node]
-            elif isinstance(config_node,
-                            list) and int(xpath_node) < len(config_node):
-                config_node = config_node[int(xpath_node)]
-            else:
-                return False
-        return True
-
-    def get(self):  # noqa
-        node = self.config
-        for subkey in self.xpath:
-            node = self._step_into(node, subkey)
-        return node
-
-    def set(self, value):  # noqa
-        node = self.config
-        for subkey in self.xpath[:-1]:
-            node = self._step_into(node, subkey)
-        node[self.xpath[-1]] = value
-
-    def remove(self):  # noqa
-        node = self.config
-        for subkey in self.xpath[:-1]:
-            node = self._step_into(node, subkey)
-        del node[self.xpath[-1]]
-
-    def __repr__(self):  # noqa
-        return _xpath_to_string(self.xpath)
 
 
 class ConfigExpander:
@@ -236,9 +169,9 @@ class ConfigExpander:
                             changed = True
 
                             node.replace_value(expanded_value)
-                            if _xpath_to_string(node.xpath) in (callbacks
+                            if xpath_to_string(node.xpath) in (callbacks
                                                                 or {}):
-                                callbacks[_xpath_to_string(
+                                callbacks[xpath_to_string(
                                     node.xpath)](expanded_value)
                 else:
                     raise CommandError("Should not reach here")

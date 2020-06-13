@@ -7,9 +7,9 @@ import sys
 
 from dodo_commands.dependencies.get import dotenv, yaml
 from dodo_commands.framework.command_error import CommandError
-from dodo_commands.framework.config_expander import ConfigExpander  # noqa
-from dodo_commands.framework.config_expander import Key, KeyNotFound
+from dodo_commands.framework.config_expander import ConfigExpander
 from dodo_commands.framework.config_io import ConfigIO
+from dodo_commands.framework.config_key import Key
 from dodo_commands.framework.global_config import create_global_config  # noqa
 from dodo_commands.framework.paths import Paths, _env
 

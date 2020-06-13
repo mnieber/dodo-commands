@@ -144,3 +144,7 @@ def maybe_list_to_list(maybe_list):
 
 def sh_cmd(cmd):
     return ['sh', '-c', cmd]
+
+
+def xpath_to_string(xpath):
+    return '/' + '/'.join([str(x) for x in xpath])
