@@ -10,28 +10,32 @@ from dodo_commands.framework.util import exe_exists
 tmux = plumbum.cmd.tmux
 
 
-def _session_id(category):
-    return os.path.expandvars('$USER') + "_" + category
-
-
 def _normalize(category):
-    return category.replace(' ', '-')
+    return category.replace(" ", "-")
 
 
 def _args():
-    command_map = Dodo.get('/MENU/commands', {})
+    command_map = Dodo.get("/MENU/commands", {})
+    default_session_id = Dodo.get("/MENU/session_id", os.path.expandvars("$USER"))
 
     parser = ArgumentParser()
-    parser.add_argument('category',
-                        choices=['all'] +
-                        list([_normalize(x) for x in command_map.keys()]),
-                        nargs='?')
-    parser.add_argument('--tmux', action='store_true')
-    parser.add_argument('--list', action='store_true')
-    parser.add_argument('--run', type=int, nargs='?', const=-1)
+    parser.add_argument(
+        "category",
+        choices=["all"] + list([_normalize(x) for x in command_map.keys()]),
+        nargs="?",
+    )
+    parser.add_argument("--tmux", action="store_true")
+    parser.add_argument("--list", action="store_true")
+    parser.add_argument("--run", type=int, nargs="?", const=-1)
+    parser.add_argument(
+        "--id",
+        dest="session_id",
+        default=default_session_id,
+        help="The tmux session id",
+    )
 
     args = Dodo.parse_args(parser)
-    args.category = args.category or 'all'
+    args.category = args.category or "all"
     args.run = -1 if args.run is None else args.run
     args.command_map = command_map
 
@@ -40,17 +44,14 @@ def _args():
 
 def _create_tmux_window(session_id):
     # Create tmux session
-    tmux('-2', 'new-session', '-d', '-s', session_id)
+    tmux("-2", "new-session", "-d", "-s", session_id)
 
     # Create a tmux window
-    tmux('new-window', '-t', '%s:1' % session_id, '-n', 'Logs')
+    tmux("new-window", "-t", "%s:1" % session_id, "-n", "Logs")
 
 
 def _get_categories(command_map, category):
-    return [
-        x for x in command_map
-        if category == 'all' or _normalize(x) == category
-    ]
+    return [x for x in command_map if category == "all" or _normalize(x) == category]
 
 
 def _get_commands_and_labels(command_map, category):
@@ -65,8 +66,7 @@ def _get_commands_and_labels(command_map, category):
         for command in command_map[category]:
             commands.append(command)
             format_string = "%02s [" + label_prefix + "] - %s"
-            labels.append(format_string %
-                          (str(len(commands)), category, command))
+            labels.append(format_string % (str(len(commands)), category, command))
 
     return commands, labels
 
@@ -80,9 +80,9 @@ def _get_selected_commands(commands, labels, allow_free_text=False):
             print()
 
         def question(self):
-            return (
-                'Select one or more commands (e.g. 1,3-4)%s or type 0 to exit: '
-                % (', or type a command,' if allow_free_text else ''))
+            return "Select one or more commands (e.g. 1,3-4)%s or type 0 to exit: " % (
+                ", or type a command," if allow_free_text else ""
+            )
 
         def on_invalid_index(self, index):
             if index == 0:
@@ -95,55 +95,56 @@ def _get_selected_commands(commands, labels, allow_free_text=False):
 
 if Dodo.is_main(__name__):
     args = _args()
-    check_exists = Dodo.get('/MENU/check_exists', '/')
+    check_exists = Dodo.get("/MENU/check_exists", "/")
     if not os.path.exists(check_exists):
         raise CommandError("Path %s does not exist" % check_exists)
 
-    commands, labels = _get_commands_and_labels(args.command_map,
-                                                args.category)
+    commands, labels = _get_commands_and_labels(args.command_map, args.category)
 
     if not commands:
-        raise CommandError(
-            "No commands were found in the /MENU configuration key")
+        raise CommandError("No commands were found in the /MENU configuration key")
 
     if args.list:
         print()
         for label in labels:
             print(label)
     elif args.tmux:
-        if not exe_exists('tmux'):
-            raise CommandError('Tmux is not installed on this sytem.')
+        if not exe_exists("tmux"):
+            raise CommandError("Tmux is not installed on this sytem.")
 
-        session_id = _session_id(args.category)
         has_session = False
         try:
-            sessions = tmux('ls')
-            for session in sessions.split('\n'):
-                has_session = has_session or session.startswith(
-                    '%s:' % session_id)
+            sessions = tmux("ls")
+            for session in sessions.split("\n"):
+                has_session = has_session or session.startswith("%s:" % args.session_id)
         except:  # noqa
             pass
 
         if not has_session:
-            _create_tmux_window(session_id)
-            tmux('send-keys', 'dodo menu --tmux %s' % args.category, 'C-m')
+            _create_tmux_window(args.session_id)
+            tmux("send-keys", " ".join(sys.argv), "C-m")
             # Attach to tmux session
             # HACK: why does this only work via Dodo.run?
-            Dodo.run(['tmux', '-2', 'attach-session', '-t', session_id], )
+            Dodo.run(["tmux", "-2", "attach-session", "-t", args.session_id],)
         else:
             while True:
+                tmux("send-keys", "-R", "")
                 selected_commands = _get_selected_commands(
-                    commands, labels, allow_free_text=True)
+                    commands, labels, allow_free_text=True
+                )
                 for command in selected_commands:
                     print(command)
-                    tmux('split-window', '-v')
-                    tmux('send-keys', command, 'C-m')
+                    tmux("split-window", "-v")
+                    tmux("send-keys", command, "C-m")
 
                 # Set default window
-                tmux('select-pane', '-t', '0')
-                tmux('select-layout', 'tile')
+                tmux("select-pane", "-t", "0")
+                tmux("select-layout", "tile")
     else:
-        selected_commands = (_get_selected_commands(commands, labels)
-                             if args.run == -1 else [commands[args.run - 1]])
+        selected_commands = (
+            _get_selected_commands(commands, labels)
+            if args.run == -1
+            else [commands[args.run - 1]]
+        )
         for command in selected_commands:
-            Dodo.run(['bash', '-c', command])
+            Dodo.run(["bash", "-c", command])
