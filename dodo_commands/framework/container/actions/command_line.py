@@ -60,6 +60,7 @@ def action_expand_and_autocomplete_command_name(ctr):
         command_aliases,
         layer_name_by_inferred_command,
         layer_props_by_layer_name,
+        layer_by_target_path,
     ):
         completed_command_name = (
             handle_arg_complete(
@@ -67,7 +68,8 @@ def action_expand_and_autocomplete_command_name(ctr):
                 inferred_command_names=list(
                     layer_name_by_inferred_command.keys()),
                 command_aliases=list(command_aliases.keys()),
-                layer_props_by_layer_name=layer_props_by_layer_name)
+                layer_props_by_layer_name=layer_props_by_layer_name,
+                layer_by_target_path=layer_by_target_path)
             #
             if "_ARGCOMPLETE" in os.environ else
             #
@@ -92,6 +94,7 @@ def action_expand_and_autocomplete_command_name(ctr):
                      i_(Commands, 'aliases', alt_name='command_aliases'),
                      i_(Commands, 'layer_name_by_inferred_command'),
                      i_(Layers, 'layer_props_by_layer_name'),
+                     i_(Layers, 'layer_by_target_path'),
                      o_(CommandLine, 'input_args'),
                      o_(CommandLine, 'command_name'),
                      o_(CommandLine, 'more_given_layer_paths'),

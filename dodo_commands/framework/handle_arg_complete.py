@@ -3,13 +3,14 @@ from argparse import ArgumentParser
 
 from dodo_commands.dependencies.get import argcomplete, funcy
 from dodo_commands.framework.config_layers import get_conflicts_in_layer_paths
-from dodo_commands.framework.funcy import map_with, remove_if, str_split_at
+from dodo_commands.framework.funcy import (drill, map_with, remove_if,
+                                           str_split_at)
 
 distinct, flatten = funcy.distinct, funcy.flatten
 
 
 def handle_arg_complete(command_names, inferred_command_names, command_aliases,
-                        layer_props_by_layer_name):
+                        layer_props_by_layer_name, layer_by_target_path):
     def get_args():
         return os.environ['COMP_LINE'].split()
 
@@ -30,8 +31,15 @@ def handle_arg_complete(command_names, inferred_command_names, command_aliases,
     used_layer_names = get_used_layer_names(command_prefix)
 
     def get_commands():
+        more_aliases = []
+        for layer_name in used_layer_names:
+            layer_props = layer_props_by_layer_name[layer_name]
+            layer = layer_by_target_path[layer_props.target_path]
+            aliases = drill(layer, 'ROOT', 'aliases', default={})
+            more_aliases.extend(aliases.keys())
+
         return distinct(command_names + inferred_command_names +
-                        command_aliases)
+                        command_aliases + more_aliases)
 
     def get_choices(commands):
         return [(command_prefix + x) for x in commands]
