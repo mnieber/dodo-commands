@@ -63,5 +63,5 @@ if Dodo.is_main(__name__):
         '-t',
     ] + (['--user', args.user] if args.user else []) + [
         args.name,
-        args.cmd,
+        *args.cmd.split(),
     ], )
