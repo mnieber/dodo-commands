@@ -1,3 +1,5 @@
+import sys
+
 from dodo_commands.framework.container import actions, facets
 from dodo_commands.framework.paths import Paths
 
@@ -38,3 +40,7 @@ class Container:
         if self.command_line.more_given_layer_paths:
             actions.layers.action_select_layers(self)
             actions.config.action_build_from_selected_layers(self)
+
+        if self.config.warnings:
+            for warning in self.config.warnings:
+                sys.stderr.write(warning)

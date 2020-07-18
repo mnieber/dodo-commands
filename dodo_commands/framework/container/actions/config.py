@@ -29,18 +29,16 @@ def action_build_from_selected_layers(ctr):
         def get_selected_layers():
             return selected_layer_by_path.values()
 
-        def _build_config(layers):
-            return build_config(layers)
-
         x = get_selected_layers()
         # [layer]
-        config = build_config(x)
+        config, warnings = build_config(x)
         config = extend_command_path(config)
         transform_prefixes_in_aliases(config, layer_props_by_layer_name)
 
-        return (config, )
+        return (config, warnings)
 
     return map_datas(i_(Layers, 'selected_layer_by_path'),
                      i_(Layers, 'layer_props_by_layer_name'),
                      o_(Config, 'config'),
+                     o_(Config, 'warnings'),
                      transform=transform)(ctr)

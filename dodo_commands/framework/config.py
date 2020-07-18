@@ -99,7 +99,7 @@ def check_conflicts(layer_paths):
     return layer_paths
 
 
-def build_config(layers, warn=True):
+def build_config(layers):
     config = {'ROOT': {}}
     for layer in layers:
         merge_into_config(config, layer)
@@ -117,11 +117,11 @@ def build_config(layers, warn=True):
     for idx, _ in enumerate(config['ROOT'].get('dotenv_files', [])):
         callbacks['/ROOT/dotenv_files/%d' % idx] = _load_env
 
-    ConfigExpander(extra_vars, warn=warn).run(config, callbacks=callbacks)
-    return config
+    warnings = ConfigExpander(extra_vars).run(config, callbacks=callbacks)
+    return (config, warnings)
 
 
-def load_config(layer_filenames, config_io=None, warn=True):
+def load_config(layer_filenames, config_io=None):
     layers = []
     config_io = config_io or ConfigIO()
     try:
@@ -132,7 +132,8 @@ def load_config(layer_filenames, config_io=None, warn=True):
                 "Run 'dodo diff' to compare your configuration to the "
                 "default one.\n")
 
-    return build_config(layers, warn)
+    config, warnings = build_config(layers)
+    return config
 
 
 def expand_keys(config, text):

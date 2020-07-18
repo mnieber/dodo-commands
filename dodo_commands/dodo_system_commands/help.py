@@ -90,7 +90,7 @@ def _collect_command_dirs(config, config_io, layer_names_by_command_dir,
         extra_layers = map_with(config_io.load)(layer_filenames)
         if keep_if(has_command_path)(extra_layers):
             base_config = yaml_round_trip_load(config_memo)
-            updated_config = build_config([base_config] + extra_layers)
+            updated_config, warnings = build_config([base_config] + extra_layers)
             for command_dir in get_command_dirs_from_config(updated_config):
                 layer_names = layer_names_by_command_dir[command_dir]
                 _add_to_layer_names(layer_names, layer_name)

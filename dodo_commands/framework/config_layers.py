@@ -8,7 +8,7 @@ from dodo_commands.framework.funcy import (drill, ds, for_each, keep_if,
 distinct, flatten = funcy.distinct, funcy.flatten
 
 
-def layer_filename_superset(layer_filenames, config_io, recursive=True):
+def layer_filename_superset(layer_filenames, config_io):
     selected_layer_by_path = OrderedDict()
 
     def load_layers(layer_paths):

@@ -1,6 +1,5 @@
 import os
 import re
-import sys
 
 from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.config_key import Key
@@ -18,7 +17,8 @@ class DictKey:
 
     def warning_msg_not_expanded(self):
         return "Unexpanded key {key} at location {xpath}".format(
-            key=self.key, xpath=xpath_to_string(self.xpath))
+            key=self.key, xpath=xpath_to_string(self.xpath)
+        )
 
     def create_dict_val(self, expanded_key):  # noqa
         if expanded_key != self.key:
@@ -41,7 +41,8 @@ class DictVal:
 
     def warning_msg_not_expanded(self):
         return "Unexpanded value {val} at location {xpath}".format(
-            val=self.get_value(), xpath=xpath_to_string(self.xpath))
+            val=self.get_value(), xpath=xpath_to_string(self.xpath)
+        )
 
     def __repr__(self):  # noqa
         return "DV[%s]" % self.key
@@ -61,7 +62,8 @@ class ListVal:
 
     def warning_msg_not_expanded(self):
         return "Unexpanded value {val} at location {xpath}".format(
-            val=self.get_value(), xpath=xpath_to_string(self.xpath))
+            val=self.get_value(), xpath=xpath_to_string(self.xpath)
+        )
 
     def __repr__(self):  # noqa
         return "L[%s]" % self.idx
@@ -72,27 +74,26 @@ class ConfigExpander:
 
     _key_regexp = r"\$\{(/[^\}]*)\}"
 
-    def __init__(self, extra_vars=None, warn=True):
+    def __init__(self, extra_vars=None):
         self.extra_vars = extra_vars or {}
-        self.warn = warn
 
     def _expand_str(self, current_str):
         expanded_str = current_str
-        key_expressions = [
-            x for x in re.finditer(self._key_regexp, current_str)
-        ]
+        key_expressions = [x for x in re.finditer(self._key_regexp, current_str)]
         known_strs = []
 
-        while (key_expressions):
+        while key_expressions:
             changed = False
             for key_expression in reversed(key_expressions):
                 xpath_string = key_expression.group(1)
 
                 key = Key(self.config, xpath_string)
                 if key.exists():
-                    expanded_str = (expanded_str[:key_expression.start()] +
-                                    str(key.get()) +
-                                    expanded_str[key_expression.end():])
+                    expanded_str = (
+                        expanded_str[: key_expression.start()]
+                        + str(key.get())
+                        + expanded_str[key_expression.end() :]
+                    )
 
                     if expanded_str not in known_strs:
                         known_strs.append(expanded_str)
@@ -102,17 +103,13 @@ class ConfigExpander:
                 return None
 
             current_str = expanded_str
-            key_expressions = [
-                x for x in re.finditer(self._key_regexp, current_str)
-            ]
+            key_expressions = [x for x in re.finditer(self._key_regexp, current_str)]
 
         with EnvironMemo(self.extra_vars):
             expanded_str = os.path.expandvars(expanded_str)
 
         env_key_regexp = r"\$\{([^\}]*)\}"
-        env_key_expressions = [
-            x for x in re.finditer(env_key_regexp, expanded_str)
-        ]
+        env_key_expressions = [x for x in re.finditer(env_key_regexp, expanded_str)]
         return expanded_str if not env_key_expressions else None
 
     def _expand(self, raw_obj):
@@ -123,10 +120,7 @@ class ConfigExpander:
             return [self._expand(x) for x in raw_obj]
 
         if isinstance(raw_obj, dict):
-            return {
-                self._expand(k): self._expand(v)
-                for k, v in raw_obj.items()
-            }
+            return {self._expand(k): self._expand(v) for k, v in raw_obj.items()}
 
         return raw_obj
 
@@ -169,16 +163,12 @@ class ConfigExpander:
                             changed = True
 
                             node.replace_value(expanded_value)
-                            if xpath_to_string(node.xpath) in (callbacks
-                                                                or {}):
-                                callbacks[xpath_to_string(
-                                    node.xpath)](expanded_value)
+                            if xpath_to_string(node.xpath) in (callbacks or {}):
+                                callbacks[xpath_to_string(node.xpath)](expanded_value)
                 else:
                     raise CommandError("Should not reach here")
 
             nodes = new_nodes
 
-        if self.warn:
-            for node in nodes:
-                sys.stderr.write("Warning: %s\n" %
-                                 node.warning_msg_not_expanded())
+        warnings = ["Warning: %s\n" % node.warning_msg_not_expanded() for node in nodes]
+        return warnings
