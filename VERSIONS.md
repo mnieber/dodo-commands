@@ -1,5 +1,12 @@
 # Version history
 
+## 0.34.0
+
+- Add command docker-restart
+- Fix: not all aliases were proposed in expand action
+- Fix docker-exec when commands has multiple terms
+- Use groups inside /DIAL
+
 ## 0.33.0
 
 - Add option --use-python-env to dodo env
