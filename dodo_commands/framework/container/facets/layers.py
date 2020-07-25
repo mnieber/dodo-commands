@@ -1,6 +1,6 @@
+from dodo_commands.framework import ramda as R
 from dodo_commands.framework.command_error import CommandError  # noqa
 from dodo_commands.framework.config_io import ConfigIO
-from dodo_commands.framework.funcy import drill
 
 
 class LayerConfig:
@@ -22,7 +22,7 @@ class Layers:
     def layer_props_by_layer_name(self):
         result = {}
 
-        groups = drill(self.root_layer, 'LAYER_GROUPS', default={})
+        groups = R.path_or({}, 'LAYER_GROUPS')(self.root_layer)
         for group_name, group in groups.items():
             for group_item in group:
 

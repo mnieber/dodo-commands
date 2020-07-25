@@ -1,8 +1,5 @@
-from dodo_commands.dependencies.get import funcy
+from dodo_commands.framework import ramda as R
 from dodo_commands.framework.command_error import CommandError
-from dodo_commands.framework.funcy import drill, for_each
-
-distinct, merge = funcy.distinct, funcy.merge
 
 
 def get_inferred_command_map(
@@ -18,13 +15,13 @@ def get_inferred_command_map(
             return layer_by_target_path[layer_props.target_path]
 
         def get_cmd_aliases(layer):
-            command_aliases = drill(layer, 'ROOT', 'aliases', default={})
+            command_aliases = R.path_or({}, 'ROOT', 'aliases')(layer)
             for alias, target in global_aliases.items():
                 if alias in command_aliases:
                     raise CommandError(
                         "Ambigous command alias %s, could be %s or %s" %
                         (alias, target, command_aliases[alias]))
-            return merge(command_aliases, global_aliases)
+            return R.merge(command_aliases, global_aliases)
 
         def get_inferred_aliases(command_aliases, inferred_commands):
             return list(alias for alias in command_aliases.keys()
@@ -32,7 +29,7 @@ def get_inferred_command_map(
 
         def get_inferred_commands_and_aliases(inferred_commands,
                                               inferred_aliases):
-            return distinct(inferred_commands + inferred_aliases)
+            return R.uniq(inferred_commands + inferred_aliases)
 
         def do_store(inferred_command):
             if inferred_command in layer_name_by_inferred_command:
@@ -50,6 +47,6 @@ def get_inferred_command_map(
             command_aliases, layer_props.inferred_commands)
         x = get_inferred_commands_and_aliases(layer_props.inferred_commands,
                                               inferred_aliases)
-        for_each(do_store)(x)
+        R.for_each(do_store)(x)
 
     return layer_name_by_inferred_command

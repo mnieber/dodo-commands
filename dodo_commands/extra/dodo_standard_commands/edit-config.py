@@ -2,14 +2,14 @@ import sys
 from argparse import ArgumentParser
 
 from dodo_commands import CommandError, Dodo
-from dodo_commands.dependencies.get import funcy, six
+from dodo_commands.dependencies.get import six
+from dodo_commands.framework import ramda as R
 from dodo_commands.framework.config_io import ConfigIO
 from dodo_commands.framework.config_key import Key
 from dodo_commands.framework.container.utils import get_ordered_layer_paths
 from dodo_commands.framework.global_config import load_global_config_parser
 from dodo_commands.framework.paths import Paths
 
-concat = funcy.concat
 configparser = six.moves.configparser
 
 
@@ -50,7 +50,7 @@ if Dodo.is_main(__name__, safe=('--key' not in sys.argv)):
         sys.exit(0)
 
     def add_global_config_filename(layer_paths):
-        return concat(layer_paths, [Paths().global_config_filename()])
+        return R.concat(layer_paths, [Paths().global_config_filename()])
 
     x = get_ordered_layer_paths(Dodo.get_container())
     x = add_global_config_filename(x)

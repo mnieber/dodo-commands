@@ -6,11 +6,11 @@ from collections import defaultdict
 from dodo_commands import Dodo
 from dodo_commands.dependencies import (yaml_round_trip_dump,
                                         yaml_round_trip_load)
+from dodo_commands.framework import ramda as R
 from dodo_commands.framework.command_map import get_command_map
 from dodo_commands.framework.command_path import get_command_dirs_from_config
 from dodo_commands.framework.config import build_config
 from dodo_commands.framework.config_layers import layer_filename_superset
-from dodo_commands.framework.funcy import drill, keep_if, map_with
 from dodo_commands.framework.version import get_version
 
 
@@ -83,12 +83,12 @@ def _collect_command_dirs(config, config_io, layer_names_by_command_dir,
     for layer_name, layer_props in layer_props_by_layer_name.items():
 
         def has_command_path(layer):
-            return drill(layer, 'ROOT', 'command_path', default=None)
+            return R.path_or(None, 'ROOT', 'command_path')(layer)
 
         layer_filenames = layer_filename_superset([layer_props.target_path],
                                                   config_io=config_io)
-        extra_layers = map_with(config_io.load)(layer_filenames)
-        if keep_if(has_command_path)(extra_layers):
+        extra_layers = R.map(config_io.load)(layer_filenames)
+        if R.filter(has_command_path)(extra_layers):
             base_config = yaml_round_trip_load(config_memo)
             updated_config, warnings = build_config([base_config] + extra_layers)
             for command_dir in get_command_dirs_from_config(updated_config):

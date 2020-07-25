@@ -1,21 +1,23 @@
 import os
 from argparse import ArgumentParser
 
-from dodo_commands.dependencies.get import argcomplete, funcy
+from dodo_commands.dependencies.get import argcomplete
+from dodo_commands.framework import ramda as R
 from dodo_commands.framework.config_layers import get_conflicts_in_layer_paths
-from dodo_commands.framework.funcy import (drill, map_with, remove_if,
-                                           str_split_at)
-
-distinct, flatten = funcy.distinct, funcy.flatten
 
 
-def handle_arg_complete(command_names, inferred_command_names, command_aliases,
-                        layer_props_by_layer_name, layer_by_target_path):
+def handle_arg_complete(
+    command_names,
+    inferred_command_names,
+    command_aliases,
+    layer_props_by_layer_name,
+    layer_by_target_path,
+):
     def get_args():
-        return os.environ['COMP_LINE'].split()
+        return os.environ["COMP_LINE"].split()
 
     def get_prefix_and_command(args):
-        return str_split_at(args[1], args[1].rfind('.') + 1)
+        return R.split(args[1].rfind(".") + 1)(args[1])
 
     input_args = get_args()
     full_command_name = input_args[1]
@@ -23,10 +25,7 @@ def handle_arg_complete(command_names, inferred_command_names, command_aliases,
     (command_prefix, command_name) = get_prefix_and_command(input_args)
 
     def get_used_layer_names(command_prefix):
-        return [
-            x for x in command_prefix.split('.')
-            if x in layer_props_by_layer_name
-        ]
+        return [x for x in command_prefix.split(".") if x in layer_props_by_layer_name]
 
     used_layer_names = get_used_layer_names(command_prefix)
 
@@ -35,11 +34,12 @@ def handle_arg_complete(command_names, inferred_command_names, command_aliases,
         for layer_name in used_layer_names:
             layer_props = layer_props_by_layer_name[layer_name]
             layer = layer_by_target_path[layer_props.target_path]
-            aliases = drill(layer, 'ROOT', 'aliases', default={})
+            aliases = R.path_or({}, "ROOT", "aliases")(layer)
             more_aliases.extend(aliases.keys())
 
-        return distinct(command_names + inferred_command_names +
-                        command_aliases + more_aliases)
+        return R.uniq(
+            command_names + inferred_command_names + command_aliases + more_aliases
+        )
 
     def get_choices(commands):
         return [(command_prefix + x) for x in commands]
@@ -54,8 +54,7 @@ def handle_arg_complete(command_names, inferred_command_names, command_aliases,
         return layer_name in used_layer_names
 
     def is_conflicting(layer_name):
-        used_layer_props = map_with(layer_props_by_layer_name)(
-            used_layer_names)
+        used_layer_props = R.map(layer_props_by_layer_name)(used_layer_names)
         used_layer_paths = [x.target_path for x in used_layer_props]
 
         layer_path = layer_props_by_layer_name[layer_name].target_path
@@ -66,21 +65,22 @@ def handle_arg_complete(command_names, inferred_command_names, command_aliases,
 
     x = get_possible_layer_names()
     # [layer_name]
-    x = remove_if(is_already_used)(x)
+    x = R.remove_if(is_already_used)(x)
     # [layer_name]
-    x = remove_if(is_conflicting)(x)
+    x = R.remove_if(is_conflicting)(x)
     # [layer_name]
-    new_choices = map_with(map_to_choices)(x)
+    new_choices = R.map(map_to_choices)(x)
     # [[new_choice]]
-    choices += flatten(new_choices)
+    choices += R.flatten(new_choices)
 
     if full_command_name not in choices:
         parser = ArgumentParser()
-        parser.add_argument('command', choices=choices)
+        parser.add_argument("command", choices=choices)
         argcomplete.autocomplete(parser)
 
-    os.environ['COMP_LINE'] = ' '.join(input_args[:1] + input_args[2:])
-    os.environ['COMP_POINT'] = str(
-        int(os.environ['COMP_POINT']) - (len(full_command_name) + 1))
+    os.environ["COMP_LINE"] = " ".join(input_args[:1] + input_args[2:])
+    os.environ["COMP_POINT"] = str(
+        int(os.environ["COMP_POINT"]) - (len(full_command_name) + 1)
+    )
 
     return command_name

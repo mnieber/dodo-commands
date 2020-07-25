@@ -1,8 +1,9 @@
-from .layers import Layers, init_layers  # noqa
+from dodo_commands.framework import ramda as R
+
 from .command_line import CommandLine, init_command_line  # noqa
-from .config import Config  # noqa
 from .commands import Commands, init_commands  # noqa
-from dodo_commands.framework.funcy import (ds, for_each, keep_if)
+from .config import Config  # noqa
+from .layers import Layers, init_layers  # noqa
 
 
 def i_(facet_class, member, prefix=None, alt_name=None):
@@ -29,9 +30,9 @@ def map_datas(*args, transform=None):
 
         x = args
         # [(in | out, facet_class, member)]
-        x = keep_if(is_input)(x)
+        x = R.filter(is_input)(x)
         # [(in | out, facet_class, member)]
-        x = for_each(do_add_to_kwargs)(x)
+        x = R.for_each(do_add_to_kwargs)(x)
         # [value]
         output_values = transform(**kwargs)
 
@@ -48,10 +49,10 @@ def map_datas(*args, transform=None):
 
         x = args
         # [(in | out, facet_class, member)]
-        x = keep_if(is_output)(x)
+        x = R.filter(is_output)(x)
         # [(in | out, facet_class, member)]
         x = zip_with_output_values(x)
         # [((in | out, facet_class, member), output_value)]
-        for_each(ds(do_store))(x)
+        R.for_each(R.ds(do_store))(x)
 
     return action

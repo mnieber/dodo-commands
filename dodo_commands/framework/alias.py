@@ -1,7 +1,7 @@
 import sys
 
+from dodo_commands.framework import ramda as R
 from dodo_commands.framework.command_error import CommandError
-from dodo_commands.framework.funcy import ds, for_each, map_with
 
 
 def load_named_layers(
@@ -36,10 +36,10 @@ def load_named_layers(
 
     x = get_target_paths_and_layer_names()
     # [path, layer_name]
-    x = for_each(ds(do_check_valid_target_path))(x)
+    x = R.for_each(R.ds(do_check_valid_target_path))(x)
     # [path, layer_name]
-    x = map_with(ds(add_layer))(x)
+    x = R.map(R.ds(add_layer))(x)
     # [(path, layer_name, layer)]
-    for_each(ds(do_store))(x)
+    R.for_each(R.ds(do_store))(x)
 
     return layer_by_target_path

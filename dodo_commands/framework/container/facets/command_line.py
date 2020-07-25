@@ -2,10 +2,7 @@ import argparse
 import os
 import sys
 
-from dodo_commands.dependencies.get import funcy
-from dodo_commands.framework.funcy import keep_truthy, str_split_at
-
-cut_suffix, distinct = funcy.cut_suffix, funcy.distinct
+from dodo_commands.framework import ramda as R
 
 
 class CommandLine:
@@ -23,8 +20,12 @@ class CommandLine:
 
     @property
     def layer_paths(self):
-        return distinct(self.inferred_layer_paths + self.expanded_layer_paths +
-                        self.given_layer_paths + self.more_given_layer_paths)
+        return R.uniq(
+            self.inferred_layer_paths
+            + self.expanded_layer_paths
+            + self.given_layer_paths
+            + self.more_given_layer_paths
+        )
 
     @property
     def _split_input1(self):
@@ -33,8 +34,8 @@ class CommandLine:
         # When running directly from a script, then we know the command was not
         # prefixed with layer names.
         if self.is_running_directly_from_script:
-            return '', cut_suffix(input1, '.py')
-        return str_split_at(input1, input1.rfind('.') + 1)
+            return "", R.cut_suffix(input1, ".py")
+        return R.split(input1.rfind(".") + 1)(input1)
 
     @property
     def raw_command_name(self):
@@ -46,10 +47,10 @@ class CommandLine:
 
     @property
     def layer_names(self):
-        return distinct(keep_truthy()(self.raw_command_prefix.split('.')))
+        return R.uniq(R.filter(bool)(self.raw_command_prefix.split(".")))
 
     def get_trace(self):
-        args = [x for x in self.input_args if x != '--trace']
+        args = [x for x in self.input_args if x != "--trace"]
         args[1] = self.command_name
         args.extend(["--layer=%s" % x for x in self.layer_paths])
         return args
@@ -60,23 +61,25 @@ class CommandLine:
 
 
 def init_command_line(self):
-    self.is_running_directly_from_script = '__DODO__' not in os.environ
+    self.is_running_directly_from_script = "__DODO__" not in os.environ
     parser = argparse.ArgumentParser()
     args = (
         # If a dodo script was called directly via the python interpreter,
         # then add sys.executable to make all calls look similar
         [sys.executable, *sys.argv]
-        if self.is_running_directly_from_script else
+        if self.is_running_directly_from_script
+        else
         #
-        sys.argv)
+        sys.argv
+    )
 
-    if '--help' in args:
-        if not ('--' in args and args.index('--') < args.index('--help')):
+    if "--help" in args:
+        if not ("--" in args and args.index("--") < args.index("--help")):
             self.is_help = True
-            args = [x for x in args if x != '--help']
+            args = [x for x in args if x != "--help"]
 
-    parser.add_argument('-L', '--layer', action='append')
-    parser.add_argument('--trace', action='store_true')
+    parser.add_argument("-L", "--layer", action="append")
+    parser.add_argument("--trace", action="store_true")
 
     known_args, args = parser.parse_known_args(args)
 

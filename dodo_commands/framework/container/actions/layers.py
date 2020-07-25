@@ -1,12 +1,10 @@
 from collections import OrderedDict
 
-from dodo_commands.dependencies.get import funcy
+from dodo_commands.framework import ramda as R
 from dodo_commands.framework.alias import load_named_layers
 from dodo_commands.framework.config_layers import layer_filename_superset
 from dodo_commands.framework.container.facets import (CommandLine, Layers, i_,
                                                       map_datas, o_)
-
-distinct = funcy.distinct
 
 
 # LAYERS
@@ -52,7 +50,7 @@ def action_select_layers(ctr):
         command_line_layer_paths,
     ):
         all_layer_paths = layer_filename_superset(
-            distinct([root_layer_path] + command_line_layer_paths),
+            R.uniq([root_layer_path] + command_line_layer_paths),
             config_io=config_io)
 
         selected_layer_by_path = OrderedDict()

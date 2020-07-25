@@ -2,14 +2,13 @@ import os
 from argparse import ArgumentParser
 
 from dodo_commands import CommandError, Dodo
-from dodo_commands.dependencies.get import funcy, six
+from dodo_commands.dependencies.get import six
+from dodo_commands.framework import ramda as R
 from dodo_commands.framework.choice_picker import ChoicePicker
 from dodo_commands.framework.command_map import get_command_map
 from dodo_commands.framework.command_path import get_command_dirs_from_config
 from dodo_commands.framework.config_io import ConfigIO
-from dodo_commands.framework.funcy import map_with
 
-cut_prefix = funcy.cut_prefix
 raw_input = six.moves.input
 
 
@@ -93,7 +92,7 @@ def get_command_dir(command_dirs):
         picker.pick()
         return picker.get_idxs0()[0]
 
-    choices = map_with(map_to_choice)(command_dirs) + [
+    choices = R.map(map_to_choice)(command_dirs) + [
         "create a new commands dir"
     ]
     choice_idx0 = get_choice_idx0(choices)
@@ -218,14 +217,14 @@ def handle_interactive(parsed_args):
             arg_name = arg.split('=')[0]
 
             clean_name = arg_name
-            clean_name = cut_prefix(clean_name, '--')
-            clean_name = cut_prefix(clean_name, '-')
+            clean_name = R.cut_prefix(clean_name, '--')
+            clean_name = R.cut_prefix(clean_name, '-')
 
             return (arg_name, arg, clean_name)
 
         raw_args = raw_input("Enter a command line to run inside the script: ")
         raw_args = raw_args.split(' ')
-        return map_with(map_to_split_arg)(raw_args)
+        return R.map(map_to_split_arg)(raw_args)
 
     command_dirs = Dodo.get_container().commands.command_dirs
     command_dir = get_command_dir(command_dirs)

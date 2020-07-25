@@ -1,7 +1,5 @@
-from dodo_commands.dependencies.get import funcy
+from dodo_commands.framework import ramda as R
 from dodo_commands.framework.global_config import load_global_config_parser
-
-merge = funcy.merge
 
 
 class Commands:
@@ -14,7 +12,7 @@ class Commands:
 
     @property
     def aliases(self):
-        return merge(self.global_aliases, self.aliases_from_config)
+        return R.merge(self.global_aliases, self.aliases_from_config)
 
     @staticmethod
     def get(ctr):

@@ -1,11 +1,11 @@
 import argparse
 import os
 
+from dodo_commands.framework import ramda as R
 from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.container.facets import (CommandLine, Commands,
                                                       Layers, i_, map_datas,
                                                       o_)
-from dodo_commands.framework.funcy import map_with
 from dodo_commands.framework.handle_arg_complete import handle_arg_complete
 
 
@@ -23,7 +23,7 @@ def action_get_expanded_layer_paths(ctr):
                                    (layer_name, ", ".join(known_layer_names)))
             return layer_props_by_layer_name[layer_name].target_path
 
-        return (map_with(map_to_path)(layer_names), )
+        return (R.map(map_to_path)(layer_names), )
 
     return map_datas(i_(CommandLine, 'layer_names'),
                      i_(Layers, 'layer_props_by_layer_name'),
