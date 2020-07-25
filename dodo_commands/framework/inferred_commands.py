@@ -1,5 +1,6 @@
 from dodo_commands.framework import ramda as R
 from dodo_commands.framework.command_error import CommandError
+from dodo_commands.framework.get_aliases import get_aliases
 
 
 def get_inferred_command_map(
@@ -15,7 +16,7 @@ def get_inferred_command_map(
             return layer_by_target_path[layer_props.target_path]
 
         def get_cmd_aliases(layer):
-            command_aliases = R.path_or({}, 'ROOT', 'aliases')(layer)
+            command_aliases = get_aliases(layer)
             for alias, target in global_aliases.items():
                 if alias in command_aliases:
                     raise CommandError(

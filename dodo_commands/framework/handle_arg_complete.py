@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 from dodo_commands.dependencies.get import argcomplete
 from dodo_commands.framework import ramda as R
 from dodo_commands.framework.config_layers import get_conflicts_in_layer_paths
+from dodo_commands.framework.get_aliases import get_aliases
 
 
 def handle_arg_complete(
@@ -34,8 +35,7 @@ def handle_arg_complete(
         for layer_name in used_layer_names:
             layer_props = layer_props_by_layer_name[layer_name]
             layer = layer_by_target_path[layer_props.target_path]
-            aliases = R.path_or({}, "ROOT", "aliases")(layer)
-            more_aliases.extend(aliases.keys())
+            more_aliases.extend(get_aliases(layer).keys())
 
         return R.uniq(
             command_names + inferred_command_names + command_aliases + more_aliases
