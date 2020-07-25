@@ -96,7 +96,7 @@ def _collect_command_dirs(config, config_io, layer_names_by_command_dir,
                 _add_to_layer_names(layer_names, layer_name)
 
         layer = layer_by_target_path[layer_props.target_path]
-        for command_alias in layer.get('ROOT', {}).get('aliases', {}).items():
+        for command_alias in R.path_or({}, 'ROOT', 'aliases')(layer).items():
             alias_prefix = (
                 "" if command_alias[0] in layer_props.inferred_commands else
                 (layer_name + "."))
