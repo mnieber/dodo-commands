@@ -23,10 +23,6 @@ class Key:
         self.xpath = split_on_slash(xpath_or_str) if isinstance(
             xpath_or_str, str) else xpath_or_str
 
-    def child(self, subkey):
-        """Return key for child with subkey."""
-        return Key(self.config, list(self.xpath) + [subkey])
-
     def _step_into(self, node, subkey):
         try:
             if isinstance(node, type(dict())):
