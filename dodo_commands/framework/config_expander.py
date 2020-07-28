@@ -69,17 +69,20 @@ class ListVal:
         return "L[%s]" % self.idx
 
 
+def get_key_expressions(search_string, key_regexp=r"\$\{(/[^\}]*)\}"):
+    return [x for x in re.finditer(key_regexp, search_string)]
+
+
 class ConfigExpander:
     """Expand environment variables and references in the config."""
 
-    _key_regexp = r"\$\{(/[^\}]*)\}"
 
     def __init__(self, extra_vars=None):
         self.extra_vars = extra_vars or {}
 
     def _expand_str(self, current_str):
         expanded_str = current_str
-        key_expressions = [x for x in re.finditer(self._key_regexp, current_str)]
+        key_expressions = get_key_expressions(current_str)
         known_strs = []
 
         while key_expressions:
@@ -103,13 +106,12 @@ class ConfigExpander:
                 return None
 
             current_str = expanded_str
-            key_expressions = [x for x in re.finditer(self._key_regexp, current_str)]
+            key_expressions = get_key_expressions(current_str)
 
         with EnvironMemo(self.extra_vars):
             expanded_str = os.path.expandvars(expanded_str)
 
-        env_key_regexp = r"\$\{([^\}]*)\}"
-        env_key_expressions = [x for x in re.finditer(env_key_regexp, expanded_str)]
+        env_key_expressions = get_key_expressions(expanded_str, r"\$\{([^\}]*)\}")
         return expanded_str if not env_key_expressions else None
 
     def _expand(self, raw_obj):
