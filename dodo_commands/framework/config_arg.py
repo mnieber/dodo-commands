@@ -1,5 +1,7 @@
 import sys
 
+from dodo_commands.framework.config import expand_keys
+from dodo_commands.framework.config_expander import get_key_expressions
 from dodo_commands.framework.config_key import Key
 
 
@@ -8,6 +10,7 @@ class ConfigArg:
         self.config_key = config_key
         self.args = args
         self.kwargs = kwargs
+        self.use_eval = bool(get_key_expressions(config_key))
 
     @property
     def arg_name(self):
@@ -17,9 +20,13 @@ class ConfigArg:
         return Key(config, self.config_key)
 
     def exists(self, config):
+        if self.use_eval:
+            return self.get(config) is not None
         return self._key(config).exists()
 
     def get(self, config):
+        if self.use_eval:
+            return expand_keys(config, self.config_key)
         return self._key(config).get()
 
 
