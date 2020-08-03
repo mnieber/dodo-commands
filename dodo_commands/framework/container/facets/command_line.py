@@ -3,6 +3,7 @@ import os
 import sys
 
 from dodo_commands.framework import ramda as R
+from dodo_commands.framework.container.utils import rearrange_double_dash
 
 
 class CommandLine:
@@ -62,25 +63,21 @@ class CommandLine:
 def init_command_line(self):
     self.is_running_directly_from_script = "__DODO__" not in os.environ
     parser = argparse.ArgumentParser()
-    args = (
-        # If a dodo script was called directly via the python interpreter,
-        # then add sys.executable to make all calls look similar
-        [sys.executable, *sys.argv]
-        if self.is_running_directly_from_script
-        else
-        #
-        sys.argv
-    )
-
-    if "--help" in args:
-        if not ("--" in args and args.index("--") < args.index("--help")):
-            self.is_help = True
-            args = [x for x in args if x != "--help"]
-
     parser.add_argument("-L", "--layer", action="append")
     parser.add_argument("--trace", action="store_true")
 
-    known_args, args = parser.parse_known_args(args)
+    self.is_help = "--help" in sys.argv and not (
+        "--" in sys.argv and sys.argv.index("--") < sys.argv.index("--help")
+    )
+
+    known_args, args = R.pipe(
+        R.always(rearrange_double_dash(sys.argv)),
+        R.when(
+            R.always(self.is_running_directly_from_script), R.prepend(sys.executable)
+        ),
+        R.when(R.always(self.is_help), R.filter(lambda x: x != "--help")),
+        parser.parse_known_args,
+    )(None)
 
     self.given_layer_paths = known_args.layer or []
     self.is_trace = known_args.trace

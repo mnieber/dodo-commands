@@ -1,4 +1,5 @@
 import os
+import sys
 
 from dodo_commands.framework import ramda as R
 
@@ -17,3 +18,16 @@ def get_ordered_layer_paths(ctr):
     x = R.concat([root_layer_path], x)
 
     return x
+
+
+# if there are two args that equal "--" then we assume that everything
+# behind the second instance of "--" is a part of the "left side" of the
+# command line
+def rearrange_double_dash(args):
+    left, rest = R.split_when(R.equals("--"), args)
+    middle, right = [], []
+    if rest:
+        middle, rest = R.split_when(R.equals("--"), rest[1:])
+        if rest:
+            right, rest = R.split_when(R.equals("--"), rest[1:])
+    return left + right + (R.prepend("--")(middle) if middle else [])
