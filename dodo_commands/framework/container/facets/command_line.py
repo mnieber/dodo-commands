@@ -8,7 +8,6 @@ from dodo_commands.framework import ramda as R
 class CommandLine:
     def __init__(self):
         self.input_args = None
-        self.cleaned = None
         self.command_name = None
         self.is_help = False
         self.is_trace = False
