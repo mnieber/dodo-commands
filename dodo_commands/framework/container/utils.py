@@ -1,5 +1,4 @@
 import os
-import sys
 
 from dodo_commands.framework import ramda as R
 
