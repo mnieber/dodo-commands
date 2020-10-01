@@ -2,9 +2,6 @@ from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.config import build_config, extend_command_path
 from dodo_commands.framework.config_layers import get_conflicts_in_layer_paths
 from dodo_commands.framework.container.facets import Config, Layers, i_, o_, register
-from dodo_commands.framework.transform_prefixes_in_aliases import (
-    transform_prefixes_in_aliases,
-)
 
 
 # CONFIG
@@ -33,6 +30,5 @@ def build_from_selected_layers(
     # [layer]
     config, warnings = build_config(x)
     config = extend_command_path(config)
-    transform_prefixes_in_aliases(config, metadata_by_layer_name)
 
     return dict(config=config, warnings=warnings)
