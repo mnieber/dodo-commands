@@ -1,6 +1,10 @@
 import sys
 
 from dodo_commands.framework.container import actions, facets
+from dodo_commands.framework.container.facets.command_line_actions import (
+    parse_sys_argv,
+    run,
+)
 from dodo_commands.framework.paths import Paths
 
 
@@ -8,7 +12,7 @@ class Container:
     def _create_facets(self):
         self.paths = Paths()
         self.command_line = facets.init_command_line(facets.CommandLine())
-        self.layers = facets.init_layers(facets.Layers(), 'config.yaml')
+        self.layers = facets.init_layers(facets.Layers(), "config.yaml")
         self.config = facets.Config()
         self.commands = facets.init_commands(facets.Commands())
 
@@ -16,6 +20,8 @@ class Container:
         self._create_facets()
 
     def run_actions(self):
+        run(self, parse_sys_argv)
+
         actions.layers.action_load_root_layer(self)
         actions.layers.action_load_named_layers(self)
 

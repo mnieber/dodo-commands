@@ -10,13 +10,21 @@ class CommandLine:
     def __init__(self):
         self.input_args = None
         self.command_name = None
-        self.is_help = False
         self.is_trace = False
         self.inferred_layer_paths = []
         self.expanded_layer_paths = []
         self.given_layer_paths = []
         self.more_given_layer_paths = []
-        self.is_running_directly_from_script = False
+
+    @property
+    def is_running_directly_from_script(self):
+        return "__DODO__" not in os.environ
+
+    @property
+    def is_help(self):
+        return "--help" in sys.argv and not (
+            "--" in sys.argv and sys.argv.index("--") < sys.argv.index("--help")
+        )
 
     @property
     def layer_paths(self):
@@ -61,14 +69,9 @@ class CommandLine:
 
 
 def init_command_line(self):
-    self.is_running_directly_from_script = "__DODO__" not in os.environ
     parser = argparse.ArgumentParser()
     parser.add_argument("-L", "--layer", action="append")
     parser.add_argument("--trace", action="store_true")
-
-    self.is_help = "--help" in sys.argv and not (
-        "--" in sys.argv and sys.argv.index("--") < sys.argv.index("--help")
-    )
 
     known_args, args = R.pipe(
         R.always(rearrange_double_dash(sys.argv)),
