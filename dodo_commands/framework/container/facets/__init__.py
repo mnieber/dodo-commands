@@ -1,6 +1,6 @@
 from dodo_commands.framework import ramda as R
 
-from .command_line import CommandLine, init_command_line  # noqa
+from .command_line import CommandLine  # noqa
 from .commands import Commands, init_commands  # noqa
 from .config import Config  # noqa
 from .layers import Layers, init_layers  # noqa
@@ -63,3 +63,15 @@ def map_datas(*args, transform=None):
         R.for_each(R.ds(do_store))(x)
 
     return action
+
+
+def register(*args):
+    def decorator(func):
+        setattr(func, "action_args", args)
+        return func
+
+    return decorator
+
+
+def run(ctr, action):
+    return map_datas(*action.action_args, transform=action,)(ctr)

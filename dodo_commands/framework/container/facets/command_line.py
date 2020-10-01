@@ -1,9 +1,7 @@
-import argparse
 import os
 import sys
 
 from dodo_commands.framework import ramda as R
-from dodo_commands.framework.container.utils import rearrange_double_dash
 
 
 class CommandLine:
@@ -66,24 +64,3 @@ class CommandLine:
     @staticmethod
     def get(ctr):
         return ctr.command_line
-
-
-def init_command_line(self):
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-L", "--layer", action="append")
-    parser.add_argument("--trace", action="store_true")
-
-    known_args, args = R.pipe(
-        R.always(rearrange_double_dash(sys.argv)),
-        R.when(
-            R.always(self.is_running_directly_from_script), R.prepend(sys.executable)
-        ),
-        R.when(R.always(self.is_help), R.filter(lambda x: x != "--help")),
-        parser.parse_known_args,
-    )(None)
-
-    self.given_layer_paths = known_args.layer or []
-    self.is_trace = known_args.trace
-    self.input_args = args
-
-    return self
