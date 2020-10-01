@@ -49,12 +49,11 @@ class YamlCommandHandler:
                     default_val = None
                     if arg.startswith("--") and "=" in arg:
                         arg, default_val = arg.split("=")
-                    parser.add_argument(
-                        arg,
-                        default=None
-                        if default_val is None
-                        else self._expand(default_val),
-                    )
+                        parser.add_argument(
+                            arg, nargs="?", const=self._expand(default_val)
+                        )
+                    else:
+                        parser.add_argument(arg,)
 
         args = Dodo.parse_args(parser)
         Dodo.get()["_ARGS"] = args.__dict__
