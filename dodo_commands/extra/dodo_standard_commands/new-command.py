@@ -14,21 +14,19 @@ raw_input = six.moves.input
 
 def _args():
     parser = ArgumentParser(description="Creates a new Dodo command.")
-    parser.add_argument('--name')
+    parser.add_argument("--name")
 
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('-i', '--interactive', action='store_true')
-    group.add_argument('--next-to')
+    group.add_argument("-i", "--interactive", action="store_true")
+    group.add_argument("--next-to")
 
-    parser.add_argument('-f',
-                        '--force',
-                        action='store_true',
-                        help='Overwrite existing command script')
+    parser.add_argument(
+        "-f", "--force", action="store_true", help="Overwrite existing command script"
+    )
     args = Dodo.parse_args(parser)
 
     if args.next_to and not args.name:
-        raise CommandError(
-            "The --name argument is mandatory when --next-to is used")
+        raise CommandError("The --name argument is mandatory when --next-to is used")
 
     return args
 
@@ -38,29 +36,24 @@ def create_command_dir(command_dirs):
         while True:
             dir_name = raw_input("\nEnter a name for the commands dir: ")
             if dir_name:
-                default_src_dir = os.path.join(
-                    Dodo.get('/ROOT/project_dir'), 'src')
-                src_dir = Dodo.get('/ROOT/src_dir', default_src_dir)
-                return os.path.join(src_dir, "extra", "dodo_commands",
-                                    dir_name)
+                default_src_dir = os.path.join(Dodo.get("/ROOT/project_dir"), "src")
+                src_dir = Dodo.get("/ROOT/src_dir", default_src_dir)
+                return os.path.join(src_dir, "extra", "dodo_commands", dir_name)
             else:
                 print("Sorry, I did not understand that.")
 
     def create_dir(new_command_dir):
         if not os.path.exists(new_command_dir):
-            Dodo.run(['mkdir', '-p', new_command_dir])
+            Dodo.run(["mkdir", "-p", new_command_dir])
 
-        init_py = os.path.join(new_command_dir, '__init__.py')
+        init_py = os.path.join(new_command_dir, "__init__.py")
         if not os.path.exists(init_py):
-            Dodo.run(['touch', init_py])
+            Dodo.run(["touch", init_py])
 
     def save_config(new_command_dir):
-        if not [
-                x
-                for x in command_dirs if os.path.normpath(x) == new_command_dir
-        ]:
+        if not [x for x in command_dirs if os.path.normpath(x) == new_command_dir]:
             config = ConfigIO().load()
-            config['ROOT']['command_path'].append(new_command_dir)
+            config["ROOT"]["command_path"].append(new_command_dir)
             ConfigIO().save(config)
 
     command_dir = get_command_dir_name()
@@ -73,8 +66,7 @@ def get_command_dir(command_dirs):
     col_width = max(len(os.path.basename(x)) for x in command_dirs)
 
     def map_to_choice(command_dir):
-        return "%s (%s)" % (os.path.basename(command_dir).ljust(col_width),
-                            command_dir)
+        return "%s (%s)" % (os.path.basename(command_dir).ljust(col_width), command_dir)
 
     def get_choice_idx0(choices):
         class Picker(ChoicePicker):
@@ -92,9 +84,7 @@ def get_command_dir(command_dirs):
         picker.pick()
         return picker.get_idxs0()[0]
 
-    choices = R.map(map_to_choice)(command_dirs) + [
-        "create a new commands dir"
-    ]
+    choices = R.map(map_to_choice)(command_dirs) + ["create a new commands dir"]
     choice_idx0 = get_choice_idx0(choices)
     if choice_idx0 == len(choices) - 1:
         return create_command_dir(command_dirs)
@@ -125,8 +115,7 @@ def get_parser_args(args):
         single_string = ""
         for idx in idxs:
             arg = args[idx]
-            single_string += "    parser.add_argument('{name}')\n".format(
-                name=arg[0])
+            single_string += "    parser.add_argument('{name}')\n".format(name=arg[0])
         return single_string
 
     idxs0 = get_choice_idxs0(args)
@@ -139,35 +128,33 @@ def get_params(args, remaining_idxs):
             def print_choices(self, choices):
                 print("0 - none")
                 for idx, arg in enumerate(choices):
-                    if idx == len(choices) - 1:
-                        print("")
                     print("%d - %s" % (idx + 1, arg[1]))
                 print()
 
             def question(self):
                 return "Select the options and args that come from the config: "
 
-            def maybe_handle_invalid_index(self, index):
+            def on_invalid_index(self, index):
                 if index == 0:
                     self.idxs = []
 
-        remaining_choices = [
-            args[remaining_idx] for remaining_idx in remaining_idxs
-        ]
+        remaining_choices = [args[remaining_idx] for remaining_idx in remaining_idxs]
         picker = Picker(remaining_choices)
         picker.pick()
         return [remaining_idxs[x] for x in picker.get_idxs0()]
 
     def convert_to_single_string(args, idxs):
-        single_string = ""
+        parts = []
         for idx in idxs:
             name = args[idx][0]
             clean_name = args[idx][2]
-            single_string += (
-                "        " +
-                "ConfigArg('/PATH/TO/{clean_name}', '{name}')".format(
-                    name=name, clean_name=clean_name))
-        return single_string
+            parts.append(
+                "        "
+                + "ConfigArg('/PATH/TO/{clean_name}', '{name}'),".format(
+                    name=name, clean_name=clean_name
+                )
+            )
+        return "\n".join(parts)
 
     idxs = get_choices(args)
     return idxs, convert_to_single_string(args, idxs)
@@ -214,16 +201,16 @@ def handle_interactive(parsed_args):
 
     def get_args():
         def map_to_split_arg(arg):
-            arg_name = arg.split('=')[0]
+            arg_name = arg.split("=")[0]
 
             clean_name = arg_name
-            clean_name = R.cut_prefix(clean_name, '--')
-            clean_name = R.cut_prefix(clean_name, '-')
+            clean_name = R.cut_prefix(clean_name, "--")
+            clean_name = R.cut_prefix(clean_name, "-")
 
             return (arg_name, arg, clean_name)
 
         raw_args = raw_input("Enter a command line to run inside the script: ")
-        raw_args = raw_args.split(' ')
+        raw_args = raw_args.split(" ")
         return R.map(map_to_split_arg)(raw_args)
 
     command_dirs = Dodo.get_container().commands.command_dirs
@@ -233,9 +220,7 @@ def handle_interactive(parsed_args):
     args = get_args()
     parser_arg_idxs, parser_args_str = get_parser_args(args)
 
-    remaining_arg_idxs = [
-        x for x in range(len(args)) if x not in parser_arg_idxs
-    ]
+    remaining_arg_idxs = [x for x in range(len(args)) if x not in parser_arg_idxs]
     param_arg_idxs, params_str = get_params(args, remaining_arg_idxs)
 
     if os.path.exists(dest_path) and not parsed_args.force:
@@ -252,10 +237,13 @@ def handle_interactive(parsed_args):
 
     with open(dest_path, "w") as f:
         f.write(
-            script.format(parser_args_str=parser_args_str,
-                          params_str=params_str,
-                          description=description,
-                          args_str=args_str))
+            script.format(
+                parser_args_str=parser_args_str,
+                params_str=params_str,
+                description=description,
+                args_str=args_str,
+            )
+        )
     print(dest_path)
 
 
@@ -267,18 +255,17 @@ def handle_next_to(parsed_args):
     if not item:
         raise CommandError("Script not found: %s" % parsed_args.next_to)
 
-    dest_path = os.path.join(os.path.dirname(item.filename),
-                             parsed_args.name + ".py")
+    dest_path = os.path.join(os.path.dirname(item.filename), parsed_args.name + ".py")
 
     if os.path.exists(dest_path) and not parsed_args.force:
         raise CommandError("Destination already exists: %s" % dest_path)
 
     with open(dest_path, "w") as f:
         f.write(
-            script.format(parser_args_str="",
-                          params_str="",
-                          description="",
-                          args_str=""))
+            script.format(
+                parser_args_str="", params_str="", description="", args_str=""
+            )
+        )
     print(dest_path)
 
 
