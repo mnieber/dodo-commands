@@ -11,7 +11,7 @@ def handle_arg_complete(
     command_names,
     inferred_command_names,
     command_aliases,
-    layer_props_by_layer_name,
+    metadata_by_layer_name,
     layer_by_target_path,
 ):
     def get_args():
@@ -26,15 +26,15 @@ def handle_arg_complete(
     (command_prefix, command_name) = get_prefix_and_command(input_args)
 
     def get_used_layer_names(command_prefix):
-        return [x for x in command_prefix.split(".") if x in layer_props_by_layer_name]
+        return [x for x in command_prefix.split(".") if x in metadata_by_layer_name]
 
     used_layer_names = get_used_layer_names(command_prefix)
 
     def get_commands():
         more_aliases = []
         for layer_name in used_layer_names:
-            layer_props = layer_props_by_layer_name[layer_name]
-            layer = layer_by_target_path[layer_props.target_path]
+            layer_metadata = metadata_by_layer_name[layer_name]
+            layer = layer_by_target_path[layer_metadata.target_path]
             more_aliases.extend(get_aliases(layer).keys())
 
         return R.uniq(
@@ -48,16 +48,16 @@ def handle_arg_complete(
     choices = get_choices(commands)  # [choice]
 
     def get_possible_layer_names():
-        return layer_props_by_layer_name.keys()
+        return metadata_by_layer_name.keys()
 
     def is_already_used(layer_name):
         return layer_name in used_layer_names
 
     def is_conflicting(layer_name):
-        used_layer_props = R.map(layer_props_by_layer_name)(used_layer_names)
-        used_layer_paths = [x.target_path for x in used_layer_props]
+        used_layer_metadata = R.map(metadata_by_layer_name)(used_layer_names)
+        used_layer_paths = [x.target_path for x in used_layer_metadata]
 
-        layer_path = layer_props_by_layer_name[layer_name].target_path
+        layer_path = metadata_by_layer_name[layer_name].target_path
         return get_conflicts_in_layer_paths(used_layer_paths + [layer_path])
 
     def map_to_choices(layer_name):

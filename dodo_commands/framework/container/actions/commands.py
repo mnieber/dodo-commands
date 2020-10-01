@@ -17,16 +17,16 @@ from dodo_commands.framework.inferred_commands import (
 # COMMANDS
 @register(
     i_(Commands, "global_aliases"),
-    i_(Layers, "layer_props_by_layer_name"),
+    i_(Layers, "metadata_by_layer_name"),
     i_(Layers, "layer_by_target_path"),
     o_(Commands, "layer_name_by_inferred_command"),
 )
 def get_inferred_command_map(
-    global_aliases, layer_props_by_layer_name, layer_by_target_path
+    global_aliases, metadata_by_layer_name, layer_by_target_path
 ):
     return dict(
         layer_name_by_inferred_command=_get_inferred_command_map(
-            global_aliases, layer_props_by_layer_name, layer_by_target_path,
+            global_aliases, metadata_by_layer_name, layer_by_target_path,
         )
     )
 

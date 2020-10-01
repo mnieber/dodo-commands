@@ -10,6 +10,9 @@ from dodo_commands.framework.container.facets import (
     o_,
     register,
 )
+from dodo_commands.framework.get_metadata_by_layer_name import (
+    get_metadata_by_layer_name as _get_metadata_by_layer_name,
+)
 from dodo_commands.framework.load_named_layers import (
     load_named_layers as _load_named_layers,
 )
@@ -31,13 +34,23 @@ def load_root_layer(paths, config_io, root_layer_path):
 
 # LAYERS
 @register(
+    i_(Layers, "root_layer"),
+    #
+    o_(Layers, "metadata_by_layer_name"),
+)
+def get_metadata_by_layer_name(root_layer):
+    return dict(metadata_by_layer_name=_get_metadata_by_layer_name(root_layer))
+
+
+# LAYERS
+@register(
     i_(Layers, "config_io"),
-    i_(Layers, "layer_props_by_layer_name"),
+    i_(Layers, "metadata_by_layer_name"),
     o_(Layers, "layer_by_target_path"),
 )
-def load_named_layers(config_io, layer_props_by_layer_name):
+def load_named_layers(config_io, metadata_by_layer_name):
     return dict(
-        layer_by_target_path=_load_named_layers(config_io, layer_props_by_layer_name,)
+        layer_by_target_path=_load_named_layers(config_io, metadata_by_layer_name,)
     )
 
 

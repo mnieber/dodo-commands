@@ -15,7 +15,7 @@ def o_(facet_class, member):
     return ("out", facet_class, member)
 
 
-def map_datas(*args, transform=None):
+def map_datas(*args, transform):
     def action(ctr):
         kwargs = {}
 
@@ -54,6 +54,8 @@ def map_datas(*args, transform=None):
         x = zip_with_output_values(x)
         # [((in | out, facet_class, member), output_value)]
         R.for_each(R.ds(do_store))(x)
+
+        return output_values
 
     return action
 

@@ -19,12 +19,12 @@ def check_conflicts_in_selected_layer_paths(selected_layer_by_path):
 # CONFIG
 @register(
     i_(Layers, "selected_layer_by_path"),
-    i_(Layers, "layer_props_by_layer_name"),
+    i_(Layers, "metadata_by_layer_name"),
     o_(Config, "config"),
     o_(Config, "warnings"),
 )
 def build_from_selected_layers(
-    selected_layer_by_path, layer_props_by_layer_name,
+    selected_layer_by_path, metadata_by_layer_name,
 ):
     def get_selected_layers():
         return selected_layer_by_path.values()
@@ -33,6 +33,6 @@ def build_from_selected_layers(
     # [layer]
     config, warnings = build_config(x)
     config = extend_command_path(config)
-    transform_prefixes_in_aliases(config, layer_props_by_layer_name)
+    transform_prefixes_in_aliases(config, metadata_by_layer_name)
 
     return dict(config=config, warnings=warnings)

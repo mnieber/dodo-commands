@@ -4,8 +4,7 @@ from argparse import ArgumentParser
 from collections import defaultdict
 
 from dodo_commands import Dodo
-from dodo_commands.dependencies import (yaml_round_trip_dump,
-                                        yaml_round_trip_load)
+from dodo_commands.dependencies import yaml_round_trip_dump, yaml_round_trip_load
 from dodo_commands.framework import ramda as R
 from dodo_commands.framework.command_map import get_command_map
 from dodo_commands.framework.command_path import get_command_dirs_from_config
@@ -85,18 +84,18 @@ def _collect_command_dirs(
     config_io,
     layer_names_by_command_dir,
     command_aliases,
-    layer_props_by_layer_name,
+    metadata_by_layer_name,
     layer_by_target_path,
 ):
     config_memo = yaml_round_trip_dump(config)
 
-    for layer_name, layer_props in layer_props_by_layer_name.items():
+    for layer_name, layer_metadata in metadata_by_layer_name.items():
 
         def has_command_path(layer):
             return R.path_or(None, "ROOT", "command_path")(layer)
 
         layer_filenames = layer_filename_superset(
-            [layer_props.target_path], config_io=config_io
+            [layer_metadata.target_path], config_io=config_io
         )
         extra_layers = R.map(config_io.load)(layer_filenames)
         if R.filter(has_command_path)(extra_layers):
@@ -106,11 +105,11 @@ def _collect_command_dirs(
                 layer_names = layer_names_by_command_dir[command_dir]
                 _add_to_layer_names(layer_names, layer_name)
 
-        layer = layer_by_target_path[layer_props.target_path]
+        layer = layer_by_target_path[layer_metadata.target_path]
         for command_alias in get_aliases(layer).items():
             alias_prefix = (
                 ""
-                if command_alias[0] in layer_props.inferred_commands
+                if command_alias[0] in layer_metadata.inferred_commands
                 else (layer_name + ".")
             )
             cmd_prefix = layer_name + "."
@@ -144,14 +143,14 @@ def _print_command_dirs(args, layer_names_2_command_dirs, inferred_commands):
         )
 
 
-def _print_layer_names(layer_props_by_layer_name):
-    layer_names = layer_props_by_layer_name.keys()
+def _print_layer_names(metadata_by_layer_name):
+    layer_names = metadata_by_layer_name.keys()
     col_width = max(len(x) for x in layer_names)
 
     sys.stdout.write("Layers:\n\n")
-    for layer_name, layer_props in sorted(layer_props_by_layer_name.items()):
+    for layer_name, layer_metadata in sorted(metadata_by_layer_name.items()):
         sys.stdout.write(
-            "%s = %s\n" % (layer_name.ljust(col_width), layer_props.target_path)
+            "%s = %s\n" % (layer_name.ljust(col_width), layer_metadata.target_path)
         )
 
 
@@ -191,7 +190,7 @@ if Dodo.is_main(__name__, safe=True):
             ctr.layers.config_io,
             layer_names_by_command_dir,
             command_aliases,
-            ctr.layers.layer_props_by_layer_name,
+            ctr.layers.metadata_by_layer_name,
             ctr.layers.layer_by_target_path,
         )
 
@@ -212,5 +211,5 @@ if Dodo.is_main(__name__, safe=True):
             )
 
             if not args.commands:
-                if ctr.layers.layer_props_by_layer_name:
-                    _print_layer_names(dict(ctr.layers.layer_props_by_layer_name))
+                if ctr.layers.metadata_by_layer_name:
+                    _print_layer_names(dict(ctr.layers.metadata_by_layer_name))
