@@ -39,16 +39,9 @@ def map_datas(*args, transform=None):
             return arg[0] == "out"
 
         def zip_with_output_values(output_args):
-            if isinstance(output_values, tuple):
-                assert len(output_args) == len(output_values)
-                return zip(output_args, output_values)
-            elif isinstance(output_values, dict):
-                return [
-                    [output_arg, output_values[output_arg[2]]]
-                    for output_arg in output_args
-                ]
-            else:
-                raise Exception("Oops")
+            return [
+                [output_arg, output_values[output_arg[2]]] for output_arg in output_args
+            ]
 
         def do_store(output_arg, output_value):
             _, facet_class, member = output_arg
