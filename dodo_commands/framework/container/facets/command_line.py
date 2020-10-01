@@ -7,7 +7,6 @@ from dodo_commands.framework import ramda as R
 class CommandLine:
     def __init__(self):
         self.input_args = None
-        self.command_name = None
         self.is_trace = False
         self.inferred_layer_paths = []
         self.expanded_layer_paths = []
@@ -41,19 +40,17 @@ class CommandLine:
         # prefixed with layer names.
         if self.is_running_directly_from_script:
             return "", R.cut_suffix(input1, ".py")
+
         return R.split(input1.rfind(".") + 1)(input1)
 
     @property
-    def raw_command_name(self):
+    def command_name(self):
         return self._split_input1[1]
 
     @property
-    def raw_command_prefix(self):
-        return self._split_input1[0]
-
-    @property
     def layer_names(self):
-        return R.uniq(R.filter(bool)(self.raw_command_prefix.split(".")))
+        command_prefix = self._split_input1[0]
+        return R.uniq(R.filter(bool)(command_prefix.split(".")))
 
     def get_trace(self):
         args = [x for x in self.input_args if x != "--trace"]

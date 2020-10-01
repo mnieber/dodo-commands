@@ -65,15 +65,15 @@ def get_expanded_layer_paths(
 
 # COMMAND LINE
 @register(
-    i_(CommandLine, "raw_command_name"),
+    i_(CommandLine, "command_name"),
     i_(Commands, "layer_name_by_inferred_command"),
     i_(Layers, "layer_props_by_layer_name"),
     o_(CommandLine, "inferred_layer_paths"),
 )
 def get_inferred_layer_paths(
-    raw_command_name, layer_name_by_inferred_command, layer_props_by_layer_name,
+    command_name, layer_name_by_inferred_command, layer_props_by_layer_name,
 ):
-    layer_name = layer_name_by_inferred_command.get(raw_command_name, None)
+    layer_name = layer_name_by_inferred_command.get(command_name, None)
     layer_props = layer_props_by_layer_name.get(layer_name)
 
     return dict(inferred_layer_paths=[layer_props.target_path] if layer_props else [])
@@ -81,7 +81,7 @@ def get_inferred_layer_paths(
 
 # COMMAND LINE
 @register(
-    i_(CommandLine, "raw_command_name"),
+    i_(CommandLine, "command_name"),
     i_(CommandLine, "input_args"),
     i_(Commands, "command_map"),
     i_(Commands, "aliases", alt_name="command_aliases"),
@@ -89,11 +89,10 @@ def get_inferred_layer_paths(
     i_(Layers, "layer_props_by_layer_name"),
     i_(Layers, "layer_by_target_path"),
     o_(CommandLine, "input_args"),
-    o_(CommandLine, "command_name"),
     o_(CommandLine, "more_given_layer_paths"),
 )
 def expand_and_autocomplete_command_name(
-    raw_command_name,
+    command_name,
     input_args,
     command_map,
     command_aliases,
@@ -110,7 +109,7 @@ def expand_and_autocomplete_command_name(
             layer_by_target_path=layer_by_target_path,
         )
         if "_ARGCOMPLETE" in os.environ
-        else raw_command_name
+        else command_name
     )
 
     alias_target = (
@@ -134,7 +133,6 @@ def expand_and_autocomplete_command_name(
 
     return dict(
         input_args=input_args[:1] + new_args + input_args[2:],
-        command_name=new_args[0],
         more_given_layer_paths=known_args.layer or [],
     )
 
