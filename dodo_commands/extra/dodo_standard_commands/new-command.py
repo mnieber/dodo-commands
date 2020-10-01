@@ -15,6 +15,9 @@ raw_input = six.moves.input
 def _args():
     parser = ArgumentParser(description="Creates a new Dodo command.")
     parser.add_argument("--name")
+    parser.add_argument(
+        "--yaml", action="store_true", help="Create a yaml command file"
+    )
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument("-i", "--interactive", action="store_true")
@@ -91,7 +94,7 @@ def get_command_dir(command_dirs):
     return command_dirs[choice_idx0]
 
 
-def get_parser_args(args):
+def get_parser_args(args, builder):
     def get_choice_idxs0(args):
         class Picker(ChoicePicker):
             def print_choices(self, choices):
@@ -112,11 +115,11 @@ def get_parser_args(args):
         return picker.get_idxs0()
 
     def convert_to_single_string(args, idxs):
-        single_string = ""
+        parts = []
         for idx in idxs:
             arg = args[idx]
-            single_string += "    parser.add_argument('{name}')\n".format(name=arg[0])
-        return single_string
+            parts.append(builder.format_arg_spec(arg[0]))
+        return builder.arg_spec_sep.join(parts)
 
     idxs0 = get_choice_idxs0(args)
     return idxs0, convert_to_single_string(args, idxs0)
@@ -160,7 +163,7 @@ def get_params(args, remaining_idxs):
     return idxs, convert_to_single_string(args, idxs)
 
 
-script = """from argparse import ArgumentParser
+script_py = """from argparse import ArgumentParser
 
 from dodo_commands import Dodo, ConfigArg, CommandError
 
@@ -193,8 +196,71 @@ if Dodo.is_main(__name__, safe=True):
 """
 
 
+script_yaml = """{name}:
+  _args: [{parser_args_str}]
+  _description: {description}
+  run_script:
+    args: 
+{args_str}
+"""
+
+
+class YamlBuilder:
+    arg_spec_sep = ", "
+
+    @staticmethod
+    def dest_path(command_dir, name):
+        return os.path.join(command_dir, "dodo." + name + ".yaml")
+
+    @staticmethod
+    def format_arg_usage(args, parser_arg_idxs, param_arg_idxs):
+        args_str_parts = []
+        for idx in range(len(args)):
+            arg = args[idx]
+            if idx in parser_arg_idxs:
+                args_str_parts.append("      - ${/_ARGS/" + arg[2] + "}")
+            elif idx in param_arg_idxs:
+                args_str_parts.append("      - ${/PATH/TO/" + arg[2] + "}")
+            else:
+                args_str_parts.append("      - %s" % arg[1])
+        return "\n".join(args_str_parts)
+
+    @staticmethod
+    def format_config_param_usage(param):
+        return
+
+    @staticmethod
+    def format_arg_spec(arg):
+        return arg
+
+
+class PyBuilder:
+    arg_spec_sep = "\n"
+
+    @staticmethod
+    def dest_path(command_dir, name):
+        return os.path.join(command_dir, name + ".py")
+
+    @staticmethod
+    def format_arg_usage(args, parser_arg_idxs, param_arg_idxs):
+        args_str_parts = []
+        for idx in range(len(args)):
+            arg = args[idx]
+            if idx in parser_arg_idxs or idx in param_arg_idxs:
+                args_str_parts.append("args." + arg)
+            else:
+                args_str_parts.append("'%s'" % arg[1])
+        return ", ".join(args_str_parts)
+
+    @staticmethod
+    def format_arg_spec(arg):
+        return "    parser.add_argument('{name}')".format(name=arg)
+
+
 def handle_interactive(parsed_args):
     parsed_args = _args()
+
+    builder = YamlBuilder() if parsed_args.yaml else PyBuilder()
 
     name = raw_input("Enter a name for the command: ")
     description = raw_input("Enter a description: ")
@@ -215,35 +281,41 @@ def handle_interactive(parsed_args):
 
     command_dirs = Dodo.get_container().commands.command_dirs
     command_dir = get_command_dir(command_dirs)
-    dest_path = os.path.join(command_dir, name + ".py")
 
-    args = get_args()
-    parser_arg_idxs, parser_args_str = get_parser_args(args)
-
-    remaining_arg_idxs = [x for x in range(len(args)) if x not in parser_arg_idxs]
-    param_arg_idxs, params_str = get_params(args, remaining_arg_idxs)
+    dest_path = builder.dest_path(command_dir, name)
 
     if os.path.exists(dest_path) and not parsed_args.force:
         raise CommandError("Destination already exists: %s" % dest_path)
 
-    args_str_parts = []
-    for idx in range(len(args)):
-        arg = args[idx]
-        if idx in parser_arg_idxs or idx in param_arg_idxs:
-            args_str_parts.append("args." + arg[2])
-        else:
-            args_str_parts.append("'%s'" % arg[1])
-    args_str = ", ".join(args_str_parts)
+    args = get_args()
+    parser_arg_idxs, parser_args_str = get_parser_args(args, builder)
 
-    with open(dest_path, "w") as f:
-        f.write(
-            script.format(
-                parser_args_str=parser_args_str,
-                params_str=params_str,
-                description=description,
-                args_str=args_str,
+    remaining_arg_idxs = [x for x in range(len(args)) if x not in parser_arg_idxs]
+    param_arg_idxs, params_str = get_params(args, remaining_arg_idxs)
+
+    args_str = builder.format_arg_usage(args, parser_arg_idxs, param_arg_idxs)
+
+    if parsed_args.yaml:
+        with open(dest_path, "w") as f:
+            f.write(
+                script_yaml.format(
+                    name=name,
+                    parser_args_str=parser_args_str,
+                    params_str=params_str,
+                    description=description,
+                    args_str=args_str,
+                )
             )
-        )
+    else:
+        with open(dest_path, "w") as f:
+            f.write(
+                script_py.format(
+                    parser_args_str=parser_args_str,
+                    params_str=params_str,
+                    description=description,
+                    args_str=args_str,
+                )
+            )
     print(dest_path)
 
 
@@ -262,7 +334,7 @@ def handle_next_to(parsed_args):
 
     with open(dest_path, "w") as f:
         f.write(
-            script.format(
+            script_py.format(
                 parser_args_str="", params_str="", description="", args_str=""
             )
         )
