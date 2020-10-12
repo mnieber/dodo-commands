@@ -1,22 +1,14 @@
-import os
-
-from dodo_commands.dependencies.get import funcy
-from dodo_commands.framework.funcy import remove_if
-
-concat, distinct = funcy.concat, funcy.distinct
+from dodo_commands.framework import ramda as R
 
 
-def get_ordered_layer_paths(ctr):
-    root_layer_path = ctr.layers.config_io.glob([ctr.layers.root_layer_path
-                                                 ])[0]
-
-    x = concat(ctr.layers.selected_layer_by_path.keys(),
-               ctr.layers.layer_by_target_path.keys())
-    x = distinct(x)
-    x = sorted(x, key=os.path.basename)
-    x = ctr.layers.config_io.glob(x)
-
-    x = remove_if(lambda x: x == root_layer_path)(x)
-    x = concat([root_layer_path], x)
-
-    return x
+# if there are two args that equal "--" then we assume that everything
+# behind the second instance of "--" is a part of the "left side" of the
+# command line
+def rearrange_double_dash(args):
+    left, rest = R.split_when(R.equals("--"), args)
+    middle, right = [], []
+    if rest:
+        middle, rest = R.split_when(R.equals("--"), rest[1:])
+        if rest:
+            right, rest = R.split_when(R.equals("--"), rest[1:])
+    return left + right + (R.prepend("--")(middle) if middle else [])

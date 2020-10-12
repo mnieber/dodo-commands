@@ -91,9 +91,8 @@ class Dodo:
 
         if config_args:
             for config_arg in config_args:
-                key = Key(cls.get(), config_arg.config_key)
-                if key.exists():
-                    setattr(cls._args, config_arg.arg_name, key.get())
+                if config_arg.exists(cls.get()):
+                    setattr(cls._args, config_arg.arg_name, config_arg.get(cls.get()))
 
         return cls._args
 

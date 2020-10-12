@@ -1,13 +1,7 @@
-from dodo_commands.framework.command_error import CommandError  # noqa
+import os
+
+from dodo_commands.framework import ramda as R
 from dodo_commands.framework.config_io import ConfigIO
-from dodo_commands.framework.funcy import drill
-
-
-class LayerConfig:
-    def __init__(self, target_path, inferred_commands, group_name):
-        self.target_path = target_path
-        self.inferred_commands = inferred_commands
-        self.group_name = group_name
 
 
 class Layers:
@@ -17,43 +11,22 @@ class Layers:
         self.root_layer = None
         self.layer_by_target_path = {}
         self.selected_layer_by_path = {}
+        self.metadata_by_layer_name = None
 
-    @property
-    def layer_props_by_layer_name(self):
-        result = {}
+    def get_ordered_layer_paths(self):
+        root_layer_path = self.config_io.glob([self.root_layer_path])[0]
 
-        groups = drill(self.root_layer, 'LAYER_GROUPS', default={})
-        for group_name, group in groups.items():
-            for group_item in group:
+        x = R.concat(
+            self.selected_layer_by_path.keys(), self.layer_by_target_path.keys()
+        )
+        x = R.uniq(x)
+        x = sorted(x, key=os.path.basename)
+        x = self.config_io.glob(x)
 
-                if isinstance(group_item, str):
-                    layer_name = group_item
-                    base_name = layer_name
-                    inferred_commands = []
-                    target_path = None
-                elif isinstance(group_item, dict):
-                    layer_name, layer_props = list(group_item.items())[0]
-                    layer_props = layer_props or {}
-                    inferred_commands = list(layer_props.get(
-                        'inferred_by', []))
-                    target_path = layer_props.get('target_path')
-                    base_name = layer_props.get('base_name', layer_name)
+        x = R.filter(lambda x: x != root_layer_path)(x)
+        x = R.concat([root_layer_path], x)
 
-                target_path = target_path or "%s.%s.yaml" % (group_name,
-                                                             base_name)
-
-                layer_props = LayerConfig(target_path, inferred_commands,
-                                          group_name)
-
-                if layer_name in result:
-                    prev_layer_props = result[layer_name]
-                    raise CommandError(
-                        "Name conlict for layer '%s' in groups '%s' and '%s'" %
-                        (layer_name, prev_layer_props.group_name,
-                         layer_props.group_name))
-
-                result[layer_name] = layer_props
-        return result
+        return x
 
     @staticmethod
     def get(ctr):

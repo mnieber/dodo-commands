@@ -20,3 +20,5 @@ def create_config_dir(config_dir):
     }
     with open(config_filename, "w") as f:
         f.write(yaml_round_trip_dump(default_config))
+
+    os.makedirs(os.path.join(config_dir, ".dodo-start-env"))

@@ -1,6 +1,6 @@
 import os
 import sys
-from argparse import ArgumentParser
+from argparse import SUPPRESS, ArgumentParser
 
 from dodo_commands import CommandError, Dodo
 from dodo_commands.dependencies.get import plumbum
@@ -24,6 +24,7 @@ def _args():
         choices=["all"] + list([_normalize(x) for x in command_map.keys()]),
         nargs="?",
     )
+    parser.add_argument("--contnue", action="store_true", help=SUPPRESS)
     parser.add_argument("--tmux", action="store_true")
     parser.add_argument("--list", action="store_true")
     parser.add_argument("--run", type=int, nargs="?", const=-1)
@@ -95,10 +96,6 @@ def _get_selected_commands(commands, labels, allow_free_text=False):
 
 if Dodo.is_main(__name__):
     args = _args()
-    check_exists = Dodo.get("/MENU/check_exists", "/")
-    if not os.path.exists(check_exists):
-        raise CommandError("Path %s does not exist" % check_exists)
-
     commands, labels = _get_commands_and_labels(args.command_map, args.category)
 
     if not commands:
@@ -122,9 +119,11 @@ if Dodo.is_main(__name__):
 
         if not has_session:
             _create_tmux_window(args.session_id)
-            tmux("send-keys", " ".join(sys.argv), "C-m")
+            tmux("send-keys", " ".join(sys.argv + ["--contnue"]), "C-m")
             # Attach to tmux session
             # HACK: why does this only work via Dodo.run?
+            Dodo.run(["tmux", "-2", "attach-session", "-t", args.session_id],)
+        elif not args.contnue:
             Dodo.run(["tmux", "-2", "attach-session", "-t", args.session_id],)
         else:
             while True:

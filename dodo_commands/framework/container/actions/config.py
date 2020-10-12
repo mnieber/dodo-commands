@@ -1,44 +1,34 @@
 from dodo_commands.framework.command_error import CommandError
 from dodo_commands.framework.config import build_config, extend_command_path
 from dodo_commands.framework.config_layers import get_conflicts_in_layer_paths
-from dodo_commands.framework.container.facets import (Config, Layers, i_,
-                                                      map_datas, o_)
-from dodo_commands.framework.transform_prefixes_in_aliases import \
-    transform_prefixes_in_aliases
+from dodo_commands.framework.container.facets import Config, Layers, i_, o_, register
 
 
 # CONFIG
-def action_check_conflicts_in_selected_layer_paths(ctr):
-    def transform(selected_layer_by_path):
-        conflicts = get_conflicts_in_layer_paths(selected_layer_by_path.keys())
-        for path, conflicting_path in conflicts:
-            raise CommandError("Conflicting layers: %s and %s" %
-                               (path, conflicting_path))
-        return tuple()
-
-    return map_datas(i_(Layers, 'selected_layer_by_path'),
-                     transform=transform)(ctr)
+@register(i_(Layers, "selected_layer_by_path"))
+def check_conflicts_in_selected_layer_paths(selected_layer_by_path):
+    conflicts = get_conflicts_in_layer_paths(selected_layer_by_path.keys())
+    for path, conflicting_path in conflicts:
+        raise CommandError("Conflicting layers: %s and %s" % (path, conflicting_path))
+    return dict()
 
 
 # CONFIG
-def action_build_from_selected_layers(ctr):
-    def transform(
-        #
-        selected_layer_by_path,
-        layer_props_by_layer_name):
-        def get_selected_layers():
-            return selected_layer_by_path.values()
+@register(
+    i_(Layers, "selected_layer_by_path"),
+    i_(Layers, "metadata_by_layer_name"),
+    o_(Config, "config"),
+    o_(Config, "warnings"),
+)
+def build_from_selected_layers(
+    selected_layer_by_path, metadata_by_layer_name,
+):
+    def get_selected_layers():
+        return selected_layer_by_path.values()
 
-        x = get_selected_layers()
-        # [layer]
-        config, warnings = build_config(x)
-        config = extend_command_path(config)
-        transform_prefixes_in_aliases(config, layer_props_by_layer_name)
+    x = get_selected_layers()
+    # [layer]
+    config, warnings = build_config(x)
+    config = extend_command_path(config)
 
-        return (config, warnings)
-
-    return map_datas(i_(Layers, 'selected_layer_by_path'),
-                     i_(Layers, 'layer_props_by_layer_name'),
-                     o_(Config, 'config'),
-                     o_(Config, 'warnings'),
-                     transform=transform)(ctr)
+    return dict(config=config, warnings=warnings)

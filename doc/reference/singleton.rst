@@ -106,6 +106,8 @@ This approach opens up an interesting possibility: if the requested configuratio
 
 The ``ConfigArg`` is constructed with the configuration key, followed by any (keyword) arguments that ``parser.add_argument`` accepts. If the key is found in the configuration, then the corresponding value will be inserted into the return value of ``Dodo.parse_args``. Otherwise, an extra *argument* will be added to the command line syntax. This ensures that the value is either read from the configuration or from the command line.
 
+You may also use an expression such as ``${/ROOT/project_dir}/foo/bar`` as the first argument of ConfigArg.
+In this case, the config argument is considered to exist if the expression can be fully expanded.
 
 Using pipes and redirection
 ---------------------------

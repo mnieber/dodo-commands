@@ -1,11 +1,7 @@
 import os
 from collections import OrderedDict
 
-from dodo_commands.dependencies.get import funcy
-from dodo_commands.framework.funcy import (drill, ds, for_each, keep_if,
-                                           map_with)
-
-distinct, flatten = funcy.distinct, funcy.flatten
+from dodo_commands.framework import ramda as R
 
 
 def layer_filename_superset(layer_filenames, config_io):
@@ -22,18 +18,18 @@ def layer_filename_superset(layer_filenames, config_io):
             selected_layer_by_path[layer_filename] = layer
 
         def map_to_nested_layer_paths(layer_filename, layer):
-            return drill(layer, 'LAYERS', default=[])
+            return R.path_or([], 'LAYERS')(layer)
 
         def get_flat_list(list_of_lists):
-            return distinct(flatten(list_of_lists))
+            return R.uniq(R.flatten(list_of_lists))
 
         x = map_to_layer_filenames(layer_paths)
         # [[layer_filename]]
-        x = map_with(map_to_filename_and_layer)(x)
+        x = R.map(map_to_filename_and_layer)(x)
         # [layer_filename, layer]
-        x = for_each(ds(do_store))(x)
+        x = R.for_each(R.ds(do_store))(x)
         # [layer_filename, layer]
-        x = map_with(ds(map_to_nested_layer_paths))(x)
+        x = R.map(R.ds(map_to_nested_layer_paths))(x)
         # [[layer_filename]]
         x = get_flat_list(x)
         # [layer_filename, layer]
@@ -66,12 +62,12 @@ def get_conflicts_in_layer_paths(layer_paths):
 
     x = layer_paths
     # [path]
-    x = map_with(map_to_layer_path_and_parts)(x)
+    x = R.map(map_to_layer_path_and_parts)(x)
     # [(path, parts)]
-    x = keep_if(ds(has_flavours))(x)
+    x = R.filter(R.ds(has_flavours))(x)
     # [(path, parts)]
-    x = map_with(ds(map_to_path_and_generic_path))(x)
+    x = R.map(R.ds(map_to_path_and_generic_path))(x)
     # [(path, generic_path)]
-    x = keep_if(ds(is_conflict))(x)
+    x = R.filter(R.ds(is_conflict))(x)
 
     return x

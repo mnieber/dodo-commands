@@ -101,7 +101,7 @@ class TestConfigIO:  # noqa
         assert "confirm, debugger, docker, pause" == dodo("which", "--decorators")[:-1]
 
         # dodo cd
-        assert "cd " + dodo_test_dir == dodo("cd")[:-1]
+        assert "cd " + dodo_test_dir == dodo("which --cd --project-dir")[:-1]
 
         # dodo check-version --config
         self._set_config_version(config_filename, "0.1.0")
