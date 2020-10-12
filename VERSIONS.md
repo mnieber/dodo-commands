@@ -1,5 +1,18 @@
 # Version history
 
+## 0.35.0
+
+- Add --yaml argument to new-command script
+- Fix optional args in yaml_command_handler
+- Fix new-command script
+- Refactor to use register and run(ctr, action)
+- Add new exec command and kubectl command
+- Reuse existing tmux session in dodo menu --tmux
+- Treat second occurrence of -- as the start of more dodo arguments
+- Allow expanded expression in ConfigArg
+- Add --list argument to dodo dial
+- Merge dodo cd into dodo which
+
 ## 0.34.0
 
 - Add command docker-restart
@@ -19,7 +32,7 @@
 ## 0.32.0
 
 - Update docs
-- Add ``remove`` flag to DecoratorScope
+- Add `remove` flag to DecoratorScope
 - Add arg --alt to commit-config
 - Several fixes related to previous refactoring
 - Fix: print-config <key> without leading slash
@@ -42,7 +55,6 @@
 - Rename Dodo.get_config to Dodo.get
 - Rename to DOCKER_OPTIONS and DOCKER_IMAGES
 - Use DOCKER_COMPOSE/cwd
-
 
 ## 0.29.1
 
@@ -294,16 +306,17 @@
 - Allow to add aliases in [alias] section of global config
 - Set docker instance name to args.service by default
 -
+
 ## 0.13.5
 
--  Use --image, --name and --command args in 'dodo docker'
--  Use sphinx for diagnose output
--  Add documentation for the diagnose command
--  Remove 'aliases' in /DOCKER/options
--  Use 'cwd' key in /DOCKER/options
--  Add dockercommit command
--  Use volume_map_strict in docker decorator
--  Improve reporting of broken config keys
+- Use --image, --name and --command args in 'dodo docker'
+- Use sphinx for diagnose output
+- Add documentation for the diagnose command
+- Remove 'aliases' in /DOCKER/options
+- Use 'cwd' key in /DOCKER/options
+- Add dockercommit command
+- Use volume_map_strict in docker decorator
+- Improve reporting of broken config keys
 
 ## 0.13.4
 
@@ -627,8 +640,8 @@
 - New command chown-src
 - Better error reporting in gitsplit command
 - Configurable python interpreter in django-manage command
-- Make directories in ${DOCKER/extra_dirs} available in dockerbuild command
-- Use ${/DOCKER/default_cwd} in docker command
+- Make directories in \${DOCKER/extra_dirs} available in dockerbuild command
+- Use \${/DOCKER/default_cwd} in docker command
 - Add argument 'branch' to bootstrap command
 
 ## 0.1.4

@@ -9,8 +9,9 @@ from setuptools.command.install import install
 
 class InstallPrivatePackages(install):
     def _package_dirname(self):
-        return os.path.join(self.install_lib, "dodo_commands", "dependencies",
-                            "packages")
+        return os.path.join(
+            self.install_lib, "dodo_commands", "dependencies", "packages"
+        )
 
     def _bin_dirname(self):
         return os.path.join(self.install_lib, "dodo_commands", "bin")
@@ -20,21 +21,28 @@ class InstallPrivatePackages(install):
             os.makedirs(package_dirname)
 
         for dependency in [
-                'python-dotenv==0.12.0',
-                'plumbum==1.6.8',
-                'ruamel.yaml==0.16.10',
-                'parsimonious==0.8.1',
-                'six==1.14.0',
-                'funcy==1.14',
-                'ansimarkup==1.4.0',
-                'argcomplete==1.11.1',
-                'semantic_version==2.8.4',
+            "python-dotenv==0.12.0",
+            "plumbum==1.6.8",
+            "ruamel.yaml==0.16.10",
+            "parsimonious==0.8.1",
+            "six==1.14.0",
+            "funcy==1.14",
+            "ansimarkup==1.4.0",
+            "argcomplete==1.11.1",
+            "semantic_version==2.8.4",
         ]:
             try:
-                subprocess.check_call([
-                    sys.executable, '-m', 'pip', 'install', '--target',
-                    package_dirname, dependency
-                ])
+                subprocess.check_call(
+                    [
+                        sys.executable,
+                        "-m",
+                        "pip",
+                        "install",
+                        "--target",
+                        package_dirname,
+                        dependency,
+                    ]
+                )
             except:  # noqa
                 pass
 
@@ -42,9 +50,11 @@ class InstallPrivatePackages(install):
         bash_autocomplete_dir = "/etc/bash_completion.d/"
         fish_autocomplete_dir = "/etc/fish/conf.d/"
 
-        for (f, d) in (("dodo_autocomplete.sh", bash_autocomplete_dir),
-                       ("sdodo_autocomplete.sh", bash_autocomplete_dir),
-                       ("dodo_autocomplete.fish", fish_autocomplete_dir)):
+        for (f, d) in (
+            ("dodo_autocomplete.sh", bash_autocomplete_dir),
+            ("sdodo_autocomplete.sh", bash_autocomplete_dir),
+            ("dodo_autocomplete.fish", fish_autocomplete_dir),
+        ):
             try:
                 if not os.path.exists(d):
                     os.makedirs(d)
@@ -58,31 +68,40 @@ class InstallPrivatePackages(install):
         self._install_autocomplete_scripts(self._bin_dirname())
 
 
-setup(name='dodo_commands',
-      version='0.34.0',
-      description=
-      'Project-aware development environments, inspired by django-manage',
-      url='https://github.com/mnieber/dodo_commands',
-      download_url='https://github.com/mnieber/dodo_commands/tarball/0.34.0',
-      author='Maarten Nieber',
-      author_email='hallomaarten@yahoo.com',
-      license='MIT',
-      packages=find_packages(),
-      package_data={
-          'dodo_commands': [
-              'bin/*.sh',
-              'bin/*.fish',
-              'extra/dodo_standard_commands/*.meta',
-              'extra/dodo_docker_commands/*.meta',
-          ]
-      },
-      entry_points={'console_scripts': [
-          'dodo=dodo_commands.dodo:main',
-      ]},
-      data_files=[('/etc/bash_completion.d', [
-          'dodo_commands/bin/dodo_autocomplete.sh',
-          'dodo_commands/bin/sdodo_autocomplete.sh'
-      ]), ('/etc/fish/conf.d', ['dodo_commands/bin/dodo_autocomplete.fish'])],
-      cmdclass={'install': InstallPrivatePackages},
-      install_requires=[],
-      zip_safe=False)
+setup(
+    name="dodo_commands",
+    version="0.35.0",
+    description="Project-aware development environments, inspired by django-manage",
+    url="https://github.com/mnieber/dodo_commands",
+    download_url="https://github.com/mnieber/dodo_commands/tarball/0.35.0",
+    author="Maarten Nieber",
+    author_email="hallomaarten@yahoo.com",
+    license="MIT",
+    packages=find_packages(),
+    package_data={
+        "dodo_commands": [
+            "bin/*.sh",
+            "bin/*.fish",
+            "extra/dodo_standard_commands/*.meta",
+            "extra/dodo_docker_commands/*.meta",
+        ]
+    },
+    entry_points={
+        "console_scripts": [
+            "dodo=dodo_commands.dodo:main",
+        ]
+    },
+    data_files=[
+        (
+            "/etc/bash_completion.d",
+            [
+                "dodo_commands/bin/dodo_autocomplete.sh",
+                "dodo_commands/bin/sdodo_autocomplete.sh",
+            ],
+        ),
+        ("/etc/fish/conf.d", ["dodo_commands/bin/dodo_autocomplete.fish"]),
+    ],
+    cmdclass={"install": InstallPrivatePackages},
+    install_requires=[],
+    zip_safe=False,
+)
