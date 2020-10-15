@@ -8,6 +8,9 @@ from dodo_commands.framework.version import get_version
 
 
 def _handle_exception(e):
+    if "_ARGCOMPLETE" in os.environ:
+        sys.exit(0)
+
     if "--traceback" in sys.argv or not isinstance(e, CommandError):
         raise
     sys.stderr.write("%s: %s\n" % (e.__class__.__name__, e))
@@ -16,6 +19,9 @@ def _handle_exception(e):
 
 def execute_from_command_line(argv):
     os.environ["__DODO__"] = "1"
+
+    if "_ARGCOMPLETE" in os.environ:
+        sys.argv += os.environ["COMP_LINE"].split()[1:2]
 
     try:
         ctr = Dodo.get_container()

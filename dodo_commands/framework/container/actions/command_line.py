@@ -109,6 +109,7 @@ def expand_and_autocomplete_command_name(
     metadata_by_layer_name,
     layer_by_target_path,
 ):
+    is_autocompleting = "_ARGCOMPLETE" in os.environ
     completed_command_name = (
         handle_arg_complete(
             command_names=list(command_map.keys()),
@@ -117,7 +118,7 @@ def expand_and_autocomplete_command_name(
             metadata_by_layer_name=metadata_by_layer_name,
             layer_by_target_path=layer_by_target_path,
         )
-        if "_ARGCOMPLETE" in os.environ
+        if is_autocompleting
         else command_name
     )
 
@@ -126,5 +127,5 @@ def expand_and_autocomplete_command_name(
 
     return dict(
         input_args=input_args[:1] + new_args + input_args[2:],
-        has_changed=new_args != input_args[1:2],
+        has_changed=not is_autocompleting and new_args != input_args[1:2],
     )
