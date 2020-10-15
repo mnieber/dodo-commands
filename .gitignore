@@ -13,3 +13,4 @@ dist/*
 doc_build
 doc_html
 .cache
+*.code-workspace
