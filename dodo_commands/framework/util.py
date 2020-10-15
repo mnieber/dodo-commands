@@ -112,7 +112,7 @@ def chop(path):
 
 
 def _log(string):
-    with open("/tmp/.dodo.log", "w") as ofs:
+    with open("/tmp/.dodo.log", "a") as ofs:
         ofs.write(string + "\n")
 
 
