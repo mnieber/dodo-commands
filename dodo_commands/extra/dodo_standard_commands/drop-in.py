@@ -7,7 +7,7 @@ from dodo_commands.framework.util import chop
 
 
 def _args():
-    Dodo.parser.add_argument('package', choices=_drop_dir_by_package_name().keys())
+    Dodo.parser.add_argument("package", choices=_drop_dir_by_package_name().keys())
     return Dodo.parse_args()
 
 
@@ -27,20 +27,21 @@ def _register_drop_dir(drop_dir_by_package_name, package_name, drop_src_dir):
         if drop_src_dir == drop_dir_by_package_name[package_name]:
             return
         else:
-            print('Warning: Found two drop directories for package %s:\n' %
-                  package_name)
+            print(
+                "Warning: Found two drop directories for package %s:\n" % package_name
+            )
             print(drop_src_dir)
             print(drop_dir_by_package_name[package_name])
     drop_dir_by_package_name[package_name] = drop_src_dir
 
 
 def _dot_drop_path(item):
-    result = os.path.join(item, '.drop-in')
+    result = os.path.join(item, ".drop-in")
     return result if os.path.exists(result) else None
 
 
 def _drop_src_dir(item):
-    result = os.path.join(item, 'drop-in')
+    result = os.path.join(item, "drop-in")
     return result if os.path.isdir(result) else None
 
 
@@ -59,10 +60,8 @@ def _drop_dir_by_package_name():
             print("%s\n%s" % (dot_drop_path, default_drop_src_dir))
 
         package_name = os.path.basename(item)
-        drop_src_dir = default_drop_src_dir or _read_dot_drop_path(
-            dot_drop_path)
-        _register_drop_dir(drop_dir_by_package_name, package_name,
-                           drop_src_dir)
+        drop_src_dir = default_drop_src_dir or _read_dot_drop_path(dot_drop_path)
+        _register_drop_dir(drop_dir_by_package_name, package_name, drop_src_dir)
 
     return drop_dir_by_package_name
 
@@ -75,26 +74,27 @@ if Dodo.is_main(__name__, safe=True):
         raise CommandError("No drop-in found for package %s" % args.package)
 
     if not os.path.isdir(drop_src_dir):
-        raise CommandError("The drop-in directory does not exist: %s" %
-                           drop_src_dir)
+        raise CommandError("The drop-in directory does not exist: %s" % drop_src_dir)
 
-    config_dir = Dodo.get('/ROOT/config_dir')
-    drops_target_dir = os.path.join(config_dir, 'drops')
+    config_dir = Dodo.get("/ROOT/config_dir")
+    drops_target_dir = os.path.join(config_dir, "drops")
     if not os.path.exists(drops_target_dir):
-        Dodo.run(['mkdir', drops_target_dir])
+        Dodo.run(["mkdir", drops_target_dir])
     target_dir = os.path.join(drops_target_dir, args.package)
 
     if os.path.exists(target_dir):
-        msg = ''
-        msg += 'Target directory already exists: %s\n' % target_dir
-        msg += '\nThis probably means that %s has been already dropped into %s.\n' % (
-            args.package, config_dir)
-        msg += 'To update the drop-in manually, please run:\n\n'
-        msg += '%s %s %s' % (_diff_tool(), drop_src_dir, target_dir)
+        msg = ""
+        msg += "Target directory already exists: %s\n" % target_dir
+        msg += "\nThis probably means that %s has been already dropped into %s.\n" % (
+            args.package,
+            config_dir,
+        )
+        msg += "To update the drop-in manually, please run:\n\n"
+        msg += "%s %s %s" % (_diff_tool(), drop_src_dir, target_dir)
         raise CommandError(msg)
 
-    Dodo.run(['cp', '-rf', drop_src_dir, target_dir])
+    Dodo.run(["cp", "-rf", drop_src_dir, target_dir])
 
-    readme_path = os.path.join(drop_src_dir, 'README.md')
+    readme_path = os.path.join(drop_src_dir, "README.md")
     if os.path.exists(readme_path):
-        Dodo.run(['cat', readme_path])
+        Dodo.run(["cat", readme_path])

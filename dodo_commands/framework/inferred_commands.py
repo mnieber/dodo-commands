@@ -4,7 +4,9 @@ from dodo_commands.framework.get_aliases import get_aliases
 
 
 def get_inferred_command_map(
-    global_aliases, metadata_by_layer_name, layer_by_target_path,
+    global_aliases,
+    metadata_by_layer_name,
+    layer_by_target_path,
 ):
     layer_name_by_inferred_command = {}
 

@@ -18,7 +18,8 @@ def _args():  # noqa
         )
     )
     parser.add_argument(
-        "what", nargs="?",
+        "what",
+        nargs="?",
     )
     parser.add_argument(
         "--cd", action="store_true", help="Prefix the output with 'cd '"

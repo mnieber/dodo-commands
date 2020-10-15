@@ -3,8 +3,7 @@ import os
 import shutil
 import sys
 
-from dodo_commands.dependencies import (yaml_round_trip_dump,
-                                        yaml_round_trip_load)
+from dodo_commands.dependencies import yaml_round_trip_dump, yaml_round_trip_load
 
 docker_on_yaml = """
 DOCKER_OPTIONS:

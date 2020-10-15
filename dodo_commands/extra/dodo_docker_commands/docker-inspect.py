@@ -10,15 +10,15 @@ docker = plumbum.cmd.docker
 
 def _args():
     parser = ArgumentParser()
-    parser.add_argument('--find')
-    parser.add_argument('--ip', action='store_true')
+    parser.add_argument("--find")
+    parser.add_argument("--ip", action="store_true")
     args = Dodo.parse_args(parser)
     args.names = []
     return args
 
 
 def _containers():
-    return [x for x in docker("ps", "--format", "{{.Names}}").split('\n') if x]
+    return [x for x in docker("ps", "--format", "{{.Names}}").split("\n") if x]
 
 
 if Dodo.is_main(__name__):
@@ -49,8 +49,12 @@ if Dodo.is_main(__name__):
         picker.pick()
         args.names = picker.get_choices()
 
-    ip_args = [
-        "-f", "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}"
-    ] if args.ip else []
+    ip_args = (
+        ["-f", "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}"]
+        if args.ip
+        else []
+    )
     for container in args.names:
-        Dodo.run(['docker', 'inspect', *ip_args, container], )
+        Dodo.run(
+            ["docker", "inspect", *ip_args, container],
+        )

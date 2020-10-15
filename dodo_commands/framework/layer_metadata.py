@@ -3,4 +3,3 @@ class LayerMetadata:
         self.target_path = target_path
         self.inferred_commands = inferred_commands
         self.group_name = group_name
-

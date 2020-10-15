@@ -15,8 +15,7 @@ def _args():
 
 def _containers():
     result = []
-    for line in docker("ps", "--format",
-                       "{{.ID}} {{.Names}} {{.Image}}").split('\n'):
+    for line in docker("ps", "--format", "{{.ID}} {{.Names}} {{.Image}}").split("\n"):
         if line:
             cid, name, image = line.split()
             result.append(dict(name=name, cid=cid, image=image))
@@ -29,7 +28,7 @@ if Dodo.is_main(__name__):
     class Picker(ChoicePicker):
         def print_choices(self, choices):
             for idx, container in enumerate(choices):
-                print("%d - %s" % (idx + 1, container['name']))
+                print("%d - %s" % (idx + 1, container["name"]))
 
         def question(self):
             return "Select a container: "
@@ -38,4 +37,6 @@ if Dodo.is_main(__name__):
     picker.pick()
 
     for container in picker.get_choices():
-        Dodo.run(['docker', 'kill', container['cid']], )
+        Dodo.run(
+            ["docker", "kill", container["cid"]],
+        )

@@ -5,18 +5,23 @@ from dodo_commands import Dodo
 
 
 def _args():
-    parser = ArgumentParser(description=(
-        "Writes (or removes) a small script that activates the latest " +
-        "Dodo Commands project"))
-    parser.add_argument('status', choices=['on', 'off'])
+    parser = ArgumentParser(
+        description=(
+            "Writes (or removes) a small script that activates the latest "
+            + "Dodo Commands project"
+        )
+    )
+    parser.add_argument("status", choices=["on", "off"])
     return Dodo.parse_args(parser)
 
 
 if Dodo.is_main(__name__, safe=False):
     args = _args()
 
-    for shell, activate_cmd in (("bash", "$(dodo env --latest)"),
-                                ("fish", "source (dodo env --latest)")):
+    for shell, activate_cmd in (
+        ("bash", "$(dodo env --latest)"),
+        ("fish", "source (dodo env --latest)"),
+    ):
 
         confd_dir = os.path.expanduser("~/.config/%s/conf.d" % shell)
         if not os.path.exists(confd_dir):
@@ -25,7 +30,6 @@ if Dodo.is_main(__name__, safe=False):
         if args.status == "on" and not os.path.exists(script):
             with open(script, "w") as f:
                 f.write("# NOTE: automatically generated file, don't edit.\n")
-                f.write("%s && dodo check-version --dodo --config\n" %
-                        activate_cmd)
+                f.write("%s && dodo check-version --dodo --config\n" % activate_cmd)
         if args.status == "off" and os.path.exists(script):
             os.unlink(script)

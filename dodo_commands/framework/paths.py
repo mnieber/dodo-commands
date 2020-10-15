@@ -15,7 +15,7 @@ class Paths:
         Paths._config_dir = Paths._config_dir or self.config_dir(_env())
 
     def home_dir(self, expanduser=True):
-        return os.path.expanduser('~') if expanduser else '~'
+        return os.path.expanduser("~") if expanduser else "~"
 
     def envs_dir(self):
         return os.path.join(self.global_config_dir(), "envs")
@@ -24,20 +24,19 @@ class Paths:
         return os.path.join(self.envs_dir(), env or _env())
 
     def global_config_dir(self, expanduser=True):
-        return os.path.join(self.home_dir(expanduser), '.dodo_commands')
+        return os.path.join(self.home_dir(expanduser), ".dodo_commands")
 
     def global_config_filename(self):
-        return os.path.join(self.global_config_dir(), 'config')
+        return os.path.join(self.global_config_dir(), "config")
 
     def default_project_dir(self, expanduser=True):
-        return os.path.join(self.global_config_dir(expanduser),
-                            'default_project')
+        return os.path.join(self.global_config_dir(expanduser), "default_project")
 
     def default_commands_dir(self, expanduser=True):
-        return os.path.join(self.default_project_dir(), 'commands')
+        return os.path.join(self.default_project_dir(), "commands")
 
     def global_commands_dir(self, expanduser=True):
-        return os.path.join(self.global_config_dir(expanduser), 'commands')
+        return os.path.join(self.global_config_dir(expanduser), "commands")
 
     def project_dir(self, env=None):
         """Return the root dir of the current project."""
@@ -54,6 +53,7 @@ class Paths:
 
     def package_dir(self):
         import dodo_commands
+
         return os.path.dirname(dodo_commands.__file__)
 
     def extra_dir(self):

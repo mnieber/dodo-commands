@@ -26,7 +26,9 @@ def get_inferred_command_map(
 ):
     return dict(
         layer_name_by_inferred_command=_get_inferred_command_map(
-            global_aliases, metadata_by_layer_name, layer_by_target_path,
+            global_aliases,
+            metadata_by_layer_name,
+            layer_by_target_path,
         )
     )
 
@@ -47,4 +49,7 @@ def get_aliases_from_config(config):
 )
 def get_command_map(config):
     command_dirs = get_command_dirs_from_config(config)
-    return dict(command_dirs=command_dirs, command_map=_get_command_map(command_dirs),)
+    return dict(
+        command_dirs=command_dirs,
+        command_map=_get_command_map(command_dirs),
+    )

@@ -8,16 +8,19 @@ from argparse import ArgumentParser
 from dodo_commands.dependencies.get import plumbum, six
 from dodo_commands.framework.config import CommandError, Paths
 from dodo_commands.framework.singleton import Dodo
-from dodo_commands.framework.util import (exe_exists, is_using_system_dodo,
-                                          query_yes_no, symlink)
+from dodo_commands.framework.util import (
+    exe_exists,
+    is_using_system_dodo,
+    query_yes_no,
+    symlink,
+)
 
 meld = plumbum.cmd.meld  # noqa
 raw_input = six.moves.input
 
 
 def _args():
-    parser = ArgumentParser(
-        description='Set up Dodo Commands after installation')
+    parser = ArgumentParser(description="Set up Dodo Commands after installation")
 
     # Parse the arguments.
     # Optionally, use `config_args` to include additional arguments whose values
@@ -27,14 +30,15 @@ def _args():
 
 
 def _install_commands(pip_package, confirm):
-    if confirm or query_yes_no('Install package %s ' % pip_package +
-                               'into the default commands directory'):
-        Dodo.run(['dodo', 'install-commands', '--pip', pip_package])
+    if confirm or query_yes_no(
+        "Install package %s " % pip_package + "into the default commands directory"
+    ):
+        Dodo.run(["dodo", "install-commands", "--pip", pip_package])
 
 
 def _create_left_file(left_dir, filename, contents):
     left_filename = os.path.join(left_dir, filename)
-    with open(left_filename, 'w') as ofs:
+    with open(left_filename, "w") as ofs:
         ofs.write(contents)
     return left_filename
 
@@ -98,51 +102,49 @@ if Dodo.is_main(__name__, safe=True):
         )
 
     if not args.confirm:
-        if query_yes_no(
-                'Turn on confirmation for each command that setup executes?'):
-            os.environ['__DODO_UNIVERSAL_CONFIRM__'] = '1'
+        if query_yes_no("Turn on confirmation for each command that setup executes?"):
+            os.environ["__DODO_UNIVERSAL_CONFIRM__"] = "1"
 
-    is_darwin = platform.system() == 'Darwin'
-    is_linux = platform.system() == 'Linux'
+    is_darwin = platform.system() == "Darwin"
+    is_linux = platform.system() == "Linux"
 
-    if exe_exists('meld'):
-        Dodo.run(['dodo', 'global-config', 'settings.diff_tool', 'meld'])
+    if exe_exists("meld"):
+        Dodo.run(["dodo", "global-config", "settings.diff_tool", "meld"])
 
-    Dodo.run(['dodo', 'autostart', 'on'])
+    Dodo.run(["dodo", "autostart", "on"])
 
-    for pip_package in ('dodo_webdev_commands', 'dodo_git_commands'):
+    for pip_package in ("dodo_webdev_commands", "dodo_git_commands"):
         _install_commands(pip_package, args.confirm)
 
     # tmp_dir = tempfile.mkdtemp()
-    tmp_dir = '/tmp/dodo_setup'
+    tmp_dir = "/tmp/dodo_setup"
     shutil.rmtree(tmp_dir)  # HACK
 
-    left_dir = os.path.join(tmp_dir, 'left')
+    left_dir = os.path.join(tmp_dir, "left")
     if not os.path.exists(left_dir):
         os.makedirs(left_dir)
-    right_dir = os.path.join(tmp_dir, 'right')
+    right_dir = os.path.join(tmp_dir, "right")
     if not os.path.exists(right_dir):
         os.makedirs(right_dir)
 
-    names = dict(bash_profile='.bash_profile' if is_darwin else '.bashrc')
+    names = dict(bash_profile=".bash_profile" if is_darwin else ".bashrc")
 
-    _create_left_file(left_dir, names['bash_profile'], bash_profile)
-    bash_profile_path = os.path.join(os.path.expanduser('~'),
-                                     names['bash_profile'])
+    _create_left_file(left_dir, names["bash_profile"], bash_profile)
+    bash_profile_path = os.path.join(os.path.expanduser("~"), names["bash_profile"])
     if not os.path.exists(bash_profile_path):
-        print('The bash profile file %s does not exist.' % bash_profile_path)
-        if query_yes_no('Create it?'):
-            Dodo.run(['touch', bash_profile_path])
-    _create_right_file(right_dir, names['bash_profile'], bash_profile_path)
+        print("The bash profile file %s does not exist." % bash_profile_path)
+        if query_yes_no("Create it?"):
+            Dodo.run(["touch", bash_profile_path])
+    _create_right_file(right_dir, names["bash_profile"], bash_profile_path)
 
-    _create_left_file(left_dir, 'config', global_config)
-    _create_right_file(right_dir, 'config', Paths().global_config_filename())
+    _create_left_file(left_dir, "config", global_config)
+    _create_right_file(right_dir, "config", Paths().global_config_filename())
 
-    if not exe_exists('meld'):
+    if not exe_exists("meld"):
         print(no_meld_instructions % (left_dir, right_dir))
         raw_input()
     else:
         print(meld_instructions)
-        Dodo.run(['meld', left_dir, right_dir])
+        Dodo.run(["meld", left_dir, right_dir])
 
     shutil.rmtree(tmp_dir)

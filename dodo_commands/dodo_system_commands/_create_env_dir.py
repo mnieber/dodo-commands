@@ -25,15 +25,21 @@ def deactivate_template_fish():
 end
 """
 
+
 def source_startup_files_fish(config_dir):
     return """for file in {config_dir}/.dodo-start-env/*
     source $file
 end
-""".format(config_dir=config_dir)
+""".format(
+        config_dir=config_dir
+    )
+
 
 def activate_template(envs_dir, activate):
     return """source {envs_dir}/$DODO_COMMANDS_ENV/python_env_dir/bin/{activate}
-""".format(envs_dir=envs_dir, activate=activate)
+""".format(
+        envs_dir=envs_dir, activate=activate
+    )
 
 
 def create_env_dir(env, env_dir, project_dir, config_dir, python_env_dir):
@@ -51,11 +57,11 @@ def create_env_dir(env, env_dir, project_dir, config_dir, python_env_dir):
         ofs.write(env_var_template(env))
         ofs.write(deactivate_template_bash())
         if python_env_dir:
-            ofs.write(activate_template(Paths().envs_dir(), 'activate'))
+            ofs.write(activate_template(Paths().envs_dir(), "activate"))
 
     with open(os.path.join(env_dir, "activate.fish"), "w") as ofs:
         ofs.write(env_var_template(env))
         ofs.write(deactivate_template_fish())
         ofs.write(source_startup_files_fish(config_dir))
         if python_env_dir:
-            ofs.write(activate_template(Paths().envs_dir(), 'activate.fish'))
+            ofs.write(activate_template(Paths().envs_dir(), "activate.fish"))

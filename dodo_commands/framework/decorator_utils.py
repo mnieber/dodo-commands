@@ -2,20 +2,23 @@ from importlib import import_module
 import fnmatch
 import os
 
-from dodo_commands.framework.command_path import (get_command_dirs_from_config,
-                                                  extend_sys_path)
+from dodo_commands.framework.command_path import (
+    get_command_dirs_from_config,
+    extend_sys_path,
+)
 
 
 def uses_decorator(config, command_name, decorator_name):
-    patterns = (config.get('ROOT', {}).get('decorators',
-                                           {}).get(decorator_name, []))
+    patterns = config.get("ROOT", {}).get("decorators", {}).get(decorator_name, [])
     approved = [
-        pattern for pattern in patterns if not pattern.startswith("!")
-        and fnmatch.filter([command_name], pattern)
+        pattern
+        for pattern in patterns
+        if not pattern.startswith("!") and fnmatch.filter([command_name], pattern)
     ]
     rejected = [
-        pattern for pattern in patterns if pattern.startswith("!")
-        and fnmatch.filter([command_name], pattern[1:])
+        pattern
+        for pattern in patterns
+        if pattern.startswith("!") and fnmatch.filter([command_name], pattern[1:])
     ]
     return len(approved) and not len(rejected)
 
@@ -27,7 +30,7 @@ def get_decorators(command_name, config):
     for name, directory in _all_decorators(config).items():
         decorator = _load_decorator(name, directory)
         if decorator.is_used(config, command_name, name):
-            if name == 'confirm':
+            if name == "confirm":
                 confirm_decorator = decorator
             else:
                 result.append(decorator)
@@ -54,7 +57,7 @@ def _all_decorators(config):
             module = import_module(module_path)
             for decorator in os.listdir(module.__path__[0]):
                 name, ext = os.path.splitext(decorator)
-                if ext == '.py' and name != '__init__':
+                if ext == ".py" and name != "__init__":
                     result[name] = module_path
         except ImportError:
             continue

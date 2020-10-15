@@ -18,7 +18,7 @@ def layer_filename_superset(layer_filenames, config_io):
             selected_layer_by_path[layer_filename] = layer
 
         def map_to_nested_layer_paths(layer_filename, layer):
-            return R.path_or([], 'LAYERS')(layer)
+            return R.path_or([], "LAYERS")(layer)
 
         def get_flat_list(list_of_lists):
             return R.uniq(R.flatten(list_of_lists))
@@ -44,7 +44,7 @@ def get_conflicts_in_layer_paths(layer_paths):
     generic_paths = {}
 
     def map_to_layer_path_and_parts(path):
-        parts = os.path.basename(path).split('.')
+        parts = os.path.basename(path).split(".")
         return path, parts
 
     def has_flavours(path, parts):

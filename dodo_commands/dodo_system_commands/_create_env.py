@@ -9,7 +9,7 @@ from ._create_python_env import create_python_env
 
 
 def _python_env_filename(python_env_dir, basename):
-    return os.path.join(python_env_dir, 'bin', basename)
+    return os.path.join(python_env_dir, "bin", basename)
 
 
 def _remove_dir(x):
@@ -23,11 +23,12 @@ def _remove_file(x):
 
 
 def register_env(env, project_dir, config_dir, python_env_dir, undo_steps):
-    global_bin_dir = os.path.join(Paths().global_config_dir(), 'bin')
-    named_dodo_filename = os.path.join(global_bin_dir, 'dodo-%s' % env)
+    global_bin_dir = os.path.join(Paths().global_config_dir(), "bin")
+    named_dodo_filename = os.path.join(global_bin_dir, "dodo-%s" % env)
     env_dir = Paths().env_dir(env)
-    python_path = (_python_env_filename(python_env_dir, 'python')
-                   if python_env_dir else None)
+    python_path = (
+        _python_env_filename(python_env_dir, "python") if python_env_dir else None
+    )
 
     if not os.path.exists(global_bin_dir):
         os.makedirs(global_bin_dir)
@@ -49,15 +50,15 @@ def register_env(env, project_dir, config_dir, python_env_dir, undo_steps):
 
 
 def forget_env(env):
-    global_bin_dir = os.path.join(Paths().global_config_dir(), 'bin')
-    named_dodo_filename = os.path.join(global_bin_dir, 'dodo-%s' % env)
+    global_bin_dir = os.path.join(Paths().global_config_dir(), "bin")
+    named_dodo_filename = os.path.join(global_bin_dir, "dodo-%s" % env)
 
     env_dir = Paths().env_dir(env)
 
     python_env_dir = os.path.join(env_dir, "python_env_dir")
     if os.path.exists(python_env_dir):
         python_env_dir = os.path.realpath(python_env_dir)
-        dodo_filename = _python_env_filename(python_env_dir, 'dodo')
+        dodo_filename = _python_env_filename(python_env_dir, "dodo")
         _remove_file(dodo_filename)
 
     _remove_file(named_dodo_filename)
@@ -65,8 +66,8 @@ def forget_env(env):
 
 
 def register_python_env(python, env, python_env_dir, undo_steps):
-    dodo_filename = _python_env_filename(python_env_dir, 'dodo')
-    python_path = _python_env_filename(python_env_dir, 'python')
+    dodo_filename = _python_env_filename(python_env_dir, "dodo")
+    python_path = _python_env_filename(python_env_dir, "python")
 
     if not os.path.exists(python_env_dir):
         undo_steps.append(lambda: _remove_dir(python_env_dir))

@@ -69,4 +69,7 @@ def register(*args):
 
 
 def run(ctr, action):
-    return map_datas(*action.action_args, transform=action,)(ctr)
+    return map_datas(
+        *action.action_args,
+        transform=action,
+    )(ctr)

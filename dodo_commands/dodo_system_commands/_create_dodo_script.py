@@ -17,8 +17,8 @@ def create_dodo_script(env, dodo_file, python_path):
         add("")
         add("from dodo_commands.framework import execute_from_command_line")
         add("")
-        add("if __name__ == \"__main__\":")
+        add('if __name__ == "__main__":')
         if env:
-            add("    os.environ[\"DODO_COMMANDS_ENV\"] = \"{env}\"")
+            add('    os.environ["DODO_COMMANDS_ENV"] = "{env}"')
         add("    execute_from_command_line(sys.argv)")
     make_executable(dodo_file)

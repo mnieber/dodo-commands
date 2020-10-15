@@ -10,14 +10,14 @@ from ..config_io import ConfigIO
 class TestCommandPaths:  # noqa
     @pytest.fixture
     def simple_config(self, tmpdir):
-        foo_dir = os.path.join(str(tmpdir), 'foo')
+        foo_dir = os.path.join(str(tmpdir), "foo")
         return {
-            'ROOT': {
-                'command_path': [
-                    os.path.join(foo_dir, '*'),
+            "ROOT": {
+                "command_path": [
+                    os.path.join(foo_dir, "*"),
                 ],
-                'command_path_exclude': [
-                    os.path.join(foo_dir, 'bar'),
+                "command_path_exclude": [
+                    os.path.join(foo_dir, "bar"),
                 ],
             }
         }

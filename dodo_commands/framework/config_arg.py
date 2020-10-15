@@ -30,7 +30,6 @@ class ConfigArg:
         return self._key(config).get()
 
 
-
 def add_config_args(parser, config, config_args):
     show_help = "--help" in sys.argv
 

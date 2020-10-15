@@ -24,8 +24,9 @@ def merge_into_config(config, layer, xpath=None):
         return isinstance(x, type(dict()))
 
     def _raise(xpath):
-        raise CommandError("Cannot merge configurations. Check key /%s" %
-                           '/'.join(new_xpath))
+        raise CommandError(
+            "Cannot merge configurations. Check key /%s" % "/".join(new_xpath)
+        )
 
     xpath = xpath or []
     for key, val in (layer or {}).items():
@@ -54,6 +55,7 @@ def _add_to_config(config, section, key, value):
 def _system_commands_dir():
     """Return directory where system command scripts are stored"""
     import dodo_commands.dodo_system_commands
+
     return os.path.dirname(dodo_commands.dodo_system_commands.__file__)
 
 
@@ -70,10 +72,11 @@ def extend_command_path(config):
     """Add the system commands to the command path"""
     extended_config = copy.deepcopy(config)
     _add_to_config(extended_config, "ROOT", "command_path", [])
-    extended_config['ROOT']['command_path'].append(_system_commands_dir())
+    extended_config["ROOT"]["command_path"].append(_system_commands_dir())
     if not Paths().project_dir():
-        extended_config['ROOT']['command_path'].append(
-            os.path.join(Paths().default_commands_dir(), '*'))
+        extended_config["ROOT"]["command_path"].append(
+            os.path.join(Paths().default_commands_dir(), "*")
+        )
     return extended_config
 
 
@@ -85,14 +88,15 @@ def _report(x):
 def check_conflicts(layer_paths):
     generic_paths = {}
     for path in layer_paths:
-        parts = os.path.basename(path).split('.')
+        parts = os.path.basename(path).split(".")
         if len(parts) == 3:
             generic_path = os.path.join(os.path.dirname(path), parts[0])
 
             conflicting_path = generic_paths.get(generic_path, None)
             if conflicting_path:
-                raise CommandError("Conflicting layers: %s and %s" %
-                                   (path, conflicting_path))
+                raise CommandError(
+                    "Conflicting layers: %s and %s" % (path, conflicting_path)
+                )
 
             generic_paths[generic_path] = path
 
@@ -100,7 +104,7 @@ def check_conflicts(layer_paths):
 
 
 def build_config(layers):
-    config = {'ROOT': {}}
+    config = {"ROOT": {}}
     for layer in layers:
         merge_into_config(config, layer)
 
@@ -114,8 +118,8 @@ def build_config(layers):
 
     # Call dotenv_values for every item of /ENV/dotenv
     callbacks = {}
-    for idx, _ in enumerate(config['ROOT'].get('dotenv_files', [])):
-        callbacks['/ROOT/dotenv_files/%d' % idx] = _load_env
+    for idx, _ in enumerate(config["ROOT"].get("dotenv_files", [])):
+        callbacks["/ROOT/dotenv_files/%d" % idx] = _load_env
 
     warnings = ConfigExpander(extra_vars).run(config, callbacks=callbacks)
     return (config, warnings)
@@ -128,9 +132,11 @@ def load_config(layer_filenames, config_io=None):
         for layer_filename in layer_filenames:
             layers.append(config_io.load(layer_filename))
     except yaml.scanner.ScannerError:
-        _report("There was an error while loading the configuration. "
-                "Run 'dodo diff' to compare your configuration to the "
-                "default one.\n")
+        _report(
+            "There was an error while loading the configuration. "
+            "Run 'dodo diff' to compare your configuration to the "
+            "default one.\n"
+        )
 
     config, warnings = build_config(layers)
     return config
@@ -138,7 +144,7 @@ def load_config(layer_filenames, config_io=None):
 
 def expand_keys(config, text):
     result = ""
-    val_terms = re.split('\$\{([^\}]+)\}', text)
+    val_terms = re.split("\$\{([^\}]+)\}", text)
     for idx, term in enumerate(val_terms):
         if idx % 2:
             str_rep = json.dumps(Key(config, term).get())

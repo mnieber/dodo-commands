@@ -12,17 +12,17 @@ raw_input = six.moves.input
 
 def _args():
     parser = ArgumentParser()
-    parser.add_argument('--user')
-    parser.add_argument('--find')
-    parser.add_argument('name', nargs='?')
-    parser.add_argument('--cmd')
+    parser.add_argument("--user")
+    parser.add_argument("--find")
+    parser.add_argument("name", nargs="?")
+    parser.add_argument("--cmd")
     args = Dodo.parse_args(parser)
 
     return args
 
 
 def _containers():
-    return [x for x in docker("ps", "--format", "{{.Names}}").split('\n') if x]
+    return [x for x in docker("ps", "--format", "{{.Names}}").split("\n") if x]
 
 
 if Dodo.is_main(__name__):
@@ -52,16 +52,19 @@ if Dodo.is_main(__name__):
 
     if not args.cmd:
         default_shell = Dodo.get("/DOCKER/default_shell", "sh")
-        docker_options = DockerDecorator.merged_options(
-            Dodo.get, "docker-exec")
+        docker_options = DockerDecorator.merged_options(Dodo.get, "docker-exec")
         args.cmd = docker_options.get("shell", default_shell)
 
-    Dodo.run([
-        'docker',
-        'exec',
-        '-i',
-        '-t',
-    ] + (['--user', args.user] if args.user else []) + [
-        args.name,
-        *args.cmd.split(),
-    ], )
+    Dodo.run(
+        [
+            "docker",
+            "exec",
+            "-i",
+            "-t",
+        ]
+        + (["--user", args.user] if args.user else [])
+        + [
+            args.name,
+            *args.cmd.split(),
+        ],
+    )

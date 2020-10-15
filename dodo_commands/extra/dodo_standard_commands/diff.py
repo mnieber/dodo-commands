@@ -8,11 +8,12 @@ from dodo_commands.framework.paths import Paths
 
 def _args():
     parser = ArgumentParser(
-        description=
-        "Show diff for a file in the Dodo Commands system directory.")
-    parser.add_argument('file', nargs='?', help='Show diff for this file')
+        description="Show diff for a file in the Dodo Commands system directory."
+    )
+    parser.add_argument("file", nargs="?", help="Show diff for this file")
     parser.add_argument(
-        '--env-name', help='Compare to files from an alternative environment')
+        "--env-name", help="Compare to files from an alternative environment"
+    )
     args = Dodo.parse_args(parser)
     return args
 
@@ -23,7 +24,7 @@ def _diff_tool():
 
 if Dodo.is_main(__name__):
     args = _args()
-    file = args.file or '.'
+    file = args.file or "."
 
     project_dir = Paths().project_dir()
     if not project_dir:
@@ -31,11 +32,12 @@ if Dodo.is_main(__name__):
 
     if args.env_name:
         ref_project_dir = os.path.abspath(
-            os.path.join(project_dir, "..", args.env_name))
+            os.path.join(project_dir, "..", args.env_name)
+        )
         original_file = os.path.join(ref_project_dir, file)
         copied_file = os.path.join(project_dir, file)
     else:
-        shared_config_dir = Dodo.get('/ROOT/shared_config_dir')
+        shared_config_dir = Dodo.get("/ROOT/shared_config_dir")
         original_file = os.path.realpath(os.path.join(shared_config_dir, file))
         copied_file = os.path.join(Paths().config_dir(), file)
 

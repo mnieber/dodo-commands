@@ -21,6 +21,6 @@ class Commands:
 
 def init_commands(self):
     global_config = load_global_config_parser()
-    if global_config.has_section('alias'):
-        self.global_aliases = dict(global_config.items('alias'))
+    if global_config.has_section("alias"):
+        self.global_aliases = dict(global_config.items("alias"))
     return self

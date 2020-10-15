@@ -51,7 +51,8 @@ def parse_input_args(input_args, is_running_directly_from_script):
     o_(CommandLine, "layer_paths_from_command_prefix"),
 )
 def get_layer_paths_from_command_prefix(
-    command_prefix, metadata_by_layer_name,
+    command_prefix,
+    metadata_by_layer_name,
 ):
     def map_to_path(layer_name):
         if layer_name not in metadata_by_layer_name:
@@ -74,7 +75,9 @@ def get_layer_paths_from_command_prefix(
     o_(CommandLine, "layer_paths_inferred_by_command_name"),
 )
 def get_layer_paths_inferred_by_command_name(
-    command_name, layer_name_by_inferred_command, metadata_by_layer_name,
+    command_name,
+    layer_name_by_inferred_command,
+    metadata_by_layer_name,
 ):
     layer_name = layer_name_by_inferred_command.get(command_name, None)
     layer_metadata = metadata_by_layer_name.get(layer_name)
@@ -125,4 +128,3 @@ def expand_and_autocomplete_command_name(
         input_args=input_args[:1] + new_args + input_args[2:],
         has_changed=new_args != input_args[1:2],
     )
-

@@ -10,7 +10,8 @@ class Switcher:
         self.public_sys_modules = {}
         self.private_sys_modules = {}
         self.package_path = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), "packages")
+            os.path.dirname(os.path.realpath(__file__)), "packages"
+        )
         self.built_in = {}
         for x in sys.builtin_module_names:
             self.built_in[x] = True
@@ -72,12 +73,18 @@ def get_dependency(path):
 
 class LocalModule(ModuleType):
     """The module-hack that allows us to use ``from dependencies.get import some_module``"""
+
     __all__ = ()  # to make help() happy
     __package__ = __name__
 
     def __getattr__(self, name):
-        name_ext = ("ruamel.yaml" if name == "yaml" else
-                    "funcy.py2" if name == "funcy" else name)
+        name_ext = (
+            "ruamel.yaml"
+            if name == "yaml"
+            else "funcy.py2"
+            if name == "funcy"
+            else name
+        )
         return get_dependency(name_ext)
 
     __path__ = []  # type: List[str]

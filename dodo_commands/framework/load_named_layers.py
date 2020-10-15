@@ -5,7 +5,8 @@ from dodo_commands.framework.command_error import CommandError
 
 
 def load_named_layers(
-    config_io, metadata_by_layer_name,
+    config_io,
+    metadata_by_layer_name,
 ):
     layer_by_target_path = {}
 

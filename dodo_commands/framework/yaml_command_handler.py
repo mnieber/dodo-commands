@@ -53,7 +53,9 @@ class YamlCommandHandler:
                             arg, nargs="?", const=self._expand(default_val)
                         )
                     else:
-                        parser.add_argument(arg,)
+                        parser.add_argument(
+                            arg,
+                        )
 
         args = Dodo.parse_args(parser)
         Dodo.get()["_ARGS"] = args.__dict__

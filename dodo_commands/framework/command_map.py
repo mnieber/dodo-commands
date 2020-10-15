@@ -22,11 +22,13 @@ def get_command_map(command_dirs):
 
     file_map = {}
     for command_dir in command_dirs:
-        file_map[command_dir] = list(
-            glob.glob(os.path.join(command_dir, '*.*')))
+        file_map[command_dir] = list(glob.glob(os.path.join(command_dir, "*.*")))
 
-    for handler in (PythonCommandHandler(), YamlCommandHandler(),
-                    ShellCommandHandler()):
+    for handler in (
+        PythonCommandHandler(),
+        YamlCommandHandler(),
+        ShellCommandHandler(),
+    ):
         handler.add_commands_to_map(command_dirs, file_map, command_map)
 
     return command_map
@@ -44,11 +46,11 @@ def execute_script(command_map, command_name):
 
     command_map_item = command_map[command_name]
 
-    if command_map_item.extension == 'py':
+    if command_map_item.extension == "py":
         PythonCommandHandler().execute(command_map_item, command_name)
-    elif command_map_item.extension == 'yaml':
+    elif command_map_item.extension == "yaml":
         YamlCommandHandler().execute(command_map_item, command_name)
-    elif command_map_item.extension == 'sh':
+    elif command_map_item.extension == "sh":
         ShellCommandHandler().execute(command_map_item, command_name)
     else:
         raise Exception("Logical error")

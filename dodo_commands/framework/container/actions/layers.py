@@ -50,7 +50,10 @@ def get_metadata_by_layer_name(root_layer):
 )
 def load_named_layers(config_io, metadata_by_layer_name):
     return dict(
-        layer_by_target_path=_load_named_layers(config_io, metadata_by_layer_name,)
+        layer_by_target_path=_load_named_layers(
+            config_io,
+            metadata_by_layer_name,
+        )
     )
 
 
@@ -63,7 +66,10 @@ def load_named_layers(config_io, metadata_by_layer_name):
     o_(Layers, "selected_layer_by_path"),
 )
 def select_layers(
-    config_io, root_layer_path, root_layer, command_line_layer_paths,
+    config_io,
+    root_layer_path,
+    root_layer,
+    command_line_layer_paths,
 ):
     all_layer_paths = layer_filename_superset(
         R.uniq([root_layer_path] + command_line_layer_paths), config_io=config_io

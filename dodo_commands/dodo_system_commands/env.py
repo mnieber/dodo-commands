@@ -4,9 +4,11 @@ from contextlib import contextmanager
 
 from dodo_commands import CommandError, Dodo
 from dodo_commands.dependencies.get import plumbum
-from dodo_commands.framework.global_config import (global_config_get,
-                                                   load_global_config_parser,
-                                                   write_global_config_parser)
+from dodo_commands.framework.global_config import (
+    global_config_get,
+    load_global_config_parser,
+    write_global_config_parser,
+)
 from dodo_commands.framework.paths import Paths
 
 from ._create_env import forget_env, register_env, register_python_env

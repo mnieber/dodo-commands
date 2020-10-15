@@ -9,7 +9,8 @@ NodeVisitor = parsimonious.nodes.NodeVisitor
 
 
 def parse_choice(raw_choice):
-    grammar = Grammar(r"""
+    grammar = Grammar(
+        r"""
       choices   = (term "," choices) / term
       term       = double / single
       single     = number ""
@@ -17,11 +18,12 @@ def parse_choice(raw_choice):
       first      = number ""
       last       = number ""
       number     = ~r"[\d]+"
-      """)
+      """
+    )
 
     def remove_whitespace(x):
-        pattern = re.compile(r'\s+')
-        return re.sub(pattern, '', x)
+        pattern = re.compile(r"\s+")
+        return re.sub(pattern, "", x)
 
     class Visitor(NodeVisitor):
         def __init__(self):
@@ -54,11 +56,7 @@ def parse_choice(raw_choice):
 
 
 class ChoicePicker:
-    def __init__(self,
-                 choices,
-                 start_index=1,
-                 allow_free_text=False,
-                 labels=None):
+    def __init__(self, choices, start_index=1, allow_free_text=False, labels=None):
         self._choices = choices
         self._labels = labels
         self._start_index = start_index
@@ -90,7 +88,7 @@ class ChoicePicker:
             else:
                 for idx in self.idxs:
                     idx0 = idx - self._start_index
-                    if ((idx0 < 0) or (idx0 >= len(self._choices))):
+                    if (idx0 < 0) or (idx0 >= len(self._choices)):
                         self.on_invalid_index(idx)
                 return
 

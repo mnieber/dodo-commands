@@ -75,7 +75,10 @@ def check_dodo_commands_version():  # noqa
             sys.stdout.write(
                 bordered(
                     'The dodo_commands package needs to be upgraded (%s < %s). Tip: use "dodo upgrade"'
-                    % (actual_version, required_version,),
+                    % (
+                        actual_version,
+                        required_version,
+                    ),
                 )
             )
             sys.stdout.write("\n")
@@ -104,7 +107,10 @@ def check_config_version():  # noqa
         sys.stdout.write(
             bordered(
                 'Configuration needs update (%s < %s). Tip: use "dodo diff ."\n'
-                % (copied_version, original_version,)
+                % (
+                    copied_version,
+                    original_version,
+                )
             )
         )
         sys.stdout.write("\n")

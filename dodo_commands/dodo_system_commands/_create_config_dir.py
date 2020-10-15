@@ -9,13 +9,11 @@ def create_config_dir(config_dir):
     os.makedirs(config_dir)
     config_filename = os.path.join(config_dir, "config.yaml")
     default_config = {
-        'ROOT': {
-            'command_path': [
-                os.path.join(Paths().default_commands_dir(expanduser=False),
-                             '*')
+        "ROOT": {
+            "command_path": [
+                os.path.join(Paths().default_commands_dir(expanduser=False), "*")
             ],
-            'version':
-            '1.0.0'
+            "version": "1.0.0",
         }
     }
     with open(config_filename, "w") as f:

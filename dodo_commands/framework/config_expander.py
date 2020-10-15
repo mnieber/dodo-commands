@@ -76,7 +76,6 @@ def get_key_expressions(search_string, key_regexp=r"\$\{(/[^\}]*)\}"):
 class ConfigExpander:
     """Expand environment variables and references in the config."""
 
-
     def __init__(self, extra_vars=None):
         self.extra_vars = extra_vars or {}
 

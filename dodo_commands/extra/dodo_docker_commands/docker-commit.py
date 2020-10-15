@@ -10,15 +10,14 @@ raw_input = six.moves.input
 
 def _args():
     parser = ArgumentParser()
-    parser.add_argument('--by-container-name', dest='container_name')
+    parser.add_argument("--by-container-name", dest="container_name")
     args = Dodo.parse_args(parser)
     return args
 
 
 def _containers():
     result = []
-    for line in docker("ps", "--format",
-                       "{{.ID}} {{.Names}} {{.Image}}").split('\n'):
+    for line in docker("ps", "--format", "{{.ID}} {{.Names}} {{.Image}}").split("\n"):
         if line:
             cid, name, image = line.split()
             result.append(dict(name=name, cid=cid, image=image))
@@ -31,7 +30,7 @@ if Dodo.is_main(__name__):
 
     if args.container_name:
         filtered_containers = [
-            x for x in containers if x.get('name') == args.container_name
+            x for x in containers if x.get("name") == args.container_name
         ]
         if not filtered_containers:
             raise CommandError("Container not found: %s" % args.container_name)
@@ -40,7 +39,7 @@ if Dodo.is_main(__name__):
     else:
         print("0 - exit")
         for idx, container in enumerate(containers):
-            print("%d - %s" % (idx + 1, container['name']))
+            print("%d - %s" % (idx + 1, container["name"]))
 
         print("\nSelect a container: ")
         choice = int(raw_input()) - 1
@@ -50,9 +49,11 @@ if Dodo.is_main(__name__):
 
         container = containers[choice]
 
-    Dodo.run([
-        'docker',
-        'commit',
-        container['cid'],
-        container['image'],
-    ], )
+    Dodo.run(
+        [
+            "docker",
+            "commit",
+            container["cid"],
+            container["image"],
+        ],
+    )

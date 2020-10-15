@@ -17,7 +17,7 @@ CommandNotFound = plumbum.commands.processes.CommandNotFound
 
 class PythonCommandMapItem(CommandMapItem):
     def __init__(self, group, filename):
-        super(PythonCommandMapItem, self).__init__(group, filename, 'py')
+        super(PythonCommandMapItem, self).__init__(group, filename, "py")
         self.package_path = group
 
 
@@ -27,9 +27,10 @@ class PythonCommandHandler:
         for command_dir, files in file_map.items():
             for file in files:
                 command_name, ext = os.path.splitext(os.path.basename(file))
-                if ext == '.py' and not command_name.startswith('_'):
+                if ext == ".py" and not command_name.startswith("_"):
                     command_map[command_name] = PythonCommandMapItem(
-                        group=os.path.basename(command_dir), filename=file)
+                        group=os.path.basename(command_dir), filename=file
+                    )
 
     def execute(self, command_map_item, command_name):
         def meta_data_filename():
@@ -45,23 +46,26 @@ class PythonCommandHandler:
         def install_python_packages(meta_data, dependency):
             """Pip install packages found in meta_data."""
             requirements = [
-                x for x in meta_data['requirements']
+                x
+                for x in meta_data["requirements"]
                 if re.search(r"\b" + dependency + r"\b", x)
             ]
             if requirements:
                 if len(requirements) > 1:
                     raise CommandError(
                         "Found more than 1 candidate for python package %s in %s"
-                        % (dependency, meta_data_filename()))
+                        % (dependency, meta_data_filename())
+                    )
 
                 requirement = requirements[0]
                 print("This command wants to install %s:\n" % requirement)
                 if query_yes_no("Install (yes), or abort (no)?"):
                     subprocess.check_call(
-                        [sys.executable, "-m", "pip", "install", requirement])
+                        [sys.executable, "-m", "pip", "install", requirement]
+                    )
                     print("--- Done ---\n\n")
 
-        import_path = '%s.%s' % (command_map_item.package_path, command_name)
+        import_path = "%s.%s" % (command_map_item.package_path, command_name)
         if command_map_item.package_path in ("", None, "."):
             import_path = command_name
 
@@ -70,12 +74,11 @@ class PythonCommandHandler:
             return import_module(import_path)
         except ImportError as e:
             # Try the import again, but first run install_python_packages
-            dependency = e.name,
+            dependency = (e.name,)
             try:
                 md = meta_data()
                 if md:
                     install_python_packages(md, dependency)
                 import_module(import_path)
             except ImportError:
-                raise CommandError('Could not import python module: %s' %
-                                   dependency)
+                raise CommandError("Could not import python module: %s" % dependency)

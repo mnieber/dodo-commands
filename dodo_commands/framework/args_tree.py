@@ -47,5 +47,6 @@ class ArgsTreeNode:
         for child in self.children:
             last_root_child = indent == 0 and child == self.children[-1]
             result += child.to_str(
-                indent=indent + 2, slash=slash and not last_root_child)
+                indent=indent + 2, slash=slash and not last_root_child
+            )
         return result

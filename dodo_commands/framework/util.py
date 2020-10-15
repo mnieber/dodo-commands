@@ -31,13 +31,12 @@ def query_yes_no(question, default="yes"):
     while True:
         sys.stdout.write(question + prompt)
         choice = raw_input().lower()
-        if default is not None and choice == '':
+        if default is not None and choice == "":
             return valid[default]
         elif choice in valid:
             return valid[choice]
         else:
-            sys.stdout.write("Please respond with 'yes' or 'no' "
-                             "(or 'y' or 'n').\n")
+            sys.stdout.write("Please respond with 'yes' or 'no' " "(or 'y' or 'n').\n")
 
 
 class classproperty(object):  # noqa
@@ -52,31 +51,35 @@ class classproperty(object):  # noqa
 def bordered(text):
     lines = text.splitlines()
     width = max(len(s) for s in lines)
-    tl, tr, bl, br, v, h = u'┌', u'┐', u'└', u'┘', u'│', u'─'
+    tl, tr, bl, br, v, h = u"┌", u"┐", u"└", u"┘", u"│", u"─"
     res = [tl + h * width + tr]
     for s in lines:
-        res.append(v + (s + ' ' * width)[:width] + v)
+        res.append(v + (s + " " * width)[:width] + v)
     res.append(bl + h * width + br)
-    return '\n'.join(res)
+    return "\n".join(res)
 
 
 def is_using_system_dodo():
     import dodo_commands
+
     dodo_commands_path = dodo_commands.__path__[0]
     return os.path.realpath(dodo_commands_path) == dodo_commands_path
 
 
 try:
     import textwrap
+
     textwrap.indent
 except AttributeError:  # undefined function (wasn't added until Python 3.3)
 
-    def indent(text, amount, ch=' '):
+    def indent(text, amount, ch=" "):
         padding = amount * ch
-        return ''.join(padding + line for line in text.splitlines(True))
+        return "".join(padding + line for line in text.splitlines(True))
+
+
 else:
 
-    def indent(text, amount, ch=' '):
+    def indent(text, amount, ch=" "):
         return textwrap.indent(text, amount * ch)
 
 
@@ -87,11 +90,13 @@ def make_executable(script_filename):
 
 def symlink(source, link_name):
     import os
+
     os_symlink = getattr(os, "symlink", None)
     if callable(os_symlink):
         os_symlink(source, link_name)
     else:
         import ctypes
+
         csl = ctypes.windll.kernel32.CreateSymbolicLinkW
         csl.argtypes = (ctypes.c_wchar_p, ctypes.c_wchar_p, ctypes.c_uint32)
         csl.restype = ctypes.c_ubyte
@@ -101,14 +106,14 @@ def symlink(source, link_name):
 
 
 def chop(path):
-    while path and path[-1] in ('\n', '\r'):
+    while path and path[-1] in ("\n", "\r"):
         path = path[:-1]
     return path
 
 
 def _log(string):
-    with open('/tmp/.dodo.log', 'w') as ofs:
-        ofs.write(string + '\n')
+    with open("/tmp/.dodo.log", "w") as ofs:
+        ofs.write(string + "\n")
 
 
 class EnvironMemo:
@@ -139,12 +144,12 @@ class classproperty(property):  # noqa
 
 
 def maybe_list_to_list(maybe_list):
-    return (maybe_list if isinstance(maybe_list, list) else [maybe_list])
+    return maybe_list if isinstance(maybe_list, list) else [maybe_list]
 
 
 def sh_cmd(cmd):
-    return ['sh', '-c', cmd]
+    return ["sh", "-c", cmd]
 
 
 def xpath_to_string(xpath):
-    return '/' + '/'.join([str(x) for x in xpath])
+    return "/" + "/".join([str(x) for x in xpath])

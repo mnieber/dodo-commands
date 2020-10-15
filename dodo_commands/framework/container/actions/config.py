@@ -21,7 +21,8 @@ def check_conflicts_in_selected_layer_paths(selected_layer_by_path):
     o_(Config, "warnings"),
 )
 def build_from_selected_layers(
-    selected_layer_by_path, metadata_by_layer_name,
+    selected_layer_by_path,
+    metadata_by_layer_name,
 ):
     def get_selected_layers():
         return selected_layer_by_path.values()

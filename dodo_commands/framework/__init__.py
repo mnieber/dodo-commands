@@ -8,34 +8,35 @@ from dodo_commands.framework.version import get_version
 
 
 def _handle_exception(e):
-    if '--traceback' in sys.argv or not isinstance(e, CommandError):
+    if "--traceback" in sys.argv or not isinstance(e, CommandError):
         raise
-    sys.stderr.write('%s: %s\n' % (e.__class__.__name__, e))
+    sys.stderr.write("%s: %s\n" % (e.__class__.__name__, e))
     sys.exit(1)
 
 
 def execute_from_command_line(argv):
-    os.environ['__DODO__'] = '1'
+    os.environ["__DODO__"] = "1"
 
     try:
         ctr = Dodo.get_container()
 
         # TODO: move to action_execute_command
-        if ctr.command_line.command_name == '--version':
+        if ctr.command_line.command_name == "--version":
             print(get_version())
             sys.exit(0)
 
-        if (ctr.command_line.is_trace):
+        if ctr.command_line.is_trace:
             sys.stderr.write("%s\n" % ctr.command_line.get_trace())
             sys.exit(0)
 
         if ctr.command_line.command_name not in ctr.commands.command_map:
-            raise CommandError("Unknown dodo command: %s" %
-                               ctr.command_line.command_name)
+            raise CommandError(
+                "Unknown dodo command: %s" % ctr.command_line.command_name
+            )
 
         execute_script(ctr.commands.command_map, ctr.command_line.command_name)
     except KeyboardInterrupt:
-        print('\n')
+        print("\n")
         sys.exit(1)
     except Exception as e:
         _handle_exception(e)
