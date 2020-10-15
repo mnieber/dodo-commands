@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 from argparse import SUPPRESS, ArgumentParser
 
 from dodo_commands import CommandError, Dodo
@@ -122,9 +123,13 @@ if Dodo.is_main(__name__):
             tmux("send-keys", " ".join(sys.argv + ["--contnue"]), "C-m")
             # Attach to tmux session
             # HACK: why does this only work via Dodo.run?
-            Dodo.run(["tmux", "-2", "attach-session", "-t", args.session_id],)
+            Dodo.run(
+                ["tmux", "-2", "attach-session", "-t", args.session_id],
+            )
         elif not args.contnue:
-            Dodo.run(["tmux", "-2", "attach-session", "-t", args.session_id],)
+            Dodo.run(
+                ["tmux", "-2", "attach-session", "-t", args.session_id],
+            )
         else:
             while True:
                 tmux("send-keys", "-R", "")
@@ -134,11 +139,12 @@ if Dodo.is_main(__name__):
                 for command in selected_commands:
                     print(command)
                     tmux("split-window", "-v")
+                    time.sleep(0.5)
                     tmux("send-keys", command, "C-m")
+                    tmux("select-layout", "tile")
 
                 # Set default window
                 tmux("select-pane", "-t", "0")
-                tmux("select-layout", "tile")
     else:
         selected_commands = (
             _get_selected_commands(commands, labels)
