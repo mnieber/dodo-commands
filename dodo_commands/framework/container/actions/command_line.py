@@ -17,13 +17,12 @@ from dodo_commands.framework.handle_arg_complete import handle_arg_complete
 
 @register(
     i_(CommandLine, "input_args"),
-    i_(CommandLine, "is_running_directly_from_script"),
     o_(CommandLine, "layer_paths_from_input_args"),
     o_(CommandLine, "is_trace"),
     o_(CommandLine, "is_help"),
     o_(CommandLine, "input_args"),
 )
-def parse_input_args(input_args, is_running_directly_from_script):
+def parse_input_args(input_args):
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument("-L", "--layer", action="append")
     parser.add_argument("--trace", action="store_true")
