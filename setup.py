@@ -52,7 +52,6 @@ class InstallPrivatePackages(install):
 
         for (f, d) in (
             ("dodo_autocomplete.sh", bash_autocomplete_dir),
-            ("sdodo_autocomplete.sh", bash_autocomplete_dir),
             ("dodo_autocomplete.fish", fish_autocomplete_dir),
         ):
             try:
