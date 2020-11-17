@@ -83,6 +83,8 @@ setup(
             "bin/*.fish",
             "extra/dodo_standard_commands/*.meta",
             "extra/dodo_docker_commands/*.meta",
+            "extra/fish/functions/*.fish",
+            "extra/fish/conf.d/*.fish",
         ]
     },
     entry_points={

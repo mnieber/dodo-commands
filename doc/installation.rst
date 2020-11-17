@@ -17,6 +17,17 @@ Step 1: Install Dodo Commands
 
    On Mac you may need to create a file ``~/.distutils.cfg`` that `sets an empty prefix <http://stackoverflow.com/a/24357384/301034>`_ to prevent errors stating "must supply either home or prefix/exec-prefix -- not both".
 
+.. tip::
+
+   Autocompletion is provided for bash, fish and zsh. For activating autocompletion in zsh you need to add 
+   the following to .zshrc:
+
+   .. code-block:: bash
+
+   autoload bashcompinit
+   bashcompinit
+   eval "$(register-python-argcomplete dodo)"
+
 
 Step 2: (Optional) Install virtualenv and git
 ---------------------------------------------
