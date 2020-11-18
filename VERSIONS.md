@@ -1,5 +1,11 @@
 # Version history
 
+## 0.36.0
+
+- Add extra fish files
+- Fix: parsing of --help
+- Fix: broken autocomplete
+
 ## 0.35.0
 
 - Add --yaml argument to new-command script
