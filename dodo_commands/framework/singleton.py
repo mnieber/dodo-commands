@@ -77,16 +77,16 @@ class Dodo:
         for decorator in get_decorators(cls.command_name, cls.get()):
             decorator.add_arguments(parser)
 
+        args = cls.get_container().command_line.input_args
+        parser.prog = os.path.basename(args[0])
+        if len(args) > 1:
+            parser.prog += " %s" % args[1]
+
         if cls.get_container().command_line.is_help:
             parser.print_help()
             sys.exit(0)
 
         argcomplete.autocomplete(parser)
-
-        args = cls.get_container().command_line.input_args
-        parser.prog = os.path.basename(args[0])
-        if len(args) > 1:
-            parser.prog += " %s" % args[1]
         cls._args = parser.parse_args(args[2:])
 
         if config_args:
