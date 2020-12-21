@@ -79,6 +79,11 @@ def _args():  # noqa
         action="store_true",
         help="Prints the directory where global commands are stored",
     )
+    group.add_argument(
+        "--fish-config",
+        action="store_true",
+        help="Prints the location of the additional fish config files",
+    )
 
     return Dodo.parse_args(parser)
 
@@ -148,6 +153,12 @@ if Dodo.is_main(__name__):
         x = _which_script(args.what)
         if x:
             report(x + "\n")
+    elif args.fish_config:
+        report(
+            "file:///"
+            + os.path.realpath(os.path.join(Paths().extra_dir(), "dodo_fish"))
+            + "\n"
+        )
     else:
         if Dodo.get("/ROOT/env_name", None):
             report(Dodo.get("/ROOT/env_name") + "\n")

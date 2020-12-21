@@ -57,15 +57,10 @@ This becomes useful when combined with a key binding in the shell. For example, 
    .. code-block:: bash
 
      # find location of the which.py script, e.g.
-     # /path/to/dodo_commands/extra/dodo_standard_commands/which.py
+     dodo which --fish-config
 
-     dodo which which
-
-     # move up two directories and enter the "fish" directory, e.g.
-     # cd /path/to/dodo_commands/extra/fish
-
-     # There you will find subdirectories called ``functions`` and ``conf.d`` that need
-     # to be copied to ~/.config/fish (merging them with the existing directories there)
+     # There you will find a subdirectory called ``functions`` and a ``key_bindings.fish`` file
+     # that need to be copied to ~/.config/fish (merging them with the existing directories there)
 
 
 group[=default]
