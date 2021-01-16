@@ -24,9 +24,9 @@ Step 1: Install Dodo Commands
 
 .. code-block:: bash
 
-autoload bashcompinit
-bashcompinit
-eval "$(register-python-argcomplete dodo)"
+    autoload bashcompinit
+    bashcompinit
+    eval "$(register-python-argcomplete dodo)"
 
 
 Step 2: (Optional) Install virtualenv and git
