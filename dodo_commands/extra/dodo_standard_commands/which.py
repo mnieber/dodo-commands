@@ -150,7 +150,7 @@ if Dodo.is_main(__name__):
         for layer_path in layer_paths:
             report(layer_path + "\n")
     elif args.what:
-        x = _which_script(args.what)
+        x = _which_script(args.what) or _which_dir(args.what)
         if x:
             report(x + "\n")
     elif args.fish_config:
