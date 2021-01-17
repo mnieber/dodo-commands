@@ -118,7 +118,8 @@ class Activator:
                     )
                     return False
 
-                self._report("Creating project directory %s ..." % project_dir)
+                verb = "Creating" if create else "Initializing in existing"
+                self._report("%s project directory %s ..." % (verb, project_dir))
                 config_dir = self._config_dir(project_dir)
                 register_env(
                     self.env,
