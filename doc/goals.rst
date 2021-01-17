@@ -1,28 +1,25 @@
 Dodo Commands, who and what is it for?
 ======================================
 
-The main goal of Dodo Commands is to make it easier to run a variety of scripts and commands from the command line. Below we will describe a few scenarios in which Dodo Commands can be useful. In the next chapter, we will explain how Dodo Commands can be set up to support these scenarios.
+The main goal of Dodo Commands is to make it easier to run a variety of scripts and commands from the command line. Below we will describe two scenarios in which Dodo Commands can be useful. In the next chapter, we will explain how Dodo Commands can be set up to support these scenarios.
 
 
-Scenario: working with micro-services
--------------------------------------
+Scenario: working with micro-services running in containers
+-----------------------------------------------------------
 
-Working with micro-services by definition involves working with multiple environments, where each environment offers specific commands. Typically these commands are organized in a Makefile or package.json file. Dodo Commands allows you to use these files from any directory. For example, use `dodo foo.make bar` to call the `bar` function for the Foo micro-service, and use `dodo foo.git log` to see the git history of this micro-service. Moreover, Dodo Commands makes it easy to show the console output of different services in a single screen using tmux.
+Imagine that you have a Frontend and a Backend microservice running in Docker containers. How would you open a shell in one of these containers? With Dodo Commands you would type `dodo backend.shell` or `dodo frontend.shell`. How about running the backend Python tests and saving the output to an html file? That would be `dodo backend.pytest`.
 
-
-Scenario: local development with Docker
----------------------------------------
-
-It's a good idea to install the entire tool-chain that is needed for local development in one or more Docker containers. This isolates the run-time environment from the host computer. Dodo Commands makes it easy to execute commands inside these containers. For example, if you have a Makefile inside the Foo service container, then you can use it (from the host computer) by calling `dodo foo.make test`. Dodo commands will take care of prefixing the command with the right Docker arguments, so that it will run successfully in the container.
-
-
-Scenario: using project-specific sets of aliases
-------------------------------------------------
-
-Shell aliases are useful but they also have some drawbacks. You need to make sure that you load the right set of aliases for your current project into the shell. If you reuse your aliases between projects, then it can be challenging to maintain sets of similar but slightly different aliases. Finally, for more complex aliases it would make sense to use a powerful language such as Python instead of shell script. With Dodo Commands, you can write your aliases and functions as Python scripts. These aliases can read some of their arguments from a project specific configuration file. This helps to keep them short and makes them reusable between projects.
+In general, Dodo Commands tries to reduce typing and mental overhead by compressing commands in the shortest possible alias. These aliases expand to scripts that are either ready-made or custom-made (by you). The scripts access the project-specific dodo configuration to read parameters (such as the pytest html file location).
 
 
 Scenario: getting colleagues up-to-speed
 ----------------------------------------
 
-There are usually some steps that every developer needs to take when they join a project. You can describe these steps in a README but a more effective way is to automate them. With Dodo Commands, you can write setup scripts for your project that can be invoked as simple commands. You can group these commands into menus that can be accessed by calling `dodo menu`. Moreover, new developers can run these commands with the `--confirm` flag. This prints each step and asks for confirmation, giving new developers the chance to understand what happens in each script.
+Becoming productive in a development environment means being able to easily
+execute all the tasks that are commonly required. This involves setting up software and developing an efficient workflow. If every developer writes their
+own set of aliases then you waste of potential for sharing best practices.
+With dodo commands you can share scripts between projects and between developers,
+maximizing reuse and promoting a uniform workflow.
+When a new developer bootstraps their environment by cloning the Dodo Commands
+configuration, then they will have all the main tasks available to them
+as convenient and easy to discover aliases. You can group commands into menus that can be accessed by calling `dodo menu`. Moreover, when developers run these commands with the `--confirm` flag then they will be asked for confirmation at each step in the script, giving them the chance to follow what happens in each script.
