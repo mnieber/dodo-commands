@@ -1,3 +1,5 @@
+import os
+
 from dodo_commands import Dodo
 from dodo_commands.dependencies.get import plumbum
 from dodo_commands.framework.config import expand_keys
@@ -8,12 +10,16 @@ def _args():
 
     Dodo.parser.add_argument("compose_args", nargs="*")
     Dodo.parser.add_argument("--detach", action="store_true")
+    Dodo.parser.add_argument("--dev", action="store_true")
+    Dodo.parser.add_argument("--print", action="store_true")
     args = Dodo.parse_args()
-    args.cwd = Dodo.get("/DOCKER_COMPOSE/cwd")
-    args.files = Dodo.get("/DOCKER_COMPOSE/files", None)
-    args.map = Dodo.get("/DOCKER_COMPOSE/map", {})
+
+    key = "DOCKER_COMPOSE" + ("_DEV" if args.dev else "")
+    args.cwd = Dodo.get(f"/{key}/cwd")
+    args.files = Dodo.get(f"/{key}/files", None)
+    args.map = Dodo.get(f"/{key}/map", {})
     args.compose_project_name = Dodo.get(
-        "/DOCKER_COMPOSE/compose_project_name", Dodo.get("/ROOT/env_name")
+        f"/{key}/compose_project_name", Dodo.get("/ROOT/env_name")
     )
     return args
 
@@ -36,8 +42,14 @@ if Dodo.is_main(__name__, safe=True):
 
     file_args = get_file_args() if args.files else []
     detach_args = ["--detach"] if args.detach else []
-    with plumbum.local.env(COMPOSE_PROJECT_NAME=args.compose_project_name):
-        Dodo.run(
-            ["docker-compose", *file_args, *args.compose_args, *detach_args],
-            cwd=args.cwd,
-        )
+
+    if args.print:
+        for f in args.files:
+            print(os.path.abspath(f))
+            Dodo.run(["cat", f], cwd=args.cwd)
+    else:
+        with plumbum.local.env(COMPOSE_PROJECT_NAME=args.compose_project_name):
+            Dodo.run(
+                ["docker-compose", *file_args, *args.compose_args, *detach_args],
+                cwd=args.cwd,
+            )
