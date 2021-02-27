@@ -1,3 +1,5 @@
+.. _dial:
+
 dial [--group=default] number
 =============================
 
@@ -59,8 +61,11 @@ This becomes useful when combined with a key binding in the shell. For example, 
      # find location of the which.py script, e.g.
      dodo which --fish-config
 
-     # There you will find a subdirectory called ``functions`` and a ``key_bindings.fish`` file
-     # that need to be copied to ~/.config/fish (merging them with the existing directories there)
+     # There you will find subdirectories called ``functions`` and ``conf.d`` that need
+     # to be copied to ~/.config/fish (merging them with the existing directories there)
+     # If ~/.config/fish does not yet these subdirectories then you can do this using:
+     cd (dodo which --fish-config)
+     cp -rf functions conf.d ~/.config/fish
 
 
 group[=default]

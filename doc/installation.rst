@@ -19,8 +19,8 @@ Step 1: Install Dodo Commands
 
 .. tip::
 
-   Autocompletion is provided for bash, fish and zsh. For activating autocompletion in zsh you need to add
-   the code below to .zshrc.
+   Autocompletion is provided for bash, fish and zsh (you need to restart the shell after installation).
+   For activating autocompletion in zsh you need to add the code below to .zshrc.
 
 .. code-block:: bash
 
@@ -50,3 +50,13 @@ To automatically activate the last used Dodo Commands project, call ``dodo autos
     if [ -f ~/.config/bash/conf.d/dodo_autostart ]; then
         . ~/.config/bash/conf.d/dodo_autostart
     fi
+
+
+Step 4: (Optional) Add fish shell key-bindings for the dial command
+-------------------------------------------------------------------
+
+If you are using the fish shell then it's highly recommended to add the
+key-bindings for the (:ref:`dial`) command (click the link for instructions).
+These key-binding allow you to change the current directory to one of the
+preset directories (that are configured in the project configuration file),
+which can really speed up your work-flow in the terminal.
