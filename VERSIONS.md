@@ -1,5 +1,10 @@
 # Version history
 
+## 0.38.0
+
+- Fix: call to dodo which --config
+- Improve documentation for installing the "dodo dial" key-bindings
+
 ## 0.37.0
 
 - Fix: remove references to sdodo
