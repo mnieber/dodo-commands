@@ -97,7 +97,6 @@ setup(
             "/etc/bash_completion.d",
             [
                 "dodo_commands/bin/dodo_autocomplete.sh",
-                "dodo_commands/bin/sdodo_autocomplete.sh",
             ],
         ),
         ("/etc/fish/conf.d", ["dodo_commands/bin/dodo_autocomplete.fish"]),

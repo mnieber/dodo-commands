@@ -60,11 +60,6 @@ bash_profile = """
 if [ -f ~/.dodo_commands_autostart ]; then
     . ~/.dodo_commands_autostart
 fi
-
-# Add a short-cut for $(dodo <command_name>). It let's you use sdodo <command_name>.
-sdodo() {
-    $(dodo $@)
-}
 """
 
 global_config = """[alias]
