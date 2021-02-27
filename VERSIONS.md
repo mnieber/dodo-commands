@@ -1,5 +1,14 @@
 # Version history
 
+## 0.37.0
+
+- Fix: remove references to sdodo
+- Restore functionality where `dodo which src` prints src_dir location
+- Improve message about initializing a dodo commands project directory
+- Improve the documentation of the Dodo Commands goals
+- Add dodo browse command
+- Fix: --help did not correctly show the name of the dodo command
+
 ## 0.36.0
 
 - Add extra fish files
