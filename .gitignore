@@ -10,7 +10,7 @@ dodo_commands/dependencies/*.*
 !dodo_commands/dependencies/__init__.py
 *.pyc
 dist/*
-doc_build
+doc/_build
 doc_html
 .cache
 *.code-workspace

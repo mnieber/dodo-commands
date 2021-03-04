@@ -116,8 +116,8 @@ Dodo Commands. If you want to see its location and inspect its contents, you can
   up to you to decide when parts of the configuration should be moved to a separate layer file.
 
 
-Adding an alias for docker-compose up
--------------------------------------
+Details: Adding an alias for docker-compose up
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We can add an alias for ``docker-compose up`` so we don't have to type too much. With this
 alias we can start the Docker system with ``dodo dcu``:
@@ -141,9 +141,14 @@ there for ``docker-compose up --detach``:
   [alias]
   dcud = docker-compose up --detach
 
-When we try out the command with ``dodo dcud`` it will start both containers. Dodo Commands comes with
-various useful commands to work with Docker containers. For example, ``dodo docker-kill`` will show you
-a menu in which you can select the container that you want to kill:
+
+When we try out the command with ``dodo dcud`` it will start both containers.
+
+Details: Preset docker commands
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Dodo Commands comes with various useful commands to work with Docker containers. For example,
+``dodo docker-kill`` will show you a menu in which you can select the container that you want to kill:
 
 .. code-block:: bash
 
@@ -254,8 +259,8 @@ When we try again we see that the command is prefixed with the proper Docker arg
   ``tutorial_writer_1`` container.
 
 
-Inferred commands
------------------
+Details: Inferred commands
+--------------------------
 
 If the ``mk-greet`` command is only used in combination with the ``writer`` layer then there is a way
 to make the call even shorter. We can tell Dodo Commands that the ``writer`` layer is inferred by

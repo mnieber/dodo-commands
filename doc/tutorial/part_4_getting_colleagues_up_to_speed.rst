@@ -176,8 +176,8 @@ were supplied in the call to ``bootstrap``:
   (which is relative to ``src``) to the configuration directory of foo2.
 
 
-Checking the config version
----------------------------
+Details: Checking the config version
+------------------------------------
 
 When your colleague changes their local configuration files, they may decide at some point to
 contribute these changes to the shared configuration files. Hopefully, they
@@ -188,8 +188,8 @@ configuration with the value in the shared configuration. Then, use ``dodo diff`
 any changes.
 
 
-Checking the Dodo Commands version
-----------------------------------
+Details: Checking the Dodo Commands version
+-------------------------------------------
 
 There is a similar (optional) value ``${/ROOT/required_dodo_commands_version}`` that is
 used to check that you have the right version of Dodo Commands. The call ``dodo check-version --dodo``
@@ -198,8 +198,8 @@ automatically when opening a shell, then these checks happen automatically (they
 part of the ``autostart`` script).
 
 
-Alternatives to git as the starting point
------------------------------------------
+Details: Alternatives to git as the starting point
+--------------------------------------------------
 
 In the steps above, we cloned a git repository to obtain a ``src`` directory that has the shared
 configuration files. However, there are other ways to obtain these files. First of all, you can

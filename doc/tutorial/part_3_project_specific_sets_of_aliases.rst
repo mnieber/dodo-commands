@@ -140,8 +140,8 @@ a python virtual environment:
     dodo global-config settings.projects_dir /path/to/projects
 
 
-Using environments directly
----------------------------
+Details: Using environments directly
+------------------------------------
 
 In some cases we may want to call a command in a different environment without switching
 to that environment. For example, we may only want to print its configuration. We can
@@ -206,8 +206,8 @@ otherwise the command will fail:
     cwd: /tmp
 
 
-Importing symbols from a command script
----------------------------------------
+Details: Importing symbols from a command script
+------------------------------------------------
 
 So far, we've kept our ``mk`` script deliberately very simple. Let's refactor it by extracting a function
 for running ``make``. We can then use this function in our ``mk-greet`` script. Change the ``mk.py``
@@ -258,8 +258,8 @@ We can now use the ``run_make`` function in ``mk-greet.py``:
   with ``--confirm`` (instead, it will stop with an error message).
 
 
-Specifying command dependencies in the .meta file
--------------------------------------------------
+Details: Specifying command dependencies in the .meta file
+----------------------------------------------------------
 
 Each Dodo command should ideally run out-of-the-box. If the ``mk`` command needs additional Python packages,
 you can describe them in a ``mk.meta`` file:

@@ -12,9 +12,15 @@ The source code for this scenario is found in ``part1/before`` of the
 .. tip::
 
   In the tutorials we'll assume that Bash is used. In some cases we will source the output of
-  a Dodo command using ``$(dodo <command>)``. If you are using the Fish shell, then you can
-  use ``dodo <command> | source``. In case you are curious what is being sourced, you can run the
-  command without ``$()`` and source it manually on the command line.
+  a Dodo command using ``$(dodo <command>)``. In case you are curious what is being sourced, you can run
+  the command without ``$()`` and source it manually on the command line.
+  If you are using the Fish shell, then you can use ``dodo <command> | source`` instead of
+  ``$(dodo <command>)``.
+
+.. tip::
+
+  Parts of the tutorial that give technical details or explain more advanced features are kept separate
+  from the main text. To not be overwhelmed, it's probably better to skip them on a first read.
 
 
 Two simple micro-services
@@ -106,8 +112,14 @@ Each environment contains a set of configuration files:
         - ~/.dodo_commands/default_project/commands/*
         version: 1.0.0
 
-  # When we print the contents of the configuration, we see that some extra values
-  # were added automatically
+Details: magic configuration values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When we print the contents of the configuration, we see that some extra values
+were added automatically:
+
+.. code-block:: bash
+
   dodo print-config
 
       ROOT:
@@ -118,6 +130,10 @@ Each environment contains a set of configuration files:
         project_dir: /tmp/tutorial/part1
         config_dir: /tmp/tutorial/part1/.dodo_commands
         version: 1.0.0
+
+
+Extending the configuration
+------------------------------
 
 You can extend the configuration in any way you like. Let's add the following section:
 
@@ -201,11 +217,9 @@ We see that the command will run ``make runserver`` in the ``/tmp/tutorial/write
 Using layers to run the reader and writer service
 -------------------------------------------------
 
-Of course, we made a rather strange choice in our configuration file by binding ``${/MAKE/cwd}`` to the
-directory of the writer service. What if we instead want to run the Makefile of the reader service? We should
-not tightly couple the ``mk`` alias to the writer service but somehow make it work with both services.
-To fix this we will move the ``${/MAKE}`` section to a new configuration file: ``server.writer.yaml``. This
-file should therefore look like this:
+At the moment, the `mk` command operates on the writer service. What if we instead want to run the Makefile of the
+reader service? As a first step to generalize our `mk` command we will move the ``${/MAKE}`` section to a new configuration file:
+``server.writer.yaml``. This file should therefore look like this:
 
 .. code-block:: yaml
 
@@ -213,7 +227,7 @@ file should therefore look like this:
   MAKE:
     cwd: ${/ROOT/project_dir}/writer
 
-Add a similar file for the reader:
+Then we add a similar file for the reader:
 
 .. code-block:: yaml
 
@@ -245,7 +259,8 @@ that has the name ``writer``. It will find this layer in the ``server`` group an
 
 Of course, to run the reader, we can use ``dodo reader.mk runserver``.
 
-.. tip::
+Details: the --trace option
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   We saw above the Dodo Commands applies some magic to find out what command you want to run based
   on the prefixes that you use before the name of the command. To find out what is going on below
@@ -261,10 +276,10 @@ Of course, to run the reader, we can use ``dodo reader.mk runserver``.
   This tells us that we are actually invoking the command ``dodo mk runserver --layer=server.reader.yaml``.
 
 
-Running the services in tmux
-----------------------------
+Details: running the services in tmux
+-------------------------------------
 
-We'll now put the commands to run our services in a menu so we can easily run them
+We can put the commands to run our services in a menu so we can easily run them
 in a tmux session. First, make sure that tmux is installed on your system.
 Then, add a ``MENU`` section to the configuration file like this:
 
