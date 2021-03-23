@@ -19,46 +19,41 @@ of the previous scenario, run this to get started:
   $(dodo env --init tutorial)
 
 
-Adding a docker-compose file
-----------------------------
+Running the docker-compose file
+-------------------------------
 
-As a first step we'll add the following docker-compose file in the ``/tmp/tutorial`` directory.
-Note that this docker-compose file does not have any settings that are specific to Dodo Commands, it just runs the services
-in Docker.
+Our services come with Docker files that we have not used so far.
 
 .. code-block:: yaml
 
-  # /tmp/tutorial/docker-compose.yml
+  cat /tmp/tutorial/docker-compose.yml
 
-  version: "3"
-  services:
-    writer:
-      image: dodo_tutorial
-      build:
-        dockerfile: ./Dockerfile
-        context: .
-      volumes:
-        - ./writer:/app
-        - ./time.log:/time.log
-      working_dir: /app
-      command: make runserver
-    reader:
-      depends_on: [writer]
-      image: dodo_tutorial
-      volumes:
-        - ./reader:/app
-        - ./time.log:/time.log
-      working_dir: /app
-      command: make runserver
+      version: "3"
+      services:
+        writer:
+          image: dodo_tutorial
+          build:
+            dockerfile: ./Dockerfile
+            context: .
+          volumes:
+            - ./writer:/app
+            - ./time.log:/time.log
+          working_dir: /app
+          command: make runserver
+        reader:
+          depends_on: [writer]
+          image: dodo_tutorial
+          volumes:
+            - ./reader:/app
+            - ./time.log:/time.log
+          working_dir: /app
+          command: make runserver
 
-and also add this Dockerfile:
+  cat /tmp/tutorial/Dockerfile
 
-.. code-block:: docker
+      FROM python:3.7-alpine
 
-  # /tmp/tutorial/Dockerfile
-  FROM python:3.7-alpine
-
-  RUN apk add make
+      RUN apk add make
 
 Let's test if it works:
 
