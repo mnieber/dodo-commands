@@ -12,6 +12,11 @@ from dodo_commands.framework.command_path import extend_sys_path
 from dodo_commands.framework.config import Paths
 from dodo_commands.framework.util import query_yes_no
 
+try:
+    import_error_type = ImportError
+except Exception as e:
+    import_error_type = ModuleNotFoundError
+
 CommandNotFound = plumbum.commands.processes.CommandNotFound
 
 
@@ -72,13 +77,13 @@ class PythonCommandHandler:
         # Try the import, return if success
         try:
             return import_module(import_path)
-        except ImportError as e:
+        except import_error_type as e:
             # Try the import again, but first run install_python_packages
-            dependency = (e.name,)
+            dependency = e.name
             try:
                 md = meta_data()
                 if md:
                     install_python_packages(md, dependency)
                 import_module(import_path)
-            except ImportError:
+            except import_error_type as e:
                 raise CommandError("Could not import python module: %s" % dependency)

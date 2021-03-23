@@ -4,7 +4,7 @@ Scenario: local development with Docker
 =======================================
 
 We will continue the previous scenario (:ref:`tutorial_part1`) by Dockerizing the two services. If you haven't done the steps
-of the previous scenario, run these steps to get started:
+of the previous scenario, run this to get started:
 
 .. code-block:: bash
 
@@ -22,30 +22,32 @@ of the previous scenario, run these steps to get started:
 Adding a docker-compose file
 ----------------------------
 
-In the ``/tmp/tutorial`` directory, create the following ``docker-compose.yml`` file
+As a first step we'll add the following docker-compose file in the ``/tmp/tutorial`` directory.
+Note that this docker-compose file does not have any settings that are specific to Dodo Commands, it just runs the services
+in Docker.
 
 .. code-block:: yaml
 
   # /tmp/tutorial/docker-compose.yml
 
-  version : '3'
-  services :
+  version: "3"
+  services:
     writer:
-      image: python:3.7-alpine-make
+      image: dodo_tutorial
       build:
         dockerfile: ./Dockerfile
         context: .
       volumes:
-        - /tmp/tutorial/writer:/app
-        - /tmp/tutorial/time.log:/tmp/time.log
+        - ./writer:/app
+        - ./time.log:/time.log
       working_dir: /app
       command: make runserver
     reader:
       depends_on: [writer]
-      image: python:3.7-alpine-make
+      image: dodo_tutorial
       volumes:
-        - /tmp/tutorial/reader:/app
-        - /tmp/tutorial/time.log:/tmp/time.log
+        - ./reader:/app
+        - ./time.log:/time.log
       working_dir: /app
       command: make runserver
 
@@ -55,6 +57,7 @@ and also add this Dockerfile:
 
   # /tmp/tutorial/Dockerfile
   FROM python:3.7-alpine
+
   RUN apk add make
 
 Let's test if it works:
@@ -120,7 +123,7 @@ Details: Adding an alias for docker-compose up
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We can add an alias for ``docker-compose up`` so we don't have to type too much. With this
-alias we can start the Docker system with ``dodo dcu``:
+alias we can start the Docker system with ``dodo up``:
 
 .. code-block:: yaml
 
@@ -128,7 +131,7 @@ alias we can start the Docker system with ``dodo dcu``:
   ROOT:
     # other stuff
     aliases:
-      dcu: docker-compose up
+      up: docker-compose up
 
 Aliases that should be available in any environment can be added to the global configuration
 file. To find out where this file lives run ``dodo which --global-config``. Let's add an alias
@@ -139,10 +142,10 @@ there for ``docker-compose up --detach``:
   # ~/.dodo_commands/config
 
   [alias]
-  dcud = docker-compose up --detach
+  upd = docker-compose up --detach
 
 
-When we try out the command with ``dodo dcud`` it will start both containers.
+When we try out the command with ``dodo upd`` it will start both containers.
 
 Details: Preset docker commands
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -182,7 +185,7 @@ Let's add another command to the Makefile of the writer service:
 
   # /tmp/tutorial/writer/Makefile
   greeting:
-    echo "Hello $GREETING"
+    echo "Hello ${GREETING}"
 
 We'll add a ``mk-greet.py`` script to ``/tmp/tutorial/commands`` that sets the ``GREETING``
 environment variable and then runs ``make greeting``:
@@ -194,8 +197,8 @@ environment variable and then runs ``make greeting``:
 
   Dodo.parser.add_argument("greeting")
   Dodo.run(
-    ["make", "greeting", "GREETING=%s" % Dodo.args.greeting],
-    cwd=Dodo.get("/MAKE/cwd")
+      ["make", "greeting", "GREETING=%s" % Dodo.args.greeting],
+      cwd=Dodo.get("/MAKE/cwd")
   )
 
 Remember that we have to run this as ``dodo writer.mk-greet`` so that the ``server.writer.yaml`` layer
@@ -214,7 +217,7 @@ To achieve this, we first need to tell Dodo Commands that the ``mk-greet`` comma
 
 .. code-block:: yaml
 
-  # /tmp/tutorial/.dodo_commands/writer.yaml
+  # /tmp/tutorial/.dodo_commands/server.writer.yaml
   ROOT:
     # other stuff
     decorators:
@@ -252,10 +255,13 @@ When we try again we see that the command is prefixed with the proper Docker arg
 
       confirm? [Y/n]
 
+      echo "Hello hi"
+      Hello hi
+
 .. tip::
 
   The keys in the ``DOCKER_OPTIONS`` take wild-cards, so instead of ``mk-greet`` we could have used
-  ``*``. In our example, this means that any dockerized script will use the
+  ``*``. In our example, this means that *any* dockerized script will use the
   ``tutorial_writer_1`` container.
 
 

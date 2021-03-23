@@ -57,10 +57,17 @@ def _report(msg):
 
 def _copy_defaults(args, shared_config_dir):
     config_dir = os.path.join(args.project_dir, ".dodo_commands")
+    has_printed_header = False
+
     for filename in glob.glob(os.path.join(shared_config_dir, "*")):
         dest_path = os.path.join(config_dir, os.path.basename(filename))
         if os.path.exists(dest_path):
             if args.confirm:
+                if not has_printed_header:
+                    has_printed_header = True
+                    print(
+                        "\nCopying shared environment files to your local environment...\n"
+                    )
                 print(
                     "Warning, destination path already exists: %s. Overwrite it?"
                     % dest_path
@@ -98,10 +105,7 @@ def _cookiecutter(src_dir, cookiecutter_url):
 def _link_dir(link_target, link_name):
     if os.path.exists(link_name):
         raise CommandError("Cannot create a link because %s already exists" % link_name)
-    if os.name == "nt" and not args.confirm:
-        symlink(link_target, link_name)
-    else:
-        Dodo.run(["ln", "-s", link_target, link_name])
+    Dodo.run(["ln", "-s", link_target, link_name])
 
 
 def _get_full_src_dir(src_dir, src_subdir):

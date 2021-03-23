@@ -6,10 +6,10 @@ Scenario: getting colleagues up-to-speed
 If someone joins your project, then it makes sense to share your working environment with them.
 At the same time, you want working environments to be independent, so that each project member
 can arrange it to their preferences. This is achieved by having a shared configuration from
-which you cherry-pick the parts you need,
+which you cherry-pick the parts you need.
 
 We will continue where we left off in part 3 (:ref:`tutorial_part3`). If you haven't done the
-steps of the previous scenario, run these steps to get started:
+steps of the previous scenario, run this to get started:
 
 .. code-block:: bash
 
@@ -27,10 +27,18 @@ steps of the previous scenario, run these steps to get started:
 Preparing the configuration files for sharing
 ---------------------------------------------
 
-We currently have a working Dodo Commands configuration in ``/tmp/tutorial/.dodo_commands``,
-and some scripts in ``/tmp/tutorial/commands``. We want to share this configuration with
-colleagues. The first step we will take is to move some files into a ``src`` directory that
-we can add to a git repository:
+Let's start by activating the `tutorial` environment:
+
+.. code-block:: bash
+
+  $(dodo env tutorial)
+
+
+If you followed the tutorial so far (or the steps at the start of this tutorial to create a
+starting point) then we currently have a working Dodo Commands configuration in
+`/tmp/tutorial/.dodo_commands`, and some scripts in ``/tmp/tutorial/commands``. We want to share
+this configuration with colleagues. The first step we will take is to move some files into a ``src``
+directory that we can add to git:
 
 .. code-block:: bash
 
@@ -56,10 +64,10 @@ we can add to a git repository:
        create mode 100644 writer/write_periodically.py
 
 
-We're not adding our configuration files in ``.dodo_commands`` to git, because then the
+We're not adding the ``.dodo_commands`` directory to git, because then the
 ownership of these files will become a problem. It's better if each developer can tweak the
 configuration to their liking. Therefore, we will copy our configuration files to a new
-location inside ``/tmp/tutorial.src`` and consider this copy to be the shared configuration:
+location inside ``/tmp/tutorial/src`` and consider this copy to be the shared configuration:
 
 .. code-block:: bash
 
@@ -84,7 +92,7 @@ where the shared configuration files are:
 .. code-block:: yaml
 
   ROOT:
-    # other stuff
+    # Keep the rest of the settings as they are
     src_dir: ${/ROOT/project_dir}/src
     shared_config_dir: ${/ROOT/src_dir}/extra/dodo_commands/config
 
@@ -95,8 +103,8 @@ Now, we can compare our local configuration files to the shared files as follows
   dodo diff --confirm
 
       (/tmp) meld \
-        /tmp/dodo_tutorial/src/extra/dodo_commands/config \
-        /tmp/dodo_tutorial/.dodo_commands/.
+        /tmp/tutorial/src/extra/dodo_commands/config \
+        /tmp/tutorial/.dodo_commands/.
 
 When you run this command then ``meld`` will tell us that the ``config.yaml`` file has
 changed. You can double click on this file to get a detailed view of the differences.
@@ -121,49 +129,51 @@ to git and commit them:
   file. If the version in the local file is smaller than the version in the shared file, then
   it means that your colleague added something to the shared file. In this case, use
   ``dodo diff`` to synchronize your local file with the shared one. When you are done, make
-  sure that the local file has the same ``${/ROOT/version}`` value as the shared file (this acts
-  as a reminder that you are up-to-date with the shared configuration).
+  sure to edit the ``${/ROOT/version}`` value so that it's the same as the value in the shared file (this marks
+  the fact that you are up-to-date with the shared configuration).
 
 
 Bootstrapping a Dodo Commands environment
 -----------------------------------------
 
-We are now ready to let a colleague work on our project. To similate the steps that our
-colleague would take, we will create a foo2 environment and use the ``bootstrap`` command to
-initialize it. This will provide our colleage with a copy of the configuration files that we
-just added to git:
+We are now ready to let a colleague work on our project. This colleague will also create a `tutorial`
+environment on their computer. However, to similate this situation on our computer, we will create
+an environment named `colleague` and pretend that this is the "tutorial" environment that they will use.
+We will use the ``bootstrap`` command to initialize it. This will provide our colleage with a copy of the
+configuration files that we just added to git:
 
 .. code-block:: bash
 
-  cd /tmp
-  $(dodo env --create foo2)
-  dodo bootstrap --git-url=/tmp/dodo_tutorial/src src extra/dodo_commands/config --confirm
+  $(dodo env --create colleague)
+  dodo bootstrap --git-url=/tmp/tutorial/src src extra/dodo_commands/config --confirm
 
-      (/tmp) mkdir -p /home/maarten/projects/foo2
+      (/tmp) mkdir -p /home/maarten/projects/colleague
 
       confirm? [Y/n]
 
       (/tmp) cp -rf \
-        ~/projects/foo2/src/extra/dodo_commands/config/config.yaml
-        ~/projects/foo2/.dodo_commands/config.yaml
+        ~/projects/colleague/src/extra/dodo_commands/config/config.yaml
+        ~/projects/colleague/.dodo_commands/config.yaml
 
-      Warning, destination path already exists: ~/projects/foo2/.dodo_commands/config.yaml. Overwrite it?
-      confirm? [Y/n] n
+      Copying shared environment files to your local environment...
 
-      (/tmp) cp -rf
-        ~/projects/foo2/src/extra/dodo_commands/config/server.writer.yaml
-        ~/projects/foo2/.dodo_commands/server.writer.yaml
-      confirm? [Y/n] n
+      Warning, destination path already exists: ~/projects/colleague/.dodo_commands/config.yaml. Overwrite it?
+      confirm? [Y/n]
 
       (/tmp) cp -rf
-        ~/projects/foo2/src/extra/dodo_commands/config/server.reader.yaml
-        ~/projects/foo2/.dodo_commands/server.reader.yaml
-      confirm? [Y/n] n
+        ~/projects/colleague/src/extra/dodo_commands/config/server.writer.yaml
+        ~/projects/colleague/.dodo_commands/server.writer.yaml
+      confirm? [Y/n]
 
       (/tmp) cp -rf
-        ~/projects/foo2/src/extra/dodo_commands/config/docker.yaml
-        ~/projects/foo2/.dodo_commands/docker.yaml
-      confirm? [Y/n] n
+        ~/projects/colleague/src/extra/dodo_commands/config/server.reader.yaml
+        ~/projects/colleague/.dodo_commands/server.reader.yaml
+      confirm? [Y/n]
+
+      (/tmp) cp -rf
+        ~/projects/colleague/src/extra/dodo_commands/config/docker.yaml
+        ~/projects/colleague/.dodo_commands/docker.yaml
+      confirm? [Y/n]
 
 Because we used the ``--confirm`` flag, the command asks permission to copy the shared
 configuration files to our local configuration directory. Let's look at the arguments that
@@ -171,9 +181,9 @@ were supplied in the call to ``bootstrap``:
 
 - We used a ``--git-url`` that points to our local git repository. Usually you would use
   a remote git url.
-- The repository is cloned to the ``src`` subdirectory of foo2's project directory.
+- The repository is cloned to the ``src`` subdirectory of colleague's project directory.
 - The shared configuration files are copied from the ``extra/dodo_commands/config`` location
-  (which is relative to ``src``) to the configuration directory of foo2.
+  (which is relative to ``src``) to the configuration directory of colleague.
 
 
 Details: Checking the config version
@@ -182,7 +192,7 @@ Details: Checking the config version
 When your colleague changes their local configuration files, they may decide at some point to
 contribute these changes to the shared configuration files. Hopefully, they
 will also bump the ``${/ROOT/version}`` value when they do. Whenever you pull the git repository
-on which you both work, you can run the ``dodo check-config --config`` command to find out if the
+on which you both work, you can run the ``dodo check-version --config`` command to find out if the
 shared configuration has changed. This command compares the ``${/ROOT/version}`` value in your local
 configuration with the value in the shared configuration. Then, use ``dodo diff`` to synchronize
 any changes.

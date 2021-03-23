@@ -127,10 +127,7 @@ def _install_package(package, as_directory, install_commands_function, add_to_de
             _report_error("Error: not found: %s" % dest_dir)
             return False
 
-        if os.name == "nt" and not args.confirm:
-            symlink(dest_dir, defaults_dest_dir)
-        else:
-            Dodo.run(["ln", "-s", dest_dir, defaults_dest_dir])
+        Dodo.run(["ln", "-s", dest_dir, defaults_dest_dir])
 
     return True
 
@@ -153,11 +150,8 @@ def _install_commands_from_path(path, dest_dir, mv=False):
         Dodo.run(["mv", path, dest_dir])
     else:
         try:
-            if os.name == "nt" and not args.confirm:
-                symlink(os.path.abspath(path), dest_dir)
-            else:
-                Dodo.run(["ln", "-s", os.path.abspath(path), dest_dir])
-        except:
+            Dodo.run(["ln", "-s", os.path.abspath(path), dest_dir])
+        except Exception:
             _report_error("Error: could not create a symlink in %s." % dest_dir)
 
     return True
