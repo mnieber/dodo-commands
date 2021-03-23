@@ -15,11 +15,11 @@ def _args():
     args = Dodo.parse_args()
 
     key = "DOCKER_COMPOSE" + ("_DEV" if args.dev else "")
-    args.cwd = Dodo.get(f"/{key}/cwd")
-    args.files = Dodo.get(f"/{key}/files", None)
-    args.map = Dodo.get(f"/{key}/map", {})
+    args.cwd = Dodo.get("/" + key + "/cwd")
+    args.files = Dodo.get("/" + key + "/files", None)
+    args.map = Dodo.get("/" + key + "/map", {})
     args.compose_project_name = Dodo.get(
-        f"/{key}/compose_project_name", Dodo.get("/ROOT/env_name")
+        "/" + key + "/compose_project_name", Dodo.get("/ROOT/env_name")
     )
     return args
 
