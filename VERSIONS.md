@@ -1,5 +1,10 @@
 # Version history
 
+## 0.39.0
+
+- Update documentation
+- Fix: dont use f-strings because not supported in Python2
+
 ## 0.38.0
 
 - Fix: call to dodo which --config
