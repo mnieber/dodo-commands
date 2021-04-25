@@ -1,5 +1,12 @@
 # Version history
 
+## 0.40.0
+
+- Fix: calls to dial_insert.fish when there is no preset in the DIAL config
+- Fix: checking Dodo.safe must be done first, and not inside Dodo.run
+- Fix: autostart scripts
+- Fix: path to extra/dodo_fish
+
 ## 0.39.0
 
 - Update documentation
