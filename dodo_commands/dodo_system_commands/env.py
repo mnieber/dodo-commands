@@ -22,6 +22,10 @@ def _args():
     group = Dodo.parser.add_mutually_exclusive_group()
     group.add_argument("--create-python-env", action="store_true")
     group.add_argument("--use-python-env")
+    group.add_argument(
+        "--shell",
+        help="Use this shell value instead of the global settings.shell value",
+    )
 
     group = Dodo.parser.add_mutually_exclusive_group()
     group.add_argument("--latest", action="store_true", dest="use_latest")
@@ -59,7 +63,9 @@ class Activator:
             self.global_config.add_section("recent")
 
         self.latest_env = global_config_get(self.global_config, "recent", "latest_env")
-        self.shell = global_config_get(self.global_config, "settings", "shell", "bash")
+        self.shell = args.shell or global_config_get(
+            self.global_config, "settings", "shell", "bash"
+        )
 
         if env == "-":
             env = global_config_get(self.global_config, "recent", "previous_env")

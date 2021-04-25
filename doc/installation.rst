@@ -43,12 +43,16 @@ Some commands depend on the python-virtualenv package. In addition, some of the 
 Step 3: (Optional) Activate the latest project automatically
 ------------------------------------------------------------
 
-To automatically activate the last used Dodo Commands project, call ``dodo autostart on``. This writes a small ``dodo_autostart`` shell script into ``~/.config/fish/conf.d`` and ``~/.config/bash/conf.d``. Call ``dodo autostart off`` to turn automatic activation off, this will delete the ``dodo_autostart`` script. The Fish shell will automatically find the ``dodo_autostart`` script and run it when the shell starts. To have the same behaviour in Bash, add this line to your ``~/.bashrc`` file:
+To automatically activate the last used Dodo Commands project, call ``dodo autostart on``.
+This creates a ``~/.config/fish/conf.d/dodo_autostart.fish`` and a ``~/.config/bash/conf.d/dodo_autostart.bash`` script.
+Call ``dodo autostart off`` to turn automatic activation off, this will delete the ``dodo_autostart`` script.
+The Fish shell will automatically find the ``dodo_autostart.fish`` script and run it when the shell starts.
+To have the same behaviour in Bash, add this line to your ``~/.bashrc`` file:
 
 .. code-block:: bash
 
-    if [ -f ~/.config/bash/conf.d/dodo_autostart ]; then
-        . ~/.config/bash/conf.d/dodo_autostart
+    if [ -f ~/.config/bash/conf.d/dodo_autostart.bash ]; then
+        . ~/.config/bash/conf.d/dodo_autostart.bash
     fi
 
 

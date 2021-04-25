@@ -10,8 +10,7 @@ def env_var_template(env):
 
 
 def deactivate_template_bash():
-    return """if [ -z "$VIRTUAL_ENV" ]
-else
+    return """if [ -n "$VIRTUAL_ENV" ]; then
     echo "Deactivating virtual env: $VIRTUAL_ENV"
     deactivate
 fi

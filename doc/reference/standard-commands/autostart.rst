@@ -7,6 +7,6 @@ used environment. In Bash, this requires that you add these lines to the `~/.bas
 
 .. code-block:: bash
 
-    if [ -f ~/.config/bash/conf.d/dodo_autostart ]; then
-        . ~/.config/bash/conf.d/dodo_autostart
+    if [ -f ~/.config/bash/conf.d/dodo_autostart.bash ]; then
+        . ~/.config/bash/conf.d/dodo_autostart.bash
     fi

@@ -19,17 +19,17 @@ if Dodo.is_main(__name__, safe=False):
     args = _args()
 
     for shell, activate_cmd in (
-        ("bash", "$(dodo env --latest)"),
-        ("fish", "source (dodo env --latest)"),
+        ("bash", "$(dodo env --latest --shell=bash) &&"),
+        ("fish", "eval (dodo env --latest --shell=fish); and"),
     ):
 
         confd_dir = os.path.expanduser("~/.config/%s/conf.d" % shell)
         if not os.path.exists(confd_dir):
             Dodo.run(["mkdir", "-p", confd_dir])
-        script = os.path.join(confd_dir, "dodo_autostart")
+        script = os.path.join(confd_dir, "dodo_autostart." + shell)
         if args.status == "on" and not os.path.exists(script):
             with open(script, "w") as f:
                 f.write("# NOTE: automatically generated file, don't edit.\n")
-                f.write("%s && dodo check-version --dodo --config\n" % activate_cmd)
+                f.write("%s dodo check-version --dodo --config\n" % activate_cmd)
         if args.status == "off" and os.path.exists(script):
             os.unlink(script)
