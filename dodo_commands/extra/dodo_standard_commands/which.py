@@ -154,7 +154,7 @@ if Dodo.is_main(__name__):
         if x:
             report(x + "\n")
     elif args.fish_config:
-        report(os.path.realpath(os.path.join(Paths().extra_dir(), "fish")) + "\n")
+        report(os.path.realpath(os.path.join(Paths().extra_dir(), "dodo_fish")) + "\n")
     else:
         if Dodo.get("/ROOT/env_name", None):
             report(Dodo.get("/ROOT/env_name") + "\n")

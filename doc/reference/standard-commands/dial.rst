@@ -56,7 +56,7 @@ This becomes useful when combined with a key binding in the shell. For example, 
 
 .. tip::
 
-   Dodo Commands comes with "dial" key bindings for fish. You can find them as follows:
+   Dodo Commands comes with "dial" key bindings for fish. You can install them as follows:
 
    .. code-block:: bash
 
@@ -65,7 +65,7 @@ This becomes useful when combined with a key binding in the shell. For example, 
 
      # There you will find subdirectories called ``functions`` and ``conf.d`` that need
      # to be copied to ~/.config/fish (merging them with the existing directories there)
-     # If ~/.config/fish does not yet these subdirectories then you can do this using:
+     # If ~/.config/fish does not yet contain these subdirectories then you can do this using:
      cd (dodo which --fish-config)
      cp -rf functions conf.d ~/.config/fish
 
