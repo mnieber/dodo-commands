@@ -10,25 +10,29 @@ local = plumbum.local
 
 def _count_confirm_in_argv():
     result = 0
+    counting = True
     for arg in sys.argv:
-        if arg == "--confirm":
-            result += 1
-        if arg.startswith("-") and not arg.startswith("--"):
-            result += arg.count("c")
+        if counting:
+            if arg == "--confirm":
+                result += 1
+            if arg.startswith("-") and not arg.startswith("--"):
+                result += arg.count("c")
         if arg == "--":
-            break
+            counting = not counting
     return result
 
 
 def _count_echo_in_argv():
     result = 0
+    counting = True
     for arg in sys.argv:
-        if arg == "--echo":
-            result += 1
-        if arg.startswith("-") and not arg.startswith("--"):
-            result += arg.count("e")
+        if counting:
+            if arg == "--echo":
+                result += 1
+            if arg.startswith("-") and not arg.startswith("--"):
+                result += arg.count("e")
         if arg == "--":
-            break
+            counting = not counting
     return result
 
 
