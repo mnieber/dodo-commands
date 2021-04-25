@@ -55,6 +55,10 @@ class Dodo:
         if safe is not None:
             cls.safe = safe
 
+        for decorator in get_decorators(cls.command_name, cls.get()):
+            if hasattr(decorator, "install"):
+                decorator.install()
+
         if name == "__main__":
             return True
 

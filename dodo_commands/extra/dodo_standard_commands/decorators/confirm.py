@@ -20,6 +20,18 @@ def _count_confirm_in_argv():
     return result
 
 
+def _count_echo_in_argv():
+    result = 0
+    for arg in sys.argv:
+        if arg == "--echo":
+            result += 1
+        if arg.startswith("-") and not arg.startswith("--"):
+            result += arg.count("e")
+        if arg == "--":
+            break
+    return result
+
+
 def _ask_confirmation(args, cwd, is_echo, is_confirm):
     """Ask the user whether to continue with executing func."""
 
@@ -76,11 +88,11 @@ class Decorator:  # noqa
             help="Print all commands instead of running them",
         )
 
-    def modify_args(self, command_line_args, args_tree_root_node, cwd):  # noqa
+    def install(self):
         if _count_confirm_in_argv() > 1:
             local.env["__DODO_UNIVERSAL_CONFIRM__"] = "1"
 
-        if _is_echo(command_line_args) and not Dodo.safe:
+        if _count_echo_in_argv() and not Dodo.safe:
             raise CommandError(
                 "The --echo option is not supported for unsafe commands.\n"
                 + "Since this command is marked as unsafe, some operations will "
@@ -88,7 +100,7 @@ class Decorator:  # noqa
                 + "Use --confirm if you wish to execute with visual feedback. "
             )
 
-        if _is_confirm(command_line_args) and not Dodo.safe:
+        if _count_confirm_in_argv() and not Dodo.safe:
             if not query_yes_no(
                 "Since this command is marked as unsafe, some operations will "
                 + "be performed without asking for confirmation. Continue?",
@@ -96,6 +108,7 @@ class Decorator:  # noqa
             ):
                 sys.exit(1)
 
+    def modify_args(self, command_line_args, args_tree_root_node, cwd):  # noqa
         if not _ask_confirmation(
             args_tree_root_node,
             cwd or local.cwd,
