@@ -33,8 +33,10 @@ This becomes useful when combined with a key binding in the shell. For example, 
 
     # /.config/fish/functions/dial_insert.fish
     function dial_insert
-        cd (dodo dial $argv)
-        commandline -f repaint
+        set cmd (dodo dial -g default $argv)
+        if test $cmd
+            commandline -i $cmd
+        end
     end
 
     # /.config/fish/functions/dial_cd.fish

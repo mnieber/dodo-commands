@@ -1,3 +1,6 @@
 function dial_insert
-    commandline -i (dodo dial -g default $argv)
+    set cmd (dodo dial -g default $argv)
+    if test $cmd
+        commandline -i $cmd
+    end
 end
