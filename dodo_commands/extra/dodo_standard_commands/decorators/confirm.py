@@ -1,39 +1,12 @@
 import os
 import sys
+from argparse import ArgumentParser
 
 from dodo_commands import CommandError, Dodo
 from dodo_commands.dependencies.get import plumbum
 from dodo_commands.framework.util import query_yes_no
 
 local = plumbum.local
-
-
-def _count_confirm_in_argv():
-    result = 0
-    counting = True
-    for arg in sys.argv:
-        if counting:
-            if arg == "--confirm":
-                result += 1
-            if arg.startswith("-") and not arg.startswith("--"):
-                result += arg.count("c")
-        if arg == "--":
-            counting = not counting
-    return result
-
-
-def _count_echo_in_argv():
-    result = 0
-    counting = True
-    for arg in sys.argv:
-        if counting:
-            if arg == "--echo":
-                result += 1
-            if arg.startswith("-") and not arg.startswith("--"):
-                result += arg.count("e")
-        if arg == "--":
-            counting = not counting
-    return result
 
 
 def _ask_confirmation(args, cwd, is_echo, is_confirm):
@@ -63,7 +36,6 @@ def _is_echo(command_line_args):
 def _is_confirm(command_line_args):
     return (
         getattr(command_line_args, "confirm", False)
-        or _count_confirm_in_argv()
         or os.environ.get("__DODO_UNIVERSAL_CONFIRM__", None) == "1"
     )
 
@@ -88,15 +60,19 @@ class Decorator:  # noqa
         parser.add_argument(
             "-e",
             "--echo",
-            action="store_true",
+            action="count",
             help="Print all commands instead of running them",
         )
 
     def install(self):
-        if _count_confirm_in_argv() > 1:
+        parser = ArgumentParser()
+        self.add_arguments(parser)
+        known_args, args = parser.parse_known_args()
+
+        if known_args.confirm and known_args.confirm > 1:
             local.env["__DODO_UNIVERSAL_CONFIRM__"] = "1"
 
-        if _count_echo_in_argv() and not Dodo.safe:
+        if known_args.echo and not Dodo.safe:
             raise CommandError(
                 "The --echo option is not supported for unsafe commands.\n"
                 + "Since this command is marked as unsafe, some operations will "
@@ -104,7 +80,7 @@ class Decorator:  # noqa
                 + "Use --confirm if you wish to execute with visual feedback. "
             )
 
-        if _count_confirm_in_argv() and not Dodo.safe:
+        if known_args.confirm and not Dodo.safe:
             if not query_yes_no(
                 "Since this command is marked as unsafe, some operations will "
                 + "be performed without asking for confirmation. Continue?",
