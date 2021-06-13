@@ -10,7 +10,7 @@ def _args():
     Dodo.parser.description = "Download a command script and run it"
 
     Dodo.parser.add_argument("url")
-    Dodo.parser.add_argument("script_args", nargs="*")
+    Dodo.parser.add_argument("script_args")
 
     args = Dodo.parse_args()
     return args

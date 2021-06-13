@@ -3,12 +3,13 @@ import os
 from dodo_commands import Dodo
 from dodo_commands.dependencies.get import plumbum
 from dodo_commands.framework.config import expand_keys
+from dodo_commands.framework.util import to_arg_list
 
 
 def _args():
     Dodo.parser.description = "Run docker compose"
 
-    Dodo.parser.add_argument("compose_args", nargs="*")
+    Dodo.parser.add_argument("compose_args")
     Dodo.parser.add_argument("--detach", action="store_true")
     Dodo.parser.add_argument("--dev", action="store_true")
     Dodo.parser.add_argument("--print", action="store_true")
@@ -50,6 +51,11 @@ if Dodo.is_main(__name__, safe=True):
     else:
         with plumbum.local.env(COMPOSE_PROJECT_NAME=args.compose_project_name):
             Dodo.run(
-                ["docker-compose", *file_args, *args.compose_args, *detach_args],
+                [
+                    "docker-compose",
+                    *file_args,
+                    *to_arg_list(args.compose_args),
+                    *detach_args,
+                ],
                 cwd=args.cwd,
             )

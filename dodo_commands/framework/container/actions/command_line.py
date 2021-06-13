@@ -11,7 +11,6 @@ from dodo_commands.framework.container.facets import (
     o_,
     register,
 )
-from dodo_commands.framework.container.utils import rearrange_double_dash
 from dodo_commands.framework.handle_arg_complete import handle_arg_complete
 
 
@@ -28,12 +27,7 @@ def parse_input_args(input_args):
     parser.add_argument("--trace", action="store_true")
     parser.add_argument("--help", action="store_true")
 
-    known_args, args = R.pipe(
-        #
-        R.always(input_args),
-        rearrange_double_dash,
-        parser.parse_known_args,
-    )(None)
+    known_args, args = parser.parse_known_args(input_args)
 
     return dict(
         layer_paths_from_input_args=known_args.layer or [],

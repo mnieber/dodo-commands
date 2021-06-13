@@ -1,6 +1,7 @@
 import os
 
 from dodo_commands import CommandError, Dodo
+from dodo_commands.framework.util import to_arg_list
 
 
 def _args():
@@ -9,9 +10,7 @@ def _args():
         choices=Dodo.get("/DOCKER_IMAGES").keys(),
         help="Key to look up in /DOCKER_IMAGES",
     )
-    Dodo.parser.add_argument(
-        "build_args", nargs="*", help="Extra args to pass to docker build"
-    )
+    Dodo.parser.add_argument("build_args", help="Extra args to pass to docker build")
     args = Dodo.parse_args()
     args.build_dir = Dodo.get(
         "/DOCKER_IMAGES/{name}/build_dir".format(name=args.name), "."
@@ -66,7 +65,7 @@ if Dodo.is_main(__name__):
                 args.docker_image,
                 "-f",
                 args.docker_file,
-                *args.build_args,
+                *to_arg_list(args.build_args),
                 ".",
             ],
             cwd=args.build_dir,

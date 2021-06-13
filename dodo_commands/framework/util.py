@@ -147,6 +147,12 @@ def maybe_list_to_list(maybe_list):
     return maybe_list if isinstance(maybe_list, list) else [maybe_list]
 
 
+def to_arg_list(x):
+    if isinstance(x, str):
+        x = x.split()
+    return maybe_list_to_list(x)
+
+
 def sh_cmd(cmd):
     return ["sh", "-c", cmd]
 
