@@ -1,5 +1,6 @@
 import argparse
 import os
+import shlex
 
 from dodo_commands.framework import ramda as R
 from dodo_commands.framework.command_error import CommandError
@@ -41,11 +42,13 @@ def parse_input_args(input_args):
 @register(
     i_(CommandLine, "command_prefix"),
     i_(Layers, "metadata_by_layer_name"),
+    i_(CommandLine, "layer_paths_from_command_prefix"),
     o_(CommandLine, "layer_paths_from_command_prefix"),
 )
 def get_layer_paths_from_command_prefix(
     command_prefix,
     metadata_by_layer_name,
+    layer_paths_from_command_prefix,
 ):
     def map_to_path(layer_name):
         if layer_name not in metadata_by_layer_name:
@@ -57,7 +60,10 @@ def get_layer_paths_from_command_prefix(
         return metadata_by_layer_name[layer_name].target_path
 
     layer_names = R.uniq(R.filter(bool)(command_prefix.split(".")))
-    return dict(layer_paths_from_command_prefix=R.map(map_to_path)(layer_names))
+    return dict(
+        layer_paths_from_command_prefix=R.map(map_to_path)(layer_names)
+        or layer_paths_from_command_prefix
+    )
 
 
 # COMMAND LINE
@@ -115,8 +121,8 @@ def expand_and_autocomplete_command_name(
         else command_name
     )
 
-    alias_target = command_aliases.get(completed_command_name) or completed_command_name
-    new_args = alias_target.split(" ")
+    alias_target = command_aliases.get(completed_command_name)
+    new_args = shlex.split(alias_target) if alias_target else input_args[1:2]
 
     return dict(
         input_args=input_args[:1] + new_args + input_args[2:],

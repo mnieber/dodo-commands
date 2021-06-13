@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Utilities."""
 import os
+import re
 import sys
 
 from dodo_commands.dependencies.get import plumbum, six
@@ -149,6 +150,8 @@ def maybe_list_to_list(maybe_list):
 
 def to_arg_list(x):
     if isinstance(x, str):
+        if re.match(r"'.*'", x) or re.match(r'".*"', x):
+            x = x[1:-1]
         x = x.split()
     return maybe_list_to_list(x)
 

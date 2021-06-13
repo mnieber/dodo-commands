@@ -25,10 +25,10 @@ class Container:
         run(self, actions.layers.get_metadata_by_layer_name)
         run(self, actions.layers.load_named_layers)
         run(self, actions.commands.get_inferred_command_map)
-        run(self, actions.command_line.get_layer_paths_from_command_prefix)
         run(self, actions.command_line.parse_input_args)
 
         while True:
+            run(self, actions.command_line.get_layer_paths_from_command_prefix)
             run(self, actions.command_line.get_layer_paths_inferred_by_command_name)
 
             # Create the config
