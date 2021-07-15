@@ -11,11 +11,10 @@ def _args():
 
     Dodo.parser.add_argument("compose_args")
     Dodo.parser.add_argument("--detach", action="store_true")
-    Dodo.parser.add_argument("--dev", action="store_true")
     Dodo.parser.add_argument("--print", action="store_true")
     args = Dodo.parse_args()
 
-    key = "DOCKER_COMPOSE" + ("_DEV" if args.dev else "")
+    key = "DOCKER_COMPOSE"
     args.cwd = Dodo.get("/" + key + "/cwd")
     args.files = Dodo.get("/" + key + "/files", None)
     args.map = Dodo.get("/" + key + "/map", {})
