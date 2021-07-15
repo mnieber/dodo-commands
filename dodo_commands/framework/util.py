@@ -153,7 +153,7 @@ def to_arg_list(x):
         if re.match(r"'.*'", x) or re.match(r'".*"', x):
             x = x[1:-1]
         x = x.split()
-    return maybe_list_to_list(x)
+    return maybe_list_to_list(x or [])
 
 
 def sh_cmd(cmd):
