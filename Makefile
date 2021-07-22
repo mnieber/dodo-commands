@@ -1,2 +1,2 @@
 sphinx:
-	sphinx-build -b html doc doc_html
+	sphinx-build -b html docs docs_html

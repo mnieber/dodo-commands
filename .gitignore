@@ -11,6 +11,6 @@ dodo_commands/dependencies/*.*
 *.pyc
 dist/*
 doc/_build
-doc_html
+docs_html
 .cache
 *.code-workspace
