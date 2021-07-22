@@ -174,7 +174,7 @@ in the global commands directory, and then reference that location.
 
 .. tabs::
 
-  .. tab:: Step 1: Run ``dodo install-commands`
+  .. tab:: Step 1: Run ``dodo install-commands``
 
     Since the directory name ``commands`` is not very descriptive, we will use the ``--as`` option to rename
     it to ``dodo_tutorial_commands``:
