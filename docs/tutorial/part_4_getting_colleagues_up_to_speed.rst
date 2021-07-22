@@ -34,94 +34,104 @@ Let's start by activating the `tutorial` environment:
   $(dodo env tutorial)
 
 
-If you followed the tutorial so far (or the steps at the start of this tutorial to create a
-starting point) then we currently have a working Dodo Commands configuration in
-`/tmp/tutorial/.dodo_commands`, and some scripts in ``/tmp/tutorial/commands``. We want to share
-this configuration with colleagues. The first step we will take is to move some files into a ``src``
-directory that we can add to git:
+If you followed the tutorial so far (or if you've cloned the latest starting point) then we have a
+working Dodo Commands configuration in `/tmp/tutorial/.dodo_commands`, and some scripts in ``/tmp/tutorial/commands``.
+Let's see how we can share this configuration with colleagues.
 
-.. code-block:: bash
+.. tabs::
 
-  cd /tmp/tutorial
-  mkdir src
-  mv commands/ docker-compose.yml Dockerfile reader/ writer/ time.log src/
+  .. tab:: Step 1: Add files to git
 
-  cd src
-  git init
-  git add *
-  git commit -m "First commit"
+    The first step we will take is to move some files into a ``src``
+    directory that we can add to git:
 
-      [master (root-commit) 56f79a1] First commit
-       9 files changed, 77741 insertions(+)
-       create mode 100644 Dockerfile
-       create mode 100644 commands/greet.py
-       create mode 100644 commands/mk.meta
-       create mode 100644 commands/mk.py
-       create mode 100644 docker-compose.yml
-       create mode 100644 reader/Makefile
-       create mode 100644 time.log
-       create mode 100644 writer/Makefile
-       create mode 100644 writer/write_periodically.py
+    .. code-block:: bash
 
+      cd /tmp/tutorial
+      mkdir src
+      mv commands/ docker-compose.yml Dockerfile reader/ writer/ time.log src/
 
-We're not adding the ``.dodo_commands`` directory to git, because then the
-ownership of these files will become a problem. It's better if each developer can tweak the
-configuration to their liking. Therefore, we will copy our configuration files to a new
-location inside ``/tmp/tutorial/src`` and consider this copy to be the shared configuration:
+      cd src
+      git init
+      git add *
+      git commit -m "First commit"
 
-.. code-block:: bash
+          [master (root-commit) 56f79a1] First commit
+          9 files changed, 77741 insertions(+)
+          create mode 100644 Dockerfile
+          create mode 100644 commands/greet.py
+          create mode 100644 commands/mk.meta
+          create mode 100644 commands/mk.py
+          create mode 100644 docker-compose.yml
+          create mode 100644 reader/Makefile
+          create mode 100644 time.log
+          create mode 100644 writer/Makefile
+          create mode 100644 writer/write_periodically.py
 
-  cd /tmp/tutorial
-  mkdir -p ./src/extra/dodo_commands
-  cp -rf .dodo_commands ./src/extra/dodo_commands/config
+    We're not adding the ``.dodo_commands`` directory to git, because then the
+    ownership of these files will become a problem. It's better if each developer can tweak the
+    configuration to their liking.
 
-  cd src
-  git add *
-  git commit -m "Add shared configuration files"
+  .. tab:: Step 2: Add shared configuration files
 
-      [master de33a3f] Add shared configuration files
-       4 files changed, 39 insertions(+), 5 deletions(-)
-       create mode 100644 extra/dodo_commands/config/config.yaml
-       create mode 100644 extra/dodo_commands/config/docker.yaml
-       create mode 100644 extra/dodo_commands/config/server.reader.yaml
-       create mode 100644 extra/dodo_commands/config/server.writer.yaml
+    Instead of adding `.dodo_commands` directly to git, we copy these configuration files to a special location (called
+    ``extra``) inside the repository and consider this copy to be the shared configuration.
 
-Finally, we will add the ``${/ROOT/config/shared_config_dir}`` key to tell Dodo Commands
-where the shared configuration files are:
+    .. code-block:: bash
 
-.. code-block:: yaml
+      cd /tmp/tutorial
+      mkdir -p ./src/extra/dodo_commands
+      cp -rf .dodo_commands ./src/extra/dodo_commands/config
 
-  ROOT:
-    # Keep the rest of the settings as they are
-    src_dir: ${/ROOT/project_dir}/src
-    shared_config_dir: ${/ROOT/src_dir}/extra/dodo_commands/config
+      cd src
+      git add *
+      git commit -m "Add shared configuration files"
 
-Now, we can compare our local configuration files to the shared files as follows:
+          [master de33a3f] Add shared configuration files
+          4 files changed, 39 insertions(+), 5 deletions(-)
+          create mode 100644 extra/dodo_commands/config/config.yaml
+          create mode 100644 extra/dodo_commands/config/docker.yaml
+          create mode 100644 extra/dodo_commands/config/server.reader.yaml
+          create mode 100644 extra/dodo_commands/config/server.writer.yaml
 
-.. code-block:: bash
+    We also add the ``${/ROOT/config/shared_config_dir}`` key to tell Dodo Commands
+    where the shared configuration files are:
 
-  dodo diff --confirm
+    .. code-block:: yaml
 
-      (/tmp) meld \
-        /tmp/tutorial/src/extra/dodo_commands/config \
-        /tmp/tutorial/.dodo_commands/.
+      ROOT:
+        # ...
+        shared_config_dir: ${/ROOT/src_dir}/extra/dodo_commands/config
 
-When you run this command then ``meld`` will tell us that the ``config.yaml`` file has
-changed. You can double click on this file to get a detailed view of the differences.
-In this view, you can copy the local changes (remember, we added a ``shared_config_dir``
-key to the ``ROOT`` section) over to the shared file. Since this means that we have a
-new version, it's a good habit to also bump the ``${/ROOT/version}`` key in both files.
-Finally, you can add the changes in ``/tmp/tutorial/src/extra/dodo_commands/config/config.yaml``
-to git and commit them:
+  .. tab:: Step 3: Diff
 
-.. code-block:: bash
+    Now, we can compare our local configuration files to the shared files as follows:
 
-  cd /tmp/tutorial/src
-  git add *
-  git commit -m "Update shared configuration files"
+    .. code-block:: bash
 
-      [master 256a23b] Update shared configuration files
-       1 file changed, 3 insertions(+), 1 deletion(-)
+      dodo diff --confirm
+
+          (/tmp) meld \
+            /tmp/tutorial/src/extra/dodo_commands/config \
+            /tmp/tutorial/.dodo_commands/.
+
+    When you run this command then ``meld`` will tell us that the ``config.yaml`` file has
+    changed (remember, we added a ``shared_config_dir``
+    key to the ``ROOT`` section). You can double click on this file to get a detailed view of
+    the differences, and copy the local changes over to the shared file. Since we are updating the
+    shared configuration, we should also bump the ``${/ROOT/version}`` key in both files to indicate
+    the version change.
+    Finally, you can add the changes in ``/tmp/tutorial/src/extra/dodo_commands/config/config.yaml``
+    to git and commit them:
+
+    .. code-block:: bash
+
+      cd /tmp/tutorial/src
+      git add *
+      git commit -m "Update shared configuration files"
+
+          [master 256a23b] Update shared configuration files
+          1 file changed, 3 insertions(+), 1 deletion(-)
 
 .. note::
 
@@ -136,11 +146,11 @@ to git and commit them:
 Bootstrapping a Dodo Commands environment
 -----------------------------------------
 
-We are now ready to let a colleague work on our project. This colleague will also create a `tutorial`
-environment on their computer. However, to similate this situation on our computer, we will create
-an environment named `colleague` and pretend that this is the "tutorial" environment that they will use.
+We are now ready to let a colleague work on our project. To similate the steps that our colleague will
+take on their computer, we will create an environment named `colleague` and pretend that this is the "tutorial"
+environment that they will use.
 We will use the ``bootstrap`` command to initialize it. This will provide our colleage with a copy of the
-configuration files that we just added to git:
+configuration files that we just added to git.
 
 .. code-block:: bash
 
@@ -185,46 +195,49 @@ were supplied in the call to ``bootstrap``:
 - The shared configuration files are copied from the ``extra/dodo_commands/config`` location
   (which is relative to ``src``) to the configuration directory of colleague.
 
+Detail sections
+---------------
 
-Details: Checking the config version
-------------------------------------
+.. tabs::
 
-When your colleague changes their local configuration files, they may decide at some point to
-contribute these changes to the shared configuration files. Hopefully, they
-will also bump the ``${/ROOT/version}`` value when they do. Whenever you pull the git repository
-on which you both work, you can run the ``dodo check-version --config`` command to find out if the
-shared configuration has changed. This command compares the ``${/ROOT/version}`` value in your local
-configuration with the value in the shared configuration. Then, use ``dodo diff`` to synchronize
-any changes.
+  .. tab:: Details
 
+    Open the adjacent tabs for more detail sections
 
-Details: Checking the Dodo Commands version
--------------------------------------------
+  .. tab:: Checking the config version
 
-There is a similar (optional) value ``${/ROOT/required_dodo_commands_version}`` that is
-used to check that you have the right version of Dodo Commands. The call ``dodo check-version --dodo``
-verifies this. If you are using the ``autostart`` script to enable the last used environment
-automatically when opening a shell, then these checks happen automatically (they are
-part of the ``autostart`` script).
+    When your colleague changes their local configuration files, they may decide at some point to
+    contribute these changes to the shared configuration files. Hopefully, they
+    will also bump the ``${/ROOT/version}`` value when they do. Whenever you pull the git repository
+    on which you both work, you can run the ``dodo check-version --config`` command to find out if the
+    shared configuration has changed. This command compares the ``${/ROOT/version}`` value in your local
+    configuration with the value in the shared configuration. Then, use ``dodo diff`` to synchronize
+    any changes.
 
+  .. tab:: Checking the Dodo Commands version
 
-Details: Alternatives to git as the starting point
---------------------------------------------------
+    The (optional) ``${/ROOT/required_dodo_commands_version}`` value is used to check that you have the
+    right version of Dodo Commands. The call ``dodo check-version --dodo``
+    verifies this. If you are using the ``autostart`` script to enable the last used environment
+    automatically when opening a shell, then these checks happen automatically (they are
+    part of the ``autostart`` script).
 
-In the steps above, we cloned a git repository to obtain a ``src`` directory that has the shared
-configuration files. However, there are other ways to obtain these files. First of all, you can
-obtain the ``src`` directory from a cookiecutter template:
+  .. tab:: Alternatives to git as the starting point
 
-.. code-block:: bash
+    In the steps above, we cloned a git repository to obtain a ``src`` directory that has the shared
+    configuration files. However, there are other ways to obtain these files. First of all, you can
+    obtain the ``src`` directory from a cookiecutter template:
 
-    dodo bootstrap --cookiecutter-url https://github.com/foo/foobar.git src extra/dodo_commands/config
+    .. code-block:: bash
 
-Note that the cookiecutter url can also point to a directory on the local filesystem. Second, when you
-already have a checked out monolithic source tree, then you can use any subdirectory of this tree as
-the ``src`` directory of your new project:
+        dodo bootstrap --cookiecutter-url https://github.com/foo/foobar.git src extra/dodo_commands/config
 
-.. code-block:: bash
+    Note that the cookiecutter url can also point to a directory on the local filesystem. Second, when you
+    already have a checked out monolithic source tree, then you can use any subdirectory of this tree as
+    the ``src`` directory of your new project:
 
-    dodo bootstrap --link-dir ~/sources/monolith/foobar src extra/dodo_commands/config
+    .. code-block:: bash
 
-Note that both examples look very similar to the case where git was used.
+        dodo bootstrap --link-dir ~/sources/monolith/foobar src extra/dodo_commands/config
+
+    Note that both examples look very similar to the case where git was used.

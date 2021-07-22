@@ -73,7 +73,7 @@ Each key-value pair will be added as a docker published port
 
 
 ``$(/DOCKER_OPTIONS/<pattern>/publish_list}``
---------------------------------------------
+---------------------------------------------
 
 Each item will be added as a docker published port
 
