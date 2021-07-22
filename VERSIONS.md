@@ -1,5 +1,15 @@
 # Version history
 
+## 0.41.0
+
+- Fix: expect multiple "--" when counting --confirm or --echo in sys.argv
+- Use to_arg_list instead of nargs='\*'
+- Fix: an alias from a layer may imply a different layer prefix
+- Remove --dev argument from dodo docker-compose
+- Fix: merge_into_config function
+- Fix: to_arg_list function
+- Update and reformat docs
+
 ## 0.40.0
 
 - Fix: calls to dial_insert.fish when there is no preset in the DIAL config
