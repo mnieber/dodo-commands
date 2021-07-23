@@ -169,15 +169,15 @@ To use the ``mk`` command script that we created in the ``tutorial`` environment
 ``/tmp/tutorial/commands`` in our command_path. Surely, we can simply add this path to
 ``${/ROOT/command_path}``. The problem with this approach is that we may move the
 ``tutorial`` project to a new location, and then the hard-coded path will no longer
-be correct. A better option is to install ``/tmp/tutorial/commands``
-in the global commands directory, and then reference that location.
+be correct. In the steps below, we will use an alternative option that is a bit more robust.
 
 .. tabs::
 
   .. tab:: Step 1: Run ``dodo install-commands``
 
-    Since the directory name ``commands`` is not very descriptive, we will use the ``--as`` option to rename
-    it to ``dodo_tutorial_commands``:
+    In this step, we use ``dodo install-commands`` to create a symlink in the global commands directory
+    that points to ``/tmp/tutorial/commands``. Note that we use the ``--as`` option to give a more
+    recognizable name (``dodo_tutorial_commands``) to the new command path.
 
     .. code-block:: bash
 
@@ -192,7 +192,7 @@ in the global commands directory, and then reference that location.
   .. tab:: Step 2: Extend command path
 
     Now, if we add ``~/.dodo_commands/commands/dodo_tutorial_commands`` to ``${/ROOT/command_path}`` then the ``mk``
-    command will be found:
+    command will be found.
 
     .. code-block:: yaml
 
@@ -202,10 +202,15 @@ in the global commands directory, and then reference that location.
         - ~/.dodo_commands/default_project/commands/*
         - ~/.dodo_commands/commands/dodo_tutorial_commands
 
+    .. note::
+
+      Of course, if the original location of /tmp/tutorial/commands changes, then you still need to update the symlink
+      in the global commands directory, but you won't have to update the command path in every project.
+
   .. tab:: Step 3: Add ${MAKE}
 
     Before we can successfully call ``mk``, we should add a ``MAKE`` section to ``config.yaml``,
-    otherwise the command will fail:
+    otherwise the command will fail (it expects to find a ``MAKE`` configuration key):
 
     .. code-block:: yaml
 

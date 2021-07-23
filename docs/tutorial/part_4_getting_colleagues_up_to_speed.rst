@@ -214,13 +214,17 @@ Detail sections
     configuration with the value in the shared configuration. Then, use ``dodo diff`` to synchronize
     any changes.
 
+    If you are using the ``autostart`` script to enable the last used environment
+    automatically when opening a shell, then this checks happens automatically.
+
   .. tab:: Checking the Dodo Commands version
 
     The (optional) ``${/ROOT/required_dodo_commands_version}`` value is used to check that you have the
     right version of Dodo Commands. The call ``dodo check-version --dodo``
-    verifies this. If you are using the ``autostart`` script to enable the last used environment
-    automatically when opening a shell, then these checks happen automatically (they are
-    part of the ``autostart`` script).
+    verifies this.
+
+    If you are using the ``autostart`` script to enable the last used environment
+    automatically when opening a shell, then this checks happens automatically.
 
   .. tab:: Alternatives to git as the starting point
 
