@@ -29,6 +29,9 @@ class Paths:
     def global_config_filename(self):
         return os.path.join(self.global_config_dir(), "config")
 
+    def default_config_mixin_filename(self):
+        return os.path.join(self.global_config_dir(), "default_config.yaml")
+
     def default_project_dir(self, expanduser=True):
         return os.path.join(self.global_config_dir(expanduser), "default_project")
 

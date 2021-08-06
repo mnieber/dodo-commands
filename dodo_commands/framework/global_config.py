@@ -40,10 +40,23 @@ diff_tool=diff
 [recent]
 """
 
-_default_config = """ROOT:
+_default_project_config = """ROOT:
   version: 1.0.0
   command_path:
   - ${/ROOT/project_dir}/commands/*
+"""
+
+_default_config_mixin = """ROOT:
+  src_dir: ${/ROOT/project_dir}/src
+
+DIAL:
+  default:
+    '1': dodo
+  ctrl:
+    '1': ${/ROOT/project_dir}/
+    '2': ~/
+  shift:
+    '1': ${/ROOT/src_dir}/
 """
 
 
@@ -65,13 +78,18 @@ def create_global_config():
         with open(config_filename, "w") as f:
             f.write(_global_config)
 
+    default_config_mixin_filename = Paths().default_config_mixin_filename()
+    if not os.path.exists(default_config_mixin_filename):
+        with open(default_config_mixin_filename, "w") as f:
+            f.write(_default_config_mixin)
+
     default_project_dir = Paths().default_project_dir()
 
     if not os.path.exists(default_project_dir):
         os.makedirs(default_project_dir)
-        default_config_filename = os.path.join(default_project_dir, "config.yaml")
-        with open(default_config_filename, "w") as f:
-            f.write(_default_config)
+        default_project_config_fn = os.path.join(default_project_dir, "config.yaml")
+        with open(default_project_config_fn, "w") as f:
+            f.write(_default_project_config)
 
     default_env_dir = Paths().env_dir("default")
     if not os.path.exists(default_env_dir):
