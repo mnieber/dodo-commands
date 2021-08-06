@@ -27,7 +27,7 @@ Two simple micro-services
 
 The first micro-service writes the time to a file in the ``/tmp`` directory, whereas the second
 micro-service runs a ``tail`` command that tracks the contents of this file. The source code for these
-services is found in ``part1/before`` of the dodo_commands_tutorial <https://github.com/mnieber/dodo_commands_tutorial>`_
+services is found in ``part1/before`` of the dodo-commands-tutorial <https://github.com/mnieber/dodo-commands-tutorial>`_
 repository. We will go ahead and clone the code for this part of the tutorial:
 
 .. tabs::
@@ -37,10 +37,10 @@ repository. We will go ahead and clone the code for this part of the tutorial:
       .. code-block:: bash
 
         cd /tmp
-        git clone https://github.com/mnieber/dodo_commands_tutorial.git
+        git clone https://github.com/mnieber/dodo-commands-tutorial.git
 
         # Copy part 1 of the tutorial so that we can work with a short path
-        cp -rf ./dodo_commands_tutorial/part1/before ./tutorial
+        cp -rf ./dodo-commands-tutorial/part1/before ./tutorial
 
    .. tab:: Step 2: Run the example servers
 

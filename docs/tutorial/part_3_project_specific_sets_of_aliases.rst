@@ -86,14 +86,14 @@ We will now see how additional default commands can be installed.
       # If you haven't activated the default environment yet, do so now
       $(dodo env default)
 
-      # Install the dodo_git_commands pip package
-      dodo install-commands --pip dodo_git_commands --to-defaults --confirm
+      # Install the dodo-git-commands pip package
+      dodo install-commands --pip dodo-git-commands --to-defaults --confirm
 
           (/) python3.5 -m pip install --upgrade --target ~/.dodo_commands/commands dodo_git_commands
 
           confirm? [Y/n]
 
-          Collecting dodo_git_commands
+          Collecting dodo-git-commands
           Successfully installed dodo-git-commands-0.3.0
 
           (/) ln -s \

@@ -14,10 +14,10 @@ steps of the previous scenario, run this to get started:
 .. code-block:: bash
 
   cd /tmp
-  git clone git@github.com:mnieber/dodo_commands_tutorial.git
+  git clone git@github.com:mnieber/dodo-commands-tutorial.git
 
   # Copy the end state of part 3 of the tutorial
-  cp -rf ./dodo_commands_tutorial/part3/after ./tutorial
+  cp -rf ./dodo-commands-tutorial/part3/after ./tutorial
 
   # Create and activate a dodo environment for our project
   cd ./tutorial

@@ -11,7 +11,7 @@ Step 1: Install Dodo Commands
 .. code-block:: bash
 
     # install dodo commands
-    sudo pip install dodo_commands
+    sudo pip install dodo-commands
 
 .. tip::
 

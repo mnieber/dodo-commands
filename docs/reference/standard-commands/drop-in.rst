@@ -8,7 +8,7 @@ you own your local configuration, the way to use these files is through copying 
 
 .. code-block:: bash
 
-    dodo install-commands --pip dodo_deploy_commands
+    dodo install-commands --pip dodo-deploy-commands
     # copy drop-in directory to ${/ROOT/res_dir}/drops/dodo_deploy_commands
     dodo drop-in dodo_deploy_commands
 
