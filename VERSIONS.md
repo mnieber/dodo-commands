@@ -1,6 +1,6 @@
 # Version history
 
-## 0.43.0
+## 0.43.1
 
 - Rename package from dodo_commands to dodo-commands
 
