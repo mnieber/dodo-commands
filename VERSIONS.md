@@ -1,5 +1,15 @@
 # Version history
 
+## 0.42.0
+
+- Fix: find shell scripts with 'dodo which'
+- Replace --print with --cat, and add --edit to docker-compose
+- Remove docker-create and docker-snapshot commands
+- Fix arg-complete in zsh
+- Remove YamlCommandHandlerY
+- Revert new-command.py back to its previous simple version
+- Use default_config.yaml as a mixin when creating a new project
+
 ## 0.41.0
 
 - Fix: expect multiple "--" when counting --confirm or --echo in sys.argv
