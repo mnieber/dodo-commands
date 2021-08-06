@@ -1,5 +1,9 @@
 # Version history
 
+## 0.43.0
+
+- Rename package from dodo_commands to dodo-commands
+
 ## 0.42.0
 
 - Fix: find shell scripts with 'dodo which'
