@@ -96,10 +96,8 @@ def _which_script(script):
             return os.path.realpath(script_path)
 
     for item in command_dirs:
-        for yml in glob.glob(os.path.join(item, "dodo.*.yaml")):
-            with open(yml) as ifs:
-                if script in yaml_round_trip_load(ifs.read()).keys():
-                    return os.path.realpath(yml)
+        for fn in glob.glob(os.path.join(item, "dodo.*.sh")):
+            return os.path.realpath(fn)
 
     return None
 
