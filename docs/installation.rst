@@ -20,7 +20,15 @@ Step 1: Install Dodo Commands
 .. tip::
 
    Autocompletion is provided for bash, fish and zsh (you need to restart the shell after installation).
-   For activating autocompletion in zsh you need to add the code below to .zshrc.
+   For activating autocompletion in zsh you need to install the `argcomplete` python package
+
+.. code-block:: bash
+
+    # deactivate any existing python environment
+    deactivate
+    pip install argcomplete
+
+   and add the code below to .zshrc.
 
 .. code-block:: bash
 

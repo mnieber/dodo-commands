@@ -78,9 +78,7 @@ def handle_arg_complete(
         parser.add_argument("command", choices=choices)
         argcomplete.autocomplete(parser)
 
-    os.environ["COMP_LINE"] = " ".join(input_args[:1] + input_args[2:])
-    os.environ["COMP_POINT"] = str(
-        int(os.environ["COMP_POINT"]) - (len(full_command_name) + 1)
-    )
+    # Hack to make argcomplete work with zsh
+    os.environ["COMP_POINT"] = str(len(os.environ["COMP_LINE"]))
 
     return command_name
