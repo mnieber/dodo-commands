@@ -5,7 +5,8 @@ import tempfile
 from dodo_commands import CommandError, Dodo
 from dodo_commands.framework.global_config import load_global_config_parser
 from dodo_commands.framework.paths import Paths
-from dodo_commands.framework.util import bordered, is_using_system_dodo, symlink
+from dodo_commands.framework.util import (bordered, is_using_system_dodo,
+                                          symlink)
 
 
 def _args():
@@ -111,7 +112,7 @@ def _remove_package(package, only_from_defaults=False):
 
 def _install_package(package, as_directory, install_commands_function, add_to_defaults):
     """Install the dir with the global commands."""
-    package_dirname = as_directory or package
+    package_dirname = as_directory or package.replace('-', '_')
     dest_dir = os.path.join(Paths().global_commands_dir(), package_dirname)
     defaults_dest_dir = os.path.join(Paths().default_commands_dir(), package_dirname)
 
