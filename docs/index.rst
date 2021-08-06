@@ -40,7 +40,7 @@ Source code: https://github.com/mnieber/dodo_commands.
    reference/entry-point
    reference/singleton
    reference/decorators
-   reference/yaml-and-shell-commands
+   reference/shell-commands
 
 
 .. toctree::
