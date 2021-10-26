@@ -21,6 +21,7 @@ def _args():
     key = "DOCKER_COMPOSE"
     args.cwd = Dodo.get("/" + key + "/cwd")
     args.files = Dodo.get("/" + key + "/files", None)
+    args.env_file = Dodo.get("/" + key + "/env_file", None)
     args.map = Dodo.get("/" + key + "/map", {})
     args.editor = load_global_config_parser().get("settings", "editor")
     args.compose_project_name = Dodo.get(
@@ -46,6 +47,7 @@ if Dodo.is_main(__name__, safe=True):
         return result
 
     file_args = get_file_args() if args.files else []
+    env_file_args = ["--env-file", args.env_file] if args.env_file else []
     detach_args = ["--detach"] if args.detach else []
 
     if args.cat:
@@ -59,6 +61,7 @@ if Dodo.is_main(__name__, safe=True):
                 [
                     "docker-compose",
                     *file_args,
+                    *env_file_args,
                     *to_arg_list(args.compose_args),
                     *detach_args,
                 ],
