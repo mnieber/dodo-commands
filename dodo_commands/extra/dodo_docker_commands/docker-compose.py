@@ -20,6 +20,7 @@ def _args():
 
     key = "DOCKER_COMPOSE"
     args.cwd = Dodo.get("/" + key + "/cwd")
+    args.progress = Dodo.get("/" + key + "/progress", "plain")
     args.files = Dodo.get("/" + key + "/files", None)
     args.env_file = Dodo.get("/" + key + "/env_file", None)
     args.map = Dodo.get("/" + key + "/map", {})
@@ -47,9 +48,19 @@ if Dodo.is_main(__name__, safe=True):
         return result
 
     file_args = get_file_args() if args.files else []
-    env_file_args = ["--env-file", args.env_file] if args.env_file else []
+    env_file_args = [f"--env-file={args.env_file}"] if args.env_file else []
+
     detach_args = ["--detach"] if args.detach else []
 
+    compose_args = to_arg_list(args.compose_args)
+    if "build" in compose_args[:1]:
+        if "--progress" not in compose_args:
+            compose_args = [
+                compose_args[0],
+                "--progress",
+                args.progress,
+                *compose_args[1:]
+            ]
     if args.cat:
         for f in args.files:
             Dodo.run(["cat", f], cwd=args.cwd)
@@ -62,7 +73,7 @@ if Dodo.is_main(__name__, safe=True):
                     "docker-compose",
                     *file_args,
                     *env_file_args,
-                    *to_arg_list(args.compose_args),
+                    *compose_args,
                     *detach_args,
                 ],
                 cwd=args.cwd,
