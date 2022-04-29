@@ -18,9 +18,6 @@ def _args():
     )
 
     args = Dodo.parse_args(parser)
-    if not args.next_to:
-        raise CommandError("The --next-to argument is mandatory")
-
     return args
 
 
@@ -52,28 +49,34 @@ if Dodo.is_main(__name__, safe=True):
 """
 
 
-def handle_next_to(parsed_args):
+def handle_next_to(args):
     command_dirs = get_command_dirs_from_config(Dodo.get())
     command_map = get_command_map(command_dirs)
-    item = command_map.get(parsed_args.next_to)
 
-    if not item:
-        raise CommandError("Script not found: %s" % parsed_args.next_to)
+    if args.next_to:
+        item = command_map.get(args.next_to)
+        if not item:
+            raise CommandError("Script not found: %s" % args.next_to)
+        dest_path = os.path.join(os.path.dirname(item.filename), args.name + ".py")
 
-    dest_path = os.path.join(os.path.dirname(item.filename), parsed_args.name + ".py")
+        if os.path.exists(dest_path) and not args.force:
+            raise CommandError("Destination already exists: %s" % dest_path)
 
-    if os.path.exists(dest_path) and not parsed_args.force:
-        raise CommandError("Destination already exists: %s" % dest_path)
-
-    with open(dest_path, "w") as f:
-        f.write(
+        with open(dest_path, "w") as f:
+            f.write(
+                script_py.format(
+                    parser_args_str="", params_str="", description="", args_str=""
+                )
+            )
+        print(dest_path)
+    else:
+        print(
             script_py.format(
                 parser_args_str="", params_str="", description="", args_str=""
             )
         )
-    print(dest_path)
 
 
 if Dodo.is_main(__name__, safe=False):
-    parsed_args = _args()
-    handle_next_to(parsed_args)
+    args = _args()
+    handle_next_to(args)
