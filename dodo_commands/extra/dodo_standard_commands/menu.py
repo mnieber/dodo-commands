@@ -46,7 +46,7 @@ def _args():
 
 def _create_tmux_window(session_id):
     # Create tmux session
-    tmux("-2", "new-session", "-d", "-s", session_id)
+    tmux("new-session", "-d", "-s", session_id)
 
     # Create a tmux window
     tmux("new-window", "-t", "%s:1" % session_id, "-n", "Logs")
@@ -124,11 +124,11 @@ if Dodo.is_main(__name__):
             # Attach to tmux session
             # HACK: why does this only work via Dodo.run?
             Dodo.run(
-                ["tmux", "-2", "attach-session", "-t", args.session_id],
+                ["tmux", "attach-session", "-t", args.session_id],
             )
         elif not args.cont:
             Dodo.run(
-                ["tmux", "-2", "attach-session", "-t", args.session_id],
+                ["tmux", "attach-session", "-t", args.session_id],
             )
         else:
             while True:
