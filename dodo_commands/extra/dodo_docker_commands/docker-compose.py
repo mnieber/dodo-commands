@@ -11,7 +11,6 @@ def _args():
     Dodo.parser.description = "Run docker compose"
 
     Dodo.parser.add_argument("compose_args", nargs="?")
-    Dodo.parser.add_argument("--detach", action="store_true")
 
     group = Dodo.parser.add_mutually_exclusive_group()
     group.add_argument("--cat", action="store_true")
@@ -50,8 +49,6 @@ if Dodo.is_main(__name__, safe=True):
     file_args = get_file_args() if args.files else []
     env_file_args = [f"--env-file={args.env_file}"] if args.env_file else []
 
-    detach_args = ["--detach"] if args.detach else []
-
     compose_args = to_arg_list(args.compose_args)
     if "build" in compose_args[:1]:
         if "--progress" not in compose_args:
@@ -74,7 +71,6 @@ if Dodo.is_main(__name__, safe=True):
                     *file_args,
                     *env_file_args,
                     *compose_args,
-                    *detach_args,
                 ],
                 cwd=args.cwd,
             )
