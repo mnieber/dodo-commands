@@ -26,9 +26,9 @@ def layer_filename_superset(layer_filenames, config_io):
         x = map_to_layer_filenames(layer_paths)
         # [[layer_filename]]
         x = R.map(map_to_filename_and_layer)(x)
-        # [layer_filename, layer]
+        # [[layer_filename, layer]]
         x = R.for_each(R.ds(do_store))(x)
-        # [layer_filename, layer]
+        # [[layer_filename, layer]]
         x = R.map(R.ds(map_to_nested_layer_paths))(x)
         # [[layer_filename]]
         x = get_flat_list(x)

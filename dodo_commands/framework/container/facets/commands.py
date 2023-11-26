@@ -4,7 +4,6 @@ from dodo_commands.framework.global_config import load_global_config_parser
 
 class Commands:
     def __init__(self):
-        self.layer_name_by_inferred_command = {}
         self.global_aliases = {}
         self.aliases_from_config = {}
         self.command_map = {}

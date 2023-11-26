@@ -1,7 +1,25 @@
 import sys
 
-from dodo_commands.framework.container import actions, facets
-from dodo_commands.framework.container.facets import run
+from dodo_commands.framework.container import facets
+from dodo_commands.framework.container.actions.command_line import (
+    expand_and_autocomplete_command_name,
+    get_layer_paths_from_command_prefix,
+    parse_input_args,
+)
+from dodo_commands.framework.container.actions.commands import (
+    get_aliases_from_config,
+    get_command_map,
+)
+from dodo_commands.framework.container.actions.config import (
+    build_from_selected_layers,
+    check_conflicts_in_selected_layer_paths,
+)
+from dodo_commands.framework.container.actions.layers import (
+    get_metadata_by_layer_name,
+    load_named_layers,
+    load_root_layer,
+    select_layers,
+)
 from dodo_commands.framework.paths import Paths
 
 
@@ -21,27 +39,23 @@ class Container:
         return ctr
 
     def run_actions(self):
-        run(self, actions.layers.load_root_layer)
-        run(self, actions.layers.get_metadata_by_layer_name)
-        run(self, actions.layers.load_named_layers)
-        run(self, actions.commands.get_inferred_command_map)
-        run(self, actions.command_line.parse_input_args)
+        load_root_layer(self)
+        get_metadata_by_layer_name(self)
+        load_named_layers(self)
+        parse_input_args(self)
 
         while True:
-            run(self, actions.command_line.get_layer_paths_from_command_prefix)
-            run(self, actions.command_line.get_layer_paths_inferred_by_command_name)
+            get_layer_paths_from_command_prefix(self)
 
             # Create the config
-            run(self, actions.layers.select_layers)
-            run(self, actions.config.check_conflicts_in_selected_layer_paths)
-            run(self, actions.config.build_from_selected_layers)
+            select_layers(self)
+            check_conflicts_in_selected_layer_paths(self)
+            build_from_selected_layers(self)
 
-            run(self, actions.commands.get_aliases_from_config)
-            run(self, actions.commands.get_command_map)
+            get_aliases_from_config(self)
+            get_command_map(self)
 
-            if not run(self, actions.command_line.expand_and_autocomplete_command_name)[
-                "has_changed"
-            ]:
+            if not expand_and_autocomplete_command_name(self):
                 break
 
         if self.config.warnings:

@@ -9,7 +9,6 @@ from dodo_commands.framework.get_aliases import get_aliases
 
 def handle_arg_complete(
     command_names,
-    inferred_command_names,
     command_aliases,
     metadata_by_layer_name,
     layer_by_target_path,
@@ -37,9 +36,7 @@ def handle_arg_complete(
             layer = layer_by_target_path[layer_metadata.target_path]
             more_aliases.extend(get_aliases(layer).keys())
 
-        return R.uniq(
-            command_names + inferred_command_names + command_aliases + more_aliases
-        )
+        return R.uniq(command_names + command_aliases + more_aliases)
 
     def get_choices(commands):
         return [(command_prefix + x) for x in commands]

@@ -101,11 +101,21 @@ class Dodo:
         return cls._args
 
     @classmethod
-    def run(cls, args, cwd=None, quiet=False, capture=False):
+    def run(
+        cls,
+        args,
+        cwd=None,
+        quiet=False,
+        capture=False,
+        decorator_names=None,
+        variable_map=None,
+    ):
         args_tree_root_node = ArgsTreeNode("original_args", args=args)
-        for decorator in get_decorators(cls.command_name, cls.get()):
+        for decorator in get_decorators(
+            cls.command_name, cls.get(), decorator_names=decorator_names
+        ):
             args_tree_root_node, cwd = decorator.modify_args(
-                cls._args, args_tree_root_node, cwd
+                cls._args, args_tree_root_node, cwd, env_variable_map=variable_map
             )
             if args_tree_root_node is None:
                 return False
@@ -116,7 +126,11 @@ class Dodo:
         with plumbum.local.cwd(cwd or plumbum.local.cwd):
             flat_args = args_tree_root_node.flatten()
             func = plumbum.local[flat_args[0]][flat_args[1:]]
-            variable_map = cls.get("/ENVIRONMENT/variable_map", {})
+            variable_map = (
+                cls.get("/ENVIRONMENT/variable_map", {})
+                if variable_map is None
+                else variable_map
+            )
             with plumbum.local.env(**variable_map):
                 if capture:
                     return func()

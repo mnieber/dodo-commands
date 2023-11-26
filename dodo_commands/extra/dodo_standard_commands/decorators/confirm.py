@@ -45,9 +45,6 @@ def _is_echo(command_line_args):
 
 
 class Decorator:  # noqa
-    def is_used(self, config, command_name, decorator_name):
-        return True
-
     def add_arguments(self, parser):  # noqa
         parser.add_argument(
             "-c",
@@ -88,7 +85,9 @@ class Decorator:  # noqa
             ):
                 sys.exit(1)
 
-    def modify_args(self, command_line_args, args_tree_root_node, cwd):  # noqa
+    def modify_args(
+        self, command_line_args, args_tree_root_node, cwd, env_variable_map
+    ):  # noqa
         if not _ask_confirmation(
             args_tree_root_node,
             cwd or local.cwd,

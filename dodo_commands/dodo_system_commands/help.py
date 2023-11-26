@@ -35,14 +35,9 @@ def _header_section():
     return "\n".join(lines)
 
 
-def _commands_section(command_map, inferred_commands, use_columns=True):
+def _commands_section(command_map, use_columns=True):
     def format_name(command_name):
-        inferred_layer = inferred_commands.get(command_name, None)
-        return (
-            "%s (%s)" % (command_name, inferred_layer)
-            if inferred_layer
-            else command_name
-        )
+        return command_name
 
     """Return the script's main help text, as a string."""
     if not use_columns:
@@ -107,26 +102,18 @@ def _collect_command_dirs(
 
         layer = layer_by_target_path[layer_metadata.target_path]
         for command_alias in get_aliases(layer).items():
-            alias_prefix = (
-                ""
-                if command_alias[0] in layer_metadata.inferred_commands
-                else (layer_name + ".")
-            )
             cmd_prefix = layer_name + "."
-            command_aliases[alias_prefix + command_alias[0]] = (
-                cmd_prefix + command_alias[1]
-            )
+            command_aliases[command_alias[0]] = cmd_prefix + command_alias[1]
 
 
-def _print_command_dirs(args, layer_names_2_command_dirs, inferred_commands):
+def _print_command_dirs(args, layer_names_2_command_dirs):
     if not args.commands:
         sys.stdout.write(_header_section())
 
     root_set = ("",)
     command_map = get_command_map(layer_names_2_command_dirs[root_set])
     sys.stdout.write(
-        _commands_section(command_map, inferred_commands, use_columns=not args.commands)
-        + "\n"
+        _commands_section(command_map, use_columns=not args.commands) + "\n"
     )
 
     for layer_names, command_dirs in layer_names_2_command_dirs.items():
@@ -136,10 +123,7 @@ def _print_command_dirs(args, layer_names_2_command_dirs, inferred_commands):
         sys.stdout.write("\nCommands for layer(s): %s\n\n" % ", ".join(layer_names))
         command_map = get_command_map(command_dirs)
         sys.stdout.write(
-            _commands_section(
-                command_map, inferred_commands, use_columns=not args.commands
-            )
-            + "\n"
+            _commands_section(command_map, use_columns=not args.commands) + "\n"
         )
 
 
@@ -154,7 +138,7 @@ def _print_layer_names(metadata_by_layer_name):
         )
 
 
-def _print_command_aliases(command_aliases, inferred_commands):
+def _print_command_aliases(command_aliases):
     if command_aliases:
         col_width = max(len(x) for x in command_aliases.keys())
 
@@ -199,16 +183,10 @@ if Dodo.is_main(__name__, safe=True):
             layer_names_2_command_dirs[tuple(layer_names)].append(command_dir)
 
         if args.aliases:
-            _print_command_aliases(
-                command_aliases, ctr.commands.layer_name_by_inferred_command
-            )
+            _print_command_aliases(command_aliases)
             sys.stdout.write("\n")
         else:
-            _print_command_dirs(
-                args,
-                layer_names_2_command_dirs,
-                ctr.commands.layer_name_by_inferred_command,
-            )
+            _print_command_dirs(args, layer_names_2_command_dirs)
 
             if not args.commands:
                 if ctr.layers.metadata_by_layer_name:

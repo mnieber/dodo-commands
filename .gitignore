@@ -7,6 +7,7 @@ dodo_commands.sublime-workspace
 dodo_commands/default_commands
 dodo_commands/dependencies/*/
 dodo_commands/dependencies/*.*
+dodo_commands/bin
 !dodo_commands/dependencies/__init__.py
 *.pyc
 dist/*

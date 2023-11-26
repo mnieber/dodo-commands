@@ -5,7 +5,6 @@ from dodo_commands import CommandError, Dodo
 from dodo_commands.dependencies.get import plumbum
 from dodo_commands.framework.args_tree import ArgsTreeNode
 from dodo_commands.framework.config import merge_into_config
-from dodo_commands.framework.decorator_utils import uses_decorator
 
 local = plumbum.local
 
@@ -15,9 +14,6 @@ def _is_tuple(x):
 
 
 class Decorator:  # noqa
-    def is_used(self, config, command_name, decorator_name):
-        return uses_decorator(config, command_name, decorator_name)
-
     @classmethod
     def merged_options(cls, get_config, command_name):
         merged = {}
@@ -63,7 +59,9 @@ class Decorator:  # noqa
     def add_arguments(self, parser):  # noqa
         pass
 
-    def modify_args(self, command_line_args, args_tree_root_node, cwd):  # override
+    def modify_args(
+        self, command_line_args, args_tree_root_node, cwd, env_variable_map
+    ):  # override
         kubectl_node = self.kubectl_node(Dodo.get_config, Dodo.command_name, cwd)
 
         kubectl_node.add_child(args_tree_root_node)

@@ -1,6 +1,5 @@
 from dodo_commands import Dodo
 from dodo_commands.framework.args_tree import ArgsTreeNode
-from dodo_commands.framework.decorator_utils import uses_decorator
 
 
 class Decorator:  # noqa
@@ -12,10 +11,7 @@ class Decorator:  # noqa
             help="Run the command through the debugger",
         )
 
-    def is_used(self, config, command_name, decorator_name):
-        return uses_decorator(config, command_name, decorator_name)
-
-    def modify_args(self, command_line_args, root_node, cwd):  # noqa
+    def modify_args(self, command_line_args, root_node, cwd, env_variable_map):  # noqa
         if not getattr(command_line_args, "use_debugger", False):
             return root_node, cwd
 

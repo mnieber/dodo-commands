@@ -9,21 +9,25 @@ def get_metadata_by_layer_name(root_layer):
     groups = R.path_or({}, "LAYER_GROUPS")(root_layer)
     for group_name, group in groups.items():
         for group_item in group:
-
             if isinstance(group_item, str):
                 layer_name = group_item
-                base_name = layer_name
-                inferred_commands = []
                 target_path = None
             elif isinstance(group_item, dict):
                 layer_name, metadata = list(group_item.items())[0]
                 metadata = metadata or {}
-                inferred_commands = list(metadata.get("inferred_by", []))
                 target_path = metadata.get("target_path")
-                base_name = metadata.get("base_name", layer_name)
+                if not target_path:
+                    raise CommandError(
+                        "Missing target_path for layer %s in group %s"
+                        % (layer_name, group_name)
+                    )
+            else:
+                raise CommandError(
+                    "Invalid layer group item: %s. Must be a string or a dict"
+                    % group_item
+                )
 
-            target_path = target_path or "%s.%s.yaml" % (group_name, base_name)
-            layer_metadata = LayerMetadata(target_path, inferred_commands, group_name)
+            layer_metadata = LayerMetadata(target_path, group_name)
 
             if layer_name in result:
                 prev_layer_metadata = result[layer_name]

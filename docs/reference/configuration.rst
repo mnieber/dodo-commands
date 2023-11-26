@@ -25,7 +25,6 @@ Contains a map from group-name to layer properties, e.g.
       LAYER:GROUPS:
         server:
         - reader:
-            inferred_commands: [greet]
             name: rdr
             target_path: /foo/bar.yaml
         - writer: {}

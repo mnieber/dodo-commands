@@ -11,20 +11,18 @@ class CommandLine:
         ) + list(sys.argv)
         self.is_trace = False
         self.is_help = False
-        self.layer_paths_inferred_by_command_name = []
         self.layer_paths_from_command_prefix = []
         self.layer_paths_from_input_args = []
+        self.decorators_from_input_args = []
 
     @property
     def is_running_directly_from_script(self):
         return "__DODO__" not in os.environ
 
     @property
-    def layer_paths(self):
+    def target_paths(self):
         return R.uniq(
-            self.layer_paths_inferred_by_command_name
-            + self.layer_paths_from_command_prefix
-            + self.layer_paths_from_input_args
+            self.layer_paths_from_command_prefix + self.layer_paths_from_input_args
         )
 
     @property
@@ -49,7 +47,7 @@ class CommandLine:
     def get_trace(self):
         args = [x for x in self.input_args if x != "--trace"]
         args[1] = self.command_name
-        args.extend(["--layer=%s" % x for x in self.layer_paths])
+        args.extend(["--layer=%s" % x for x in self.target_paths])
         return args
 
     @staticmethod

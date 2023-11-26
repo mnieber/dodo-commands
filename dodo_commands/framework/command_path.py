@@ -4,8 +4,8 @@ import json
 import os
 import sys
 
-from dodo_commands.framework.paths import Paths
 from dodo_commands.framework.command_error import CommandError
+from dodo_commands.framework.paths import Paths
 from dodo_commands.framework.util import symlink
 
 
@@ -47,9 +47,9 @@ def _create_search_path_dir(command_dirs):
         open(os.path.join(search_path_dir, "__init__.py"), "a").close()
         for command_dir in command_dirs:
             basename = os.path.basename(command_dir)
-            target_path = os.path.join(search_path_dir, basename)
-            if not os.path.exists(target_path):
-                symlink(command_dir, target_path)
+            path = os.path.join(search_path_dir, basename)
+            if not os.path.exists(path):
+                symlink(command_dir, path)
 
     return search_path_dir
 

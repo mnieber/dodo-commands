@@ -9,7 +9,11 @@ class Layers:
         self.config_io = ConfigIO()
         self.root_layer_path = None
         self.root_layer = None
+        # This is a config based on root_layer (it will resolve all keys
+        # that only depend on the root layer, not any other layer)
+        self.root_layer_config = None
         self.layer_by_target_path = {}
+        self.layer_path_by_target_path = {}
         self.selected_layer_by_path = {}
         self.metadata_by_layer_name = None
 

@@ -1,10 +1,10 @@
-from importlib import import_module
 import fnmatch
 import os
+from importlib import import_module
 
 from dodo_commands.framework.command_path import (
-    get_command_dirs_from_config,
     extend_sys_path,
+    get_command_dirs_from_config,
 )
 
 
@@ -23,16 +23,22 @@ def uses_decorator(config, command_name, decorator_name):
     return len(approved) and not len(rejected)
 
 
-def get_decorators(command_name, config):
+def get_decorators(command_name, config, decorator_names=None):
     result = []
     # should be returned as the last item in the list
     confirm_decorator = None
     for name, directory in _all_decorators(config).items():
-        decorator = _load_decorator(name, directory)
-        if decorator.is_used(config, command_name, name):
-            if name == "confirm":
-                confirm_decorator = decorator
+        if name == "confirm":
+            decorator = _load_decorator(name, directory)
+            confirm_decorator = decorator
+        else:
+            use_decorator = False
+            if decorator_names is not None:
+                use_decorator = name in decorator_names
             else:
+                use_decorator = uses_decorator(config, command_name, name)
+            if use_decorator:
+                decorator = _load_decorator(name, directory)
                 result.append(decorator)
 
     if confirm_decorator:
