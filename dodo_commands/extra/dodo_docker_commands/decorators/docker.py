@@ -192,7 +192,7 @@ class Decorator:  # noqa
 
     def modify_args(
         self, command_line_args, args_tree_root_node, cwd, env_variable_map
-    ):  # override
+    ):
         docker_node, _ = self.docker_node(
             Dodo.get_config, Dodo.command_name, cwd, env_variable_map=env_variable_map
         )
