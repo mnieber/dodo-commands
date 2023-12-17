@@ -19,7 +19,9 @@ def layer_filename_superset(layer_filenames, config_io):
             selected_layer_by_path[layer_filename] = layer
 
         def map_to_nested_layer_paths(layer_filename, layer):
-            return R.path_or([], "LAYERS")(layer)
+            layer_snippet = dict(LAYERS=layer.get("LAYERS", []))
+            config_snippet = build_config([layer_snippet])[0]
+            return R.path_or([], "LAYERS")(config_snippet)
 
         def get_flat_list(list_of_lists):
             return R.uniq(R.flatten(list_of_lists))
