@@ -2,6 +2,7 @@ import os
 from collections import OrderedDict
 
 from dodo_commands.framework import ramda as R
+from dodo_commands.framework.config import build_config
 
 
 def layer_filename_superset(layer_filenames, config_io):
