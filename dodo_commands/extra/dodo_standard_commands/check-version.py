@@ -42,23 +42,10 @@ def _args():
     return args
 
 
-def _shared_config_dir():
-    src_dir = Dodo.get("/ROOT/src_dir", None)
-    default_shared_config_dir = (
-        os.path.join(src_dir, "extra", "dodo_commands", "res") if src_dir else None
-    )
-    return Dodo.get("/ROOT/shared_config_dir", default_shared_config_dir)
-
-
 def _get_root_config_field(config_filename, field_name):
     with open(config_filename) as f:
         config = yaml_round_trip_load(f.read())
     return config.get("ROOT", {}).get(field_name, "")
-
-
-def _partial_sem_version(version):
-    v = Version(version)
-    return Version("%s.%s" % (v.major, v.minor), partial=True)
 
 
 def _config_filename():
@@ -84,38 +71,6 @@ def check_dodo_commands_version():  # noqa
             sys.stdout.write("\n")
 
 
-def check_config_version():  # noqa
-    if not _shared_config_dir():
-        return
-
-    original_file = os.path.join(_shared_config_dir(), "config.yaml")
-    if not os.path.exists(original_file):
-        return
-
-    original_version = _get_root_config_field(original_file, "version")
-    if not original_version:
-        sys.stderr.write("No version found in original file %s\n" % original_file)
-        return
-
-    copied_file = os.path.join(Paths().config_dir(), "config.yaml")
-    copied_version = _get_root_config_field(copied_file, "version")
-    if not copied_version:
-        sys.stderr.write("No version found in user managed file %s\n" % copied_file)
-        return
-
-    if _partial_sem_version(copied_version) < _partial_sem_version(original_version):
-        sys.stdout.write(
-            bordered(
-                'Configuration needs update (%s < %s). Tip: use "dodo diff ."\n'
-                % (
-                    copied_version,
-                    original_version,
-                )
-            )
-        )
-        sys.stdout.write("\n")
-
-
 def check_config_changes():  # noqa
     if os.path.exists(os.path.join(Paths().config_dir(), ".git")):
         with local.cwd(Paths().config_dir()):
@@ -135,5 +90,4 @@ if Dodo.is_main(__name__, safe=False):
     if args.check_dodo:
         check_dodo_commands_version()
     if args.check_config:
-        check_config_version()
         check_config_changes()
