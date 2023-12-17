@@ -52,7 +52,7 @@ class classproperty(object):  # noqa
 def bordered(text):
     lines = text.splitlines()
     width = max(len(s) for s in lines)
-    tl, tr, bl, br, v, h = u"┌", u"┐", u"└", u"┘", u"│", u"─"
+    tl, tr, bl, br, v, h = "┌", "┐", "└", "┘", "│", "─"
     res = [tl + h * width + tr]
     for s in lines:
         res.append(v + (s + " " * width)[:width] + v)
@@ -76,7 +76,6 @@ except AttributeError:  # undefined function (wasn't added until Python 3.3)
     def indent(text, amount, ch=" "):
         padding = amount * ch
         return "".join(padding + line for line in text.splitlines(True))
-
 
 else:
 
@@ -153,7 +152,10 @@ def to_arg_list(x):
         if re.match(r"'.*'", x) or re.match(r'".*"', x):
             x = x[1:-1]
         x = x.split()
-    return maybe_list_to_list(x or [])
+    return [
+        (f"--{arg[2:]}" if arg.startswith("++") else arg)
+        for arg in maybe_list_to_list(x or [])
+    ]
 
 
 def sh_cmd(cmd):

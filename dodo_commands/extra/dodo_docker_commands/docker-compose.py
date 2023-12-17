@@ -1,5 +1,3 @@
-import os
-
 from dodo_commands import Dodo
 from dodo_commands.dependencies.get import plumbum
 from dodo_commands.framework.config import expand_keys
@@ -10,7 +8,7 @@ from dodo_commands.framework.util import to_arg_list
 def _args():
     Dodo.parser.description = "Run docker compose"
 
-    Dodo.parser.add_argument("compose_args", nargs="?")
+    Dodo.parser.add_argument("compose_args", nargs="*")
 
     group = Dodo.parser.add_mutually_exclusive_group()
     group.add_argument("--cat", action="store_true")
@@ -56,7 +54,7 @@ if Dodo.is_main(__name__, safe=True):
                 compose_args[0],
                 "--progress",
                 args.progress,
-                *compose_args[1:]
+                *compose_args[1:],
             ]
     if args.cat:
         for f in args.files:
