@@ -69,19 +69,22 @@ class ListVal:
         return "L[%s]" % self.idx
 
 
-def get_key_expressions(search_string, key_regexp=r"\$\{(/[^\}]*)\}"):
+def get_key_expressions(search_string, key_regexp):
     return [x for x in re.finditer(key_regexp, search_string)]
 
 
 class ConfigExpander:
     """Expand environment variables and references in the config."""
 
+    KEY_REGEXP = re.compile(r"\$\{(/[^\}]*)\}")
+    ENV_KEY_REGEXP = re.compile(r"\$\{([^\}]*)\}")
+
     def __init__(self, extra_vars=None):
         self.extra_vars = extra_vars or {}
 
     def _expand_str(self, current_str):
         expanded_str = current_str
-        key_expressions = get_key_expressions(current_str)
+        key_expressions = get_key_expressions(current_str, ConfigExpander.KEY_REGEXP)
         known_strs = []
 
         while key_expressions:
@@ -91,10 +94,12 @@ class ConfigExpander:
 
                 key = Key(self.config, xpath_string)
                 if key.exists():
-                    expanded_str = (
-                        expanded_str[: key_expression.start()]
-                        + str(key.get())
-                        + expanded_str[key_expression.end() :]
+                    expanded_str = "".join(
+                        [
+                            expanded_str[: key_expression.start()],
+                            str(key.get()),
+                            expanded_str[key_expression.end() :],
+                        ]
                     )
 
                     if expanded_str not in known_strs:
@@ -105,12 +110,16 @@ class ConfigExpander:
                 return None
 
             current_str = expanded_str
-            key_expressions = get_key_expressions(current_str)
+            key_expressions = get_key_expressions(
+                current_str, ConfigExpander.KEY_REGEXP
+            )
 
         with EnvironMemo(self.extra_vars):
             expanded_str = os.path.expandvars(expanded_str)
 
-        env_key_expressions = get_key_expressions(expanded_str, r"\$\{([^\}]*)\}")
+        env_key_expressions = get_key_expressions(
+            expanded_str, ConfigExpander.ENV_KEY_REGEXP
+        )
         return expanded_str if not env_key_expressions else None
 
     def _expand(self, raw_obj):
