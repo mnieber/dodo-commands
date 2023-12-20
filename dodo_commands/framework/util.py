@@ -153,7 +153,13 @@ def to_arg_list(x):
             x = x[1:-1]
         x = x.split()
     return [
-        (f"--{arg[2:]}" if arg.startswith("++") else arg)
+        (
+            f"--{arg[2:]}"
+            if arg.startswith("++")
+            else f"-{arg[1:]}"
+            if arg.startswith("+")
+            else arg
+        )
         for arg in maybe_list_to_list(x or [])
     ]
 

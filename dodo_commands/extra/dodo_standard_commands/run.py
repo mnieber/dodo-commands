@@ -26,13 +26,11 @@ if Dodo.is_main(__name__, safe=True):
                 args.command = command
                 break
 
+    command = commands[args.command]
+
     cmd = None
     cmd_args = []
-    command = commands[args.command]
     decorator_names = []
-    more_kwargs = {}
-    more_args = []
-
     for part in command.get("run", {}):
         # check if part is a dict
         if "in" in part:
@@ -44,29 +42,37 @@ if Dodo.is_main(__name__, safe=True):
             cmd_args.append(part)
         else:
             raise Exception("Unknown part in command")
+    if not cmd:
+        raise Exception("No cmd found in command")
 
+    more_kwargs = {}
+    more_args = []
     for arg in args.run_args:
         if arg.startswith("++"):
             if "=" in arg:
-                k, v = arg[2:].split("=")
+                k, v = arg.split("=")
                 more_kwargs[k] = v
             else:
-                more_args.append(f"--{arg[2:]}")
+                more_args.append(arg)
+        elif arg.startswith("+"):
+            if "=" in arg:
+                k, v = arg.split("=")
+                more_kwargs[k] = v
+            else:
+                more_args.append(arg)
         else:
             more_args.append(arg)
 
     kwargs = command.get("kwargs", {})
     for kwarg, value in kwargs.items():
         if kwarg not in more_kwargs:
-            cmd_args.append(f"--{kwarg}={value}")
+            cmd_args.append(f"{kwarg}={value}")
     for kwarg, value in more_kwargs.items():
-        cmd_args.append(f"--{kwarg}={value}")
+        cmd_args.append(f"{kwarg}={value}")
     for arg in more_args:
         cmd_args.append(arg)
 
     cwd = command.get("cwd")
-    if not cmd:
-        raise Exception("No cmd found in command")
 
     variable_map = None
     if env := command.get("env"):
@@ -81,6 +87,9 @@ if Dodo.is_main(__name__, safe=True):
     quiet = False
     if cmd == "dodo":
         quiet = True
+        if cwd:
+            cmd_args.append(f"--cwd={cwd}")
+            cwd = None
         for decorator_name in decorator_names:
             cmd_args.append(f"--decorator={decorator_name}")
         decorator_names = []

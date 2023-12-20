@@ -55,7 +55,13 @@ class Dodo:
         if safe is not None:
             cls.safe = safe
 
-        for decorator in get_decorators(cls.command_name, cls.get()):
+        for decorator in get_decorators(
+            cls.command_name,
+            cls.get(),
+            decorators_from_input_args=(
+                cls.get_container().command_line.decorators_from_input_args
+            ),
+        ):
             if hasattr(decorator, "install"):
                 decorator.install()
 
@@ -78,7 +84,13 @@ class Dodo:
 
         add_config_args(parser, cls.get(), config_args)
 
-        for decorator in get_decorators(cls.command_name, cls.get()):
+        for decorator in get_decorators(
+            cls.command_name,
+            cls.get(),
+            decorators_from_input_args=(
+                cls.get_container().command_line.decorators_from_input_args
+            ),
+        ):
             decorator.add_arguments(parser)
 
         args = cls.get_container().command_line.input_args
@@ -110,9 +122,15 @@ class Dodo:
         decorator_names=None,
         variable_map=None,
     ):
+        cwd = cwd or cls.get_container().command_line.cwd
         args_tree_root_node = ArgsTreeNode("original_args", args=args)
         for decorator in get_decorators(
-            cls.command_name, cls.get(), decorator_names=decorator_names
+            cls.command_name,
+            cls.get(),
+            decorators_from_input_args=(
+                cls.get_container().command_line.decorators_from_input_args
+            ),
+            decorator_names=decorator_names,
         ):
             args_tree_root_node, cwd = decorator.modify_args(
                 cls._args, args_tree_root_node, cwd, env_variable_map=variable_map

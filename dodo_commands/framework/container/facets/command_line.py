@@ -14,6 +14,7 @@ class CommandLine:
         self.layer_paths_from_command_prefix = []
         self.layer_paths_from_input_args = []
         self.decorators_from_input_args = []
+        self.cwd = None
 
     @property
     def is_running_directly_from_script(self):

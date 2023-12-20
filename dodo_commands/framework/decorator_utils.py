@@ -8,7 +8,10 @@ from dodo_commands.framework.command_path import (
 )
 
 
-def uses_decorator(config, command_name, decorator_name):
+def uses_decorator(config, command_name, decorator_name, decorators_from_input_args):
+    if decorator_name in decorators_from_input_args:
+        return True
+
     patterns = config.get("ROOT", {}).get("decorators", {}).get(decorator_name, [])
     approved = [
         pattern
@@ -23,7 +26,9 @@ def uses_decorator(config, command_name, decorator_name):
     return len(approved) and not len(rejected)
 
 
-def get_decorators(command_name, config, decorator_names=None):
+def get_decorators(
+    command_name, config, decorators_from_input_args, decorator_names=None
+):
     result = []
     # should be returned as the last item in the list
     confirm_decorator = None
@@ -36,7 +41,9 @@ def get_decorators(command_name, config, decorator_names=None):
             if decorator_names is not None:
                 use_decorator = name in decorator_names
             else:
-                use_decorator = uses_decorator(config, command_name, name)
+                use_decorator = uses_decorator(
+                    config, command_name, name, decorators_from_input_args
+                )
             if use_decorator:
                 decorator = _load_decorator(name, directory)
                 result.append(decorator)
