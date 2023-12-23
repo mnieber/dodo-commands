@@ -33,10 +33,10 @@ if Dodo.is_main(__name__, safe=True):
     decorator_names = []
     for part in command.get("run", {}):
         # check if part is a dict
-        if "in" in part:
+        if isinstance(part, dict) and "in" in part:
             for decorator_name in maybe_list_to_list(part["in"]):
                 decorator_names.append(decorator_name)
-        elif "cmd" in part:
+        elif isinstance(part, dict) and "cmd" in part:
             cmd = part["cmd"]
         elif not isinstance(part, dict):
             cmd_args.append(part)
