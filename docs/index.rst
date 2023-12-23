@@ -26,7 +26,6 @@ Source code: https://github.com/mnieber/dodo-commands.
    tutorial/part_1_working_with_microservices
    tutorial/part_2_local_development_with_docker
    tutorial/part_3_project_specific_sets_of_aliases.rst
-   tutorial/part_4_getting_colleagues_up_to_speed.rst
 
 
 .. toctree::
