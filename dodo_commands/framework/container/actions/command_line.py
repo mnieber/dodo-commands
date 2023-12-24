@@ -11,6 +11,7 @@ def parse_input_args(ctr):
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument("-L", "--layer", action="append")
     parser.add_argument("-D", "--decorator", action="append")
+    parser.add_argument("--env", action="append")
     parser.add_argument("--trace", action="store_true")
     parser.add_argument("--help", action="store_true")
     parser.add_argument("--cwd")
@@ -19,6 +20,7 @@ def parse_input_args(ctr):
 
     ctr.command_line.layer_paths_from_input_args = known_args.layer or []
     ctr.command_line.decorators_from_input_args = known_args.decorator or []
+    ctr.command_line.env_vars_from_input_args = known_args.env or []
     ctr.command_line.cwd = known_args.cwd or None
     ctr.command_line.is_trace = known_args.trace
     ctr.command_line.is_help = known_args.help

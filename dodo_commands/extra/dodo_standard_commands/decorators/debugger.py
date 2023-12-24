@@ -11,7 +11,7 @@ class Decorator:  # noqa
             help="Run the command through the debugger",
         )
 
-    def modify_args(self, command_line_args, root_node, cwd, env_variable_map):  # noqa
+    def modify_args(self, command_line_args, root_node, cwd):  # noqa
         if not getattr(command_line_args, "use_debugger", False):
             return root_node, cwd
 

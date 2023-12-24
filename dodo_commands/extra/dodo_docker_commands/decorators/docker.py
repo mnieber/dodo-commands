@@ -104,14 +104,8 @@ class Decorator:  # noqa
             docker_node["basic"].extend(["--user", docker_config["user"]])
 
     @classmethod
-    def _add_environment_vars(
-        cls, get_config, docker_config, docker_node, env_variable_map
-    ):
-        for key_val in (
-            get_config("/ENVIRONMENT/variable_map", {})
-            if env_variable_map is None
-            else env_variable_map
-        ).items():
+    def _add_environment_vars(cls, get_config, docker_config, docker_node):
+        for key_val in get_config("/ENVIRONMENT/variable_map", {}).items():
             docker_node["env"].append("--env=%s=%s" % key_val)
 
     @classmethod
@@ -124,7 +118,7 @@ class Decorator:  # noqa
         return get_config("/DOCKER_OPTIONS", {})
 
     @classmethod
-    def docker_node(cls, get_config, command_name, cwd, env_variable_map):
+    def docker_node(cls, get_config, command_name, cwd):
         merged = cls.merged_options(get_config, command_name)
 
         image, container = merged.get("image"), merged.get("container")
@@ -150,7 +144,7 @@ class Decorator:  # noqa
             cls._add_workdir(merged, docker_node, cwd)
             cls._add_interactive(merged, docker_node)
             cls._add_user(merged, docker_node)
-            cls._add_environment_vars(get_config, merged, docker_node, env_variable_map)
+            cls._add_environment_vars(get_config, merged, docker_node)
             cls._add_extra_options(merged, docker_node)
 
             if merged.get("rm", True):
@@ -176,7 +170,7 @@ class Decorator:  # noqa
             cls._add_docker_variable_list(merged, docker_node)
             cls._add_workdir(merged, docker_node, cwd)
             cls._add_user(merged, docker_node)
-            cls._add_environment_vars(get_config, merged, docker_node, env_variable_map)
+            cls._add_environment_vars(get_config, merged, docker_node)
             cls._add_extra_options(merged, docker_node)
             docker_node["container"].append(container)
         else:
@@ -190,12 +184,8 @@ class Decorator:  # noqa
     def add_arguments(self, parser):  # noqa
         pass
 
-    def modify_args(
-        self, command_line_args, args_tree_root_node, cwd, env_variable_map
-    ):
-        docker_node, _ = self.docker_node(
-            Dodo.get_config, Dodo.command_name, cwd, env_variable_map=env_variable_map
-        )
+    def modify_args(self, command_line_args, args_tree_root_node, cwd):
+        docker_node, _ = self.docker_node(Dodo.get_config, Dodo.command_name, cwd)
 
         docker_node.add_child(args_tree_root_node)
         return docker_node, local.cwd

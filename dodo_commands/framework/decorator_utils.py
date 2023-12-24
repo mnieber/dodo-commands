@@ -26,9 +26,7 @@ def uses_decorator(config, command_name, decorator_name, decorators_from_input_a
     return len(approved) and not len(rejected)
 
 
-def get_decorators(
-    command_name, config, decorators_from_input_args, decorator_names=None
-):
+def get_decorators(command_name, config, decorators_from_input_args):
     result = []
     # should be returned as the last item in the list
     confirm_decorator = None
@@ -38,12 +36,9 @@ def get_decorators(
             confirm_decorator = decorator
         else:
             use_decorator = False
-            if decorator_names is not None:
-                use_decorator = name in decorator_names
-            else:
-                use_decorator = uses_decorator(
-                    config, command_name, name, decorators_from_input_args
-                )
+            use_decorator = uses_decorator(
+                config, command_name, name, decorators_from_input_args
+            )
             if use_decorator:
                 decorator = _load_decorator(name, directory)
                 result.append(decorator)

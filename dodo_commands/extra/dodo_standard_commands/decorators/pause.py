@@ -8,9 +8,7 @@ class Decorator:
             "--pause-ms", type=int, help="Pause in milliseconds before continuing"
         )
 
-    def modify_args(
-        self, command_line_args, args_tree_root_node, cwd, env_variable_map
-    ):  # override
+    def modify_args(self, command_line_args, args_tree_root_node, cwd):  # override
         if getattr(command_line_args, "pause_ms", 0):
             time.sleep(command_line_args.pause_ms / 1000)
         return args_tree_root_node, cwd

@@ -49,9 +49,7 @@ class Decorator:  # noqa
     def add_arguments(self, parser):  # noqa
         pass
 
-    def modify_args(
-        self, command_line_args, args_tree_root_node, cwd, env_variable_map
-    ):
+    def modify_args(self, command_line_args, args_tree_root_node, cwd):
         kubectl_node = self.kubectl_node(Dodo.get_config)
 
         kubectl_node.add_child(args_tree_root_node)

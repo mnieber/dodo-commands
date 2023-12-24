@@ -44,6 +44,7 @@ if Dodo.is_main(__name__, safe=True):
             raise Exception("Unknown part in command")
     if not cmd:
         raise Exception("No cmd found in command")
+    is_dodo = cmd == "dodo"
 
     more_kwargs = {}
     more_args = []
@@ -74,33 +75,39 @@ if Dodo.is_main(__name__, safe=True):
 
     cwd = command.get("cwd")
 
-    variable_map = None
     if env := command.get("env"):
         if isinstance(env, dict):
-            variable_map = dict(env)
+            env = dict(env)
         else:
             variable_map = {}
             for env_var in env:
                 key, value = env_var.split("=")
                 variable_map[key] = value
+            env = variable_map
+        for key, value in env.items():
+            if is_dodo:
+                cmd_args.append(f"--env={key}={value}")
+            else:
+                for decorator_name in decorator_names:
+                    Dodo.get_container().command_line.env_variables_from_input_args.append(
+                        f"{key}={value}"
+                    )
 
     quiet = False
-    if cmd == "dodo":
+    if is_dodo:
         quiet = True
         if cwd:
             cmd_args.append(f"--cwd={cwd}")
             cwd = None
-        for decorator_name in decorator_names:
-            cmd_args.append(f"--decorator={decorator_name}")
-        decorator_names = []
         if Dodo._args.confirm:
             Dodo._args.confirm = 0
             cmd_args.append("--confirm")
+        for decorator_name in decorator_names:
+            cmd_args.append(f"--decorator={decorator_name}")
+    else:
+        for decorator_name in decorator_names:
+            Dodo.get_container().command_line.decorators_from_input_args.append(
+                decorator_name
+            )
 
-    Dodo.run(
-        [cmd, *cmd_args],
-        quiet=quiet,
-        cwd=cwd,
-        decorator_names=decorator_names,
-        variable_map=variable_map,
-    )
+    Dodo.run([cmd, *cmd_args], quiet=quiet, cwd=cwd)
