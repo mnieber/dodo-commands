@@ -50,7 +50,7 @@ class InstallPrivatePackages(install):
         bash_autocomplete_dir = "/etc/bash_completion.d/"
         fish_autocomplete_dir = "/etc/fish/conf.d/"
 
-        for (f, d) in (
+        for f, d in (
             ("dodo_autocomplete.sh", bash_autocomplete_dir),
             ("dodo_autocomplete.fish", fish_autocomplete_dir),
         ):
@@ -69,12 +69,12 @@ class InstallPrivatePackages(install):
 
 setup(
     name="dodo-commands",
-    version="0.50.1",
+    version="0.50.2",
     description="Project-aware development environments, inspired by django-manage",
     long_description="Project-aware development environments, inspired by django-manage",
     long_description_content_type="text/x-rst",
     url="https://github.com/mnieber/dodo-commands",
-    download_url="https://github.com/mnieber/dodo-commands/tarball/0.50.1",
+    download_url="https://github.com/mnieber/dodo-commands/tarball/0.50.2",
     author="Maarten Nieber",
     author_email="hallomaarten@yahoo.com",
     license="MIT",
