@@ -105,6 +105,15 @@ if Dodo.is_main(__name__, safe=True):
         for decorator_name in decorator_names:
             cmd_args.append(f"--decorator={decorator_name}")
     else:
+
+        def update_cmd_arg(arg):
+            if arg.startswith("++"):
+                return f"--{arg[2:]}"
+            elif arg.startswith("+"):
+                return f"-{arg[1:]}"
+            return arg
+
+        cmd_args = [update_cmd_arg(arg) for arg in cmd_args]
         for decorator_name in decorator_names:
             Dodo.get_container().command_line.decorators_from_input_args.append(
                 decorator_name
