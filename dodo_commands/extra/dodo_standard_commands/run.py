@@ -26,6 +26,10 @@ if Dodo.is_main(__name__, safe=True):
                 args.command = command
                 break
 
+    if args.command not in commands:
+        print(f"Unknown command: {args.command}")
+        sys.exit(1)
+
     command = commands[args.command]
 
     cmd = None
@@ -88,10 +92,9 @@ if Dodo.is_main(__name__, safe=True):
             if is_dodo:
                 cmd_args.append(f"--env={key}={value}")
             else:
-                for decorator_name in decorator_names:
-                    Dodo.get_container().command_line.env_variables_from_input_args.append(
-                        f"{key}={value}"
-                    )
+                Dodo.get_container().command_line.env_vars_from_input_args.append(
+                    f"{key}={value}"
+                )
 
     quiet = False
     if is_dodo:
