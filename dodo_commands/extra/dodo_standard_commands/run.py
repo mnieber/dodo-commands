@@ -16,7 +16,9 @@ def _args():
 if Dodo.is_main(__name__, safe=True):
     args = _args()
 
-    commands = Dodo.get("/COMMANDS")
+    commands = dict(
+        **Dodo.get("/COMMANDS/default", {}), **Dodo.get("/COMMANDS/with_alias", {})
+    )
     if not commands:
         sys.exit(0)
 
@@ -26,11 +28,11 @@ if Dodo.is_main(__name__, safe=True):
                 args.command = command
                 break
 
-    if args.command not in commands:
+    if args.command not in commands and args.command:
         print(f"Unknown command: {args.command}")
         sys.exit(1)
 
-    command = commands[args.command]
+    command = commands.get(args.command)
 
     cmd = None
     cmd_args = []
