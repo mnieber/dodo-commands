@@ -77,7 +77,7 @@ class Dodo:
         return name == script_path
 
     @classmethod
-    def parse_args(cls, parser=None, config_args=None):
+    def parse_args(cls, parser=None, config_args=None, strict=True):
         parser = parser or cls.parser
 
         parser.add_argument("--traceback", action="store_true", help=argparse.SUPPRESS)
@@ -103,14 +103,21 @@ class Dodo:
             sys.exit(0)
 
         argcomplete.autocomplete(parser)
-        cls._args = parser.parse_args(args[2:])
+        if strict:
+            more_args = None
+            cls._args = parser.parse_args(args[2:])
+        else:
+            cls._args, more_args = parser.parse_known_args(args[2:])
 
         if config_args:
             for config_arg in config_args:
                 if config_arg.exists(cls.get()):
                     setattr(cls._args, config_arg.arg_name, config_arg.get(cls.get()))
 
-        return cls._args
+        if strict:
+            return cls._args
+        else:
+            return cls._args, more_args
 
     @classmethod
     def run(

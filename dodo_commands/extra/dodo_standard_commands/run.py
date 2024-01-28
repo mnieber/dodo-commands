@@ -7,14 +7,14 @@ from dodo_commands.framework.util import maybe_list_to_list
 def _args():
     Dodo.parser.add_argument("command")
     Dodo.parser.add_argument("run_args", nargs="*")
-    args = Dodo.parse_args()
+    args, more_args = Dodo.parse_args(strict=False)
 
-    return args
+    return args, more_args
 
 
 # Use safe=False if the script makes changes other than through Dodo.run
 if Dodo.is_main(__name__, safe=True):
-    args = _args()
+    args, more_args = _args()
 
     commands = dict(
         **Dodo.get("/COMMANDS/default", {}), **Dodo.get("/COMMANDS/with_alias", {})
@@ -53,31 +53,31 @@ if Dodo.is_main(__name__, safe=True):
     is_dodo = cmd == "dodo"
 
     more_kwargs = {}
-    more_args = []
+
+    def add_kwarg(kwarg, value):
+        cmd_args.append(f"{kwarg}={value}")
+        more_kwargs[kwarg] = value
+
     for arg in args.run_args:
         if arg.startswith("++"):
             if "=" in arg:
                 k, v = arg.split("=")
-                more_kwargs[k] = v
+                add_kwarg(k, v)
             else:
-                more_args.append(arg)
+                cmd_args.append(arg)
         elif arg.startswith("+"):
             if "=" in arg:
                 k, v = arg.split("=")
-                more_kwargs[k] = v
+                add_kwarg(k, v)
             else:
-                more_args.append(arg)
+                cmd_args.append(arg)
         else:
-            more_args.append(arg)
+            cmd_args.append(arg)
 
     kwargs = command.get("kwargs", {})
     for kwarg, value in kwargs.items():
         if kwarg not in more_kwargs:
             cmd_args.append(f"{kwarg}={value}")
-    for kwarg, value in more_kwargs.items():
-        cmd_args.append(f"{kwarg}={value}")
-    for arg in more_args:
-        cmd_args.append(arg)
 
     cwd = command.get("cwd")
 
@@ -97,6 +97,7 @@ if Dodo.is_main(__name__, safe=True):
                 Dodo.get_container().command_line.env_vars_from_input_args.append(
                     f"{key}={value}"
                 )
+    cmd_args.extend(more_args)
 
     quiet = False
     if is_dodo:
