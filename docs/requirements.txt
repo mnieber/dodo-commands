@@ -1,4 +1,6 @@
-sphinx==3.4.3
-sphinx_rtd_theme==0.5.1
-readthedocs-sphinx-search==0.1.0rc3
-sphinx-tabs==3.1.0
+sphinx
+sphinx_rtd_theme
+readthedocs-sphinx-search
+sphinx-tabs
+mkdocs==1.2.3
+jinja2==3.0.0
