@@ -1,4 +1,5 @@
 """Decorates command lines with docker arguments."""
+
 import os
 
 from dodo_commands import CommandError, Dodo
@@ -24,10 +25,6 @@ def invert_path(path):
             best_host_path = os.path.join(host_path, os.path.relpath(path, common_path))
 
     return best_host_path
-
-
-def _is_tuple(x):
-    return hasattr(x, "__len__") and not isinstance(x, type(str()))
 
 
 # Resp: reads docker related settings from the docker_config and uses
