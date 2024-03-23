@@ -69,12 +69,12 @@ class InstallPrivatePackages(install):
 
 setup(
     name="dodo-commands",
-    version="0.50.2",
+    version="0.51.0",
     description="Project-aware development environments, inspired by django-manage",
     long_description="Project-aware development environments, inspired by django-manage",
     long_description_content_type="text/x-rst",
     url="https://github.com/mnieber/dodo-commands",
-    download_url="https://github.com/mnieber/dodo-commands/tarball/0.50.2",
+    download_url="https://github.com/mnieber/dodo-commands/tarball/0.51.0",
     author="Maarten Nieber",
     author_email="hallomaarten@yahoo.com",
     license="MIT",
