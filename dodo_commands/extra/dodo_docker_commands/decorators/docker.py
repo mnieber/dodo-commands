@@ -112,7 +112,7 @@ class Decorator:  # noqa
 
     @classmethod
     def merged_options(cls, get_config, command_name):
-        return get_config("/DOCKER_OPTIONS", {})
+        return get_config("/DOCKER", {})
 
     @classmethod
     def docker_node(cls, get_config, command_name, cwd):
@@ -172,7 +172,7 @@ class Decorator:  # noqa
             docker_node["container"].append(container)
         else:
             raise CommandError(
-                "No docker image or container found in /DOCKER_OPTIONS for command %s"
+                "No docker image or container found in /DOCKER for command %s"
                 % command_name
             )
 
