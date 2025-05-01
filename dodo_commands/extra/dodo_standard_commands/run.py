@@ -16,9 +16,11 @@ def _args():
 if Dodo.is_main(__name__, safe=True):
     args, more_args = _args()
 
-    commands = dict(
-        **Dodo.get("/COMMANDS/default", {}), **Dodo.get("/COMMANDS/with_alias", {})
-    )
+    commands = {}
+    for cmd_name, cmd in Dodo.get("/COMMANDS/list", {}).items():
+        if cmd_name.startswith("~"):
+            cmd_name = cmd_name[1:]
+        commands[cmd_name] = cmd
     if not commands:
         sys.exit(0)
 
