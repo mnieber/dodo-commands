@@ -41,7 +41,7 @@ class Decorator:  # noqa
                 'jsonpath="{.items[*].metadata.name}"',
                 "--field-selector",
                 "status.phase=Running",
-            )[1:-1]
+            )[1:-1].split()[0]
         else:
             full_container_name = None
         return full_container_name
