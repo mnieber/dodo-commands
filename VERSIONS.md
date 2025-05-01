@@ -1,5 +1,10 @@
 # Version history
 
+## 0.52.0
+
+- Use pyproject.toml.
+- Skip installing the bash completion scripts, as this no longer works
+
 ## 0.43.1
 
 - Rename package from dodo_commands to dodo-commands

@@ -1,0 +1,29 @@
+[project]
+name = "dodo-commands"
+version = "0.52.0"
+description = "Project-aware development environments, inspired by django-manage"
+readme = "README.md"
+authors = [{ name = "Maarten Nieber", email = "hallomaarten@yahoo.com" }]
+license = { text = "MIT" }
+urls = { Homepage = "https://github.com/mnieber/dodo-commands" }
+requires-python = ">=3.6"
+
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["dodo_commands*"]
+
+[tool.setuptools.package-data]
+"dodo_commands" = [
+    "bin/*.sh",
+    "bin/*.fish",
+    "extra/dodo_standard_commands/*.meta",
+    "extra/dodo_docker_commands/*.meta",
+    "extra/fish/functions/*.fish",
+    "extra/fish/conf.d/*.fish",
+]
+
+[project.scripts]
+dodo = "dodo_commands.dodo:main"
