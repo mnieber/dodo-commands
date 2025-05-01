@@ -65,7 +65,8 @@ if Dodo.is_main(__name__, safe=True):
         with plumbum.local.env(COMPOSE_PROJECT_NAME=args.compose_project_name):
             Dodo.run(
                 [
-                    "docker-compose",
+                    "docker",
+                    "compose",
                     *file_args,
                     *env_file_args,
                     *compose_args,
