@@ -4,7 +4,6 @@ import sys
 from argparse import ArgumentParser
 
 from dodo_commands import Dodo
-from dodo_commands.dependencies import yaml_round_trip_load
 from dodo_commands.framework.command_path import get_command_dirs_from_config
 from dodo_commands.framework.decorator_utils import _all_decorators
 from dodo_commands.framework.paths import Paths
