@@ -1,5 +1,9 @@
 # Version history
 
+## 0.52.1
+
+- Fix dependencies management for Python 3.12
+
 ## 0.52.0
 
 - Use pyproject.toml.

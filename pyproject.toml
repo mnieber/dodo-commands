@@ -1,6 +1,6 @@
 [project]
 name = "dodo-commands"
-version = "0.52.0"
+version = "0.52.1"
 description = "Project-aware development environments, inspired by django-manage"
 readme = "README.md"
 authors = [{ name = "Maarten Nieber", email = "hallomaarten@yahoo.com" }]
