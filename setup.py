@@ -50,6 +50,27 @@ def install_packages():
             print(f"Failed to install {dependency}: {e}")
 
 
+def _is_installing():
+    # More accurately check if this is an actual install command
+    install_commands = {"install", "develop"}
+
+    # Check for pip install scenarios
+    is_pip_install = False
+    if "egg_info" in sys.argv:
+        # pip install will run egg_info, but we need additional checks
+        # pip install -e . will typically have 'develop' in sys.argv
+        # pip install . will have 'install' in sys.argv later
+        # For safety, we can check if the environment suggests pip is running
+        is_pip_install = (
+            "PIP_PYTHON_PATH" in os.environ
+            or os.environ.get("PYTHONPATH", "").find("pip") >= 0
+        )
+
+    # True installation occurs only for specific commands
+    is_installing = any(cmd in sys.argv for cmd in install_commands) or is_pip_install
+    return is_installing
+
+
 if __name__ == "__main__":
     setup(
         data_files=[
@@ -64,4 +85,5 @@ if __name__ == "__main__":
     )
 
     # Run the install_packages function after setup
-    install_packages()
+    if _is_installing():
+        install_packages()

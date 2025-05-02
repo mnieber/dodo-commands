@@ -15,6 +15,8 @@ class Switcher:
         self.built_in = {}
         for x in sys.builtin_module_names:
             self.built_in[x] = True
+            if x.startswith("_"):
+                self.built_in[x[1:]] = True
 
     def switch_to_private(self):
         # Move non-built-in modules to self.public_sys_modules
@@ -81,9 +83,7 @@ class LocalModule(ModuleType):
         name_ext = (
             "ruamel.yaml"
             if name == "yaml"
-            else "funcy.py2"
-            if name == "funcy"
-            else name
+            else "funcy.py2" if name == "funcy" else name
         )
         return get_dependency(name_ext)
 
